@@ -22,6 +22,6 @@ Sample code:
         println page.title + ' - ' + page.path
     }
 
-Additional sample scripts can be found in [src/main/resources/scripts](cq5-groovy-console/src/main/resources/scripts).
+Additional sample scripts can be found in src/main/resources/scripts.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
