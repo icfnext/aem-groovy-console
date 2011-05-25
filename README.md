@@ -6,24 +6,22 @@ See below for installation instructions on a local CQ5 author instance (must be 
 
 Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
 
-Install the Groovy jar:
+1.  Install the Groovy jar:
 
-```bash
-mvn install -P install-groovy,local-author
-```
+    mvn install -P install-groovy,local-author
 
-Install the console package:
+2.  Install the console package:
 
-```bash
-mvn install -P install-console,local-author
-```
+    mvn install -P install-console,local-author
 
-[Test](http://localhost:4502/etc/groovyconsole.html)
+3.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
 Sample code:
 
     page('/content/geometrixx').recurse { page ->
         println page.title + ' - ' + page.path
     }
+
+Additional sample scripts can be found in [src/main/resources/scripts](src/main/resources/scripts).
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
