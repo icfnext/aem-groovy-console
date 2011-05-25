@@ -10,7 +10,7 @@ Additional build profiles may be created in the project's pom.xml to support dep
 
     mvn install -P install-groovy,local-author
 
-2.  Install the console package:
+2.  Install the console package (NOTE: [cURL](http://curl.haxx.se/) must be installed in order to use the deploy scripts, alternatively the package can be uploaded manually via Package Manager):
 
     mvn install -P install-console,local-author
 
