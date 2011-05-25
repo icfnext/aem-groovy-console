@@ -8,9 +8,7 @@ Requirements:
 * Maven 2.x+
 * [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
-See below for installation instructions on a local CQ5 author instance (must be running).
-
-Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
+Installation:
 
 1.  Install the Groovy jar:
 
@@ -21,6 +19,8 @@ Additional build profiles may be created in the project's pom.xml to support dep
     mvn install -P install-console,local-author
 
 3.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
+
+Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
 
 Sample code:
 
