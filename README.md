@@ -12,11 +12,11 @@ Installation:
 
 1.  Install the Groovy jar:
 
-    mvn install -P install-groovy,local-author
+    `mvn install -P install-groovy,local-author`
 
 2.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager):
 
-    mvn install -P install-console,local-author
+    `mvn install -P install-console,local-author`
 
 3.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
