@@ -2,6 +2,12 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
+Requirements:
+
+* CQ 5.4 running on localhost:4502
+* Maven 2.x+
+* [cURL](http://curl.haxx.se/) for automated deployment (optional)
+
 See below for installation instructions on a local CQ5 author instance (must be running).
 
 Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
@@ -10,7 +16,7 @@ Additional build profiles may be created in the project's pom.xml to support dep
 
     mvn install -P install-groovy,local-author
 
-2.  Install the console package (NOTE: [cURL](http://curl.haxx.se/) must be installed in order to use the deploy scripts, alternatively the package can be uploaded manually via Package Manager):
+2.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager):
 
     mvn install -P install-console,local-author
 
