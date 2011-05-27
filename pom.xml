@@ -9,6 +9,12 @@
     <version>1.0-SNAPSHOT</version>
     <name>cq5-groovy-console</name>
 
+    <scm>
+		<connection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</connection>
+		<developerConnection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</developerConnection>
+		<url>https://github.com/Citytechinc/cq5-groovy-console</url>
+	</scm>
+
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <bundles.dir>${project.build.directory}/classes</bundles.dir>
