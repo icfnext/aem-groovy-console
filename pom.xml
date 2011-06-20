@@ -31,6 +31,7 @@
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
         <xml.plugin.version>1.0</xml.plugin.version>
+        <assembly.plugin.version>2.2.1</assembly.plugin.version>
 
         <!-- install -->
         <sling.url>http://${sling.host}:${sling.port}/system/console/install</sling.url>
@@ -221,7 +222,7 @@
                                 </goals>
                                 <configuration>
                                     <arguments>
-                                        <argument>target/${project.artifactId}-${project.version}.${project.packaging}</argument>
+                                        <argument>target/${project.artifactId}-${project.version}.zip</argument>
                                         <argument>${project.artifactId}-${project.version}</argument>
                                         <argument>${packagemanager.url}</argument>
                                         <argument>${sling.user}</argument>
@@ -239,27 +240,18 @@
     <build>
         <resources>
             <resource>
-                <directory>src/main/content/META-INF</directory>
+                <directory>${basedir}/src/main/content/META-INF</directory>
                 <targetPath>META-INF</targetPath>
                 <filtering>true</filtering>
             </resource>
             <resource>
-                <directory>src/main/content/jcr_root/apps</directory>
+                <directory>${basedir}/src/main/content/jcr_root</directory>
                 <excludes>
                     <exclude>**/.vlt</exclude>
                     <exclude>**/.vltignore</exclude>
                     <exclude>**/.DS_Store</exclude>
                 </excludes>
-                <targetPath>jcr_root/apps</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/content/jcr_root/etc</directory>
-                <excludes>
-                    <exclude>**/.vlt</exclude>
-                    <exclude>**/.vltignore</exclude>
-                    <exclude>**/.DS_Store</exclude>
-                </excludes>
-                <targetPath>jcr_root/etc</targetPath>
+                <targetPath>jcr_root</targetPath>
             </resource>
         </resources>
 
@@ -286,6 +278,24 @@
                         </validationSet>
                     </validationSets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${assembly.plugin.version}</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/resources/assemblies/zip.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
