@@ -12,6 +12,10 @@
                     <span>pageManager</span>
                     <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html">com.day.cq.wcm.api.PageManager</a>
                 </li>
+				<li>
+                    <span>resourceResolver</span>
+                    <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html">com.apache.sling.api.resource.ResourceResolver</a>
+                </li>
                 <li>
                     <span>log</span>
                     <a href="http://www.slf4j.org/api/org/slf4j/Logger.html">org.slf4j.Logger</a>

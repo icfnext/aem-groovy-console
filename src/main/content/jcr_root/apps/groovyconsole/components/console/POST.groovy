@@ -2,6 +2,7 @@ import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 
 import javax.jcr.Node
+import javax.jcr.PropertyType
 import javax.jcr.Session
 
 import groovy.json.JsonBuilder
@@ -25,6 +26,52 @@ Node.metaClass {
             node.recurse(c)
         }
     }
+
+    delegate.getProperty = { String name ->
+        def result = null
+
+        if (delegate.hasProperty(name)) {
+            def method = Node.class.getMethod('getProperty', String.class)
+            def property = method.invoke(delegate, name)
+
+            def value = property.value
+
+            switch(value.type) {
+                case PropertyType.BINARY:
+                    result = value.binary
+                    break
+                case PropertyType.BOOLEAN:
+                    result = value.boolean
+                    break
+                case PropertyType.DATE:
+                    result = value.date
+                    break
+                case PropertyType.DECIMAL:
+                    result = value.decimal
+                    break
+                case PropertyType.DOUBLE:
+                    result = value.double
+                    break
+                case PropertyType.LONG:
+                    result = value.long
+                    break
+                case PropertyType.STRING:
+                    result = value.string
+            }
+        }
+
+        result
+    }
+
+    delegate.setProperty = { String name, value ->
+        if (value) {
+            delegate.setProperty(name, value)
+        } else {
+            if (delegate.hasProperty(name)) {
+                delegate.getProperty(name).remove()
+            }
+        }
+    }
 }
 
 Page.metaClass {
@@ -34,6 +81,12 @@ Page.metaClass {
         delegate.listChildren().each { child ->
             child.recurse(c)
         }
+    }
+
+    delegate.getProperty = { String name ->
+        def node = delegate.contentResource?.adaptTo(Node.class)
+
+        node ? node[name] : null
     }
 }
 
@@ -45,7 +98,8 @@ def scriptBinding = new Binding([
     out: printStream,
     log: log,
     session: session,
-    pageManager: pageManager
+    pageManager: pageManager,
+    resourceResolver: resolver
 ])
 
 def shell = new GroovyShell(scriptBinding)
