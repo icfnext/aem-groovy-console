@@ -10,15 +10,17 @@ Requirements:
 
 Installation:
 
-1.  Install the Groovy jar:
+1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    `mvn install -P install-groovy,local-author`
+    a. If you already have the Groovy bundle installed in Felix:
 
-2.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager):
+        `mvn install -P install-console,local-author`
 
-    `mvn install -P install-console,local-author`
+    b. If you do not have the Groovy bundle installed:
 
-3.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
+        `mvn install -P install-groovy,install-console,local-author`
+
+2.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
 Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
 

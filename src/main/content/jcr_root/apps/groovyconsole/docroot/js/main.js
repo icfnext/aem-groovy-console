@@ -22,6 +22,7 @@ function initialize(path) {
         $('#output').text('');
         $('#result').text('');
         $('#stacktrace').text('');
+        $('#result-time').text('');
 
         $.ajax({
             type: 'POST',
@@ -30,11 +31,12 @@ function initialize(path) {
                 script: editor.getCode()
             },
             dataType: 'json',
-
             success: function(data) {
                 var result = data.executionResult;
                 var output = data.outputText;
                 var stackTrace = data.stacktraceText;
+
+                $('#result-time').text(data.runningTime).fadeIn();
 
                 if (output && output.length > 0) {
                     $('#tabs').tabs('select', 1);

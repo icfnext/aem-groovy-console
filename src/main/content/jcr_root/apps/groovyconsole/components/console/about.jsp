@@ -12,7 +12,7 @@
                     <span>pageManager</span>
                     <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html">com.day.cq.wcm.api.PageManager</a>
                 </li>
-				<li>
+                <li>
                     <span>resourceResolver</span>
                     <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html">com.apache.sling.api.resource.ResourceResolver</a>
                 </li>
@@ -41,7 +41,7 @@
         <h2>About</h2>
         <ul>
             <li>Inspired and heavily sourced by Guillaume Laforge's <a href="http://groovyconsole.appspot.com">Groovy web console</a></li>
-            <li>Programmed with <a href="http://groovy.codehaus.org">Groovy</a>, version 1.8.0</li>
+            <li>Programmed with <a href="http://groovy.codehaus.org">Groovy</a>, version 1.8.3</li>
             <li>Code hosted on <a href="https://github.com/Citytechinc/cq5-groovy-console">GitHub</a> for <a href="http://www.citytechinc.com">CITYTECH, Inc.</a></li>
         </ul>
     </div>

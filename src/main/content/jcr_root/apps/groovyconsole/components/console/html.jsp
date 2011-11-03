@@ -1,6 +1,6 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<cq:defineObjects/>
+<cq:defineObjects />
 
 <html>
     <head>
@@ -26,7 +26,7 @@
             <img src="/apps/groovyconsole/docroot/images/ajax-spinner-blue.gif">
         </div>
 
-        <h1><a href="${resource.path}.html">Groovy Console</a></h1>
+        <h1><a href="${currentPage.path}.html">Groovy Console</a></h1>
 
         <form method="POST">
             <div id="textarea-container-script" class="border">
@@ -37,7 +37,7 @@
                 <div id="actionsBreadcrumb">
                     <span class="actionsBreadcrumbHead">Actions &nbsp;&#x27A4;</span>
                     <span class="actionsBreadcrumbChild" id="run"><a href="javascript:void(0)">Run script</a></span>
-                    <span class="actionsBreadcrumbLastChild" id="new"><a href="${resource.path}.html">New script</a></span>
+                    <span class="actionsBreadcrumbLastChild" id="new"><a href="${currentPage.path}.html">New script</a></span>
                 </div>
             </div>
         </form>
@@ -51,6 +51,7 @@
 
             <div id="tabs-result">
                 <pre id="result" class="border hidden"></pre>
+                <pre id="result-time" class="hidden"></pre>
             </div>
 
             <div id="tabs-output">

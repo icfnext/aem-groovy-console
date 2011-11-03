@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.cqlibrary</groupId>
@@ -18,94 +19,28 @@
         <maven.test.skip>true</maven.test.skip>
         <bundles.dir>${project.build.directory}/classes</bundles.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <assembly.descriptor>src/main/resources/assemblies/zip.xml</assembly.descriptor>
 
         <!-- dependency versions -->
+        <gmaven.version>1.3</gmaven.version>
+        <gmaven.provider.version>1.7</gmaven.provider.version>
         <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>1.8.0</groovy.version>
+        <groovy.version>1.8.3</groovy.version>
         <jcr.version>2.0</jcr.version>
         <cq.version>5.4.0</cq.version>
         <sling.api.version>2.2.0</sling.api.version>
+        <commons.lang.version>2.4</commons.lang.version>
 
         <!-- plugin versions -->
         <sling.plugin.version>2.0.4-incubator</sling.plugin.version>
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
-        <xml.plugin.version>1.0</xml.plugin.version>
+        <felix.bundle.plugin.version>2.3.5</felix.bundle.plugin.version>
         <assembly.plugin.version>2.2.1</assembly.plugin.version>
-
-        <!-- install -->
-        <sling.url>http://${sling.host}:${sling.port}/system/console/install</sling.url>
-        <packagemanager.url>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp</packagemanager.url>
+        <jar.plugin.version>2.3.2</jar.plugin.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-            <version>${jcr.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-api</artifactId>
-            <version>${cq.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-            <version>${sling.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
     <profiles>
-        <profile>
-            <id>filter-windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <exec.executable>deploy.bat</exec.executable>
-            </properties>
-        </profile>
-        <profile>
-            <id>filter-mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <exec.executable>deploy.sh</exec.executable>
-            </properties>
-        </profile>
-        <profile>
-            <id>filter-unix</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <exec.executable>deploy.sh</exec.executable>
-            </properties>
-        </profile>
-
         <profile>
             <id>local-author</id>
             <activation>
@@ -142,49 +77,9 @@
                     <name>install-groovy</name>
                 </property>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-dependencies</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${bundles.dir}</outputDirectory>
-                                    <overWriteReleases>false</overWriteReleases>
-                                    <overWriteSnapshots>true</overWriteSnapshots>
-                                    <excludeTransitive>true</excludeTransitive>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.sling</groupId>
-                        <artifactId>maven-sling-plugin</artifactId>
-                        <version>${sling.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>install-groovy</id>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
-                                <configuration>
-                                    <bundleFileName>
-                                        ${bundles.dir}/groovy-all-${groovy.version}.jar </bundleFileName>
-                                    <slingUrl>${sling.url}</slingUrl>
-                                    <user>${sling.user}</user>
-                                    <password>${sling.password}</password>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <assembly.descriptor>src/main/resources/assemblies/zip-groovy.xml</assembly.descriptor>
+            </properties>
         </profile>
         <profile>
             <id>install-console</id>
@@ -195,20 +90,6 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.sling</groupId>
-                        <artifactId>maven-sling-plugin</artifactId>
-                        <version>${sling.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>validate-install-console</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>validate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -221,12 +102,16 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
+                                    <executable>curl</executable>
                                     <arguments>
-                                        <argument>target/${project.artifactId}-${project.version}.zip</argument>
-                                        <argument>${project.artifactId}-${project.version}</argument>
-                                        <argument>${packagemanager.url}</argument>
-                                        <argument>${sling.user}</argument>
-                                        <argument>${sling.password}</argument>
+                                        <argument>-v</argument>
+                                        <argument>-u</argument>
+                                        <argument>${sling.user}:${sling.password}</argument>
+                                        <argument>-F</argument>
+                                        <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
+                                        <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
+                                        <argument>-F</argument>
+                                        <argument>install=true</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -240,43 +125,90 @@
     <build>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/content/META-INF</directory>
-                <targetPath>META-INF</targetPath>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>${basedir}/src/main/content/jcr_root</directory>
+                <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>**/.vlt</exclude>
-                    <exclude>**/.vltignore</exclude>
-                    <exclude>**/.DS_Store</exclude>
+                    <exclude>**/*</exclude>
                 </excludes>
-                <targetPath>jcr_root</targetPath>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <version>${xml.plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.plugin.version}</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>${gmaven.version}</version>
+                <configuration>
+                    <providerSelection>${gmaven.provider.version}</providerSelection>
+                    <source />
+                </configuration>
                 <executions>
                     <execution>
-                        <phase>install</phase>
                         <goals>
-                            <goal>validate</goal>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                            <goal>generateStubs</goal>
+                            <goal>generateTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.gmaven.runtime</groupId>
+                        <artifactId>gmaven-runtime-${gmaven.provider.version}</artifactId>
+                        <version>${gmaven.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.codehaus.groovy</groupId>
+                                <artifactId>groovy-all</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${groovy.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${felix.bundle.plugin.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>bundle</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <validationSets>
-                        <validationSet>
-                            <dir>src/main/content/jcr_root</dir>
-                            <includes>
-                                <include>**/*.xml</include>
-                            </includes>
-                        </validationSet>
-                    </validationSets>
+                    <instructions>
+                        <Export-Package>com.citytechinc.cqlibrary.groovyconsole.*</Export-Package>
+                        <Include-Resource>{maven-resources}</Include-Resource>
+                        <Sling-Bundle-Resources>/var/classes</Sling-Bundle-Resources>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${jar.plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>assemblies/**</exclude>
+                        <exclude>scripts/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -285,7 +217,7 @@
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptors>
-                        <descriptor>src/main/resources/assemblies/zip.xml</descriptor>
+                        <descriptor>${assembly.descriptor}</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -299,4 +231,43 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+            <version>${jcr.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-api</artifactId>
+            <version>${cq.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.api</artifactId>
+            <version>${sling.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons.lang.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>
