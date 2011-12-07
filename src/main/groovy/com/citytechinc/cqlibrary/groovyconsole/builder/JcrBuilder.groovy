@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.groovyconsole
+package com.citytechinc.cqlibrary.groovyconsole.builder
 
 import javax.jcr.Node
 import javax.jcr.Session

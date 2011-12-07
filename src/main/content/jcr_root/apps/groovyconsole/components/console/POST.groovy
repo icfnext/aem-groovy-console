@@ -1,12 +1,12 @@
-import com.citytechinc.cqlibrary.groovyconsole.JcrBuilder
+import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
 
 import com.day.cq.wcm.api.Page
 import com.day.cq.wcm.api.PageManager
 
 import javax.jcr.Node
 import javax.jcr.PropertyType
-import javax.jcr.Session
 import javax.jcr.Value
+import javax.jcr.Session
 
 import groovy.json.JsonBuilder
 
@@ -18,12 +18,12 @@ import org.slf4j.LoggerFactory
 
 final def resolver = resource.resourceResolver
 
-session = resolver.adaptTo(Session.class)
-pageManager = resolver.adaptTo(PageManager.class)
-valueFactory = session.valueFactory
-log = LoggerFactory.getLogger('groovyconsole')
-
 registerMetaClasses()
+
+session = resolver.adaptTo(Session)
+pageManager = resolver.adaptTo(PageManager)
+
+log = LoggerFactory.getLogger('groovyconsole')
 
 def encoding = 'UTF-8'
 def stream = new ByteArrayOutputStream()
@@ -60,11 +60,11 @@ try {
     def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
 
     script.metaClass {
-        delegate.node = { path ->
+        delegate.getNode = { path ->
             session.getNode(path)
         }
 
-        delegate.page = { path ->
+        delegate.getPage = { path ->
             pageManager.getPage(path)
         }
 
@@ -119,7 +119,7 @@ json {
     runningTime stopWatch.toString()
 }
 
-log.info('json response = ' + json.toString())
+log.debug('json response = ' + json.toString())
 
 out.println json.toString()
 
@@ -149,119 +149,123 @@ def sanitizeStacktrace(t) {
 }
 
 def registerMetaClasses() {
-    Node.metaClass {
-        delegate.recurse = { Closure c ->
-            c(delegate)
+	Node.metaClass {
+		iterator {
+			delegate.nodes
+		}
 
-            delegate.nodes.each { node ->
-                node.recurse(c)
-            }
-        }
+		recurse { c ->
+			c(delegate)
 
-        delegate.getNodeSafe = { name ->
-            delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name)
-        }
+			delegate.nodes.each { node ->
+				node.recurse(c)
+			}
+		}
 
-        delegate.getNodeSafe = { name, nodeTypeName ->
-            delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
-        }
+		getNodeSafe { relativePath ->
+			def node = delegate
 
-        delegate.getProperty = { String name ->
-            def result = null
+			relativePath.split("/").each { path ->
+				if (node.hasNode(path)) {
+					node = node.getNode(path)
+				} else {
+					node = node.addNode(path)
+				}
+			}
 
-            if (delegate.hasProperty(name)) {
-                def method = Node.class.getMethod('getProperty', String)
-                def property = method.invoke(delegate, name)
+			node
+		}
 
-                if (property.multiple) {
-                    def values = property.values
+		getNodeSafe { name, nodeTypeName ->
+			delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
+		}
 
-                    result = values.collect { getResult(it) }
-                } else {
-                    def value = property.value
+		getProperty { String name ->
+			def result = null
 
-                    result = getResult(value)
-                }
-            } else {
-                result = ""
-            }
+			if (delegate.hasProperty(name)) {
+				def method = Node.class.getMethod('getProperty', String)
+				def property = method.invoke(delegate, name)
 
-            result
-        }
+				def value = property.value
 
-        delegate.setProperty = { String name, value ->
-            if (value) {
-                if (value instanceof Object[]) {
-                    def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
+				switch(value.type) {
+					case PropertyType.BINARY:
+						result = value.binary
+						break
+					case PropertyType.BOOLEAN:
+						result = value.boolean
+						break
+					case PropertyType.DATE:
+						result = value.date
+						break
+					case PropertyType.DECIMAL:
+						result = value.decimal
+						break
+					case PropertyType.DOUBLE:
+						result = value.double
+						break
+					case PropertyType.LONG:
+						result = value.long
+						break
+					case PropertyType.STRING:
+						result = value.string
+				}
+			} else {
+				result = ""
+			}
 
-                    def method = Node.class.getMethod('setProperty', String, Value[])
+			result
+		}
 
-                    method.invoke(delegate, name, values)
-                } else {
-                    def jcrValue = valueFactory.createValue(value)
+		setProperty { String name, value ->
+			if (value) {
+				if (value instanceof Object[]) {
+					def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
 
-                    def method = Node.class.getMethod('setProperty', String, Value)
+					def method = Node.class.getMethod('setProperty', String, Value[])
 
-                    method.invoke(delegate, name, jcrValue)
-                }
-            } else {
-                if (delegate.hasProperty(name)) {
-                    def method = Node.class.getMethod('getProperty', String)
+					method.invoke(delegate, name, values)
+				} else {
+					def jcrValue = valueFactory.createValue(value)
 
-                    def property = method.invoke(delegate, name)
+					def method = Node.class.getMethod('setProperty', String, Value)
 
-                    property.remove()
-                }
-            }
-        }
-    }
+					method.invoke(delegate, name, jcrValue)
+				}
+			} else {
+				if (delegate.hasProperty(name)) {
+					def method = Node.class.getMethod('getProperty', String)
 
-    Page.metaClass {
-        delegate.getNode = {
-            delegate.contentResource?.adaptTo(Node)
-        }
+					def property = method.invoke(delegate, name)
 
-        delegate.recurse = { Closure c ->
-            c(delegate)
+					property.remove()
+				}
+			}
+		}
+	}
 
-            delegate.listChildren().each { child ->
-                child.recurse(c)
-            }
-        }
+	Page.metaClass {
+		iterator {
+			delegate.listChildren()
+		}
 
-        delegate.getProperty = { String name ->
-            def node = delegate.contentResource?.adaptTo(Node)
+		recurse { Closure c ->
+			c(delegate)
 
-            node ? node[name] : null
-        }
-    }
-}
+			delegate.listChildren().each { child ->
+				child.recurse(c)
+			}
+		}
 
-def getResult(value) {
-    def result = null
+		getNode {
+			delegate.contentResource?.adaptTo(Node)
+		}
 
-    switch(value.type) {
-        case PropertyType.BINARY:
-            result = value.binary
-            break
-        case PropertyType.BOOLEAN:
-            result = value.boolean
-            break
-        case PropertyType.DATE:
-            result = value.date
-            break
-        case PropertyType.DECIMAL:
-            result = value.decimal
-            break
-        case PropertyType.DOUBLE:
-            result = value.double
-            break
-        case PropertyType.LONG:
-            result = value.long
-            break
-        case PropertyType.STRING:
-            result = value.string
-    }
+		getProperty { String name ->
+			def node = delegate.contentResource?.adaptTo(Node)
 
-    result
+			node ? node[name] : null
+		}
+	}
 }
