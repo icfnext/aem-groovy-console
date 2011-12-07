@@ -1,4 +1,4 @@
-final def page = page('/content/geometrixx')
+final def page = getPage('/content/geometrixx')
 
 final def query = buildQuery(page, 'beer')
 
