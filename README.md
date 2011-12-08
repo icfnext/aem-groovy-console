@@ -26,10 +26,10 @@ Additional build profiles may be created in the project's pom.xml to support dep
 
 Sample code:
 
-    page('/content/geometrixx').recurse { page ->
+    getPage('/content/geometrixx').recurse { page ->
         println page.title + ' - ' + page.path
     }
 
-Additional sample scripts can be found in src/main/resources/scripts.
+Additional sample scripts can be found in src/main/scripts.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
