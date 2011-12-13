@@ -83,8 +83,6 @@ try {
     }
 
     result = script.run()
-
-    log.info('script result = ' + result)
 } catch (MultipleCompilationErrorsException e) {
     log.error('script compilation error', e)
 
@@ -119,8 +117,6 @@ json {
     runningTime stopWatch.toString()
 }
 
-log.debug('json response = ' + json.toString())
-
 out.println json.toString()
 
 def escape(object) {
@@ -149,123 +145,133 @@ def sanitizeStacktrace(t) {
 }
 
 def registerMetaClasses() {
-	Node.metaClass {
-		iterator {
-			delegate.nodes
-		}
+    Node.metaClass {
+        iterator {
+            delegate.nodes
+        }
 
-		recurse { c ->
-			c(delegate)
+        recurse { c ->
+            c(delegate)
 
-			delegate.nodes.each { node ->
-				node.recurse(c)
-			}
-		}
+            delegate.nodes.each { node ->
+                node.recurse(c)
+            }
+        }
 
-		getNodeSafe { relativePath ->
-			def node = delegate
+        getNodeSafe { relativePath ->
+            def node = delegate
 
-			relativePath.split("/").each { path ->
-				if (node.hasNode(path)) {
-					node = node.getNode(path)
-				} else {
-					node = node.addNode(path)
-				}
-			}
+            relativePath.split("/").each { path ->
+                if (node.hasNode(path)) {
+                    node = node.getNode(path)
+                } else {
+                    node = node.addNode(path)
+                }
+            }
 
-			node
-		}
+            node
+        }
 
-		getNodeSafe { name, nodeTypeName ->
-			delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
-		}
+        getNodeSafe { name, nodeTypeName ->
+            delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
+        }
 
-		getProperty { String name ->
-			def result = null
+        getProperty { String name ->
+            def result = null
 
-			if (delegate.hasProperty(name)) {
-				def method = Node.class.getMethod('getProperty', String)
-				def property = method.invoke(delegate, name)
+            if (delegate.hasProperty(name)) {
+                def method = Node.class.getMethod('getProperty', String)
+                def property = method.invoke(delegate, name)
 
-				def value = property.value
+                if (property.multiple) {
+                    result = property.values.collect { getResult(it) }
+                } else {
+                    result = getResult(property.value)
+                }
+            } else {
+                result = ""
+            }
 
-				switch(value.type) {
-					case PropertyType.BINARY:
-						result = value.binary
-						break
-					case PropertyType.BOOLEAN:
-						result = value.boolean
-						break
-					case PropertyType.DATE:
-						result = value.date
-						break
-					case PropertyType.DECIMAL:
-						result = value.decimal
-						break
-					case PropertyType.DOUBLE:
-						result = value.double
-						break
-					case PropertyType.LONG:
-						result = value.long
-						break
-					case PropertyType.STRING:
-						result = value.string
-				}
-			} else {
-				result = ""
-			}
+            result
+        }
 
-			result
-		}
+        setProperty { String name, value ->
+            if (value) {
+                if (value instanceof Object[]) {
+                    def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
 
-		setProperty { String name, value ->
-			if (value) {
-				if (value instanceof Object[]) {
-					def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
+                    def method = Node.class.getMethod('setProperty', String, Value[])
 
-					def method = Node.class.getMethod('setProperty', String, Value[])
+                    method.invoke(delegate, name, values)
+                } else {
+                    def jcrValue = valueFactory.createValue(value)
 
-					method.invoke(delegate, name, values)
-				} else {
-					def jcrValue = valueFactory.createValue(value)
+                    def method = Node.class.getMethod('setProperty', String, Value)
 
-					def method = Node.class.getMethod('setProperty', String, Value)
+                    method.invoke(delegate, name, jcrValue)
+                }
+            } else {
+                if (delegate.hasProperty(name)) {
+                    def method = Node.class.getMethod('getProperty', String)
 
-					method.invoke(delegate, name, jcrValue)
-				}
-			} else {
-				if (delegate.hasProperty(name)) {
-					def method = Node.class.getMethod('getProperty', String)
+                    def property = method.invoke(delegate, name)
 
-					def property = method.invoke(delegate, name)
+                    property.remove()
+                }
+            }
+        }
+    }
 
-					property.remove()
-				}
-			}
-		}
-	}
+    Page.metaClass {
+        iterator {
+            delegate.listChildren()
+        }
 
-	Page.metaClass {
-		iterator {
-			delegate.listChildren()
-		}
+        recurse { Closure c ->
+            c(delegate)
 
-		recurse { Closure c ->
-			c(delegate)
+            delegate.listChildren().each { child ->
+                child.recurse(c)
+            }
+        }
 
-			delegate.listChildren().each { child ->
-				child.recurse(c)
-			}
-		}
+        getNode {
+            delegate.contentResource?.adaptTo(Node)
+        }
 
-		getNode {
-			delegate.contentResource?.adaptTo(Node)
-		}
+        getProperty { String name ->
+            def node = delegate.contentResource?.adaptTo(Node)
 
-		getProperty { String name ->
-			def node = delegate.contentResource?.adaptTo(Node)
+            node ? node[name] : null
+        }
+    }
+}
 
-			node ? node[name] : null
-		}
-	}
+def getResult(value) {
+    def result = null
+
+    switch(value.type) {
+        case PropertyType.BINARY:
+            result = value.binary
+            break
+        case PropertyType.BOOLEAN:
+            result = value.boolean
+            break
+        case PropertyType.DATE:
+            result = value.date
+            break
+        case PropertyType.DECIMAL:
+            result = value.decimal
+            break
+        case PropertyType.DOUBLE:
+            result = value.double
+            break
+        case PropertyType.LONG:
+            result = value.long
+            break
+        case PropertyType.STRING:
+            result = value.string
+    }
+
+    result
 }
