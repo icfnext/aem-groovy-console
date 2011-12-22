@@ -18,7 +18,7 @@
         <maven.test.skip>true</maven.test.skip>
         <bundles.dir>${project.build.directory}/classes</bundles.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <assembly.descriptor>src/main/resources/assemblies/zip.xml</assembly.descriptor>
 
@@ -106,7 +106,7 @@
                                 <configuration>
                                     <executable>curl</executable>
                                     <arguments>
-                                    	<argument>-f</argument>
+                                        <argument>-f</argument>
                                         <argument>-v</argument>
                                         <argument>-u</argument>
                                         <argument>${sling.user}:${sling.password}</argument>
@@ -126,32 +126,18 @@
     </profiles>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/content</directory>
-                <excludes>
-                    <exclude>**/*</exclude>
-                </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*</exclude>
-                </excludes>
-            </resource>
-        </resources>
         <plugins>
-        	<plugin>
+            <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
                 <version>${gmaven.version}</version>
                 <executions>
                     <execution>
-                    	<configuration>
-		                    <providerSelection>${gmaven.provider.version}</providerSelection>
-		                </configuration>
+                        <configuration>
+                            <providerSelection>${gmaven.provider.version}</providerSelection>
+                        </configuration>
                         <goals>
-                        	<goal>generateStubs</goal>
+                            <goal>generateStubs</goal>
                             <goal>compile</goal>
                             <goal>generateTestStubs</goal>
                             <goal>testCompile</goal>

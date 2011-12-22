@@ -21,6 +21,7 @@
         <fileSet>
             <directory>${basedir}/src/main/content/META-INF</directory>
             <outputDirectory>META-INF</outputDirectory>
+            <filtered>true</filtered>
         </fileSet>
     </fileSets>
     <dependencySets>
