@@ -34,6 +34,7 @@ def scriptBinding = new Binding([
     log: log,
     session: session,
     slingRequest: request,
+    sling: sling,
     pageManager: pageManager,
     resourceResolver: resolver,
     builder: new JcrBuilder(session)
