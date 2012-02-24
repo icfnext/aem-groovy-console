@@ -1,6 +1,11 @@
 body {
     font-family: Arial ;
     margin: 0px;
+    overflow: hidden;
+}
+
+pre {
+    margin: 0;
 }
 
 h1 {
@@ -19,44 +24,32 @@ h2, .indent {
     margin-left: 20px;
 }
 
-pre {
-    margin-left: 40px;
+.ui-button, .ui-button-text
+{
+    font-size: 0.5em !important;
+    height: 20px;
 }
 
-#actionsBreadcrumb {
-    padding: 4px 0px 4px 0px;
-    border: 2px solid #888;
-    border-right: 0px;
-    margin: 15px 0px 10px 20px;
-    display: inline-block;
-    font-size: 0.8em;
+#editor { 
+    position: relative;
+    margin: 0;
+    height: 60%;
 }
 
-.actionsBreadcrumbHead {
-    padding: 4px 10px 5px 5px;
-    font-weight: bold;
-    color: white;
-    background-color: #888;
+#toolbar {
+    /* height: 24px; */
+    background-color: #777;
+    padding: 5px;
 }
-
-.actionsBreadcrumbChild, .actionsBreadcrumbLastChild {
-    padding: 4px;
-    padding-right: 8px;
-    color: #888;
-    border-right: 2px dotted #888;
+            
+#tabs {
+   height: 300px;
+   bottom: 0;
 }
-
-.actionsBreadcrumbLastChild {
-    border-right: 2px solid #888;
-}
-
-.actionsBreadcrumbChild a, .actionsBreadcrumbLastChild a {
-    color: #888;
-    text-decoration: none;
-}
-
-.actionsBreadcrumbChild a:hover, .actionsBreadcrumbLastChild a:hover {
-    text-decoration: underline;
+#tabs-result, #tabs-output, #tabs-stacktrace {
+    height: 275px;
+    padding: 10px;
+    overflow-y: scroll;
 }
 
 .redBorder {
@@ -86,20 +79,6 @@ pre {
     color: gray;
 }
 
-#backtoconsole {
-    margin-left: 20px;
-    font-family: Arial, sans-serif;
-}
-
-#shareThis {
-    float: right;
-    margin: 10px;
-}
-
-#shareThis a {
-    text-decoration: none;
-}
-
 #embedText, #dialog {
     display: none;
 }
@@ -120,38 +99,11 @@ pre {
     color: gray;
 }
 
-#textarea-container-script {
-    margin-bottom: 10px;
-}
-
-#textarea-container-data {
-    margin-bottom: 10px;
-}
-
-#commentsArea #idc-container h3 {
-    font-weight: bold;
-    font-size: 14pt;
-}
-
-#button-bar {
-    padding: 5px;
-    margin-bottom: 20px;
-}
-
 #loadingDiv {
     position: fixed;
     background-color: white;
     right: 10px;
     top: 12px;
-}
-
-.CodeMirror-line-numbers {
-    color: gray;
-    background-color: lightgray;
-    padding: 5px;
-    margin-right: 5px;
-    font-family: "Consolas", "Monaco", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
-    font-size: 1em;
 }
 
 .ui-tabs .ui-tabs-hide {
