@@ -7,21 +7,19 @@
         <title>Groovy Console</title>
         
         <script src="/apps/groovyconsole/docroot/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-        <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.7.3.custom.min.js" type="text/javascript"></script>
         
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" />
-        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" />
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.7.3.custom.css" type="text/css" />
         <style type="text/css" media="screen">
             body {
                 overflow: hidden;
             }
 
             #editor { 
-                margin: 0;
                 position: relative;
+                margin: 0;
                 height: 500px;
-                left: 0;
-                right: 0;
             }
         </style>
     </head>
