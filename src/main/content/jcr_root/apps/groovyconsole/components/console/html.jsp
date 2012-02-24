@@ -5,21 +5,25 @@
 <html>
     <head>
         <title>Groovy Console</title>
-
+        
         <script src="/apps/groovyconsole/docroot/js/jquery-1.3.2.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.7.2.custom.min.js" type="text/javascript"></script>
-        <script src="/apps/groovyconsole/docroot/js/codemirror.js" type="text/javascript"></script>
-        <script src="/apps/groovyconsole/docroot/js/mirrorframe.js" type="text/javascript"></script>
-        <script src="/apps/groovyconsole/docroot/js/main.js" type="text/javascript"></script>
-
-        <script type="text/javascript">
-            $(document).ready(function() {
-                initialize('${resource.path}.html');
-            });
-        </script>
-
-        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" />
+        
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" />
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/redmond/jquery-ui-1.7.1.custom.css" type="text/css" />
+        <style type="text/css" media="screen">
+            body {
+                overflow: hidden;
+            }
+
+            #editor { 
+                margin: 0;
+                position: relative;
+                height: 500px;
+                left: 0;
+                right: 0;
+            }
+        </style>
     </head>
     <body>
         <div id="loadingDiv">
@@ -29,9 +33,7 @@
         <h1><a href="${currentPage.path}.html">Groovy Console</a></h1>
 
         <form method="POST">
-            <div id="textarea-container-script" class="border">
-                <textarea id="script" name="script" cols="140" rows="40"></textarea>
-            </div>
+            <pre id="editor"></pre>
 
             <div id="button-bar">
                 <div id="actionsBreadcrumb">
@@ -47,6 +49,7 @@
                 <li><a href="#tabs-result">Result</a></li>
                 <li><a href="#tabs-output">Output</a></li>
                 <li><a href="#tabs-stacktrace">Stacktrace</a></li>
+                <li><a href="#tabs-about">About</a></li>
             </ul>
 
             <div id="tabs-result">
@@ -61,8 +64,21 @@
             <div id="tabs-stacktrace">
                 <pre id="stacktrace" class="border hidden"></pre>
             </div>
+            
+            <div id="tabs-about">
+                <cq:include script="about.jsp" />
+                <div style="clear:both;"></div>
+            </div>
         </div>
 
-        <cq:include script="about.jsp" />
+        <script src="/apps/groovyconsole/docroot/ace/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/ace/theme-tomorrow_night-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/ace/mode-groovy-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/js/console-main.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                initialize('${resource.path}.html');
+            });
+        </script>
     </body>
 </html>
