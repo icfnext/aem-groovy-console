@@ -7,10 +7,35 @@ function initialize(path) {
 
     editor.renderer.setShowPrintMargin(false);
 
+    $("#toolbar button:first").button({
+        icons: {
+            primary: "ui-icon-document"
+        },
+        text: false
+    }).next().button({
+        icons: {
+            primary: "ui-icon-folder-open"
+        },
+        text: false
+    }).next().button({
+        icons: {
+            primary: "ui-icon-play"
+        },
+        text: false
+    });
 
     $('#tabs').tabs().tabs('select', 3);
-    $('#editor').resizable({ handles: 's', alsoResize: 'iframe' });
+    $('#editor').resizable({ 
+        handles: 's',
+        resize: function(event, ui) {
+            editor.resize();
+        }
+    });
 
+    $(window).resize(function() {
+        editor.resize();
+    });
+    
     $('#run').click(function(event) {
         $('#output').text('');
         $('#result').text('');

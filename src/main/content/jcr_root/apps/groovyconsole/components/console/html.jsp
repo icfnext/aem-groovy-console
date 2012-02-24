@@ -6,22 +6,11 @@
     <head>
         <title>Groovy Console</title>
         
-        <script src="/apps/groovyconsole/docroot/js/jquery-1.3.2.min.js" type="text/javascript"></script>
-        <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.7.3.custom.min.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
         
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" />
-        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.7.3.custom.css" type="text/css" />
-        <style type="text/css" media="screen">
-            body {
-                overflow: hidden;
-            }
-
-            #editor { 
-                position: relative;
-                margin: 0;
-                height: 500px;
-            }
-        </style>
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
     </head>
     <body>
         <div id="loadingDiv">
@@ -29,18 +18,14 @@
         </div>
 
         <h1><a href="${currentPage.path}.html">Groovy Console</a></h1>
+        
+        <div id="toolbar">
+            <button>New Script</button>
+            <button>Open Script</button>
+            <button id="run" style="float:right;">Run Script</button>
+        </div>
 
-        <form method="POST">
-            <pre id="editor"></pre>
-
-            <div id="button-bar">
-                <div id="actionsBreadcrumb">
-                    <span class="actionsBreadcrumbHead">Actions &nbsp;&#x27A4;</span>
-                    <span class="actionsBreadcrumbChild" id="run"><a href="javascript:void(0)">Run script</a></span>
-                    <span class="actionsBreadcrumbLastChild" id="new"><a href="${currentPage.path}.html">New script</a></span>
-                </div>
-            </div>
-        </form>
+        <pre id="editor"></pre>
 
         <div id="tabs">
             <ul>
