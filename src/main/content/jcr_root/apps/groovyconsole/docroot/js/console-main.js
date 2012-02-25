@@ -1,42 +1,62 @@
 function initialize(path) {
     window.editor = ace.edit("editor");
-    editor.setTheme("ace/theme/tomorrow_night");
-
     var GroovyMode = ace.require("ace/mode/groovy").Mode;
     editor.getSession().setMode(new GroovyMode());
-
     editor.renderer.setShowPrintMargin(false);
-
-    $("#toolbar button:first").button({
-        icons: {
-            primary: "ui-icon-document"
-        },
-        text: false
-    }).next().button({
-        icons: {
-            primary: "ui-icon-folder-open"
-        },
-        text: false
-    }).next().button({
-        icons: {
-            primary: "ui-icon-play"
-        },
-        text: false
-    });
-
-    $('#tabs').tabs().tabs('select', 3);
+    editor.setTheme("ace/theme/tomorrow_night");
+    
+    // Resizing
     $('#editor').resizable({ 
         handles: 's',
+        alsoResizeReverse: ".tab",
         resize: function(event, ui) {
             editor.resize();
         }
     });
-
+    
     $(window).resize(function() {
         editor.resize();
     });
     
-    $('#run').click(function(event) {
+    $('#loadingDiv').hide().ajaxStart(function() {
+        $(this).show();
+        $("#run-script").attr('disabled', 'disabled');
+    }).ajaxStop(function() {
+        $(this).hide();
+        $("#run-script").removeAttr('disabled').removeClass('ui-state-hover');
+    });
+    
+    // Tabs
+    $('#tabs').tabs().tabs('select', 3);
+
+
+    // Buttons
+    $("#new-script").button({
+        icons: {
+            primary: "ui-icon-document"
+        },
+        text: false
+    }).click(function(event) {
+        editor.getSession().setValue("");
+    });
+    $("#open-script").button({
+        icons: {
+            primary: "ui-icon-folder-open"
+        },
+        text: false
+    }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    $("#save-script").button({
+        icons: {
+            primary: "ui-icon-disk"
+        },
+        text: false
+    }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    $("#run-script").button({
+        icons: {
+            secondary: "ui-icon-play"
+        },
+        text: true
+    }).click(function(event) {
         $('#output').text('');
         $('#result').text('');
         $('#stacktrace').text('');
@@ -55,7 +75,7 @@ function initialize(path) {
                 var stackTrace = data.stacktraceText;
                 var runTime = data.runningTime ? data.runningTime : "";
 
-                $('#result-time').text(runTime).fadeIn();
+                $('#result-time').text("Execution time: " + runTime).fadeIn();
 
                 if (output && output.length > 0) {
                     $('#tabs').tabs('select', 1);
@@ -83,11 +103,5 @@ function initialize(path) {
                 alert('Error interacting with the CQ5 server: ' + errorThrown);
             }
         });
-    });
-
-    $('#loadingDiv').hide().ajaxStart(function() {
-        $(this).show();
-    }).ajaxStop(function() {
-        $(this).hide();
     });
 }

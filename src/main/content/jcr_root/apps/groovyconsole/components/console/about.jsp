@@ -20,6 +20,12 @@
                     <span>log</span>
                     <a href="http://www.slf4j.org/api/org/slf4j/Logger.html">org.slf4j.Logger</a>
                 </li>
+                <li>
+                    <span>sling</span>
+                    <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/org/apache/sling/api/scripting/SlingScriptHelper.html">
+                        org.apache.sling.api.scripting.SlingScriptHelper
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -41,8 +47,9 @@
         <h2>About</h2>
         <ul>
             <li>Inspired by and heavily sourced from Guillaume Laforge's <a href="http://groovyconsole.appspot.com">Groovy web console</a></li>
+            <li>Code editing capabilities provided by <a href="http://ace.ajax.org/">Ace</a></li>
             <li>Programmed with <a href="http://groovy.codehaus.org">Groovy</a>, version 1.8.3</li>
-            <li>Code hosted on <a href="https://github.com/Citytechinc/cq5-groovy-console">GitHub</a> for <a href="http://www.citytechinc.com">CITYTECH, Inc.</a></li>
+            <li>Project hosted on <a href="https://github.com/Citytechinc/cq5-groovy-console">GitHub</a> for <a href="http://www.citytechinc.com">CITYTECH, Inc.</a></li>
         </ul>
     </div>
 </div>

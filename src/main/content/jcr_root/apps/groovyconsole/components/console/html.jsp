@@ -8,26 +8,29 @@
         
         <script src="/apps/groovyconsole/docroot/js/jquery-1.7.1.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/jquery-ui-resize-plugin.js" type="text/javascript"></script>
         
-        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" />
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" />
     </head>
     <body>
-        <div id="loadingDiv">
-            <img src="/apps/groovyconsole/docroot/images/ajax-spinner-blue.gif">
-        </div>
+        <div class="header row">
+            <h1><span class="title">Groovy Console<span></h1>
 
-        <h1><a href="${currentPage.path}.html">Groovy Console</a></h1>
+            <div id="toolbar">
+                <button id="new-script" >New Script</button>
+                <button id="open-script">Open Script</button>
+                <button id="save-script">Save Script</button>
+
+                <div id="loadingDiv"><img src="/apps/groovyconsole/docroot/images/ajax-loader-1.gif"></div>
+
+                <button id="run-script" style="float:right;">Run Script</button>
+            </div>
+        </div>
         
-        <div id="toolbar">
-            <button>New Script</button>
-            <button>Open Script</button>
-            <button id="run" style="float:right;">Run Script</button>
-        </div>
+        <pre id="editor" class="row"></pre>
 
-        <pre id="editor"></pre>
-
-        <div id="tabs">
+        <div id="tabs" class="row tab">
             <ul>
                 <li><a href="#tabs-result">Result</a></li>
                 <li><a href="#tabs-output">Output</a></li>
@@ -35,20 +38,20 @@
                 <li><a href="#tabs-about">About</a></li>
             </ul>
 
-            <div id="tabs-result">
-                <pre id="result" class="border hidden"></pre>
+            <div id="tabs-result" class="tab">
                 <pre id="result-time" class="hidden"></pre>
+                <pre id="result" class="border hidden"></pre>
             </div>
 
-            <div id="tabs-output">
+            <div id="tabs-output" class="tab">
                 <pre id="output" class="border hidden"></pre>
             </div>
 
-            <div id="tabs-stacktrace">
+            <div id="tabs-stacktrace" class="tab">
                 <pre id="stacktrace" class="border hidden"></pre>
             </div>
             
-            <div id="tabs-about">
+            <div id="tabs-about" class="tab">
                 <cq:include script="about.jsp" />
                 <div style="clear:both;"></div>
             </div>

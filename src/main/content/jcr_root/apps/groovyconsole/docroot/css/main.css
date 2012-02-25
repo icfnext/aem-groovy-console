@@ -1,5 +1,5 @@
 body {
-    font-family: Arial ;
+    font-family: Arial;
     margin: 0px;
     overflow: hidden;
 }
@@ -9,60 +9,56 @@ pre {
 }
 
 h1 {
-    background: #5C9CCC url('../css/redmond/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png') repeat-x scroll 50% 50%;
+    background: #bbb;
     padding: 5px;
     margin: 0px;
-    color: white;
+    height: 0.68em;
 }
 
-h1 a {
-    text-decoration: none;
-    color: white;
+h1 .title {
+    color: #777;
+    top: -0.15em;
+    position: relative;
 }
 
 h2, .indent {
     margin-left: 20px;
 }
 
-.ui-button, .ui-button-text
-{
-    font-size: 0.5em !important;
-    height: 20px;
+.row { 
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
 }
 
-#editor { 
-    position: relative;
-    margin: 0;
-    height: 60%;
+.header.row { 
+    height: 62px;
+    top: 0;
 }
 
 #toolbar {
-    /* height: 24px; */
-    background-color: #777;
+    background: #CCC url('smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png') 50% 50% repeat-x;
     padding: 5px;
 }
-            
-#tabs {
-   height: 300px;
-   bottom: 0;
+
+#editor { 
+    position: absolute;
+    margin: 0;
+    top: 62px; 
+    bottom: 304px;
 }
+
+#tabs.row { 
+    height: 300px;
+    bottom: 0; 
+    padding: 2px;
+}
+            
 #tabs-result, #tabs-output, #tabs-stacktrace {
-    height: 275px;
+    height: 260px;
     padding: 10px;
     overflow-y: scroll;
-}
-
-.redBorder {
-    border: 1px solid red;
-}
-
-.taglist {
-    list-style-type: none;
-}
-
-.taglist li {
-    display: inline;
-    padding-right: 10px;
 }
 
 .border {
@@ -71,15 +67,6 @@ h2, .indent {
 }
 
 .hidden {
-    display: none;
-}
-
-.smaller {
-    font-size: small;
-    color: gray;
-}
-
-#embedText, #dialog {
     display: none;
 }
 
@@ -102,8 +89,8 @@ h2, .indent {
 #loadingDiv {
     position: fixed;
     background-color: white;
-    right: 10px;
-    top: 12px;
+    right: 5px;
+    top: 5px;
 }
 
 .ui-tabs .ui-tabs-hide {
@@ -117,4 +104,15 @@ h2, .indent {
 .ui-tabs .ui-tabs-nav li a {
     padding: 2px 4px 2px 4px;
     font-size: smaller;
+}
+
+.ui-button-text-icon-secondary .ui-button-text {
+    padding-top: 0.5em;
+    padding-right: 2.2em;
+}
+
+.ui-button, .ui-button-text
+{
+    font-size: 0.5em;
+    height: 20px;
 }
