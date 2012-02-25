@@ -114,15 +114,20 @@ h2, .indent {
     font-size: smaller;
 }
 
-.ui-button-text-icon-secondary .ui-button-text {
-    padding-top: 0.5em;
-    padding-right: 2.2em;
+.ui-button
+{
+    height: 20px;
 }
 
-.ui-button, .ui-button-text
+.ui-button-icon-only
 {
     font-size: 0.5em;
-    height: 20px;
+}
+
+.ui-button-text-icon-secondary .ui-button-text {
+    padding-top: 4px;
+    padding-right: 25px;
+    font-size: 0.5em;
 }
 
 .ui-selectmenu {
