@@ -42,6 +42,14 @@ h2, .indent {
     padding: 5px;
 }
 
+#theme-label {
+    margin-left: 40px;
+    position: relative;
+    top: 1px;
+    font-size: 0.8em;
+    color: #666;
+}
+
 #editor { 
     position: absolute;
     margin: 0;
@@ -115,4 +123,20 @@ h2, .indent {
 {
     font-size: 0.5em;
     height: 20px;
+}
+
+.ui-selectmenu {
+    height: 18px;
+    margin-top: 1px;
+}
+
+.ui-selectmenu-status {
+    line-height: 1em;
+    font-size: 0.6em;
+}
+
+.ui-selectmenu-menu li a, .ui-selectmenu-status {
+    padding: .2em;
+    font-size: 0.7em;
+    line-height: 1em;
 }

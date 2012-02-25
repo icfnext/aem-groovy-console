@@ -57,10 +57,10 @@ function initialize(path) {
         },
         text: true
     }).click(function(event) {
-        $('#output').text('');
-        $('#result').text('');
-        $('#stacktrace').text('');
-        $('#result-time').text('');
+        $('#output').text('').fadeOut();
+        $('#result').text('').fadeOut();
+        $('#stacktrace').text('').fadeOut();
+        $('#result-time').text('').fadeOut();
 
         $.ajax({
             type: 'POST',
@@ -103,5 +103,9 @@ function initialize(path) {
                 alert('Error interacting with the CQ5 server: ' + errorThrown);
             }
         });
+    });
+    
+    $("#editor-theme").selectmenu({ style: "dropdown", width:170 }).change(function(){
+        editor.setTheme(this.value);
     });
 }
