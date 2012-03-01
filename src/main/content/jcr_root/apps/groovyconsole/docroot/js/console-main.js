@@ -1,4 +1,5 @@
 function initialize(path) {
+    
     window.editor = ace.edit("editor");
     var GroovyMode = ace.require("ace/mode/groovy").Mode;
     editor.getSession().setMode(new GroovyMode());
@@ -39,18 +40,21 @@ function initialize(path) {
     }).click(function(event) {
         editor.getSession().setValue("");
     });
+    
     $("#open-script").button({
         icons: {
             primary: "ui-icon-folder-open"
         },
         text: false
     }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    
     $("#save-script").button({
         icons: {
             primary: "ui-icon-disk"
         },
         text: false
     }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    
     $("#run-script").button({
         icons: {
             secondary: "ui-icon-play"
@@ -73,22 +77,20 @@ function initialize(path) {
                 var result = data.executionResult;
                 var output = data.outputText;
                 var stackTrace = data.stacktraceText;
-                var runTime = data.runningTime ? data.runningTime : "";
-
-                $('#result-time').text("Execution time: " + runTime).fadeIn();
-
-                if (output && output.length > 0) {
-                    $('#tabs').tabs('select', 1);
-                    $('#output').text(output).fadeIn();
-                } else {
-                    $('#output').fadeOut();
-                }
+                var runTime = data.runningTime;
 
                 if (result && result.length > 0) {
                     $('#tabs').tabs('select', 0);
                     $('#result').text(result).fadeIn();
                 } else {
                     $('#result').fadeOut();
+                }
+                
+                if (output && output.length > 0) {
+                    $('#tabs').tabs('select', 1);
+                    $('#output').text(output).fadeIn();
+                } else {
+                    $('#output').fadeOut();
                 }
 
                 if (stackTrace && stackTrace.length > 0) {
@@ -97,6 +99,11 @@ function initialize(path) {
                 } else {
                     $('#stacktrace').fadeOut();
                 }
+                
+                if (runTime && runTime.length > 0) {
+                    $('#result-time').text("Execution time: " + runTime).fadeIn();
+                }
+
             },
 
             error: function (XMLHttpRequest, textStatus, errorThrown) {
