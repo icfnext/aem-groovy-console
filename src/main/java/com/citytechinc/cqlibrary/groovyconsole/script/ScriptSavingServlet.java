@@ -1,14 +1,15 @@
 package com.citytechinc.cqlibrary.groovyconsole.script;
 
 import com.day.cq.commons.servlets.HtmlStatusResponseHelper;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFactory;
 import javax.servlet.ServletException;
-
 import org.apache.felix.scr.annotations.*;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -56,12 +57,13 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
             String errStr = "POST error: Missing required '${SCRIPT_CONTENT_PARAM}' parameter.";
             HtmlStatusResponseHelper.createStatusResponse(412, errStr).send(response, false);
         }
-        ByteArrayInputStream scriptStream = new ByteArrayInputStream(scriptContent.getBytes("UTF-8"));
         
         Session session = null;
         
         try {
             session = repository.loginAdministrative(null);
+            
+            Binary scriptBinary = getScriptBinary(session, scriptContent);
             
             Node folderNode = getScriptFolderNode(session);
             
@@ -73,7 +75,7 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
             Node fileNode = folderNode.addNode(fileName, "nt:file");
             Node resNode = fileNode.addNode ("jcr:content", "nt:resource");
             resNode.setProperty ("jcr:mimeType", "application/octet-stream");
-            resNode.setProperty ("jcr:data", scriptStream);
+            resNode.setProperty ("jcr:data", scriptBinary);
             
             session.save();
         } catch (RepositoryException e) {
@@ -97,6 +99,23 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
             Node folderNode = consoleNode.addNode(SCRIPT_FOLDER_REL_PATH, "nt:folder");
             session.save();
             return folderNode;
+        }
+    }
+    
+    private Binary getScriptBinary(Session session, String scriptContent) throws RepositoryException {
+        ByteArrayInputStream scriptStream = null;
+        try {
+            ValueFactory valueFactory = session.getValueFactory();
+            scriptStream = new ByteArrayInputStream(scriptContent.getBytes("UTF-8"));
+            return valueFactory.createBinary(scriptStream);
+        } catch (UnsupportedEncodingException ex) {
+            throw new RepositoryException(ex);
+        } finally {
+            try {
+                scriptStream.close();
+            } catch (IOException ignored) {
+
+            }
         }
     }
 }
