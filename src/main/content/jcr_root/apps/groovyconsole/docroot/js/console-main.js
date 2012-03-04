@@ -36,15 +36,25 @@ saveScript = function(fileName) {
         url: '/bin/groovyconsole/save',
         params: params,
         method: 'POST',
-        success: function ( result, request ) {
-            alert('success!: ' + result.status);
-        },
         failure: function ( result, request ) {
-            alert('failure: ' + result.status);
+            alert('Save operation failed - status: ' + result.status);
         }
     });
 }
 
+refreshOpenDialog = function(dialog) {
+    var tp, root;
+    
+    if (dialog.loadedFlag == null) {
+        dialog.loadedFlag = true;
+    } else {
+        tp = dialog.treePanel;
+        root = tp.getRootNode();
+        
+        tp.getLoader().load(root);
+        root.expand();
+    }
+}
 
 initialize = function(path) {
     
@@ -104,8 +114,8 @@ initialize = function(path) {
         },
         text: false
     }).click(function(event) {
-        saveScript("test.groovy");
-    });//.attr('disabled', 'disabled').addClass('ui-state-hover');
+        showSaveDialog();
+    });
     
     $("#run-script").button({
         icons: {
