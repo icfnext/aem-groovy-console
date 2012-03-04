@@ -46,7 +46,7 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
         
         String fileName = request.getParameter(FILE_NAME_PARAM);
         if (null == fileName || fileName.trim().isEmpty()) {
-            String errStr = "POST error: Missing required '${FILE_NAME_PARAM}' parameter.";
+            String errStr = "POST error: Missing required " + FILE_NAME_PARAM + " parameter.";
             HtmlStatusResponseHelper.createStatusResponse(412, errStr).send(response, false);
         }
         
@@ -54,7 +54,7 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
         
         String scriptContent = request.getParameter(SCRIPT_CONTENT_PARAM);
         if (null == scriptContent || scriptContent.trim().isEmpty()) {
-            String errStr = "POST error: Missing required '${SCRIPT_CONTENT_PARAM}' parameter.";
+            String errStr = "POST error: Missing required " + SCRIPT_CONTENT_PARAM + " parameter.";
             HtmlStatusResponseHelper.createStatusResponse(412, errStr).send(response, false);
         }
         
@@ -89,7 +89,7 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
     
     private Node getScriptFolderNode(Session session) throws RepositoryException {     
         if (!session.nodeExists(CONSOLE_ROOT)) {
-            throw new RuntimeException("Missing expected groovy console ");
+            throw new RuntimeException("Missing expected groovy console root node");
         }
         Node consoleNode = session.getNode(CONSOLE_ROOT);
         
