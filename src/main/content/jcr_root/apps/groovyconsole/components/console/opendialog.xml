@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    parBrowse="{Boolean}false"
+    ok="function() {loadScript(this.getSelectedPath()); this.hide();}"
+    title="Load Script"
+    xtype="browsedialog">
+    <treeRoot
+        jcr:primaryType="nt:unstructured"
+        name="etc/groovyconsole/scripts"
+        text="Scripts"
+        draggable="{Boolean}false"
+        singleClickExpand="{Boolean}true"
+        expanded="{Boolean}true" />
+    <treeLoader>
+        <baseParams
+            jcr:primaryType="nt:unstructured"
+            predicate="hierarchy"
+            _charset_="utf-8"
+            />
+        <baseAttrs
+            jcr:primaryType="nt:unstructured"
+            singleClickExpand="{Boolean}true"
+            />
+        <listeners
+            jcr:primaryType="nt:unstructured"
+            beforeload="function(loader, node){ this.baseParams.path = node.getPath(); }"
+            />
+    </treeLoader>
+</jcr:root>

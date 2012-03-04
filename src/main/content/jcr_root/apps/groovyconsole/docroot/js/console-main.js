@@ -1,4 +1,52 @@
-function initialize(path) {
+showOpenDialog = function() {
+    
+    var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/opendialog");
+    dialog.show();
+}
+
+showSaveDialog = function() {
+    
+    var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/savedialog");
+    dialog.show();
+}
+
+loadScript = function(scriptPath) {
+    
+    CQ.Ext.Ajax.request({
+        url: '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data',
+        success: function(response, opts) {
+            if (response && response.responseText) {
+                editor.getSession().setValue(response.responseText);
+            }
+        },
+        failure: function(response, opts) {
+            console.log('server-side failure with status code ' + response.status);
+        }
+    });
+}
+
+saveScript = function(fileName) {
+    
+    var params = {};
+    
+    params['fileName'] = fileName;
+    params['scriptContent'] = editor.getSession().getValue();
+    
+    CQ.Ext.Ajax.request({
+        url: '/bin/groovyconsole/save',
+        params: params,
+        method: 'POST',
+        success: function ( result, request ) {
+            alert('success!: ' + result.status);
+        },
+        failure: function ( result, request ) {
+            alert('failure: ' + result.status);
+        }
+    });
+}
+
+
+initialize = function(path) {
     
     window.editor = ace.edit("editor");
     var GroovyMode = ace.require("ace/mode/groovy").Mode;
@@ -46,14 +94,18 @@ function initialize(path) {
             primary: "ui-icon-folder-open"
         },
         text: false
-    }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    }).click(function(event) {
+        showOpenDialog();
+    });
     
     $("#save-script").button({
         icons: {
             primary: "ui-icon-disk"
         },
         text: false
-    }).attr('disabled', 'disabled').addClass('ui-state-hover');
+    }).click(function(event) {
+        saveScript("test.groovy");
+    });//.attr('disabled', 'disabled').addClass('ui-state-hover');
     
     $("#run-script").button({
         icons: {
