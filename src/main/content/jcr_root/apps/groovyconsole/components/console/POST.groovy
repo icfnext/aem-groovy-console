@@ -1,14 +1,10 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
-
-import com.day.cq.wcm.api.Page
-import com.day.cq.wcm.api.PageManager
-
-import javax.jcr.Node
-import javax.jcr.PropertyType
-import javax.jcr.Value
-import javax.jcr.Session
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.MetaClassRegistry
 
 import groovy.json.JsonBuilder
+import groovy.transform.Field
+
+import javax.jcr.Session
 
 import org.apache.commons.lang.time.StopWatch
 
@@ -16,14 +12,15 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
 import org.slf4j.LoggerFactory
 
-final def resolver = resource.resourceResolver
+import com.day.cq.wcm.api.PageManager
 
-registerMetaClasses()
+@Field log = LoggerFactory.getLogger('groovyconsole')
 
+MetaClassRegistry.registerMetaClasses()
+
+resolver = resource.resourceResolver
 session = resolver.adaptTo(Session)
 pageManager = resolver.adaptTo(PageManager)
-
-log = LoggerFactory.getLogger('groovyconsole')
 
 def encoding = 'UTF-8'
 def stream = new ByteArrayOutputStream()
@@ -143,136 +140,4 @@ def sanitizeStacktrace(t) {
     def clean = newTrace.toArray(newTrace as StackTraceElement[])
 
     t.stackTrace = clean
-}
-
-def registerMetaClasses() {
-    Node.metaClass {
-        iterator {
-            delegate.nodes
-        }
-
-        recurse { c ->
-            c(delegate)
-
-            delegate.nodes.each { node ->
-                node.recurse(c)
-            }
-        }
-
-        getNodeSafe { relativePath ->
-            def node = delegate
-
-            relativePath.split("/").each { path ->
-                if (node.hasNode(path)) {
-                    node = node.getNode(path)
-                } else {
-                    node = node.addNode(path)
-                }
-            }
-
-            node
-        }
-
-        getNodeSafe { name, nodeTypeName ->
-            delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
-        }
-
-        getProperty { String name ->
-            def result = null
-
-            if (delegate.hasProperty(name)) {
-                def method = Node.class.getMethod('getProperty', String)
-                def property = method.invoke(delegate, name)
-
-                if (property.multiple) {
-                    result = property.values.collect { getResult(it) }
-                } else {
-                    result = getResult(property.value)
-                }
-            } else {
-                result = ""
-            }
-
-            result
-        }
-
-        setProperty { String name, value ->
-            if (value) {
-                if (value instanceof Object[]) {
-                    def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
-
-                    def method = Node.class.getMethod('setProperty', String, Value[])
-
-                    method.invoke(delegate, name, values)
-                } else {
-                    def jcrValue = valueFactory.createValue(value)
-
-                    def method = Node.class.getMethod('setProperty', String, Value)
-
-                    method.invoke(delegate, name, jcrValue)
-                }
-            } else {
-                if (delegate.hasProperty(name)) {
-                    def method = Node.class.getMethod('getProperty', String)
-
-                    def property = method.invoke(delegate, name)
-
-                    property.remove()
-                }
-            }
-        }
-    }
-
-    Page.metaClass {
-        iterator {
-            delegate.listChildren()
-        }
-
-        recurse { Closure c ->
-            c(delegate)
-
-            delegate.listChildren().each { child ->
-                child.recurse(c)
-            }
-        }
-
-        getNode {
-            delegate.contentResource?.adaptTo(Node)
-        }
-
-        getProperty { String name ->
-            def node = delegate.contentResource?.adaptTo(Node)
-
-            node ? node[name] : null
-        }
-    }
-}
-
-def getResult(value) {
-    def result = null
-
-    switch(value.type) {
-        case PropertyType.BINARY:
-            result = value.binary
-            break
-        case PropertyType.BOOLEAN:
-            result = value.boolean
-            break
-        case PropertyType.DATE:
-            result = value.date
-            break
-        case PropertyType.DECIMAL:
-            result = value.decimal
-            break
-        case PropertyType.DOUBLE:
-            result = value.double
-            break
-        case PropertyType.LONG:
-            result = value.long
-            break
-        case PropertyType.STRING:
-            result = value.string
-    }
-
-    result
 }

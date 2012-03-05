@@ -24,7 +24,7 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>1.8.5</groovy.version>
+        <groovy.version>1.8.6</groovy.version>
         <jcr.version>2.0</jcr.version>
         <cq.version>5.4.0</cq.version>
         <cq.commons.version>5.4.6</cq.commons.version>
@@ -37,7 +37,7 @@
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <xml.plugin.version>1.0</xml.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
-        <felix.bundle.plugin.version>2.3.5</felix.bundle.plugin.version>
+        <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <assembly.plugin.version>2.2.1</assembly.plugin.version>
         <jar.plugin.version>2.3.2</jar.plugin.version>
         <gmaven.version>1.4</gmaven.version>
