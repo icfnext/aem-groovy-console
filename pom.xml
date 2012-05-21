@@ -24,7 +24,7 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>1.8.5</groovy.version>
+        <groovy.version>1.8.6</groovy.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
         <cq.version>5.4.0</cq.version>
@@ -40,7 +40,7 @@
         <compiler.plugin.version>2.3.2</compiler.plugin.version>
         <xml.plugin.version>1.0</xml.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
-        <felix.bundle.plugin.version>2.3.5</felix.bundle.plugin.version>
+        <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <scr.plugin.version>1.7.4</scr.plugin.version>
         <assembly.plugin.version>2.2.1</assembly.plugin.version>
         <jar.plugin.version>2.3.2</jar.plugin.version>
@@ -337,7 +337,7 @@
             <version>${cq.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
@@ -350,7 +350,7 @@
             <version>${sling.jcr.api.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
