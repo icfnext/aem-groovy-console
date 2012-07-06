@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<comment>FileVault Package Properties</comment>
-	<entry key="createdBy">${sling.user}</entry>
-	<entry key="name">${project.artifactId}-${project.version}</entry>
-	<entry key="lastModified">${timestamp}</entry>
-	<entry key="lastModifiedBy">${sling.user}</entry>
-	<entry key="created">${timestamp}</entry>
-	<entry key="buildCount">1</entry>
-	<entry key="version" />
-	<entry key="dependencies" />
-	<entry key="packageFormatVersion">2</entry>
-	<entry key="lastWrapped">${timestamp}</entry>
-	<entry key="group" />
-	<entry key="lastWrappedBy">${sling.user}</entry>
-	<entry key="path">/etc/packages/${project.artifactId}-${project.version}</entry>
+    <comment>FileVault Package Properties</comment>
+    <entry key="createdBy">${sling.user}</entry>
+    <entry key="name">${project.artifactId}-${project.version}</entry>
+    <entry key="lastModified">${timestamp}</entry>
+    <entry key="lastModifiedBy">${sling.user}</entry>
+    <entry key="created">${timestamp}</entry>
+    <entry key="buildCount">1</entry>
+    <entry key="version" />
+    <entry key="dependencies" />
+    <entry key="packageFormatVersion">2</entry>
+    <entry key="lastWrapped">${timestamp}</entry>
+    <entry key="group" />
+    <entry key="lastWrappedBy">${sling.user}</entry>
+    <entry key="path">/etc/packages/${project.artifactId}-${project.version}</entry>
 </properties>

@@ -24,7 +24,7 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>1.8.6</groovy.version>
+        <groovy.version>2.0.0</groovy.version>
         <jcr.version>2.0</jcr.version>
         <cq.version>5.4.0</cq.version>
         <cq.commons.version>5.4.6</cq.commons.version>
@@ -41,7 +41,7 @@
         <assembly.plugin.version>2.2.1</assembly.plugin.version>
         <jar.plugin.version>2.3.2</jar.plugin.version>
         <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>1.8</gmaven.provider.version>
+        <gmaven.provider.version>2.0</gmaven.provider.version>
         <m2e.plugin.version>1.0.0</m2e.plugin.version>
     </properties>
 
@@ -180,17 +180,6 @@
                     </execution>
                 </executions>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.gmaven.runtime</groupId>
-                        <artifactId>gmaven-runtime-${gmaven.provider.version}</artifactId>
-                        <version>${gmaven.version}</version>
-                        <exclusions>
-                            <exclusion>
-                                <groupId>org.codehaus.groovy</groupId>
-                                <artifactId>groovy-all</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-all</artifactId>

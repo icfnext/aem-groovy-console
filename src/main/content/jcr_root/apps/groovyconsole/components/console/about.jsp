@@ -14,7 +14,15 @@
                 </li>
                 <li>
                     <span>resourceResolver</span>
-                    <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html">com.apache.sling.api.resource.ResourceResolver</a>
+                    <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html">org.apache.sling.api.resource.ResourceResolver</a>
+                </li>
+                <li>
+                    <span>slingRequest</span>
+                    <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/SlingHttpServletRequest.html">org.apache.sling.api.SlingHttpServletRequest</a>
+                </li>
+                <li>
+                    <span>sling</span>
+                    <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/scripting/SlingScriptHelper.html">org.apache.sling.api.scripting.SlingScriptHelper</a>
                 </li>
                 <li>
                     <span>log</span>
@@ -41,7 +49,7 @@
         <h2>About</h2>
         <ul>
             <li>Inspired by and heavily sourced from Guillaume Laforge's <a href="http://groovyconsole.appspot.com">Groovy web console</a></li>
-            <li>Programmed with <a href="http://groovy.codehaus.org">Groovy</a>, version 1.8.3</li>
+            <li>Programmed with <a href="http://groovy.codehaus.org">Groovy</a>, version 2.0.0</li>
             <li>Code hosted on <a href="https://github.com/Citytechinc/cq5-groovy-console">GitHub</a> for <a href="http://www.citytechinc.com">CITYTECH, Inc.</a></li>
         </ul>
     </div>

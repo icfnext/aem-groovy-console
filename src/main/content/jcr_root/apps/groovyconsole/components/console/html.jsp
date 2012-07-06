@@ -13,7 +13,7 @@
         <script src="/apps/groovyconsole/docroot/js/main.js" type="text/javascript"></script>
 
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(function() {
                 initialize('${resource.path}.html');
             });
         </script>
