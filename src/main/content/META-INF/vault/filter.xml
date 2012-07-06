@@ -3,5 +3,7 @@
     <filter root="/apps/groovyconsole">
         <exclude pattern="/apps/groovyconsole/install(/.*)?"/>
     </filter>
-    <filter root="/etc/groovyconsole" />
+    <filter root="/etc/groovyconsole">
+        <exclude pattern="/etc/groovyconsole/scripts(/.*)?"/>
+    </filter>
 </workspaceFilter>

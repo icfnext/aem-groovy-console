@@ -1,20 +1,49 @@
 package com.citytechinc.cqlibrary.groovyconsole.metaclass
 
+import org.apache.felix.scr.annotations.Activate
+import org.apache.felix.scr.annotations.Deactivate
+
 import javax.jcr.Node
 import javax.jcr.PropertyType
 import javax.jcr.Value
 
+import org.apache.felix.scr.annotations.Component
+import org.apache.felix.scr.annotations.Property
 import org.codehaus.groovy.runtime.InvokerHelper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import com.day.cq.wcm.api.Page
 
+@Component(immediate = true, label = "Groovy Console MetaClass Registry")
+@Property(name = "service.description", value = "Groovy Console MetaClass Registry")
 class MetaClassRegistry {
 
-    static void registerMetaClasses() {
+    static final def LOG = LoggerFactory.getLogger(MetaClassRegistry)
+
+    @Activate
+    void activate() {
+        LOG.info("activate() activating metaclass registry")
+
+        MetaClassRegistry.registerMetaClasses()
+    }
+
+    @Deactivate
+    void deactivate() {
+        LOG.info("deactivate() deactivating metaclass registry")
+
+        MetaClassRegistry.removeMetaClasses()
+    }
+
+    static void removeMetaClasses() {
         def registry = InvokerHelper.metaRegistry
 
         registry.removeMetaClass(Node)
         registry.removeMetaClass(Page)
+    }
+
+    static void registerMetaClasses() {
+        removeMetaClasses()
 
         Node.metaClass {
             iterator {
@@ -40,8 +69,6 @@ class MetaClassRegistry {
                     } else {
                         result = getResult(property.value)
                     }
-                } else {
-                    result = ''
                 }
 
                 result
@@ -70,7 +97,7 @@ class MetaClassRegistry {
             getNodeSafe { relativePath ->
                 def node = delegate
 
-                relativePath.split('/').each { path ->
+                relativePath.split("/").each { path ->
                     if (node.hasNode(path)) {
                         node = node.getNode(path)
                     } else {

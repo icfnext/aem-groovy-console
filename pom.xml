@@ -5,7 +5,7 @@
     <groupId>com.citytechinc.cqlibrary</groupId>
     <artifactId>groovyconsole</artifactId>
     <packaging>jar</packaging>
-    <version>1.3-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <name>cq5-groovy-console</name>
 
     <scm>
@@ -26,10 +26,13 @@
         <slf4j.version>1.5.2</slf4j.version>
         <groovy.version>2.0.0</groovy.version>
         <jcr.version>2.0</jcr.version>
+        <servlet.version>2.4</servlet.version>
         <cq.version>5.4.0</cq.version>
         <cq.commons.version>5.4.6</cq.commons.version>
         <sling.api.version>2.2.0</sling.api.version>
+        <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
         <commons.lang.version>2.4</commons.lang.version>
+        <scr.annotations.version>1.6.0</scr.annotations.version>
 
         <!-- plugin versions -->
         <sling.plugin.version>2.1.0</sling.plugin.version>
@@ -38,6 +41,7 @@
         <xml.plugin.version>1.0</xml.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
+        <scr.plugin.version>1.7.4</scr.plugin.version>
         <assembly.plugin.version>2.2.1</assembly.plugin.version>
         <jar.plugin.version>2.3.2</jar.plugin.version>
         <gmaven.version>1.4</gmaven.version>
@@ -189,6 +193,20 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>${scr.plugin.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>${felix.bundle.plugin.version}</version>
                 <extensions>true</extensions>
@@ -275,6 +293,19 @@
                                         <ignore />
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.felix</groupId>
+                                        <artifactId>maven-scr-plugin</artifactId>
+                                        <versionRange>[${scr.plugin.version},)</versionRange>
+                                        <goals>
+                                            <goal>scr</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -288,6 +319,12 @@
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
             <version>${jcr.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -309,6 +346,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.jcr.api</artifactId>
+            <version>${sling.jcr.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
@@ -324,6 +367,12 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <version>${scr.annotations.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

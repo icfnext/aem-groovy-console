@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    title="Save Script"
+    xtype="dialog">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <panel
+            jcr:primaryType="cq:Widget"
+            xtype="panel">
+            <items jcr:primaryType="cq:WidgetCollection">
+                <fileName
+                    jcr:primaryType="cq:Widget"
+                    fieldLabel="File Name"
+                    fieldDescription="Warning: will overwrite existing file with same name"
+                    name="./fileName"
+                    xtype="textfield"/>
+            </items>
+        </panel>
+    </items>
+    <listeners
+        jcr:primaryType="nt:unstructured"
+        beforesubmit="function(dialog) { saveScript(dialog.find('name', './fileName')[0].getValue()); this.hide(); return false; }"
+        />
+</jcr:root>

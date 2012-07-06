@@ -1,75 +1,72 @@
 body {
-    font-family: Arial ;
+    font-family: Arial;
     margin: 0px;
+    overflow: hidden;
+}
+
+pre {
+    margin: 0;
 }
 
 h1 {
-    background: #5C9CCC url('../css/redmond/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png') repeat-x scroll 50% 50%;
+    background: #bbb;
     padding: 5px;
     margin: 0px;
-    color: white;
+    height: 0.68em;
 }
 
-h1 a {
-    text-decoration: none;
-    color: white;
+h1 .title {
+    color: #777;
+    top: -0.15em;
+    position: relative;
 }
 
 h2, .indent {
     margin-left: 20px;
 }
 
-pre {
+.row { 
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.header.row { 
+    height: 62px;
+    top: 0;
+}
+
+#toolbar {
+    background: #CCC url('smoothness/images/ui-bg_highlight-soft_75_cccccc_1x100.png') 50% 50% repeat-x;
+    padding: 5px;
+}
+
+#theme-label {
     margin-left: 40px;
-}
-
-#actionsBreadcrumb {
-    padding: 4px 0px 4px 0px;
-    border: 2px solid #888;
-    border-right: 0px;
-    margin: 15px 0px 10px 20px;
-    display: inline-block;
+    position: relative;
+    top: 1px;
     font-size: 0.8em;
+    color: #666;
 }
 
-.actionsBreadcrumbHead {
-    padding: 4px 10px 5px 5px;
-    font-weight: bold;
-    color: white;
-    background-color: #888;
+#editor { 
+    position: absolute;
+    margin: 0;
+    top: 62px; 
+    bottom: 304px;
 }
 
-.actionsBreadcrumbChild, .actionsBreadcrumbLastChild {
-    padding: 4px;
-    padding-right: 8px;
-    color: #888;
-    border-right: 2px dotted #888;
+#tabs.row { 
+    height: 300px;
+    bottom: 0; 
+    padding: 2px;
 }
-
-.actionsBreadcrumbLastChild {
-    border-right: 2px solid #888;
-}
-
-.actionsBreadcrumbChild a, .actionsBreadcrumbLastChild a {
-    color: #888;
-    text-decoration: none;
-}
-
-.actionsBreadcrumbChild a:hover, .actionsBreadcrumbLastChild a:hover {
-    text-decoration: underline;
-}
-
-.redBorder {
-    border: 1px solid red;
-}
-
-.taglist {
-    list-style-type: none;
-}
-
-.taglist li {
-    display: inline;
-    padding-right: 10px;
+            
+#tabs-result, #tabs-output, #tabs-stacktrace {
+    height: 260px;
+    padding: 10px;
+    overflow-y: scroll;
 }
 
 .border {
@@ -78,29 +75,6 @@ pre {
 }
 
 .hidden {
-    display: none;
-}
-
-.smaller {
-    font-size: small;
-    color: gray;
-}
-
-#backtoconsole {
-    margin-left: 20px;
-    font-family: Arial, sans-serif;
-}
-
-#shareThis {
-    float: right;
-    margin: 10px;
-}
-
-#shareThis a {
-    text-decoration: none;
-}
-
-#embedText, #dialog {
     display: none;
 }
 
@@ -120,38 +94,11 @@ pre {
     color: gray;
 }
 
-#textarea-container-script {
-    margin-bottom: 10px;
-}
-
-#textarea-container-data {
-    margin-bottom: 10px;
-}
-
-#commentsArea #idc-container h3 {
-    font-weight: bold;
-    font-size: 14pt;
-}
-
-#button-bar {
-    padding: 5px;
-    margin-bottom: 20px;
-}
-
 #loadingDiv {
     position: fixed;
     background-color: white;
-    right: 10px;
-    top: 12px;
-}
-
-.CodeMirror-line-numbers {
-    color: gray;
-    background-color: lightgray;
-    padding: 5px;
-    margin-right: 5px;
-    font-family: "Consolas", "Monaco", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
-    font-size: 1em;
+    right: 5px;
+    top: 5px;
 }
 
 .ui-tabs .ui-tabs-hide {
@@ -165,4 +112,36 @@ pre {
 .ui-tabs .ui-tabs-nav li a {
     padding: 2px 4px 2px 4px;
     font-size: smaller;
+}
+
+.ui-button
+{
+    height: 20px;
+}
+
+.ui-button-icon-only
+{
+    font-size: 0.5em;
+}
+
+.ui-button-text-icon-secondary .ui-button-text {
+    padding-top: 4px;
+    padding-right: 25px;
+    font-size: 0.5em;
+}
+
+.ui-selectmenu {
+    height: 18px;
+    margin-top: 1px;
+}
+
+.ui-selectmenu-status {
+    line-height: 1em;
+    font-size: 0.6em;
+}
+
+.ui-selectmenu-menu li a, .ui-selectmenu-status {
+    padding: .2em;
+    font-size: 0.7em;
+    line-height: 1em;
 }
