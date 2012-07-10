@@ -38,25 +38,25 @@
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" type="text/css" />
          -->
     </head>
-    <body>
-        <div class="container">
-            <div class="navbar">
-                <div class="navbar-inner">
-                    <div class="container">
-                        <a class="brand" href="#">Groovy Console</a>
+    <body style="padding-top: 40px;">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="#">Groovy Console</a>
 
-                        <div class="btn-group pull-right">
-                            <button id="dropdown-themes" class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                            </ul>
-                        </div>
+                    <div class="btn-group pull-right">
+                        <button id="dropdown-themes" class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="container">
             <div class="btn-toolbar">
                 <div class="btn-group">
                     <a class="btn" href="#"><i class="icon-pencil"></i> New</a>
@@ -64,10 +64,8 @@
                     <a class="btn" href="#"><i class="icon-hdd"></i> Save</a>
                 </div>
 
-                <div class="btn-group pull-right">
-                    <a class="btn btn-success" href="#">
-                        <i class="icon-play icon-white"></i> Run Script
-                    </a>
+                <div class="btn-group">
+                    <a class="btn btn-success" href="#"><i class="icon-play icon-white"></i> Run Script</a>
                 </div>
             </div>
         </div>
