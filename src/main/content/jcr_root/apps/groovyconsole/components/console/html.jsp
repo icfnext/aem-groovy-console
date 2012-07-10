@@ -1,13 +1,14 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<cq:defineObjects />
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>Groovy Console</title>
 
+        <cq:defineObjects />
         <cq:includeClientLib categories="cq.wcm.edit" />
 
+        <!--
         <script src="/apps/groovyconsole/docroot/js/jquery-1.7.1.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-resize-plugin.js" type="text/javascript"></script>
@@ -23,12 +24,60 @@
                 initialize('${resource.path}.html');
             });
         </script>
+         -->
 
+        <script src="/apps/groovyconsole/docroot/js/jquery-1.7.1.min.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/bootstrap.min.js" type="text/javascript"></script>
+
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/bootstrap.min.css" type="text/css" type="text/css" />
+        <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/bootstrap-responsive.min.css" type="text/css" type="text/css" />
+
+        <!--
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/jquery.ui.selectmenu.css" type="text/css" />
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" type="text/css" />
+         -->
     </head>
     <body>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <a class="brand" href="#">Groovy Console</a>
+
+                        <div class="btn-group pull-right">
+                            <button id="dropdown-themes" class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-toolbar">
+                <div class="btn-group">
+                    <a class="btn" href="#"><i class="icon-pencil"></i> New</a>
+                    <a class="btn" href="#"><i class="icon-folder-open"></i> Open</a>
+                    <a class="btn" href="#"><i class="icon-hdd"></i> Save</a>
+                </div>
+
+                <div class="btn-group pull-right">
+                    <a class="btn btn-success" href="#">
+                        <i class="icon-play icon-white"></i> Run Script
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <!--
         <div class="header row">
             <h1><span class="title">Groovy Console</span></h1>
 
@@ -66,7 +115,7 @@
                     <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
                 </select>
 
-                <div id="loadingDiv"><img src="/apps/groovyconsole/docroot/images/ajax-loader-1.gif"></div>
+                <div id="loadingDiv"><img src="/apps/groovyconsole/docroot/img/ajax-loader-1.gif"></div>
 
                 <button id="run-script" style="float:right;">Run Script</button>
             </div>
@@ -101,5 +150,6 @@
                 <div style="clear:both;"></div>
             </div>
         </div>
+         -->
     </body>
 </html>
