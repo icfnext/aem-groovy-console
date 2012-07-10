@@ -6,20 +6,31 @@
     <head>
         <title>Groovy Console</title>
 
+        <cq:includeClientLib categories="cq.wcm.edit" />
+
         <script src="/apps/groovyconsole/docroot/js/jquery-1.7.1.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-1.8.18.custom.min.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery-ui-resize-plugin.js" type="text/javascript"></script>
         <script src="/apps/groovyconsole/docroot/js/jquery.ui.selectmenu.js" type="text/javascript"></script>
+        <script src="/apps/groovyconsole/docroot/js/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/js/mode-groovy-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/js/themes-noconflict.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/js/theme-textmate-uncompressed.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/apps/groovyconsole/docroot/js/console-main.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            $(function() {
+                initialize('${resource.path}.html');
+            });
+        </script>
 
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css" />
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/jquery.ui.selectmenu.css" type="text/css" />
         <link rel="stylesheet" href="/apps/groovyconsole/docroot/css/main.css" type="text/css" type="text/css" />
-
-        <cq:includeClientLib categories="cq.wcm.edit" />
     </head>
     <body>
         <div class="header row">
-            <h1><span class="title">Groovy Console<span></h1>
+            <h1><span class="title">Groovy Console</span></h1>
 
             <div id="toolbar">
                 <button id="new-script" >New Script</button>
@@ -86,19 +97,9 @@
 
             <div id="tabs-about" class="tab">
                 <cq:include script="about.jsp" />
+
                 <div style="clear:both;"></div>
             </div>
         </div>
-
-        <script src="/apps/groovyconsole/docroot/ace/ace-noconflict.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/apps/groovyconsole/docroot/ace/mode-groovy-noconflict.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/apps/groovyconsole/docroot/ace/themes-noconflict.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/apps/groovyconsole/docroot/ace/theme-textmate-uncompressed.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/apps/groovyconsole/docroot/js/console-main.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                initialize('${resource.path}.html');
-            });
-        </script>
     </body>
 </html>

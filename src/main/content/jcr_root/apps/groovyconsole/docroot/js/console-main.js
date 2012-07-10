@@ -1,17 +1,14 @@
 showOpenDialog = function() {
-    
     var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/opendialog");
     dialog.show();
 }
 
 showSaveDialog = function() {
-    
     var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/savedialog");
     dialog.show();
 }
 
 loadScript = function(scriptPath) {
-    
     CQ.Ext.Ajax.request({
         url: '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data',
         success: function(response, opts) {
@@ -26,12 +23,11 @@ loadScript = function(scriptPath) {
 }
 
 saveScript = function(fileName) {
-    
     var params = {};
-    
+
     params['fileName'] = fileName;
     params['scriptContent'] = editor.getSession().getValue();
-    
+
     CQ.Ext.Ajax.request({
         url: '/bin/groovyconsole/save',
         params: params,
@@ -44,39 +40,38 @@ saveScript = function(fileName) {
 
 refreshOpenDialog = function(dialog) {
     var tp, root;
-    
+
     if (dialog.loadedFlag == null) {
         dialog.loadedFlag = true;
     } else {
         tp = dialog.treePanel;
         root = tp.getRootNode();
-        
+
         tp.getLoader().load(root);
         root.expand();
     }
 }
 
 initialize = function(path) {
-    
     window.editor = ace.edit("editor");
     var GroovyMode = ace.require("ace/mode/groovy").Mode;
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
     editor.setTheme("ace/theme/tomorrow_night");
-    
+
     // Resizing
-    $('#editor').resizable({ 
+    $('#editor').resizable({
         handles: 's',
         alsoResizeReverse: ".tab",
         resize: function(event, ui) {
             editor.resize();
         }
     });
-    
+
     $(window).resize(function() {
         editor.resize();
     });
-    
+
     $('#loadingDiv').hide().ajaxStart(function() {
         $(this).show();
         $("#run-script").attr('disabled', 'disabled');
@@ -84,10 +79,9 @@ initialize = function(path) {
         $(this).hide();
         $("#run-script").removeAttr('disabled').removeClass('ui-state-hover');
     });
-    
+
     // Tabs
     $('#tabs').tabs().tabs('select', 3);
-
 
     // Buttons
     $("#new-script").button({
@@ -98,7 +92,7 @@ initialize = function(path) {
     }).click(function(event) {
         editor.getSession().setValue("");
     });
-    
+
     $("#open-script").button({
         icons: {
             primary: "ui-icon-folder-open"
@@ -107,7 +101,7 @@ initialize = function(path) {
     }).click(function(event) {
         showOpenDialog();
     });
-    
+
     $("#save-script").button({
         icons: {
             primary: "ui-icon-disk"
@@ -116,7 +110,7 @@ initialize = function(path) {
     }).click(function(event) {
         showSaveDialog();
     });
-    
+
     $("#run-script").button({
         icons: {
             secondary: "ui-icon-play"
@@ -147,7 +141,7 @@ initialize = function(path) {
                 } else {
                     $('#result').fadeOut();
                 }
-                
+
                 if (output && output.length > 0) {
                     $('#tabs').tabs('select', 1);
                     $('#output').text(output).fadeIn();
@@ -161,7 +155,7 @@ initialize = function(path) {
                 } else {
                     $('#stacktrace').fadeOut();
                 }
-                
+
                 if (runTime && runTime.length > 0) {
                     $('#result-time').text("Execution time: " + runTime).fadeIn();
                 }
@@ -173,7 +167,7 @@ initialize = function(path) {
             }
         });
     });
-    
+
     $("#editor-theme").selectmenu({ style: "dropdown", width:170 }).change(function(){
         editor.setTheme(this.value);
     });

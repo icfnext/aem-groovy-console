@@ -24,7 +24,7 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>2.0.0</groovy.version>
+        <groovy.version>1.8.6</groovy.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
         <cq.version>5.4.0</cq.version>
