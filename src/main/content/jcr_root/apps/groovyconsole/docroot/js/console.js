@@ -99,18 +99,19 @@ initialize = function(path) {
     });
 
     $("#run-script").click(function(event) {
-    	$('#result .accordion-inner').text('');
-        $('#result').collapse('hide');
-        $('#output .accordion-inner').text('');
-        $('#output').collapse('hide');
-        $('#stacktrace .accordion-inner').text('');
-        $('#stacktrace').collapse('hide');
+        // clear errors
+        $('.alert-error .message').text('');
+        $('.alert-error').fadeOut();
+
+        // clear result, output, and stacktrace
+        $('.accordion-inner').text('');
+
         // $('#result-time .accordion-inner').text('').fadeOut();
 
         var script = editor.getSession().getValue();
 
         if (script.length) {
-        	$.ajax({
+            $.ajax({
                 type: 'POST',
                 url: path,
                 data: { script: script },
@@ -123,17 +124,17 @@ initialize = function(path) {
 
                     if (result && result.length > 0) {
                         $('#result .accordion-inner').text(result);
-                        $('#result').collapse('toggle');
+                        $('#result').collapse('show');
                     }
 
                     if (output && output.length > 0) {
-                    	$('#output .accordion-inner').text(output);
-                        $('#output').collapse('toggle');
+                        $('#output .accordion-inner').text(output);
+                        $('#output').collapse('show');
                     }
 
                     if (stacktrace && stacktrace.length > 0) {
-                    	$('#stacktrace .accordion-inner').text(stacktrace);
-                        $('#stacktrace').collapse('toggle');
+                        $('#stacktrace .accordion-inner').text(stacktrace);
+                        $('#stacktrace').collapse('show');
                     }
 
                     if (runtime && runtime.length > 0) {
@@ -141,13 +142,13 @@ initialize = function(path) {
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                	$('.alert-error .message').text('Error interacting with the CQ5 server.  Check error log.');
-                	$('.alert-error').fadeIn();
+                    $('.alert-error .message').text('Error interacting with the CQ5 server.  Check error log.');
+                    $('.alert-error').fadeIn();
                 }
             });
         } else {
-        	$('.alert-error .message').text('Script is empty.  Please try again.');
-        	$('.alert-error').fadeIn();
+            $('.alert-error .message').text('Script is empty.  Please try again.');
+            $('.alert-error').fadeIn();
         }
     });
 }
