@@ -10,4 +10,8 @@
         <a class="btn" href="#" id="open-script"><i class="icon-folder-open"></i> Open</a>
         <a class="btn" href="#" id="save-script"><i class="icon-hdd"></i> Save</a>
     </div>
+
+    <div id="loader" class="pull-right" style="display: none;">
+        <img src="/apps/groovyconsole/docroot/img/ajax-loader.gif">
+    </div>
 </div>

@@ -7,7 +7,6 @@
         <cq:include script="toolbar.jsp" />
 
         <div class="alert alert-error" style="display: none;">
-            <a class="close" data-dismiss="alert" href="#">x</a>
             <span class="message"></span>
         </div>
 

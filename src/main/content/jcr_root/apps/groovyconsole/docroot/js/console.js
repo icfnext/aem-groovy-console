@@ -1,10 +1,10 @@
 showOpenDialog = function() {
-    var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/opendialog");
+    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
     dialog.show();
 }
 
 showSaveDialog = function() {
-    var dialog = CQ.WCM.getDialog("/apps/groovyconsole/components/console/savedialog");
+    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/savedialog');
     dialog.show();
 }
 
@@ -53,18 +53,18 @@ refreshOpenDialog = function(dialog) {
 }
 
 initialize = function(path) {
-    window.editor = ace.edit("editor");
+    window.editor = ace.edit('editor');
 
-    var GroovyMode = ace.require("ace/mode/groovy").Mode;
+    var GroovyMode = ace.require('ace/mode/groovy').Mode;
 
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
-    editor.setTheme("ace/theme/tomorrow_night");
+    editor.setTheme('ace/theme/solarized_dark');
 
     /*
     $('#editor').resizable({
         handles: 's',
-        alsoResizeReverse: ".tab",
+        alsoResizeReverse: '.tab',
         resize: function(event, ui) {
             editor.resize();
         }
@@ -75,76 +75,93 @@ initialize = function(path) {
     });
     */
 
-    /*
-    $('#loadingDiv').hide().ajaxStart(function() {
-        $(this).show();
-        $("#run-script").attr('disabled', 'disabled');
-    }).ajaxStop(function() {
-        $(this).hide();
-        $("#run-script").removeAttr('disabled').removeClass('ui-state-hover');
-    });
-    */
-
     // buttons
-    $("#new-script").click(function() {
-        editor.getSession().setValue("");
+    $('#new-script').click(function() {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
+        editor.getSession().setValue('');
     });
 
-    $("#open-script").click(function() {
+    $('#open-script').click(function() {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
         showOpenDialog();
     });
 
-    $("#save-script").click(function() {
+    $('#save-script').click(function() {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+
         showSaveDialog();
     });
 
-    $("#run-script").click(function(event) {
+    $('#run-script').click(function(event) {
+        if ($('#run-script').hasClass('disabled')) {
+            return;
+        }
+
         // clear errors
         $('.alert-error .message').text('');
         $('.alert-error').fadeOut();
 
         // clear result, output, and stacktrace
-        $('.accordion-inner').text('');
+        $('.accordion-inner pre').text('');
+
+        // collapse 'about' panel
+        $('#about').collapse('hide');
 
         // $('#result-time .accordion-inner').text('').fadeOut();
 
         var script = editor.getSession().getValue();
 
         if (script.length) {
+            editor.setReadOnly(true);
+
+            $('.btn-toolbar .btn').addClass('disabled');
+            $('#loader').fadeIn();
+
             $.ajax({
                 type: 'POST',
                 url: path,
                 data: { script: script },
-                dataType: 'json',
-                success: function(data) {
-                    var result = data.executionResult;
-                    var output = data.outputText;
-                    var stacktrace = data.stacktraceText;
-                    var runtime = data.runningTime;
+                dataType: 'json'
+            }).done(function(data) {
+                var result = data.executionResult;
+                var output = data.outputText;
+                var stacktrace = data.stacktraceText;
+                var runtime = data.runningTime;
 
-                    if (result && result.length > 0) {
-                        $('#result .accordion-inner').text(result);
-                        $('#result').collapse('show');
-                    }
-
-                    if (output && output.length > 0) {
-                        $('#output .accordion-inner').text(output);
-                        $('#output').collapse('show');
-                    }
-
-                    if (stacktrace && stacktrace.length > 0) {
-                        $('#stacktrace .accordion-inner').text(stacktrace);
-                        $('#stacktrace').collapse('show');
-                    }
-
-                    if (runtime && runtime.length > 0) {
-                        // $('#result-time').text("Execution time: " + runtime).fadeIn();
-                    }
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $('.alert-error .message').text('Error interacting with the CQ5 server.  Check error log.');
-                    $('.alert-error').fadeIn();
+                if (result && result.length > 0) {
+                    $('#result .accordion-inner pre').text(result);
+                    $('#result').collapse('show');
                 }
+
+                if (output && output.length > 0) {
+                    $('#output .accordion-inner pre').text(output);
+                    $('#output').collapse('show');
+                }
+
+                if (stacktrace && stacktrace.length > 0) {
+                    $('#stacktrace .accordion-inner pre').text(stacktrace);
+                    $('#stacktrace').collapse('show');
+                }
+
+                if (runtime && runtime.length > 0) {
+                    // $('#result-time').text('Execution time: ' + runtime).fadeIn();
+                }
+            }).fail(function() {
+                $('.alert-error .message').text('Error interacting with the CQ5 server.  Check error log.');
+                $('.alert-error').fadeIn();
+            }).always(function() {
+                editor.setReadOnly(false);
+
+                $('#loader').fadeOut();
+                $('.btn-toolbar .btn').removeClass('disabled');
             });
         } else {
             $('.alert-error .message').text('Script is empty.  Please try again.');

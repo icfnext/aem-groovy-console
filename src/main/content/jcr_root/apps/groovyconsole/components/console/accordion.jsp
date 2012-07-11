@@ -6,7 +6,9 @@
             <a class="accordion-toggle" data-toggle="collapse" data-target="#result" data-parent="#accordion" href="#result">Result</a>
         </div>
         <div id="result" class="accordion-body collapse">
-            <div class="accordion-inner"></div>
+            <div class="accordion-inner">
+                <pre class="prettyprint"></pre>
+            </div>
         </div>
     </div>
     <div class="accordion-group">
@@ -14,7 +16,9 @@
             <a class="accordion-toggle" data-toggle="collapse" data-target="#output" data-parent="#accordion" href="#output">Output</a>
         </div>
         <div id="output" class="accordion-body collapse">
-            <div class="accordion-inner"></div>
+            <div class="accordion-inner">
+                <pre class="prettyprint"></pre>
+            </div>
         </div>
     </div>
     <div class="accordion-group">
@@ -22,7 +26,9 @@
             <a class="accordion-toggle" data-toggle="collapse" data-target="#stacktrace" data-parent="#accordion" href="#stacktrace">Stack Trace</a>
         </div>
         <div id="stacktrace" class="accordion-body collapse">
-            <div class="accordion-inner"></div>
+            <div class="accordion-inner">
+                <pre class="prettyprint"></pre>
+            </div>
         </div>
     </div>
     <div class="accordion-group">
