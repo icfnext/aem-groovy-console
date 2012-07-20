@@ -2,7 +2,9 @@
 
 <div class="btn-toolbar">
     <div class="btn-group">
-        <a class="btn btn-success" href="#" id="run-script"><i class="icon-play icon-white"></i> Run Script</a>
+        <a class="btn btn-success" href="#" id="run-script">
+        	<i class="icon-play icon-white"></i> <span id="run-script-text">Run Script</span>
+       	</a>
     </div>
 
     <div class="btn-group">

@@ -19,6 +19,10 @@
     </items>
     <listeners
         jcr:primaryType="nt:unstructured"
-        beforesubmit="function(dialog) { saveScript(dialog.find('name', './fileName')[0].getValue()); this.hide(); return false; }"
-        />
+        beforesubmit="function(dialog) {
+        	saveScript(dialog.find('name', './fileName')[0].getValue());
+        	this.hide();
+        	return false;
+        }"
+	/>
 </jcr:root>

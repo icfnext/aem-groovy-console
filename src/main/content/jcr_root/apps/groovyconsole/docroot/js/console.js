@@ -17,7 +17,7 @@ loadScript = function(scriptPath) {
             }
         },
         failure: function(response, opts) {
-            alert('server-side failure with status code ' + response.status);
+        	showError('Load failed with status: ' + response.status);
         }
     });
 }
@@ -33,7 +33,7 @@ saveScript = function(fileName) {
         params: params,
         method: 'POST',
         failure: function (result, request) {
-            alert('Save operation failed - status: ' + result.status);
+        	showError('Save failed with status: ' + result.status);
         }
     });
 }
@@ -59,7 +59,22 @@ initialize = function(path) {
 
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
-    editor.setTheme('ace/theme/solarized_dark');
+
+    var theme = $.cookie('theme');
+
+    if (_.isNull(theme)) {
+    	editor.setTheme('ace/theme/solarized_dark');
+    } else {
+    	editor.setTheme(theme);
+    }
+
+    $('#dropdown-themes li').click(function() {
+    	var theme = $(this).find('a').data('target');
+
+    	editor.setTheme(theme);
+
+    	$.cookie('theme', theme, { expires: 365 });
+    });
 
     /*
     $('#editor').resizable({
@@ -80,6 +95,8 @@ initialize = function(path) {
         if ($(this).hasClass('disabled')) {
             return;
         }
+
+        resetConsole();
 
         editor.getSession().setValue('');
     });
@@ -105,17 +122,7 @@ initialize = function(path) {
             return;
         }
 
-        // clear errors
-        $('.alert-error .message').text('');
-        $('.alert-error').fadeOut();
-
-        // clear result, output, and stacktrace
-        $('.accordion-inner pre').text('');
-
-        // collapse 'about' panel
-        $('#about').collapse('hide');
-
-        // $('#result-time .accordion-inner').text('').fadeOut();
+        resetConsole();
 
         var script = editor.getSession().getValue();
 
@@ -123,7 +130,8 @@ initialize = function(path) {
             editor.setReadOnly(true);
 
             $('.btn-toolbar .btn').addClass('disabled');
-            $('#loader').fadeIn();
+            $('#run-script-text').text('Running...');
+            $('#loader').fadeIn('fast');
 
             $.ajax({
                 type: 'POST',
@@ -131,41 +139,60 @@ initialize = function(path) {
                 data: { script: script },
                 dataType: 'json'
             }).done(function(data) {
-                var result = data.executionResult;
+            	var result = data.executionResult;
                 var output = data.outputText;
                 var stacktrace = data.stacktraceText;
                 var runtime = data.runningTime;
 
-                if (result && result.length > 0) {
-                    $('#result .accordion-inner pre').text(result);
-                    $('#result').collapse('show');
-                }
+            	if (stacktrace && stacktrace.length) {
+            		$('#stacktrace').text(stacktrace).fadeIn('fast');
+            	} else {
+            		if (runtime && runtime.length) {
+            	    	$('#running-time span').text(runtime);
+            	    	$('#running-time').fadeIn('fast');
+            	    }
 
-                if (output && output.length > 0) {
-                    $('#output .accordion-inner pre').text(output);
-                    $('#output').collapse('show');
-                }
+            		if (result && result.length) {
+            	        $('#result pre').text(result);
+            	        $('#result').fadeIn('fast');
+            	    }
 
-                if (stacktrace && stacktrace.length > 0) {
-                    $('#stacktrace .accordion-inner pre').text(stacktrace);
-                    $('#stacktrace').collapse('show');
-                }
-
-                if (runtime && runtime.length > 0) {
-                    // $('#result-time').text('Execution time: ' + runtime).fadeIn();
-                }
+            	    if (output && output.length) {
+            	        $('#output pre').text(output);
+            	        $('#output').fadeIn('fast');
+            	    }
+            	}
             }).fail(function() {
-                $('.alert-error .message').text('Error interacting with the CQ5 server.  Check error log.');
-                $('.alert-error').fadeIn();
+            	showError('Error interacting with the CQ5 server.  Check error log.');
             }).always(function() {
                 editor.setReadOnly(false);
 
-                $('#loader').fadeOut();
+                $('#loader').fadeOut('fast');
+                $('#run-script-text').text('Run Script');
                 $('.btn-toolbar .btn').removeClass('disabled');
             });
         } else {
-            $('.alert-error .message').text('Script is empty.  Please try again.');
-            $('.alert-error').fadeIn();
+        	showError('Script is empty.  Please try again.');
         }
     });
+}
+
+function showError(message) {
+	$('div.alert-error .message').text(message);
+    $('div.alert-error').fadeIn('fast');
+}
+
+function resetConsole() {
+	// clear errors
+	$('div.alert-error .message').text('');
+    $('div.alert-error').fadeOut('fast');
+
+    // clear results
+    $('#stacktrace').text('').fadeOut('fast');
+	$('#result').fadeOut('fast');
+    $('#result pre').text('');
+    $('#output').fadeOut('fast');
+    $('#output pre').text('');
+    $('#running-time').fadeOut('fast');
+    $('#running-time span').text('');
 }
