@@ -5,7 +5,6 @@
 
     <cq:includeClientLib categories="cq.wcm.edit" />
 
-	<script src="/apps/groovyconsole/docroot/js/underscore-min.js" type="text/javascript"></script>
     <script src="/apps/groovyconsole/docroot/js/jquery-1.7.2.min.js" type="text/javascript"></script>
     <script src="/apps/groovyconsole/docroot/js/jquery.cookie.js" type="text/javascript"></script>
     <script src="/apps/groovyconsole/docroot/js/bootstrap.min.js" type="text/javascript"></script>

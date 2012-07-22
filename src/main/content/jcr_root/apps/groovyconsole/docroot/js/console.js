@@ -17,7 +17,7 @@ loadScript = function(scriptPath) {
             }
         },
         failure: function(response, opts) {
-        	showError('Load failed with status: ' + response.status);
+            showError('Load failed with status: ' + response.status);
         }
     });
 }
@@ -33,7 +33,7 @@ saveScript = function(fileName) {
         params: params,
         method: 'POST',
         failure: function (result, request) {
-        	showError('Save failed with status: ' + result.status);
+            showError('Save failed with status: ' + result.status);
         }
     });
 }
@@ -62,18 +62,26 @@ initialize = function(path) {
 
     var theme = $.cookie('theme');
 
-    if (_.isNull(theme)) {
-    	editor.setTheme('ace/theme/solarized_dark');
-    } else {
-    	editor.setTheme(theme);
+    if (theme == null) {
+        theme = 'ace/theme/solarized_dark';
+    }
+
+    editor.setTheme(theme);
+
+    var selectedElement = $.grep($('#dropdown-themes li'), function(element) {
+        return $(element).find('a').data('target') == theme;
+    });
+
+    if (selectedElement.length) {
+        $(selectedElement).addClass('active');
     }
 
     $('#dropdown-themes li').click(function() {
-    	var theme = $(this).find('a').data('target');
+        var theme = $(this).find('a').data('target');
 
-    	editor.setTheme(theme);
+        editor.setTheme(theme);
 
-    	$.cookie('theme', theme, { expires: 365 });
+        $.cookie('theme', theme, { expires: 365 });
     });
 
     /*
@@ -139,31 +147,31 @@ initialize = function(path) {
                 data: { script: script },
                 dataType: 'json'
             }).done(function(data) {
-            	var result = data.executionResult;
+                var result = data.executionResult;
                 var output = data.outputText;
                 var stacktrace = data.stacktraceText;
                 var runtime = data.runningTime;
 
-            	if (stacktrace && stacktrace.length) {
-            		$('#stacktrace').text(stacktrace).fadeIn('fast');
-            	} else {
-            		if (runtime && runtime.length) {
-            	    	$('#running-time span').text(runtime);
-            	    	$('#running-time').fadeIn('fast');
-            	    }
+                if (stacktrace && stacktrace.length) {
+                    $('#stacktrace').text(stacktrace).fadeIn('fast');
+                } else {
+                    if (runtime && runtime.length) {
+                        $('#running-time span').text(runtime);
+                        $('#running-time').fadeIn('fast');
+                    }
 
-            		if (result && result.length) {
-            	        $('#result pre').text(result);
-            	        $('#result').fadeIn('fast');
-            	    }
+                    if (result && result.length) {
+                        $('#result pre').text(result);
+                        $('#result').fadeIn('fast');
+                    }
 
-            	    if (output && output.length) {
-            	        $('#output pre').text(output);
-            	        $('#output').fadeIn('fast');
-            	    }
-            	}
+                    if (output && output.length) {
+                        $('#output pre').text(output);
+                        $('#output').fadeIn('fast');
+                    }
+                }
             }).fail(function() {
-            	showError('Error interacting with the CQ5 server.  Check error log.');
+                showError('Error interacting with the CQ5 server.  Check error log.');
             }).always(function() {
                 editor.setReadOnly(false);
 
@@ -172,24 +180,24 @@ initialize = function(path) {
                 $('.btn-toolbar .btn').removeClass('disabled');
             });
         } else {
-        	showError('Script is empty.  Please try again.');
+            showError('Script is empty.  Please try again.');
         }
     });
 }
 
 function showError(message) {
-	$('div.alert-error .message').text(message);
+    $('div.alert-error .message').text(message);
     $('div.alert-error').fadeIn('fast');
 }
 
 function resetConsole() {
-	// clear errors
-	$('div.alert-error .message').text('');
+    // clear errors
+    $('div.alert-error .message').text('');
     $('div.alert-error').fadeOut('fast');
 
     // clear results
     $('#stacktrace').text('').fadeOut('fast');
-	$('#result').fadeOut('fast');
+    $('#result').fadeOut('fast');
     $('#result pre').text('');
     $('#output').fadeOut('fast');
     $('#output pre').text('');
