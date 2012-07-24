@@ -14,11 +14,11 @@
 
     a. If you already have the Groovy bundle installed in Felix:
 
-        `mvn install -P install-console,local-author`
+        mvn install -P install-console,local-author
 
     b. If you do not have the Groovy bundle installed:
 
-        `mvn install -P install-groovy,install-console,local-author`
+        mvn install -P install-groovy,install-console,local-author
 
 2.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
@@ -34,10 +34,6 @@ Additional sample scripts can be found in src/main/scripts.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
 
-## License
+## Versioning
 
-Copyright 2012, CITYTECH, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+Follows [Semantic Versioning](http://semver.org/) guidelines.
