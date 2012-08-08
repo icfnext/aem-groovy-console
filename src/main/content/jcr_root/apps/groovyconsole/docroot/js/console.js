@@ -81,6 +81,8 @@ initialize = function(path) {
 
         editor.setTheme(theme);
 
+        $('#dropdown-themes li').removeClass('active');
+
         $(this).addClass('active');
 
         $.cookie('theme', theme, { expires: 365 });
