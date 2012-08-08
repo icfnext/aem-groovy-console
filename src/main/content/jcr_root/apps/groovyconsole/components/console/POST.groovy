@@ -78,6 +78,10 @@ try {
                 session.workspace.copy(src, dst)
             }]
         }
+
+        delegate.save = {
+            session.save()
+        }
     }
 
     result = script.run()
