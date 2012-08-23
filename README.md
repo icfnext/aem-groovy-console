@@ -4,7 +4,7 @@
 
 ## Requirements
 
-* CQ 5.4 running on localhost:4502
+* CQ 5.5 running on localhost:4502
 * Maven 2.x+
 * [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
