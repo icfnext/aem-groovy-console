@@ -17,7 +17,7 @@ import com.day.cq.wcm.api.Page
 
 @Component(immediate = true, label = "Groovy Console MetaClass Registry")
 @Property(name = "service.description", value = "Groovy Console MetaClass Registry")
-class MetaClassRegistry {
+class GroovyConsoleMetaClassRegistry {
 
     static final def LOG = LoggerFactory.getLogger(MetaClassRegistry)
 
@@ -25,14 +25,14 @@ class MetaClassRegistry {
     void activate() {
         LOG.info("activate() activating metaclass registry")
 
-        MetaClassRegistry.registerMetaClasses()
+        GroovyConsoleMetaClassRegistry.registerMetaClasses()
     }
 
     @Deactivate
     void deactivate() {
         LOG.info("deactivate() deactivating metaclass registry")
 
-        MetaClassRegistry.removeMetaClasses()
+        GroovyConsoleMetaClassRegistry.removeMetaClasses()
     }
 
     static void removeMetaClasses() {
@@ -55,6 +55,26 @@ class MetaClassRegistry {
 
                 delegate.nodes.each { node ->
                     node.recurse(c)
+                }
+            }
+
+            recurseWithType { String primaryNodeTypeName, c ->
+                if (delegate.primaryNodeType.name == primaryNodeTypeName) {
+                    c(delegate)
+                }
+
+                delegate.nodes.findAll { it.primaryNodeType.name == primaryNodeTypeName }.each { node ->
+                    node.recurseWithType(primaryNodeTypeName, c)
+                }
+            }
+
+            recurseWithTypes { Collection<String> primaryNodeTypeNames, c ->
+                if (primaryNodeTypeNames.contains(delegate.primaryNodeType.name)) {
+                    c(delegate)
+                }
+
+                delegate.nodes.findAll { primaryNodeTypeNames.contains(it.primaryNodeType.name) }.each { node ->
+                    node.recurseWithTypes(primaryNodeTypeNames, c)
                 }
             }
 
@@ -94,7 +114,7 @@ class MetaClassRegistry {
                 }
             }
 
-            getNodeSafe { relativePath ->
+            getOrAddNode { String relativePath ->
                 def node = delegate
 
                 relativePath.split("/").each { path ->
@@ -108,11 +128,11 @@ class MetaClassRegistry {
                 node
             }
 
-            getNodeSafe { name, nodeTypeName ->
+            getOrAddNode { String name, String nodeTypeName ->
                 delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
             }
 
-            removeNode { name ->
+            removeNode { String name ->
                 if (delegate.hasNode(name)) {
                     delegate.getNode(name).remove()
                 }

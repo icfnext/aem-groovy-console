@@ -1,10 +1,4 @@
 #editor {
-	position: relative;
-	height: 400px;
-}
-
-.accordion-disabled {
-	display: block;
-	padding: 8px 15px;
-	color: #999;
+    position: relative;
+    height: 400px;
 }

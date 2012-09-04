@@ -1,5 +1,5 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.MetaClassRegistry
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 
 import groovy.json.JsonBuilder
 import groovy.transform.Field
@@ -16,7 +16,7 @@ import com.day.cq.wcm.api.PageManager
 
 @Field log = LoggerFactory.getLogger('groovyconsole')
 
-MetaClassRegistry.registerMetaClasses()
+GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
 resolver = resource.resourceResolver
 session = resolver.adaptTo(Session)
@@ -82,23 +82,19 @@ try {
         delegate.save = {
             session.save()
         }
+
+        delegate.getService = { serviceType ->
+            sling.getService(serviceType)
+        }
     }
 
     result = script.run()
 } catch (MultipleCompilationErrorsException e) {
     log.error('script compilation error', e)
 
-    stackTrace.append(e.message - 'startup failed, Script1.groovy: ')
+    e.printStackTrace(errWriter)
 } catch (Throwable t) {
     log.error('error running script', t)
-
-    sanitizeStacktrace(t)
-
-    def cause = t
-
-    while (cause = cause?.cause) {
-        sanitizeStacktrace(cause)
-    }
 
     t.printStackTrace(errWriter)
 } finally {
@@ -120,28 +116,3 @@ json {
 }
 
 out.println json.toString()
-
-def escape(object) {
-    object ? object.toString().replaceAll(/\n/, /\\\n/).replaceAll(/"/, /\\"/) : ''
-}
-
-def sanitizeStacktrace(t) {
-    def filtered = [
-        'java.', 'javax.', 'sun.',
-        'groovy.', 'org.codehaus.groovy.',
-        'groovyconsole'
-    ]
-
-    def trace = t.stackTrace
-    def newTrace = []
-
-    trace.each { stackTraceElement ->
-        if (filtered.every { !stackTraceElement.className.startsWith(it) }) {
-            newTrace << stackTraceElement
-        }
-    }
-
-    def clean = newTrace.toArray(newTrace as StackTraceElement[])
-
-    t.stackTrace = clean
-}

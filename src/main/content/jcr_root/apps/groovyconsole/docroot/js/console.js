@@ -88,20 +88,6 @@ initialize = function(path) {
         $.cookie('theme', theme, { expires: 365 });
     });
 
-    /*
-    $('#editor').resizable({
-        handles: 's',
-        alsoResizeReverse: '.tab',
-        resize: function(event, ui) {
-            editor.resize();
-        }
-    });
-
-    $(window).resize(function() {
-        editor.resize();
-    });
-    */
-
     // buttons
     $('#new-script').click(function() {
         if ($(this).hasClass('disabled')) {
@@ -160,7 +146,7 @@ initialize = function(path) {
                     $('#stacktrace').text(stacktrace).fadeIn('fast');
                 } else {
                     if (runtime && runtime.length) {
-                        $('#running-time span').text(runtime);
+                        $('#running-time pre').text(runtime);
                         $('#running-time').fadeIn('fast');
                     }
 
@@ -175,7 +161,7 @@ initialize = function(path) {
                     }
                 }
             }).fail(function() {
-                showError('Error interacting with the CQ5 server.  Check error log.');
+                showError('CQ5 server error.  Check error.log file.');
             }).always(function() {
                 editor.setReadOnly(false);
 
@@ -206,5 +192,5 @@ function resetConsole() {
     $('#output').fadeOut('fast');
     $('#output pre').text('');
     $('#running-time').fadeOut('fast');
-    $('#running-time span').text('');
+    $('#running-time pre').text('');
 }

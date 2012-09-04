@@ -1,6 +1,6 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="${currentPage.path}.html">Groovy Console</a>

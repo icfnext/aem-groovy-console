@@ -28,7 +28,11 @@
         <dependencySet>
             <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
+            <useStrictFiltering>true</useStrictFiltering>
             <unpack>false</unpack>
+            <includes>
+                <include>com.citytechinc.cqlibrary:groovyconsole</include>
+            </includes>
         </dependencySet>
     </dependencySets>
 </assembly>

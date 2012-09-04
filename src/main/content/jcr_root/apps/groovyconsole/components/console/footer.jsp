@@ -14,7 +14,7 @@
 
 <div id="running-time" class="alert alert-info" style="display: none;">
     <h6>Running Time</h6>
-    <span></span>
+    <pre></pre>
 </div>
 
 <div class="accordion" id="accordion">
