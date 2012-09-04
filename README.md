@@ -4,7 +4,7 @@
 
 ## Requirements
 
-* CQ 5.4 running on localhost:4502
+* CQ 5.5 running on localhost:4502
 * Maven 2.x+
 * [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
@@ -12,22 +12,22 @@
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    a. If you already have the Groovy bundle installed in Felix:
+    a. If you already have the Groovy bundle installed in the Felix container:
 
-        mvn install -P install-console,local-author
+        mvn install -P local-author
 
     b. If you do not have the Groovy bundle installed:
 
-        mvn install -P install-groovy,install-console,local-author
+        mvn install -P install-groovy,local-author
 
 2.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
-Additional build profiles may be created in the project's pom.xml to support deployment to non-local CQ5 servers.
+Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
 Sample code:
 
     getPage('/content/geometrixx').recurse { page ->
-        println page.title + ' - ' + page.path
+        println "${page.title} - ${page.path}"
     }
 
 Additional sample scripts can be found in src/main/scripts.

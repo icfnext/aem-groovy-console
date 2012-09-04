@@ -78,11 +78,11 @@ class GroovyConsoleMetaClassRegistry {
                 }
             }
 
-            get { String name ->
+            get { String propertyName ->
                 def result = null
 
-                if (delegate.hasProperty(name)) {
-                    def property = delegate.getProperty(name)
+                if (delegate.hasProperty(propertyName)) {
+                    def property = delegate.getProperty(propertyName)
 
                     if (property.multiple) {
                         result = property.values.collect { getResult(it) }
@@ -94,30 +94,30 @@ class GroovyConsoleMetaClassRegistry {
                 result
             }
 
-            set { String name, value ->
+            set { String propertyName, value ->
                 if (value) {
                     def valueFactory = delegate.session.valueFactory
 
                     if (value instanceof Object[]) {
                         def values = value.collect { valueFactory.createValue(it) }.toArray(new Value[0])
 
-                        delegate.setProperty(name, values)
+                        delegate.setProperty(propertyName, values)
                     } else {
                         def jcrValue = valueFactory.createValue(value)
 
-                        delegate.setProperty(name, jcrValue)
+                        delegate.setProperty(propertyName, jcrValue)
                     }
                 } else {
-                    if (delegate.hasProperty(name)) {
-                        delegate.getProperty(name).remove()
+                    if (delegate.hasProperty(propertyName)) {
+                        delegate.getProperty(propertyName).remove()
                     }
                 }
             }
 
-            getOrAddNode { String relativePath ->
+            getOrAddNode { String name ->
                 def node = delegate
 
-                relativePath.split("/").each { path ->
+                name.split("/").each { path ->
                     if (node.hasNode(path)) {
                         node = node.getNode(path)
                     } else {
@@ -128,14 +128,19 @@ class GroovyConsoleMetaClassRegistry {
                 node
             }
 
-            getOrAddNode { String name, String nodeTypeName ->
-                delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, nodeTypeName)
+            getOrAddNode { String name, String primaryNodeTypeName ->
+                delegate.hasNode(name) ? delegate.getNode(name) : delegate.addNode(name, primaryNodeTypeName)
             }
 
             removeNode { String name ->
+                boolean removed = false
+
                 if (delegate.hasNode(name)) {
                     delegate.getNode(name).remove()
+                    remove = true
                 }
+
+                removed
             }
         }
 
