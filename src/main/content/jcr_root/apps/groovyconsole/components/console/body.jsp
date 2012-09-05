@@ -6,7 +6,11 @@
     <div class="container">
         <cq:include script="toolbar.jsp" />
 
-        <div class="alert alert-error" style="display: none;">
+        <div class="alert alert-success" id="message-success" style="display: none;">
+            <span class="message"></span>
+        </div>
+
+        <div class="alert alert-error" id="message-error" style="display: none;">
             <span class="message"></span>
         </div>
 

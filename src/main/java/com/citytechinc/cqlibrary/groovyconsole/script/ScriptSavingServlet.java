@@ -11,6 +11,8 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.servlet.ServletException;
 
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -23,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.commons.servlets.HtmlStatusResponseHelper;
 
-@SlingServlet(paths = "/bin/groovyconsole/save", methods = "POST", description = "Writes script to nt:file node")
+@SlingServlet(paths = "/bin/groovyconsole/save", methods = "POST", description = "Writes script to nt:file node.")
 public class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = 1L;
@@ -41,10 +43,12 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
     @Reference
     private SlingRepository repository;
 
+    private Session session;
+
+    @SuppressWarnings("deprecation")
     @Override
     protected final void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response)
         throws ServletException, IOException {
-
         final String fileName = request.getParameter(FILE_NAME_PARAM);
 
         if (null == fileName || fileName.trim().isEmpty()) {
@@ -54,7 +58,6 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
         }
 
         // TODO: check for jcr-illegal characters in filename
-
         final String scriptContent = request.getParameter(SCRIPT_CONTENT_PARAM);
 
         if (null == scriptContent || scriptContent.trim().isEmpty()) {
@@ -63,11 +66,7 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
             HtmlStatusResponseHelper.createStatusResponse(412, errStr).send(response, false);
         }
 
-        Session session = null;
-
         try {
-            session = repository.loginAdministrative(null);
-
             final Binary scriptBinary = getScriptBinary(session, scriptContent);
 
             final Node folderNode = getScriptFolderNode(session);
@@ -85,17 +84,17 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
 
             session.save();
         } catch (final RepositoryException e) {
-            LOG.error("error creating script node", e);
-        } finally {
-            if (null != session) {
-                session.logout();
-            }
+            final String message  = "Error creating script node.";
+
+            LOG.error(message, e);
+
+            HtmlStatusResponseHelper.createStatusResponse(500, message).send(response, false);
         }
     }
 
     private Node getScriptFolderNode(final Session session) throws RepositoryException {
         if (!session.nodeExists(CONSOLE_ROOT)) {
-            throw new RuntimeException("Missing expected groovy console root node");
+            throw new RuntimeException("Missing expected groovy console root node.");
         }
 
         final Node consoleNode = session.getNode(CONSOLE_ROOT);
@@ -128,6 +127,22 @@ public class ScriptSavingServlet extends SlingAllMethodsServlet {
             } catch (final IOException ignored) {
 
             }
+        }
+    }
+
+    @Activate
+    private void activate() {
+        try {
+            session = repository.loginAdministrative(null);
+        } catch (final RepositoryException e) {
+            LOG.error("error getting admin session", e);
+        }
+    }
+
+    @Deactivate
+    private void deactivate() {
+        if (session != null) {
+            session.logout();
         }
     }
 }

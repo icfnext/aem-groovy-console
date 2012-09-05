@@ -6,8 +6,6 @@ import groovy.transform.Field
 
 import javax.jcr.Session
 
-import org.apache.commons.lang.time.StopWatch
-
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
 import org.slf4j.LoggerFactory
@@ -50,9 +48,9 @@ System.setErr(printStream)
 
 def result = ''
 
-def stopWatch = new StopWatch()
+def startTime = System.currentTimeMillis()
 
-stopWatch.start()
+log.debug "script execution started"
 
 try {
     def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
@@ -102,7 +100,9 @@ try {
     System.setErr(originalErr)
 }
 
-stopWatch.stop()
+def time = getRunningTime(startTime)
+
+log.debug "script execution completed, running time: $time"
 
 response.contentType = 'application/json'
 
@@ -112,7 +112,15 @@ json {
     executionResult result as String
     outputText stream.toString(encoding)
     stacktraceText stackTrace.toString()
-    runningTime stopWatch.toString()
+    runningTime time
 }
 
 out.println json.toString()
+
+def getRunningTime(startTime) {
+    def date = new Date()
+
+    date.setTime(System.currentTimeMillis() - startTime)
+
+    date.format('HH:mm:ss.SSS', TimeZone.getTimeZone('GMT'))
+}

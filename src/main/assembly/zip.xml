@@ -19,6 +19,10 @@
             <outputDirectory>jcr_root</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/src/main/scripts</directory>
+            <outputDirectory>jcr_root/etc/groovyconsole/scripts/samples</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/main/content/META-INF</directory>
             <outputDirectory>META-INF</outputDirectory>
             <filtered>true</filtered>

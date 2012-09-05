@@ -13,6 +13,8 @@ loadScript = function(scriptPath) {
         url: '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data',
         success: function(response, opts) {
             if (response && response.responseText) {
+                showSuccess('Script loaded successfully.');
+
                 editor.getSession().setValue(response.responseText);
             }
         },
@@ -32,6 +34,9 @@ saveScript = function(fileName) {
         url: '/bin/groovyconsole/save',
         params: params,
         method: 'POST',
+        success: function() {
+            showSuccess('Script saved successfully.');
+        },
         failure: function (result, request) {
             showError('Save failed with status: ' + result.status);
         }
@@ -175,15 +180,22 @@ initialize = function(path) {
     });
 }
 
+function showSuccess(message) {
+    $('#message-success .message').text(message);
+    $('#message-success').fadeIn('fast');
+}
+
 function showError(message) {
-    $('div.alert-error .message').text(message);
-    $('div.alert-error').fadeIn('fast');
+    $('#message-error .message').text(message);
+    $('#message-error').fadeIn('fast');
 }
 
 function resetConsole() {
-    // clear errors
-    $('div.alert-error .message').text('');
-    $('div.alert-error').fadeOut('fast');
+    // clear messages
+    $('#message-success .message').text('');
+    $('#message-success').fadeOut('fast');
+    $('#message-error .message').text('');
+    $('#message-error').fadeOut('fast');
 
     // clear results
     $('#stacktrace').text('').fadeOut('fast');
