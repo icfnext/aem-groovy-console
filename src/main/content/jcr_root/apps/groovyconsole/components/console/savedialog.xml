@@ -11,7 +11,10 @@
                 <fileName
                     jcr:primaryType="cq:Widget"
                     fieldLabel="File Name"
-                    fieldDescription="Warning: will overwrite existing file with same name"
+                    fieldDescription="Warning: will overwrite existing file with same name."
+                    allowBlank="{Boolean}false"
+                    regex="/^[a-zA-Z0-9_\\.\\-]+$/"
+                    regexText="File name should only contain characters, numbers or _.-"
                     name="./fileName"
                     xtype="textfield"/>
             </items>
@@ -20,9 +23,9 @@
     <listeners
         jcr:primaryType="nt:unstructured"
         beforesubmit="function(dialog) {
-        	saveScript(dialog.find('name', './fileName')[0].getValue());
-        	this.hide();
-        	return false;
+            saveScript(dialog.find('name', './fileName')[0].getValue());
+            this.hide();
+            return false;
         }"
-	/>
+    />
 </jcr:root>

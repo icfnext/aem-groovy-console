@@ -58,23 +58,23 @@ class GroovyConsoleMetaClassRegistry {
                 }
             }
 
-            recurseWithType { String primaryNodeTypeName, c ->
+            recurse { String primaryNodeTypeName, c ->
                 if (delegate.primaryNodeType.name == primaryNodeTypeName) {
                     c(delegate)
                 }
 
                 delegate.nodes.findAll { it.primaryNodeType.name == primaryNodeTypeName }.each { node ->
-                    node.recurseWithType(primaryNodeTypeName, c)
+                    node.recurse(primaryNodeTypeName, c)
                 }
             }
 
-            recurseWithTypes { Collection<String> primaryNodeTypeNames, c ->
+            recurse { Collection<String> primaryNodeTypeNames, c ->
                 if (primaryNodeTypeNames.contains(delegate.primaryNodeType.name)) {
                     c(delegate)
                 }
 
                 delegate.nodes.findAll { primaryNodeTypeNames.contains(it.primaryNodeType.name) }.each { node ->
-                    node.recurseWithTypes(primaryNodeTypeNames, c)
+                    node.recurse(primaryNodeTypeNames, c)
                 }
             }
 

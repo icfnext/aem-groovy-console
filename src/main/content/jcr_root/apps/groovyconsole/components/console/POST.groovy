@@ -1,5 +1,4 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 
 import groovy.json.JsonBuilder
 import groovy.transform.Field
@@ -13,8 +12,6 @@ import org.slf4j.LoggerFactory
 import com.day.cq.wcm.api.PageManager
 
 @Field log = LoggerFactory.getLogger('groovyconsole')
-
-GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
 resolver = resource.resourceResolver
 session = resolver.adaptTo(Session)

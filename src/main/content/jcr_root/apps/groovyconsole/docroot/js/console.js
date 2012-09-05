@@ -1,49 +1,37 @@
-showOpenDialog = function() {
+function showOpenDialog() {
     var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
+
     dialog.show();
 }
 
-showSaveDialog = function() {
+function showSaveDialog() {
     var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/savedialog');
+
     dialog.show();
 }
 
-loadScript = function(scriptPath) {
-    CQ.Ext.Ajax.request({
-        url: '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data',
-        success: function(response, opts) {
-            if (response && response.responseText) {
-                showSuccess('Script loaded successfully.');
+function loadScript(scriptPath) {
+    $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function(script) {
+        showSuccess('Script loaded successfully.');
 
-                editor.getSession().setValue(response.responseText);
-            }
-        },
-        failure: function(response, opts) {
-            showError('Load failed with status: ' + response.status);
-        }
+        editor.getSession().setValue(script);
+    }).fail(function() {
+        showError('Load failed, check error.log file.');
     });
 }
 
-saveScript = function(fileName) {
-    var params = {};
-
-    params['fileName'] = fileName;
-    params['scriptContent'] = editor.getSession().getValue();
-
-    CQ.Ext.Ajax.request({
-        url: '/bin/groovyconsole/save',
-        params: params,
-        method: 'POST',
-        success: function() {
-            showSuccess('Script saved successfully.');
-        },
-        failure: function (result, request) {
-            showError('Save failed with status: ' + result.status);
-        }
+function saveScript(fileName) {
+    $.post('/bin/groovyconsole/save', {
+        fileName: fileName,
+        scriptContent: editor.getSession().getValue()
+    }).done(function() {
+        showSuccess('Script saved successfully.');
+    }).fail(function() {
+        showError('Save failed, check error.log file.');
     });
 }
 
-refreshOpenDialog = function(dialog) {
+function refreshOpenDialog(dialog) {
     var tp, root;
 
     if (dialog.loadedFlag == null) {
@@ -57,7 +45,7 @@ refreshOpenDialog = function(dialog) {
     }
 }
 
-initialize = function(path) {
+function initialize(path) {
     window.editor = ace.edit('editor');
 
     var GroovyMode = ace.require('ace/mode/groovy').Mode;
@@ -65,6 +53,11 @@ initialize = function(path) {
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
 
+    initializeThemeMenu();
+    initializeButtons(path);
+}
+
+function initializeThemeMenu() {
     var theme = $.cookie('theme');
 
     if (theme == null) {
@@ -92,8 +85,9 @@ initialize = function(path) {
 
         $.cookie('theme', theme, { expires: 365 });
     });
+}
 
-    // buttons
+function initializeButtons(path) {
     $('#new-script').click(function() {
         if ($(this).hasClass('disabled')) {
             return;
@@ -117,7 +111,13 @@ initialize = function(path) {
             return;
         }
 
-        showSaveDialog();
+        var script = editor.getSession().getValue();
+
+        if (script.length) {
+            showSaveDialog();
+        } else {
+            showError('Script is empty.');
+        }
     });
 
     $('#run-script').click(function(event) {
@@ -166,7 +166,7 @@ initialize = function(path) {
                     }
                 }
             }).fail(function() {
-                showError('CQ5 server error.  Check error.log file.');
+                showError('Script execution failed.  Check error.log file.');
             }).always(function() {
                 editor.setReadOnly(false);
 
@@ -175,7 +175,7 @@ initialize = function(path) {
                 $('.btn-toolbar .btn').removeClass('disabled');
             });
         } else {
-            showError('Script is empty.  Please try again.');
+            showError('Script is empty.');
         }
     });
 }
