@@ -4,7 +4,7 @@
 
 ## Requirements
 
-* CQ 5.5 running on localhost:4502
+* CQ 5.4 or 5.5 running on localhost:4502
 * Maven 2.x+
 * [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
@@ -19,6 +19,10 @@
     b. If you do not have the Groovy bundle installed:
 
         mvn install -P install-groovy,local-author
+
+    NOTE: if you are running CQ 5.4, add the profile 'cq5.4' to the above Maven commands to resolve the correct dependencies.
+
+        mvn install -P cq5.4,local-author
 
 2.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
 
