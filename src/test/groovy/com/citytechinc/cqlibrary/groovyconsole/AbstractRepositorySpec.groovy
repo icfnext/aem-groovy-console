@@ -1,6 +1,5 @@
 package com.citytechinc.cqlibrary.groovyconsole
 
-import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
 import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 
 import javax.jcr.Node
@@ -11,6 +10,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 abstract class AbstractRepositorySpec extends Specification {
+
+    static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
 
     static class ShutdownThread extends Thread {
 
@@ -24,18 +25,12 @@ abstract class AbstractRepositorySpec extends Specification {
 
     @Shared session
 
-    @Shared jcrBuilder
-
     def setupSpec() {
         session = getRepository().loginAdministrative(null)
 
-        jcrBuilder = new JcrBuilder(session)
-
-        registerNodeType("/SLING-INF/nodetypes/sling.cnd")
-        registerNodeType("/SLING-INF/nodetypes/replication.cnd")
-        registerNodeType("/SLING-INF/nodetypes/tagging.cnd")
-        registerNodeType("/SLING-INF/nodetypes/core.cnd")
-        registerNodeType("/SLING-INF/nodetypes/dam.cnd")
+        NODE_TYPES.each { type ->
+            registerNodeType("/SLING-INF/nodetypes/$type.cnd")
+        }
     }
 
     def cleanupSpec() {
