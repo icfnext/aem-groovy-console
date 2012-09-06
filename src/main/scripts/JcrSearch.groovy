@@ -1,39 +1,17 @@
 def start = getPage('/content/geometrixx')
 
-def querySql2 = createSql2Query(start, 'beer')
-def queryXPath = createXPathQuery(start, 'beer')
+def query = createXPathQuery(start, 'beer')
 
-execute(querySql2)
-execute(queryXPath)
+println "query = ${query.statement}"
 
-def execute(query) {
-    println "query = ${query.statement}"
+def result = query.execute()
 
-    def result = query.execute()
+def rows = result.rows
 
-    def rows = result.rows
+println "found ${rows.size} result(s)"
 
-    println "found ${rows.size} results"
-
-    rows.each { row ->
-        println row.path
-    }
-}
-
-def createSql2Query(page, term) {
-    def qomFactory = session.workspace.queryManager.qomFactory
-    def valueFactory = session.valueFactory
-
-    def termValue = valueFactory.createValue(term)
-
-    def descendant = qomFactory.descendantNode('selector', page.path)
-    def fullText = qomFactory.fullTextSearch('selector', null, qomFactory.literal(termValue))
-
-    def constraint = qomFactory.and(descendant, fullText)
-
-    def query = qomFactory.createQuery(qomFactory.selector('nt:unstructured', 'selector'), constraint, null, null)
-
-    query
+rows.each { row ->
+    println row.path
 }
 
 def createXPathQuery(page, term) {

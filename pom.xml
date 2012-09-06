@@ -34,10 +34,13 @@
         <assembly.descriptor>src/main/assembly/zip.xml</assembly.descriptor>
 
         <!-- dependency versions -->
-        <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>2.0.0</groovy.version>
+        <slf4j.version>1.6.4</slf4j.version>
+        <groovy.version>2.0.1</groovy.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
+        <cq.version>5.5.0</cq.version>
+        <cq.commons.version>5.5.0</cq.commons.version>
+        <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
         <scr.annotations.version>1.7.0</scr.annotations.version>
 
@@ -70,20 +73,10 @@
                 </property>
             </activation>
             <properties>
+                <slf4j.version>1.5.2</slf4j.version>
                 <cq.version>5.4.0</cq.version>
                 <cq.commons.version>5.4.6</cq.commons.version>
                 <sling.api.version>2.2.0</sling.api.version>
-            </properties>
-        </profile>
-        <profile>
-            <id>cq5.5</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <cq.version>5.5.0</cq.version>
-                <cq.commons.version>5.5.0</cq.commons.version>
-                <sling.api.version>2.2.4</sling.api.version>
             </properties>
         </profile>
         <profile>
