@@ -29,7 +29,7 @@ abstract class AbstractRepositorySpec extends Specification {
         session = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
-            registerNodeType("/SLING-INF/nodetypes/$type.cnd")
+            registerNodeType("/SLING-INF/nodetypes/${type}.cnd")
         }
     }
 
