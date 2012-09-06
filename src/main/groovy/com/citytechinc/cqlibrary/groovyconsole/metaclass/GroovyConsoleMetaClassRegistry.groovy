@@ -19,7 +19,7 @@ import com.day.cq.wcm.api.Page
 @Property(name = "service.description", value = "Groovy Console MetaClass Registry")
 class GroovyConsoleMetaClassRegistry {
 
-    static final def LOG = LoggerFactory.getLogger(MetaClassRegistry)
+    static final def LOG = LoggerFactory.getLogger(GroovyConsoleMetaClassRegistry)
 
     @Activate
     void activate() {
