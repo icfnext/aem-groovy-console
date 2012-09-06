@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 1997-2008 Day Management AG
+ * Barfuesserplatz 6, 4001 Basel, Switzerland
+ * All Rights Reserved.
+ *
+ * This software is the confidential and proprietary information of
+ * Day Management AG, ("Confidential Information"). You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with Day.
+ */
+<dam  = 'http://www.day.com/dam/1.0'>
+<sling = 'http://sling.apache.org/jcr/sling/1.0'>
+<cq = 'http://www.day.com/jcr/cq/1.0'>
+<acdsee = 'http://ns.acdsee.com/iptc/1.0/'>
+<album = 'http://ns.adobe.com/album/1.0/'>
+<aux = 'http://ns.adobe.com/exif/1.0/aux/'>
+<cc = 'http://creativecommons.org/ns#'>
+<crs = 'http://ns.adobe.com/camera-raw-settings/1.0/'>
+<dc = 'http://purl.org/dc/elements/1.1/'>
+<dex = 'http://ns.optimasc.com/dex/1.0/'>
+<DICOM = 'http://ns.adobe.com/DICOM/'>
+<exif = 'http://ns.adobe.com/exif/1.0/'>
+<Iptc4xmpCore = 'http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/'>
+<Iptc4xmpExt = 'http://iptc.org/std/Iptc4xmpExt/2008-02-29/'>
+<lr = 'http://ns.adobe.com/lightroom/1.0/'>
+<mediapro = 'http://ns.iview-multimedia.com/mediapro/1.0/'>
+<MicrosoftPhoto = 'http://ns.microsoft.com/photo/1.0'>
+<MP = 'http://ns.microsoft.com/photo/1.2/'>
+<pdf = 'http://ns.adobe.com/pdf/1.3/'>
+<pdfx = 'http://ns.adobe.com/pdfx/1.3/'>
+<photoshop = 'http://ns.adobe.com/photoshop/1.0/'>
+<plus = 'http://ns.useplus.org/ldf/xmp/1.0/'>
+<prism = 'http://prismstandard.org/namespaces/basic/2.1/'>
+<prismusagerights = 'http://prismstandard.org/namespaces/prismusagerights/2.1/'>
+<prl = 'http://prismstandard.org/namespaces/prl/2.1/'>
+<psAux = 'http://ns.adobe.com/exif/1.0/aux/'>
+<rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+<tiff = 'http://ns.adobe.com/tiff/1.0/'>
+<xmp = 'http://ns.adobe.com/xap/1.0/'>
+<xmpBJ = 'http://ns.adobe.com/xap/1.0/bj/'>
+<xmpDM = 'http://ns.adobe.com/xmp/1.0/DynamicMedia/'>
+<xmpMM = 'http://ns.adobe.com/xap/1.0/mm/'>
+<xmpNote = 'http://ns.adobe.com/xmp/note/'>
+<xmpPLUS = 'http://ns.adobe.com/xap/1.0/PLUS/'>
+<xmpRights = 'http://ns.adobe.com/xap/1.0/rights/'>
+<xmpTPg = 'http://ns.adobe.com/xap/1.0/t/pg/'>
+
+[xmp:Property] > nt:unstructured
+  - namespace (String)
+  + * (xmp:Property)
+  + value (xmp:Simple)
+
+[xmp:Simple] > nt:unstructured
+
+[rdf:Bag] > xmp:Simple
+ + * (xmp:Property)
+
+[rdf:Seq] > xmp:Simple
+ orderable
+ + * (xmp:Property)
+
+[rdf:Alt] > xmp:Simple
+ + * (xmp:Property)
+
+[xmp:Struct] > nt:unstructured
+
+[dam:AssetContent] > nt:unstructured, cq:OwnerTaggable, cq:ReplicationStatus, sling:Resource
+ + metadata (nt:unstructured)
+ + renditions (nt:folder)
+
+[dam:Asset] > nt:hierarchyNode
+ + jcr:content (dam:AssetContent) = dam:AssetContent copy primary
+ + * (nt:base) = nt:base version

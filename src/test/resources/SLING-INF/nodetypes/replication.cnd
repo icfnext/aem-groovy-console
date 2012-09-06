@@ -1,0 +1,20 @@
+<cq = 'http://www.day.com/jcr/cq/1.0'>
+
+/**
+ * Defines replication status information mixin.
+ *
+ * @prop cq:lastPublished the date the page was last published (not used anymore)
+ * @prop cq:lastPublishedBy the user who published the page last (not used anymore)
+ * @prop cq:lastReplicated the date the page was last replicated
+ * @prop cq:lastReplicatedBy the user that replicated the page last
+ * @prop cq:lastReplicationAction the replication action: activate or deactivate
+ * @prop cq:lastReplicationStatus the replication status (not used anymore)
+ */
+[cq:ReplicationStatus] 
+    mixin
+    - cq:lastPublished (date) ignore
+    - cq:lastPublishedBy (string) ignore
+    - cq:lastReplicated (date) ignore
+    - cq:lastReplicatedBy (string) ignore
+    - cq:lastReplicationAction (string) ignore
+    - cq:lastReplicationStatus (string) ignore

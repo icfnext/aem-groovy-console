@@ -35,6 +35,12 @@ class GroovyConsoleMetaClassRegistry {
         GroovyConsoleMetaClassRegistry.removeMetaClasses()
     }
 
+    static void registerMetaClasses() {
+        removeMetaClasses()
+        registerNodeMetaClass()
+        registerPageMetaClass()
+    }
+
     static void removeMetaClasses() {
         def registry = InvokerHelper.metaRegistry
 
@@ -42,9 +48,7 @@ class GroovyConsoleMetaClassRegistry {
         registry.removeMetaClass(Page)
     }
 
-    static void registerMetaClasses() {
-        removeMetaClasses()
-
+    static void registerNodeMetaClass() {
         Node.metaClass {
             iterator {
                 delegate.nodes
@@ -143,7 +147,9 @@ class GroovyConsoleMetaClassRegistry {
                 removed
             }
         }
+    }
 
+    static void registerPageMetaClass() {
         Page.metaClass {
             iterator {
                 delegate.listChildren()

@@ -16,18 +16,18 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = 1L
 
-    private static final String SCRIPT_FOLDER_REL_PATH = "scripts"
+    public static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
-    private static final String CONSOLE_ROOT = "/etc/groovyconsole"
+    public static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    private static final String FILE_NAME_PARAM = "fileName"
+    public static final String FILE_NAME_PARAM = "fileName"
 
-    private static final String SCRIPT_CONTENT_PARAM = "scriptContent"
+    public static final String SCRIPT_CONTENT_PARAM = "scriptContent"
 
     @Reference
     private SlingRepository repository
 
-    private def session
+    def session
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) {

@@ -27,7 +27,6 @@
     </scm>
 
     <properties>
-        <maven.test.skip>true</maven.test.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -35,24 +34,28 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.6.4</slf4j.version>
-        <groovy.version>2.0.1</groovy.version>
+        <groovy.version>1.8.7</groovy.version>
+        <spock.version>0.6-groovy-1.8</spock.version>
+        <junit.version>4.8.2</junit.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
         <cq.version>5.5.0</cq.version>
         <cq.commons.version>5.5.0</cq.commons.version>
         <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
+        <sling.testing.version>2.0.10</sling.testing.version>
         <scr.annotations.version>1.7.0</scr.annotations.version>
 
         <!-- plugin versions -->
         <compiler.version>1.6</compiler.version>
         <compiler.plugin.version>2.5.1</compiler.plugin.version>
+        <surefire.plugin.version>2.11</surefire.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <scr.plugin.version>1.8.0</scr.plugin.version>
         <assembly.plugin.version>2.3</assembly.plugin.version>
         <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>2.0</gmaven.provider.version>
+        <gmaven.provider.version>1.8</gmaven.provider.version>
     </properties>
 
     <profiles>
@@ -155,6 +158,16 @@
                         <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Test.groovy</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -293,6 +306,42 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
             <version>${scr.annotations.version}</version>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.testing</artifactId>
+            <version>${sling.testing.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
