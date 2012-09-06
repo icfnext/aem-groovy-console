@@ -12,7 +12,7 @@ import javax.jcr.RepositoryException
 
 import spock.lang.Shared
 
-class ScriptSavingServletTest extends AbstractRepositorySpec {
+class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
     static final def SCRIPT_NAME = 'Script.groovy'
 

@@ -164,8 +164,7 @@
                 <version>${surefire.plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Test.groovy</include>
+                        <include>**/*Spec.java</include>
                     </includes>
                 </configuration>
             </plugin>
