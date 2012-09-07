@@ -1,9 +1,5 @@
 package com.citytechinc.cqlibrary.groovyconsole
 
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
-
-import javax.jcr.Node
-
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 
 import spock.lang.Shared
@@ -12,14 +8,6 @@ import spock.lang.Specification
 abstract class AbstractRepositorySpec extends Specification {
 
     static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
-
-    static class ShutdownThread extends Thread {
-
-        @Override
-        void run() {
-            RepositoryUtil.stopRepository();
-        }
-    };
 
     static def repository
 
@@ -44,7 +32,9 @@ abstract class AbstractRepositorySpec extends Specification {
 
                 repository = RepositoryUtil.getRepository()
 
-                Runtime.getRuntime().addShutdownHook(new ShutdownThread())
+                addShutdownHook {
+                    RepositoryUtil.stopRepository()
+                }
             }
         }
 

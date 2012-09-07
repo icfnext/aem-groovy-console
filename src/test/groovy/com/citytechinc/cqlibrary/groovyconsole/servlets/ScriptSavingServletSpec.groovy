@@ -26,11 +26,9 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
         servlet = new ScriptSavingServlet()
         servlet.session = session
 
-        def stream = this.class.getResourceAsStream("/$SCRIPT_NAME")
-
-        script = stream.text
-
-        stream.close()
+        this.class.getResourceAsStream("/$SCRIPT_NAME").withStream { stream ->
+            script = stream.text
+        }
     }
 
     def "save script"() {

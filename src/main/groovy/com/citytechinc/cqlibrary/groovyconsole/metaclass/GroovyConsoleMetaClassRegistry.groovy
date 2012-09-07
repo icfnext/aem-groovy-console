@@ -10,7 +10,6 @@ import javax.jcr.Value
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Property
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import com.day.cq.wcm.api.Page
