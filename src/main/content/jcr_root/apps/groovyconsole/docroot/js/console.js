@@ -17,6 +17,9 @@ function loadScript(scriptPath) {
         editor.getSession().setValue(script);
     }).fail(function() {
         showError('Load failed, check error.log file.');
+    }).always(function() {
+        $('#loader').fadeOut('fast');
+        $('.btn-toolbar .btn').removeClass('disabled');
     });
 }
 
@@ -28,7 +31,10 @@ function saveScript(fileName) {
         showSuccess('Script saved successfully.');
     }).fail(function() {
         showError('Save failed, check error.log file.');
-    });
+    }).always(function() {
+        $('#loader').fadeOut('fast');
+        $('.btn-toolbar .btn').removeClass('disabled');
+    });;
 }
 
 function refreshOpenDialog(dialog) {
@@ -103,6 +109,11 @@ function initializeButtons(path) {
             return;
         }
 
+        resetConsole();
+
+        $('.btn-toolbar .btn').addClass('disabled');
+        $('#loader').fadeIn('fast');
+
         showOpenDialog();
     });
 
@@ -111,9 +122,14 @@ function initializeButtons(path) {
             return;
         }
 
+        resetConsole();
+
         var script = editor.getSession().getValue();
 
         if (script.length) {
+            $('.btn-toolbar .btn').addClass('disabled');
+            $('#loader').fadeIn('fast');
+
             showSaveDialog();
         } else {
             showError('Script is empty.');
