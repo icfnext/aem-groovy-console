@@ -27,5 +27,6 @@
             this.hide();
             return false;
         }"
+        hide="function() { enableToolbar(); }"
     />
 </jcr:root>

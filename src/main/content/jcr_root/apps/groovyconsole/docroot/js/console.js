@@ -1,56 +1,3 @@
-function showOpenDialog() {
-    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
-
-    dialog.show();
-}
-
-function showSaveDialog() {
-    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/savedialog');
-
-    dialog.show();
-}
-
-function loadScript(scriptPath) {
-    $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function(script) {
-        showSuccess('Script loaded successfully.');
-
-        editor.getSession().setValue(script);
-    }).fail(function() {
-        showError('Load failed, check error.log file.');
-    }).always(function() {
-        $('#loader').fadeOut('fast');
-        $('.btn-toolbar .btn').removeClass('disabled');
-    });
-}
-
-function saveScript(fileName) {
-    $.post('/bin/groovyconsole/save', {
-        fileName: fileName,
-        scriptContent: editor.getSession().getValue()
-    }).done(function() {
-        showSuccess('Script saved successfully.');
-    }).fail(function() {
-        showError('Save failed, check error.log file.');
-    }).always(function() {
-        $('#loader').fadeOut('fast');
-        $('.btn-toolbar .btn').removeClass('disabled');
-    });;
-}
-
-function refreshOpenDialog(dialog) {
-    var tp, root;
-
-    if (dialog.loadedFlag == null) {
-        dialog.loadedFlag = true;
-    } else {
-        tp = dialog.treePanel;
-        root = tp.getRootNode();
-
-        tp.getLoader().load(root);
-        root.expand();
-    }
-}
-
 function initialize(path) {
     window.editor = ace.edit('editor');
 
@@ -110,10 +57,7 @@ function initializeButtons(path) {
         }
 
         resetConsole();
-
-        $('.btn-toolbar .btn').addClass('disabled');
-        $('#loader').fadeIn('fast');
-
+        disableToolbar();
         showOpenDialog();
     });
 
@@ -127,9 +71,7 @@ function initializeButtons(path) {
         var script = editor.getSession().getValue();
 
         if (script.length) {
-            $('.btn-toolbar .btn').addClass('disabled');
-            $('#loader').fadeIn('fast');
-
+            disableToolbar();
             showSaveDialog();
         } else {
             showError('Script is empty.');
@@ -148,9 +90,9 @@ function initializeButtons(path) {
         if (script.length) {
             editor.setReadOnly(true);
 
-            $('.btn-toolbar .btn').addClass('disabled');
+            disableToolbar();
+
             $('#run-script-text').text('Running...');
-            $('#loader').fadeIn('fast');
 
             $.ajax({
                 type: 'POST',
@@ -186,14 +128,75 @@ function initializeButtons(path) {
             }).always(function() {
                 editor.setReadOnly(false);
 
-                $('#loader').fadeOut('fast');
+                enableToolbar();
+
                 $('#run-script-text').text('Run Script');
-                $('.btn-toolbar .btn').removeClass('disabled');
             });
         } else {
             showError('Script is empty.');
         }
     });
+}
+
+function disableToolbar() {
+    $('.btn-toolbar .btn').addClass('disabled');
+    $('#loader').fadeIn('fast');
+}
+
+function enableToolbar() {
+    $('#loader').fadeOut('fast');
+    $('.btn-toolbar .btn').removeClass('disabled');
+}
+
+function showOpenDialog() {
+    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
+
+    dialog.show();
+}
+
+function showSaveDialog() {
+    var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/savedialog');
+
+    dialog.show();
+}
+
+function loadScript(scriptPath) {
+    $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function(script) {
+        showSuccess('Script loaded successfully.');
+
+        editor.getSession().setValue(script);
+    }).fail(function() {
+        showError('Load failed, check error.log file.');
+    }).always(function() {
+        enableToolbar();
+    });
+}
+
+function saveScript(fileName) {
+    $.post('/bin/groovyconsole/save', {
+        fileName: fileName,
+        scriptContent: editor.getSession().getValue()
+    }).done(function() {
+        showSuccess('Script saved successfully.');
+    }).fail(function() {
+        showError('Save failed, check error.log file.');
+    }).always(function() {
+        enableToolbar();
+    });;
+}
+
+function refreshOpenDialog(dialog) {
+    var tp, root;
+
+    if (dialog.loadedFlag == null) {
+        dialog.loadedFlag = true;
+    } else {
+        tp = dialog.treePanel;
+        root = tp.getRootNode();
+
+        tp.getLoader().load(root);
+        root.expand();
+    }
 }
 
 function showSuccess(message) {
