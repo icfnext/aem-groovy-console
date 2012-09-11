@@ -5,8 +5,20 @@
     <groupId>com.citytechinc.cqlibrary</groupId>
     <artifactId>groovyconsole</artifactId>
     <packaging>jar</packaging>
-    <version>2.0-SNAPSHOT</version>
-    <name>cq5-groovy-console</name>
+    <version>2.0.0</version>
+    <name>CQ5 Groovy Console</name>
+    <organization>
+        <name>CITYTECH, Inc.</name>
+        <url>http://www.citytechinc.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <scm>
         <connection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</connection>
@@ -15,41 +27,72 @@
     </scm>
 
     <properties>
-        <maven.test.skip>true</maven.test.skip>
-        <bundles.dir>${project.build.directory}/classes</bundles.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <assembly.descriptor>src/main/assembly/zip.xml</assembly.descriptor>
 
         <!-- dependency versions -->
-        <slf4j.version>1.5.2</slf4j.version>
-        <groovy.version>1.8.6</groovy.version>
+        <slf4j.version>1.6.4</slf4j.version>
+        <groovy.version>1.8.7</groovy.version>
+        <spock.version>0.6-groovy-1.8</spock.version>
+        <junit.version>4.8.2</junit.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
-        <cq.version>5.4.0</cq.version>
-        <cq.commons.version>5.4.6</cq.commons.version>
-        <sling.api.version>2.2.0</sling.api.version>
+        <cq.version>5.5.0</cq.version>
+        <cq.commons.version>5.5.0</cq.commons.version>
+        <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
-        <commons.lang.version>2.4</commons.lang.version>
-        <scr.annotations.version>1.6.0</scr.annotations.version>
+        <sling.testing.version>2.0.10</sling.testing.version>
+        <scr.annotations.version>1.7.0</scr.annotations.version>
 
         <!-- plugin versions -->
-        <sling.plugin.version>2.1.0</sling.plugin.version>
         <compiler.version>1.6</compiler.version>
-        <compiler.plugin.version>2.3.2</compiler.plugin.version>
-        <xml.plugin.version>1.0</xml.plugin.version>
+        <compiler.plugin.version>2.5.1</compiler.plugin.version>
+        <surefire.plugin.version>2.11</surefire.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
-        <scr.plugin.version>1.7.4</scr.plugin.version>
-        <assembly.plugin.version>2.2.1</assembly.plugin.version>
-        <jar.plugin.version>2.3.2</jar.plugin.version>
+        <scr.plugin.version>1.8.0</scr.plugin.version>
+        <assembly.plugin.version>2.3</assembly.plugin.version>
         <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>2.0</gmaven.provider.version>
-        <m2e.plugin.version>1.0.0</m2e.plugin.version>
+        <gmaven.provider.version>1.8</gmaven.provider.version>
     </properties>
 
     <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skip>true</skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>cq5.4</id>
+            <activation>
+                <property>
+                    <name>cq5.4</name>
+                </property>
+            </activation>
+            <properties>
+                <slf4j.version>1.5.2</slf4j.version>
+                <cq.version>5.4.0</cq.version>
+                <cq.commons.version>5.4.6</cq.commons.version>
+                <sling.api.version>2.2.0</sling.api.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>install-groovy</id>
+            <activation>
+                <property>
+                    <name>install-groovy</name>
+                </property>
+            </activation>
+            <properties>
+                <assembly.descriptor>src/main/assembly/zip-groovy.xml</assembly.descriptor>
+            </properties>
+        </profile>
         <profile>
             <id>local-author</id>
             <activation>
@@ -78,58 +121,6 @@
                 <sling.password>admin</sling.password>
             </properties>
         </profile>
-
-        <profile>
-            <id>install-groovy</id>
-            <activation>
-                <property>
-                    <name>install-groovy</name>
-                </property>
-            </activation>
-            <properties>
-                <assembly.descriptor>src/main/assembly/zip-groovy.xml</assembly.descriptor>
-            </properties>
-        </profile>
-        <profile>
-            <id>install-console</id>
-            <activation>
-                <property>
-                    <name>install-console</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>exec-install-console</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>curl</executable>
-                                    <arguments>
-                                        <argument>-f</argument>
-                                        <argument>-v</argument>
-                                        <argument>-u</argument>
-                                        <argument>${sling.user}:${sling.password}</argument>
-                                        <argument>-F</argument>
-                                        <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
-                                        <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
-                                        <argument>-F</argument>
-                                        <argument>install=true</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <build>
@@ -141,29 +132,6 @@
                     <source>${compiler.version}</source>
                     <target>${compiler.version}</target>
                     <encoding>utf-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>xml-maven-plugin</artifactId>
-                <version>${xml.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <validationSets>
-                        <validationSet>
-                            <dir>src/main/content/jcr_root</dir>
-                            <includes>
-                                <include>**/*.xml</include>
-                            </includes>
-                        </validationSet>
-                    </validationSets>
                 </configuration>
             </plugin>
             <plugin>
@@ -190,6 +158,15 @@
                         <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec.java</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -225,17 +202,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${jar.plugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>assemblies/**</exclude>
-                        <exclude>scripts/**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${assembly.plugin.version}</version>
                 <configuration>
@@ -253,68 +219,38 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>curl</executable>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>-v</argument>
+                                <argument>-u</argument>
+                                <argument>${sling.user}:${sling.password}</argument>
+                                <argument>-F</argument>
+                                <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
+                                <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
+                                <argument>-F</argument>
+                                <argument>install=true</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>${m2e.plugin.version}</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.gmaven</groupId>
-                                        <artifactId>gmaven-plugin</artifactId>
-                                        <versionRange>[${gmaven.version},)</versionRange>
-                                        <goals>
-                                            <goal>compile</goal>
-                                            <goal>testCompile</goal>
-                                            <goal>generateStubs</goal>
-                                            <goal>generateTestStubs</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>xml-maven-plugin</artifactId>
-                                        <versionRange>[${xml.plugin.version},)</versionRange>
-                                        <goals>
-                                            <goal>validate</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.felix</groupId>
-                                        <artifactId>maven-scr-plugin</artifactId>
-                                        <versionRange>[${scr.plugin.version},)</versionRange>
-                                        <goals>
-                                            <goal>scr</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <dependencies>
+        <!-- provided -->
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
@@ -358,22 +294,53 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons.lang.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- compile -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
             <version>${scr.annotations.version}</version>
-            <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.commons.testing</artifactId>
+            <version>${sling.testing.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

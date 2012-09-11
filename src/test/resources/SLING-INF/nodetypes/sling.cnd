@@ -1,0 +1,65 @@
+<sling = 'http://sling.apache.org/jcr/sling/1.0'>
+
+[mix:language]
+  mixin
+  - jcr:language (string)
+
+[sling:Resource]
+  mixin
+  - sling:resourceType (string)
+
+[sling:ResourceSuperType]
+  mixin
+  - sling:resourceSuperType (string)
+
+//-----------------------------------------------------------------------------
+// Node type to be used as a replacement for nt:folder: it can be used
+// as a child of nt:folder and allows to add unstructured content
+// (See SLING-663)
+[sling:Folder] > nt:folder
+  - * (undefined) multiple
+  - * (undefined)
+  + * (nt:base) = sling:Folder version
+
+
+//-----------------------------------------------------------------------------
+// Mixin node type to turn any node into an nt:hierarchyNode to place
+// below any nt:folder (or extension thereof such as sling:Folder)
+// (See SLING-663)
+[sling:HierarchyNode] > nt:hierarchyNode
+    mixin
+
+
+//-----------------------------------------------------------------------------
+// Node type extending sling:Folder supporting the creation of folder
+// structured with child node ordering.
+// (See SLING-663)
+[sling:OrderedFolder] > sling:Folder
+    orderable
+  + * (nt:base) = sling:OrderedFolder version
+
+
+//-----------------------------------------------------------------------------
+// Mixin node type for defining vanity resource path.
+[sling:VanityPath]
+  mixin
+  - sling:vanityPath (string) multiple
+  - sling:redirect (boolean)
+  - sling:vanityOrder (long)
+
+//-----------------------------------------------------------------------------
+// Mixin node type for Sling Redirect nodes
+[sling:Redirect] > sling:Resource
+    mixin
+  - sling:target (Undefined)
+
+[sling:Message]
+  mixin
+  - sling:key (string)
+  - sling:message (undefined)
+
+[sling:MessageEntry] > sling:Message, nt:hierarchyNode
+
+// A jcrinstall configuration node
+[sling:OsgiConfig] > nt:unstructured, nt:hierarchyNode
+

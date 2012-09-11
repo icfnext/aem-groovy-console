@@ -19,6 +19,10 @@
             <outputDirectory>jcr_root</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${basedir}/src/main/scripts</directory>
+            <outputDirectory>jcr_root/etc/groovyconsole/scripts/samples</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${basedir}/src/main/content/META-INF</directory>
             <outputDirectory>META-INF</outputDirectory>
             <filtered>true</filtered>
@@ -28,14 +32,11 @@
         <dependencySet>
             <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
-            <unpack>false</unpack>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
             <useStrictFiltering>true</useStrictFiltering>
             <scope>provided</scope>
+            <unpack>false</unpack>
             <includes>
+                <include>com.citytechinc.cqlibrary:groovyconsole</include>
                 <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>
