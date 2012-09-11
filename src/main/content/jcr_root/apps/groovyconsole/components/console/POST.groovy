@@ -1,18 +1,14 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
+import com.day.cq.wcm.api.PageManager
 
 import groovy.json.JsonBuilder
-import groovy.transform.Field
 
 import javax.jcr.Session
 
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-
 import org.slf4j.LoggerFactory
 
-import com.day.cq.wcm.api.PageManager
-
-@Field log = LoggerFactory.getLogger('groovyconsole')
-
+log = LoggerFactory.getLogger('groovyconsole')
 resolver = resource.resourceResolver
 session = resolver.adaptTo(Session)
 pageManager = resolver.adaptTo(PageManager)
