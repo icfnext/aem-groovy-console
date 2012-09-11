@@ -16,13 +16,13 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = 1L
 
-    public static final String SCRIPT_FOLDER_REL_PATH = "scripts"
+    static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
-    public static final String CONSOLE_ROOT = "/etc/groovyconsole"
+    static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    public static final String FILE_NAME_PARAM = "fileName"
+    static final String FILE_NAME_PARAM = "fileName"
 
-    public static final String SCRIPT_CONTENT_PARAM = "scriptContent"
+    static final String SCRIPT_CONTENT_PARAM = "scriptContent"
 
     @Reference
     private SlingRepository repository
