@@ -1,5 +1,7 @@
 package com.citytechinc.cqlibrary.groovyconsole
 
+import groovy.transform.Synchronized
+
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 
 import spock.lang.Shared
@@ -25,23 +27,26 @@ abstract class AbstractRepositorySpec extends Specification {
         session.logout()
     }
 
+    @Synchronized
     def getRepository() {
-        synchronized (AbstractRepositorySpec) {
-            if (!repository) {
-                RepositoryUtil.startRepository()
+        if (!repository) {
+            println 'starting repo'
 
-                repository = RepositoryUtil.getRepository()
+            RepositoryUtil.startRepository()
 
-                addShutdownHook {
-                    RepositoryUtil.stopRepository()
-                }
+            repository = RepositoryUtil.getRepository()
+
+            addShutdownHook {
+                RepositoryUtil.stopRepository()
             }
         }
+
+        println 'got repo'
 
         repository
     }
 
     def registerNodeType(cndPath) {
-        RepositoryUtil.registerNodeType(session, AbstractRepositorySpec.class.getResourceAsStream(cndPath))
+        RepositoryUtil.registerNodeType(session, this.class.getResourceAsStream(cndPath))
     }
 }
