@@ -17,10 +17,6 @@ abstract class AbstractRepositorySpec extends Specification {
 
     def setupSpec() {
         session = getRepository().loginAdministrative(null)
-
-        NODE_TYPES.each { type ->
-            registerNodeType(type)
-        }
     }
 
     def cleanupSpec() {
@@ -34,6 +30,8 @@ abstract class AbstractRepositorySpec extends Specification {
 
             repository = RepositoryUtil.getRepository()
 
+            registerNodeTypes()
+
             addShutdownHook {
                 RepositoryUtil.stopRepository()
             }
@@ -42,9 +40,15 @@ abstract class AbstractRepositorySpec extends Specification {
         repository
     }
 
-    def registerNodeType(type) {
-        this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
-            RepositoryUtil.registerNodeType(session, stream)
+    def registerNodeTypes() {
+        session = getRepository().loginAdministrative(null)
+
+        NODE_TYPES.each { type ->
+            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
+            }
         }
+
+        session.logout()
     }
 }
