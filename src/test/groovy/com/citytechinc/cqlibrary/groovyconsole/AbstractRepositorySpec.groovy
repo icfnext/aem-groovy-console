@@ -19,7 +19,7 @@ abstract class AbstractRepositorySpec extends Specification {
         session = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
-            registerNodeType("/SLING-INF/nodetypes/${type}.cnd")
+            registerNodeType(type)
         }
     }
 
@@ -30,8 +30,6 @@ abstract class AbstractRepositorySpec extends Specification {
     @Synchronized
     def getRepository() {
         if (!repository) {
-            println 'starting repo'
-
             RepositoryUtil.startRepository()
 
             repository = RepositoryUtil.getRepository()
@@ -41,12 +39,12 @@ abstract class AbstractRepositorySpec extends Specification {
             }
         }
 
-        println 'got repo'
-
         repository
     }
 
-    def registerNodeType(cndPath) {
-        RepositoryUtil.registerNodeType(session, this.class.getResourceAsStream(cndPath))
+    def registerNodeType(type) {
+        this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+            RepositoryUtil.registerNodeType(session, stream)
+        }
     }
 }
