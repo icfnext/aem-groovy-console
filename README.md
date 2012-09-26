@@ -4,7 +4,7 @@
 
 ## Overview
 
-The CQ5 Groovy Console provides an interface for running Groovy scripts within the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or perform arbitrary tasks using the APIs available in the container.
+The CQ5 Groovy Console provides an interface for running Groovy scripts within the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or perform arbitrary tasks using the available APIs.
 
 ## Requirements
 
