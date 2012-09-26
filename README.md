@@ -2,6 +2,10 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
+## Overview
+
+The CQ5 Groovy Console provides an interface for running Groovy scripts within the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or perform arbitrary tasks using the APIs available in the container.
+
 ## Requirements
 
 * CQ 5.4 or 5.5 running on localhost:4502
