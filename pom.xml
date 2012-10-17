@@ -20,6 +20,13 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+    
+    <repositories>
+		<repository>
+			<id>adobe-repo</id>
+			<url>http://repo.adobe.com/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
 
 	<scm>
 		<connection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</connection>
