@@ -200,6 +200,7 @@
 					<instructions>
 						<Export-Package>com.citytechinc.cqlibrary.groovyconsole.*</Export-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
+						<Import-Package>org.apache.sling.api;version="[2.1,3)"</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
