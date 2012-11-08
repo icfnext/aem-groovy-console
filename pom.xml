@@ -249,6 +249,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- mvn clean install ghDownloads:upload -P install-groovy,local-author -->
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>downloads-maven-plugin</artifactId>
