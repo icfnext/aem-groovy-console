@@ -1,4 +1,5 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 import com.day.cq.wcm.api.PageManager
 
 import groovy.json.JsonBuilder
@@ -38,6 +39,8 @@ def originalErr = System.err
 
 System.setOut(printStream)
 System.setErr(printStream)
+
+GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
 def result = ''
 
@@ -91,6 +94,8 @@ try {
 } finally {
     System.setOut(originalOut)
     System.setErr(originalErr)
+
+    GroovyConsoleMetaClassRegistry.removeMetaClasses()
 }
 
 def time = getRunningTime(startTime)

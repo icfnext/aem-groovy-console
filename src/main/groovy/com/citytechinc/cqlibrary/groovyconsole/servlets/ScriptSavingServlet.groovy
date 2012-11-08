@@ -11,18 +11,18 @@ import org.apache.sling.jcr.api.SlingRepository
 
 import com.day.cq.commons.jcr.JcrConstants
 
-@SlingServlet(paths = "/bin/groovyconsole/save", methods = "POST", description = "Writes script to nt:file node.")
+@SlingServlet(paths = '/bin/groovyconsole/save', methods = 'POST', description = 'Writes script to nt:file node.')
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     private static final long serialVersionUID = 1L
 
-    static final String SCRIPT_FOLDER_REL_PATH = "scripts"
+    static final String SCRIPT_FOLDER_REL_PATH = 'scripts'
 
-    static final String CONSOLE_ROOT = "/etc/groovyconsole"
+    static final String CONSOLE_ROOT = '/etc/groovyconsole'
 
-    static final String FILE_NAME_PARAM = "fileName"
+    static final String FILE_NAME_PARAM = 'fileName'
 
-    static final String SCRIPT_CONTENT_PARAM = "scriptContent"
+    static final String SCRIPT_CONTENT_PARAM = 'scriptContent'
 
     @Reference
     private SlingRepository repository
@@ -45,8 +45,8 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         def fileNode = folderNode.addNode(name, JcrConstants.NT_FILE)
         def resNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
-        resNode.set(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
-        resNode.set(JcrConstants.JCR_DATA, binary)
+        resNode.setProperty(JcrConstants.JCR_MIMETYPE, 'application/octet-stream')
+        resNode.setProperty(JcrConstants.JCR_DATA, binary)
 
         session.save()
 
@@ -56,7 +56,15 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
     private def getScriptFolderNode() {
         def consoleNode = session.getNode(CONSOLE_ROOT)
 
-        consoleNode.getOrAddNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
+        def scriptFolderNode
+
+        if (consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)) {
+            scriptFolderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
+        } else {
+            scriptFolderNode = consoleNode.addNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
+        }
+
+        scriptFolderNode
     }
 
     private def getScriptBinary(script) {
@@ -66,7 +74,7 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         def binary = null
 
         try {
-            stream = new ByteArrayInputStream(script.getBytes("UTF-8"))
+            stream = new ByteArrayInputStream(script.getBytes('UTF-8'))
 
             binary = valueFactory.createBinary(stream)
         } finally {

@@ -7,6 +7,9 @@ import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import spock.lang.Shared
 import spock.lang.Specification
 
+/**
+ * Abstract Spock specification for JCR-based testing.
+ */
 abstract class AbstractRepositorySpec extends Specification {
 
     static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
@@ -40,7 +43,7 @@ abstract class AbstractRepositorySpec extends Specification {
         repository
     }
 
-    def registerNodeTypes() {
+    private def registerNodeTypes() {
         session = getRepository().loginAdministrative(null)
 
         NODE_TYPES.each { type ->
