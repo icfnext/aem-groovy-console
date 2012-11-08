@@ -94,8 +94,6 @@ try {
 } finally {
     System.setOut(originalOut)
     System.setErr(originalErr)
-
-    GroovyConsoleMetaClassRegistry.removeMetaClasses()
 }
 
 def time = getRunningTime(startTime)
