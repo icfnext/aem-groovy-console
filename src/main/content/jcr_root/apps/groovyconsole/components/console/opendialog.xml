@@ -15,5 +15,6 @@
     <listeners
         jcr:primaryType="nt:unstructured"
         beforeshow="function() { refreshOpenDialog(this); }"
+        hide="function() { enableToolbar(); }"
         />
 </jcr:root>

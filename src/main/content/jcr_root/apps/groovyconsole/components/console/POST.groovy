@@ -1,23 +1,15 @@
 import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.MetaClassRegistry
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
+import com.day.cq.wcm.api.PageManager
 
 import groovy.json.JsonBuilder
-import groovy.transform.Field
 
 import javax.jcr.Session
 
-import org.apache.commons.lang.time.StopWatch
-
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-
 import org.slf4j.LoggerFactory
 
-import com.day.cq.wcm.api.PageManager
-
-@Field log = LoggerFactory.getLogger('groovyconsole')
-
-MetaClassRegistry.registerMetaClasses()
-
+log = LoggerFactory.getLogger('groovyconsole')
 resolver = resource.resourceResolver
 session = resolver.adaptTo(Session)
 pageManager = resolver.adaptTo(PageManager)
@@ -48,11 +40,13 @@ def originalErr = System.err
 System.setOut(printStream)
 System.setErr(printStream)
 
+GroovyConsoleMetaClassRegistry.registerMetaClasses()
+
 def result = ''
 
-def stopWatch = new StopWatch()
+def startTime = System.currentTimeMillis()
 
-stopWatch.start()
+log.debug "script execution started"
 
 try {
     def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
@@ -78,31 +72,35 @@ try {
                 session.workspace.copy(src, dst)
             }]
         }
+
+        delegate.save = {
+            session.save()
+        }
+
+        delegate.getService = { serviceType ->
+            sling.getService(serviceType)
+        }
     }
 
     result = script.run()
 } catch (MultipleCompilationErrorsException e) {
     log.error('script compilation error', e)
 
-    stackTrace.append(e.message - 'startup failed, Script1.groovy: ')
+    e.printStackTrace(errWriter)
 } catch (Throwable t) {
     log.error('error running script', t)
-
-    sanitizeStacktrace(t)
-
-    def cause = t
-
-    while (cause = cause?.cause) {
-        sanitizeStacktrace(cause)
-    }
 
     t.printStackTrace(errWriter)
 } finally {
     System.setOut(originalOut)
     System.setErr(originalErr)
+
+    GroovyConsoleMetaClassRegistry.removeMetaClasses()
 }
 
-stopWatch.stop()
+def time = getRunningTime(startTime)
+
+log.debug "script execution completed, running time: $time"
 
 response.contentType = 'application/json'
 
@@ -112,32 +110,15 @@ json {
     executionResult result as String
     outputText stream.toString(encoding)
     stacktraceText stackTrace.toString()
-    runningTime stopWatch.toString()
+    runningTime time
 }
 
 out.println json.toString()
 
-def escape(object) {
-    object ? object.toString().replaceAll(/\n/, /\\\n/).replaceAll(/"/, /\\"/) : ''
-}
+def getRunningTime(startTime) {
+    def date = new Date()
 
-def sanitizeStacktrace(t) {
-    def filtered = [
-        'java.', 'javax.', 'sun.',
-        'groovy.', 'org.codehaus.groovy.',
-        'groovyconsole'
-    ]
+    date.setTime(System.currentTimeMillis() - startTime)
 
-    def trace = t.stackTrace
-    def newTrace = []
-
-    trace.each { stackTraceElement ->
-        if (filtered.every { !stackTraceElement.className.startsWith(it) }) {
-            newTrace << stackTraceElement
-        }
-    }
-
-    def clean = newTrace.toArray(newTrace as StackTraceElement[])
-
-    t.stackTrace = clean
+    date.format('HH:mm:ss.SSS', TimeZone.getTimeZone('GMT'))
 }

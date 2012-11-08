@@ -1,0 +1,262 @@
+/*
+ * Copyright 1997-2008 Day Management AG
+ * Barfuesserplatz 6, 4001 Basel, Switzerland
+ * All Rights Reserved.
+ *
+ * This software is the confidential and proprietary information of
+ * Day Management AG, ("Confidential Information"). You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with Day.
+ */
+<cq = 'http://www.day.com/jcr/cq/1.0'>
+<sling = 'http://sling.apache.org/jcr/sling/1.0'>
+
+/**
+ * Defines the default CQ page
+ *
+ * @node jcr:content primary content of the page
+ */
+[cq:Page] > nt:hierarchyNode
+  orderable
+  + jcr:content (nt:base) = nt:unstructured copy primary
+  + * (nt:base) = nt:base version
+
+/**
+ * Defines a mixin type that mark nodes as pseudo pages. This makes them
+ * adaptable to Page and enabled WCM editing support.
+ */
+[cq:PseudoPage] mixin
+
+/**
+ * Defines the default page content node with the minimal properties are used by
+ * the WCM. Note that the page content does not need to have this type.
+ *
+ * @prop jcr:title title of this page
+ * @prop jcr:description description of this page
+ * @prop cq:template path to the template that was used to create the page
+ * @prop cq:allowedTemplates list of regexp for allowed template paths
+ * @prop pageTitle title that usually displayed in the &lt;title> tag
+ * @prop navTitle title that is usually used in navigation
+ * @prop hideInNav specifies if the page should be hidden in the navigation
+ * @prop onTime time when this page gets valid
+ * @prop offTime time when this page gets invalid
+ * @prop cq:lastModified the date the page (or its paragraphs) was last modified.
+ * @prop cq:lastModifiedBy the user who changed the page (or its paragraphs) last.
+ * @prop jcr:language the content language of the page
+ */
+[cq:PageContent] > nt:unstructured, mix:title, mix:created, cq:OwnerTaggable, sling:VanityPath, cq:ReplicationStatus, sling:Resource
+    orderable
+    - cq:template (string)
+    - cq:allowedTemplates (string) multiple
+    - pageTitle (string)
+    - navTitle (string)
+    - hideInNav (boolean)
+    - onTime (date)
+    - offTime (date)
+    - cq:lastModified (date)
+    - cq:lastModifiedBy (string)
+    - cq:designPath (string)
+    - jcr:language (string)
+
+/**
+ * Defines a CQ template
+ *
+ * @node jcr:content default content for new pages
+ * @node icon.png a file that holds a characteristic icon
+ * @node thumbnail.png a file that holds a characteristic thumbnail image
+ * @node workflows auto assign workflow configuration
+ *          the configuration will follow the structure below:
+ *          + workflows
+ *              + name1
+ *                  - cq:path
+ *                  - cq:workflowName
+ * @prop allowedParents regexp patterns to path of templates that are allowed as
+ *          parent templates.
+ * @prop allowedChildren regexp patterns to path of templates that are allowed as
+ *          child templates.
+ * @prop ranking position in the list of templates in create page dialog
+ *
+ */
+[cq:Template] > nt:hierarchyNode, mix:title
+  - * (undefined)
+  - * (undefined) multiple
+  + * (nt:base) = nt:base multiple version
+  + jcr:content (nt:base) copy
+  + icon.png (nt:file) copy
+  + thumbnail.png (nt:file) copy
+  + workflows (nt:base) copy
+  - allowedParents (string) multiple
+  - allowedChildren (string) multiple
+  - ranking (long)
+
+/**
+ * Defines a CQ component.
+ *
+ * @prop jcr:title title of this component
+ * @prop jcr:description description of this component
+ * @node dialog primary dialog
+ * @prop dialogPath primary dialog path (alternative to dialog)
+ * @node design_dialog design dialog
+ * @prop cq:cellName name of the design cell.
+ * @prop cq:isContainer indicates if this is a container component. this forces
+            the cell names of child components to be used instead of path
+            names. eg, the parsys is a container component. if this values is
+            not defined, the existence of a cq:childEditConfig is used for this
+            check.
+ * @prop cq:noDecoration if true, no decoration DIV tags are drawn when including this component
+ * @node cq:editConfig edit config that defines the parameters for the edit bar
+ * @node cq:childEditConfig edit config that is inherited to child components
+ * @node cq:htmlTag defines additional tag attributes that are added to the
+ *          surrounding div tag when the component is included
+ * @node icon.png a file that holds a characteristic icon
+ * @node thumbnail.png a file that holds a characteristic thumbnail image
+ * @prop allowedParents regexp patterns to path of components that are allowed as
+ *          parent components.
+ * @prop allowedChildren regexp patterns to path of components that are allowed as
+ *          child components.
+ * @node virtual contains subnodes that reflect virtual components that use for
+ *          the component DD
+ * @prop componentGroup name of the component group for the component DD
+ * @node cq:infoProviders contains subnodes of which each has a property
+         'className' that refers to a PageInfoProvider.
+ */
+[cq:Component] > nt:folder, mix:title, sling:ResourceSuperType
+  - * (undefined)
+  - * (undefined) multiple
+  + * (nt:base) = nt:base multiple version
+  + dialog (nt:base) = nt:unstructured copy
+  - dialogPath (string)
+  + design_dialog (nt:base) = nt:unstructured copy
+  - cq:cellName (string)
+  - cq:isContainer (boolean)
+  - cq:noDecoration (boolean)
+  + cq:editConfig (cq:EditConfig) = cq:EditConfig copy
+  + cq:childEditConfig (cq:EditConfig) = cq:EditConfig copy
+  + cq:htmlTag (nt:base) = nt:unstructured copy
+  + icon.png (nt:file) copy
+  + thumbnail.png (nt:file) copy
+  - allowedParents (string) multiple
+  - allowedChildren (string) multiple
+  + virtual (nt:base) = sling:Folder copy
+  - componentGroup (string)
+  + cq:infoProviders (nt:base) = nt:unstructured copy
+
+/**
+ * Defines a CQ Component as mixin type
+ */
+[cq:ComponentMixin] > cq:Component mixin
+
+/**
+ * Defines the configuration for the 'editbar'
+ *
+ * @prop cq:dialogMode mode of the dialog.
+ *          use 'floating' for a normal, floating dialog,
+ *          use 'inline' for inline editing,
+ *          use 'auto' for automatic detection (depending on available space).
+ * @node cq:inplaceEditing inplace editing config for this component
+ * @prop cq:layout layout of the edit bar.
+ *          use 'editbar' for a edit bar,
+ *          use 'rollover' for a roll over frame,
+ *          use 'auto for automatic detection
+ * @node cq:formParameters additional parameters to add to the dialog form
+ * @prop cq:actions list of actions (edit bar buttons, or menu items)
+ * @node cq:actionConfigs widget configurations for edit bar or menu items.
+ * @prop cq:emptyText text to be displayed if not visual content is present
+ * @node cq:dropTargets collection of {@link cq:DropTargetConfig} nodes.
+ * @prop cq:inherit if true, missing values will be inherited from the super config
+  */
+[cq:EditConfig] > nt:unstructured, nt:hierarchyNode
+  orderable
+  - cq:inherit (boolean)
+  - cq:dialogMode (string) < 'auto', 'floating', 'inline'
+  + cq:inplaceEditing (cq:InplaceEditingConfig) = cq:InplaceEditingConfig
+  - cq:layout (string) < 'editbar', 'rollover', 'auto'
+  + cq:formParameters (nt:base) = nt:unstructured
+  - cq:actions (string) multiple
+  + cq:actionConfigs (nt:base) = nt:unstructured
+  - cq:emptyText (string)
+  + cq:dropTargets (nt:base) = nt:unstructured
+  + cq:listeners (nt:base) = cq:EditListenersConfig
+
+/**
+ * Configures one drop target of a component. The name of the this node will
+ * be used as DD id.
+ *
+ * @prop accept list of mime types this drop target accepts. eg: ["image/*"]
+ * @prop groups list of DD groups that accept a source
+ * @prop propertyName name of the property to store the reference
+ */
+[cq:DropTargetConfig] > nt:unstructured
+  orderable
+  - accept (string) multiple
+  - groups (string) multiple
+  - propertyName (string)
+  + parameters (nt:base) = nt:unstructured
+
+/**
+ * Configures inplace editing of a component.
+ *
+ * @prop active true to activate inplace editing for the component
+ * @prop editorType ID of inplace editor to use
+ * @prop configPath path to editor's config (optional)
+ * @node config editor's config (used if no configPath is specified; optional)
+ */
+[cq:InplaceEditingConfig] > nt:unstructured
+  - active (boolean)
+  - editorType (string)
+  - configPath (string)
+  + config (nt:unstructured) = nt:unstructured
+
+/**
+ * Defines a virtual CQ component. They are currently used only for the
+ * new component DD wizard.
+ *
+ * @prop jcr:title title of this component
+ * @prop jcr:description description of this component
+ * @node cq:editConfig edit config that defines the parameters for the edit bar
+ * @node cq:childEditConfig edit config that is inherited to child components
+ * @node icon.png a file that holds a characteristic icon
+ * @node thumbnail.png a file that holds a characteristic thumbnail image
+ * @prop allowedParents regexp patterns to path of components that are allowed as
+ *          parent components.
+ * @prop allowedChildren regexp patterns to path of components that are allowed as
+ *          child components.
+ * @prop componentGroup name of the component group for the component DD
+ */
+[cq:VirtualComponent] > nt:folder, mix:title
+  - * (undefined)
+  - * (undefined) multiple
+  + * (nt:base) = nt:base multiple version
+  + cq:editConfig (cq:EditConfig) = cq:EditConfig copy
+  + icon.png (nt:file) copy
+  + thumbnail.png (nt:file) copy
+  - allowedParents (string) multiple
+  - allowedChildren (string) multiple
+  - componentGroup (string)
+
+/**
+ * Defines the (client side) listeners to be executed on an edit event.
+ * the values either need to reference a valid client side listener function
+ * or contain a predefined shortcut:
+ *   REFRESH_PAGE
+ *   REFRESH_SELF
+ *   REFRESH_PARENT
+ *
+ * @prop aftercreate fires after a component was created
+ * @prop afteredit   fires after a component was edited (modified)
+ * @prop afterdelete fires after a component was deleted
+ * @prop afterinsert fires after a component was added to this container
+ * @prop afterremove fires after a component was removed from this container
+ * @prop aftermove   fires after components were moved in this container
+ */
+[cq:EditListenersConfig]
+  - * (undefined)
+  - * (undefined) multiple
+  + * (nt:base) = nt:base multiple version
+  - aftercreate (string)
+  - afteredit (string)
+  - afterdelete (string)
+  - afterinsert (string)
+  - afterremove (string)
+  - aftermove (string)
