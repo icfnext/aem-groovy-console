@@ -6,7 +6,7 @@
     <groupId>com.citytechinc.cqlibrary</groupId>
     <artifactId>groovyconsole</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <name>CQ5 Groovy Console</name>
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -35,8 +35,8 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.6.4</slf4j.version>
-        <groovy.version>1.8.7</groovy.version>
-        <spock.version>0.6-groovy-1.8</spock.version>
+        <groovy.version>2.0.5</groovy.version>
+        <spock.version>0.7-groovy-2.0</spock.version>
         <junit.version>4.8.2</junit.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
@@ -56,7 +56,7 @@
         <scr.plugin.version>1.8.0</scr.plugin.version>
         <assembly.plugin.version>2.3</assembly.plugin.version>
         <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>1.8</gmaven.provider.version>
+        <gmaven.provider.version>2.0</gmaven.provider.version>
         <github.downloads.plugin.version>0.6</github.downloads.plugin.version>
     </properties>
 
