@@ -4,7 +4,7 @@
 
 ## Overview
 
-The CQ5 Groovy Console provides an interface for running Groovy scripts within the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or perform arbitrary tasks using the available APIs.
+The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or perform arbitrary tasks using the available APIs.  Bindings and methods are provided for accessing the JCR session and OSGi services.
 
 ## Requirements
 
@@ -47,7 +47,7 @@ Additional build profiles may be added in the project's pom.xml to support deplo
 Sample code:
 
     getPage('/content/geometrixx').recurse { page ->
-        println "${page.title} - ${page.path}"
+        println "page title = ${page.title}, path = ${page.path}"
     }
 
 Additional sample scripts can be found in src/main/scripts.
