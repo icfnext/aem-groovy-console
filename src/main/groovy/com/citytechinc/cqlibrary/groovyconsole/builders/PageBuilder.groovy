@@ -17,7 +17,7 @@ class PageBuilder extends BuilderSupport {
         if (isContentNode(name)) {
             currentNode = currentNode.getOrAddNode(name)
         } else {
-            currentNode = currentNode.getOrAddNode(name, 'cq:Page')
+            currentNode = getOrAddPage(name: name)
         }
 
         currentNode
@@ -28,7 +28,7 @@ class PageBuilder extends BuilderSupport {
         if (isContentNode(name)) {
             currentNode = currentNode.getOrAddNode(name, value)
         } else {
-            currentNode = currentNode.getOrAddNode(name, 'cq:Page')
+            currentNode = getOrAddPage(name: name, title: value)
         }
 
         currentNode
@@ -41,11 +41,7 @@ class PageBuilder extends BuilderSupport {
 
             setAttributes(currentNode, attributes)
         } else {
-            currentNode = currentNode.getOrAddNode(name, 'cq:Page')
-
-            def contentNode = currentNode.getOrAddNode('jcr:content')
-
-            setAttributes(contentNode, attributes)
+            currentNode = getOrAddPage(name: name, attributes: attributes)
         }
 
         currentNode
@@ -58,11 +54,7 @@ class PageBuilder extends BuilderSupport {
 
             setAttributes(currentNode, attributes)
         } else {
-            currentNode = currentNode.getOrAddNode(name, 'cq:Page')
-
-            def contentNode = currentNode.getOrAddNode('jcr:content')
-
-            setAttributes(contentNode, attributes)
+            currentNode = getOrAddPage(name: name, title: value, attributes: attributes)
         }
 
         currentNode
@@ -78,6 +70,21 @@ class PageBuilder extends BuilderSupport {
         session.save()
 
         currentNode = currentNode.parent
+    }
+
+    private def getOrAddPage(map) {
+        def pageNode = currentNode.getOrAddNode(map.name, 'cq:Page')
+        def contentNode = pageNode.getOrAddNode('jcr:content')
+
+        if (map.title) {
+            contentNode.set('jcr:title', map.title)
+        }
+
+        if (map.attributes) {
+            setAttributes(contentNode, map.attributes)
+        }
+
+        pageNode
     }
 
     private boolean isContentNode(name) {

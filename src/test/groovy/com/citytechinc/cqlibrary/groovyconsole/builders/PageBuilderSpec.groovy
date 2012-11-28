@@ -12,16 +12,17 @@ class PageBuilderSpec extends AbstractRepositorySpec {
 
         expect:
         session.nodeExists('/foo')
+        session.nodeExists('/foo/jcr:content')
         session.getNode('/foo').primaryNodeType.name == 'cq:Page'
     }
 
     def 'build page with content'() {
         setup:
-        def pageProperties = ['jcr:title': 'CITYTECH, Inc.', 'sling:resourceType': 'foundation/components/page']
+        def pageProperties = ['sling:resourceType': 'foundation/components/page']
         def parProperties = ['sling:resourceType': 'foundation/components/parsys']
 
         pageBuilder.content {
-            citytechinc {
+            citytechinc('CITYTECH, Inc.') {
                 'jcr:content'(pageProperties) {
                     mainpar(parProperties)
                 }
@@ -32,20 +33,20 @@ class PageBuilderSpec extends AbstractRepositorySpec {
         def pageNode = session.getNode('/content/citytechinc')
         def parNode = session.getNode('/content/citytechinc/jcr:content/mainpar')
 
-        pageHasExpectedProperties(pageNode, pageProperties)
+        pageHasExpectedProperties(pageNode, 'CITYTECH, Inc.', pageProperties)
         nodeHasExpectedProperties(parNode, parProperties)
     }
 
     def 'build pages with content'() {
         setup:
-        def page1Properties = ['jcr:title': 'CITYTECH, Inc.', 'sling:resourceType': 'foundation/components/page']
-        def page2Properties = ['jcr:title': 'CTMSP', 'sling:resourceType': 'foundation/components/page']
+        def page1Properties = ['sling:resourceType': 'foundation/components/page']
+        def page2Properties = ['sling:resourceType': 'foundation/components/page']
 
         pageBuilder.content {
-            citytechinc {
+            citytechinc('CITYTECH, Inc.') {
                 'jcr:content'(page1Properties)
             }
-            ctmsp {
+            ctmsp('CTMSP') {
                 'jcr:content'(page2Properties)
             }
         }
@@ -54,15 +55,17 @@ class PageBuilderSpec extends AbstractRepositorySpec {
         def page1Node = session.getNode('/content/citytechinc')
         def page2Node = session.getNode('/content/ctmsp')
 
-        pageHasExpectedProperties(page1Node, page1Properties)
-        pageHasExpectedProperties(page2Node, page2Properties)
+        pageHasExpectedProperties(page1Node, 'CITYTECH, Inc.', page1Properties)
+        pageHasExpectedProperties(page2Node, 'CTMSP', page2Properties)
     }
 
-    void pageHasExpectedProperties(node, properties) {
+    void pageHasExpectedProperties(node, title, properties) {
         assert node.primaryNodeType.name == 'cq:Page'
         assert node.hasNode('jcr:content')
 
         def contentNode = node.getNode('jcr:content')
+
+        assert contentNode.get('jcr:title') == title
 
         properties.each { k, v ->
             assert contentNode.get(k) == v

@@ -1,4 +1,5 @@
-import com.citytechinc.cqlibrary.groovyconsole.builder.JcrBuilder
+import com.citytechinc.cqlibrary.groovyconsole.builders.NodeBuilder
+import com.citytechinc.cqlibrary.groovyconsole.builders.PageBuilder
 import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 import com.day.cq.wcm.api.PageManager
 
@@ -26,7 +27,8 @@ def scriptBinding = new Binding([
     sling: sling,
     pageManager: pageManager,
     resourceResolver: resolver,
-    builder: new JcrBuilder(session)
+    nodeBuilder: new NodeBuilder(session),
+    pageBuilder: new PageBuilder(session)
 ])
 
 def shell = new GroovyShell(scriptBinding)
