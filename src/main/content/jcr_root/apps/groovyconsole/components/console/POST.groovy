@@ -40,17 +40,56 @@ def originalErr = System.err
 System.setOut(printStream)
 System.setErr(printStream)
 
-GroovyConsoleMetaClassRegistry.registerMetaClasses()
-
 def result = ''
 
 def startTime = System.currentTimeMillis()
 
 log.debug "script execution started"
 
+ClassLoader oldClassLoader = Thread.currentThread().contextClassLoader
+Thread.currentThread().contextClassLoader = new GroovyClassLoader()
+
 try {
+    GroovyConsoleMetaClassRegistry.registerMetaClasses()
+
     def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
 
+    addMetaClass(script)
+
+    result = script.run()
+} catch (MultipleCompilationErrorsException e) {
+    log.error('script compilation error', e)
+
+    e.printStackTrace(errWriter)
+} catch (Throwable t) {
+    log.error('error running script', t)
+
+    t.printStackTrace(errWriter)
+} finally {
+    Thread.currentThread().setContextClassLoader(oldClassLoader)
+
+    System.setOut(originalOut)
+    System.setErr(originalErr)
+}
+
+def time = getRunningTime(startTime)
+
+log.debug "script execution completed, running time: $time"
+
+response.contentType = 'application/json'
+
+def json = new JsonBuilder()
+
+json {
+    executionResult result as String
+    outputText stream.toString(encoding)
+    stacktraceText stackTrace.toString()
+    runningTime time
+}
+
+out.println json.toString()
+
+def addMetaClass(script) {
     script.metaClass {
         delegate.getNode = { path ->
             session.getNode(path)
@@ -81,37 +120,7 @@ try {
             sling.getService(serviceType)
         }
     }
-
-    result = script.run()
-} catch (MultipleCompilationErrorsException e) {
-    log.error('script compilation error', e)
-
-    e.printStackTrace(errWriter)
-} catch (Throwable t) {
-    log.error('error running script', t)
-
-    t.printStackTrace(errWriter)
-} finally {
-    System.setOut(originalOut)
-    System.setErr(originalErr)
 }
-
-def time = getRunningTime(startTime)
-
-log.debug "script execution completed, running time: $time"
-
-response.contentType = 'application/json'
-
-def json = new JsonBuilder()
-
-json {
-    executionResult result as String
-    outputText stream.toString(encoding)
-    stacktraceText stackTrace.toString()
-    runningTime time
-}
-
-out.println json.toString()
 
 def getRunningTime(startTime) {
     def date = new Date()

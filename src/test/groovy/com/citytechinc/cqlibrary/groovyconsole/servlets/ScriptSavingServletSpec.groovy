@@ -1,16 +1,14 @@
 package com.citytechinc.cqlibrary.groovyconsole.servlets
 
-import com.citytechinc.cqlibrary.groovyconsole.AbstractRepositorySpec
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
+import javax.jcr.RepositoryException
 
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 
-import com.day.cq.commons.jcr.JcrConstants
-
-import javax.jcr.RepositoryException
-
 import spock.lang.Shared
+
+import com.citytechinc.cqlibrary.groovyconsole.AbstractRepositorySpec
+import com.day.cq.commons.jcr.JcrConstants
 
 class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
@@ -21,8 +19,6 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
     @Shared script
 
     def setupSpec() {
-        GroovyConsoleMetaClassRegistry.registerNodeMetaClass()
-
         servlet = new ScriptSavingServlet()
         servlet.session = session
 
@@ -36,9 +32,8 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
         def request = mockRequest()
         def response = mockResponse()
 
-        and: "create console node"
-        def consoleNode = session.rootNode.getOrAddNode(ScriptSavingServlet.CONSOLE_ROOT.substring(1))
-
+        and: "create console root node"
+        session.rootNode.getOrAddNode(ScriptSavingServlet.CONSOLE_ROOT.substring(1))
         session.save()
 
         when: "post to servlet"
@@ -46,22 +41,6 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
         then: "script node has been created"
         scriptNodeCreated()
-    }
-
-    def "overwrite existing script"() {
-        setup: "mock request with file name and script parameters"
-        def request = mockRequest()
-        def response = mockResponse()
-
-        when: "post to servlet"
-        servlet.doPost(request, response)
-
-        then: "script node has been created"
-        scriptNodeCreated()
-
-        cleanup: "remove test node"
-        session.getNode('/etc').remove()
-        session.save()
     }
 
     def "missing console root node"() {

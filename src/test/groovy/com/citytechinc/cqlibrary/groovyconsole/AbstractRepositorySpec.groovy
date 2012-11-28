@@ -7,6 +7,10 @@ import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import spock.lang.Shared
 import spock.lang.Specification
 
+import com.citytechinc.cqlibrary.groovyconsole.builders.NodeBuilder
+import com.citytechinc.cqlibrary.groovyconsole.builders.PageBuilder
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry;
+
 /**
  * Abstract Spock specification for JCR-based testing.
  */
@@ -14,16 +18,31 @@ abstract class AbstractRepositorySpec extends Specification {
 
     static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
 
+    static final def SYSTEM_NODE_NAMES = ['jcr:system', 'rep:policy']
+
     static def repository
 
     @Shared session
 
+    @Shared nodeBuilder
+
+    @Shared pageBuilder
+
     def setupSpec() {
         session = getRepository().loginAdministrative(null)
+        nodeBuilder = new NodeBuilder(session)
+        pageBuilder = new PageBuilder(session)
+
+        GroovyConsoleMetaClassRegistry.registerNodeMetaClass()
     }
 
     def cleanupSpec() {
         session.logout()
+    }
+
+    def cleanup() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
     }
 
     @Synchronized
