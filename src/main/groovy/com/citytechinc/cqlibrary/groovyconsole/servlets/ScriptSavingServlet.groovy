@@ -11,10 +11,10 @@ import org.apache.sling.jcr.api.SlingRepository
 
 import com.day.cq.commons.jcr.JcrConstants
 
-@SlingServlet(paths = '/bin/groovyconsole/save', methods = 'POST', description = 'Writes script to nt:file node.')
+@SlingServlet(paths = '/bin/groovyconsole/save', description = 'Writes script to nt:file node.')
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
-    private static final long serialVersionUID = 1L
+    static final long serialVersionUID = 1L
 
     static final String SCRIPT_FOLDER_REL_PATH = 'scripts'
 
@@ -25,7 +25,7 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
     static final String SCRIPT_CONTENT_PARAM = 'scriptContent'
 
     @Reference
-    private SlingRepository repository
+    SlingRepository repository
 
     def session
 
@@ -53,7 +53,7 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         binary.dispose()
     }
 
-    private def getScriptFolderNode() {
+    def getScriptFolderNode() {
         def consoleNode = session.getNode(CONSOLE_ROOT)
 
         def scriptFolderNode
@@ -67,32 +67,23 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         scriptFolderNode
     }
 
-    private def getScriptBinary(script) {
-        def valueFactory = session.valueFactory
-
-        def stream = null
+    def getScriptBinary(script) {
         def binary = null
 
-        try {
-            stream = new ByteArrayInputStream(script.getBytes('UTF-8'))
-
-            binary = valueFactory.createBinary(stream)
-        } finally {
-            if (stream) {
-                stream.close()
-            }
-        }
+		new ByteArrayInputStream(script.getBytes('UTF-8')).withStream { stream ->
+			binary = session.valueFactory.createBinary(stream)
+		}
 
         return binary
     }
 
     @Activate
-    private void activate() {
+    void activate() {
         session = repository.loginAdministrative(null)
     }
 
     @Deactivate
-    private void deactivate() {
+    void deactivate() {
         if (session) {
             session.logout()
         }
