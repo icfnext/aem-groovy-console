@@ -14,6 +14,6 @@
     </div>
 
     <div id="loader" class="pull-right" style="display: none;">
-        <img src="/apps/groovyconsole/docroot/img/ajax-loader.gif">
+        <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
     </div>
 </div>
