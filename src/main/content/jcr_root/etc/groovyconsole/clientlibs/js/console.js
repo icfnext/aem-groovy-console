@@ -96,7 +96,7 @@ function initializeButtons() {
 
             $.ajax({
                 type: 'POST',
-                url: CQURLInfo.requestPath + '.html',
+                url: CQURLInfo.requestPath + '/jcr:content.html',
                 data: {
                 	script: script
             	},
