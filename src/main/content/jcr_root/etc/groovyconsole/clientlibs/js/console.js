@@ -97,7 +97,9 @@ function initializeButtons() {
             $.ajax({
                 type: 'POST',
                 url: CQURLInfo.requestPath + '.html',
-                data: { script: script },
+                data: {
+                	script: script
+            	},
                 dataType: 'json'
             }).done(function(data) {
                 var result = data.executionResult;
@@ -182,7 +184,7 @@ function saveScript(fileName) {
         showError('Save failed, check error.log file.');
     }).always(function() {
         enableToolbar();
-    });;
+    });
 }
 
 function refreshOpenDialog(dialog) {
