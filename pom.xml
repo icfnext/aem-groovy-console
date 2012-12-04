@@ -42,6 +42,7 @@
         <servlet.version>2.4</servlet.version>
         <cq.version>5.5.0</cq.version>
         <cq.commons.version>5.5.0</cq.commons.version>
+        <cq.wcm.core.version>5.5.36</cq.wcm.core.version>
         <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
         <sling.testing.version>2.0.10</sling.testing.version>
@@ -55,9 +56,9 @@
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <scr.plugin.version>1.8.0</scr.plugin.version>
         <assembly.plugin.version>2.3</assembly.plugin.version>
-        <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>2.0</gmaven.provider.version>
+        <groovy.eclipse.compiler.version>2.7.0-01</groovy.eclipse.compiler.version>
         <github.downloads.plugin.version>0.6</github.downloads.plugin.version>
+        <m2e.plugin.version>1.0.0</m2e.plugin.version>
     </properties>
 
     <profiles>
@@ -131,33 +132,16 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler.plugin.version}</version>
                 <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
                     <source>${compiler.version}</source>
                     <target>${compiler.version}</target>
                     <encoding>utf-8</encoding>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>${gmaven.version}</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <providerSelection>${gmaven.provider.version}</providerSelection>
-                        </configuration>
-                        <goals>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>${groovy.eclipse.compiler.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -166,7 +150,8 @@
                 <version>${surefire.plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Spec.java</include>
+                        <include>**/*Spec*</include>
+                        <include>**/*Test*</include>
                     </includes>
                 </configuration>
             </plugin>
@@ -264,6 +249,35 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${m2e.plugin.version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.felix</groupId>
+                                        <artifactId>maven-scr-plugin</artifactId>
+                                        <versionRange>[${scr.plugin.version},)</versionRange>
+                                        <goals>
+                                            <goal>scr</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <dependencies>
@@ -346,6 +360,12 @@
                     <artifactId>slf4j-simple</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-core</artifactId>
+            <version>${cq.wcm.core.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
