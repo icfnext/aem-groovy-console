@@ -20,26 +20,26 @@ class NodeBuilder extends BuilderSupport {
     }
 
     @Override
-    def createNode(name, value) {
-        currentNode = currentNode.getOrAddNode(name, value)
+    def createNode(name, primaryNodeTypeName) {
+        currentNode = currentNode.getOrAddNode(name, primaryNodeTypeName)
 
         currentNode
     }
 
     @Override
-    def createNode(name, Map attributes) {
+    def createNode(name, Map properties) {
         currentNode = currentNode.getOrAddNode(name)
 
-        setAttributes(currentNode, attributes)
+        setProperties(currentNode, properties)
 
         currentNode
     }
 
     @Override
-    def createNode(name, Map attributes, value) {
-        currentNode = createNode(name, value)
+    def createNode(name, Map properties, primaryNodeTypeName) {
+        currentNode = createNode(name, primaryNodeTypeName)
 
-        setAttributes(currentNode, attributes)
+        setProperties(currentNode, properties)
 
         currentNode
     }
@@ -56,8 +56,8 @@ class NodeBuilder extends BuilderSupport {
         currentNode = currentNode.parent
     }
 
-    private void setAttributes(node, attributes) {
-        attributes.each { k, v ->
+    private void setProperties(node, properties) {
+        properties.each { k, v ->
             node.set(k, v)
         }
     }

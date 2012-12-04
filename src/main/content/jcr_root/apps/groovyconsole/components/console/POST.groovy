@@ -7,13 +7,17 @@ import groovy.json.JsonBuilder
 
 import javax.jcr.Session
 
+import org.apache.sling.api.resource.ResourceResolverFactory
+import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.jcr.resource.JcrResourceConstants
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.slf4j.LoggerFactory
 
+// global variables
 log = LoggerFactory.getLogger('groovyconsole')
-resolver = resource.resourceResolver
-session = resolver.adaptTo(Session)
-pageManager = resolver.adaptTo(PageManager)
+session = getSession()
+resourceResolver = getResourceResolver()
+pageManager = resourceResolver.adaptTo(PageManager)
 
 def encoding = 'UTF-8'
 def stream = new ByteArrayOutputStream()
@@ -26,7 +30,7 @@ def scriptBinding = new Binding([
     slingRequest: request,
     sling: sling,
     pageManager: pageManager,
-    resourceResolver: resolver,
+    resourceResolver: resourceResolver,
     nodeBuilder: new NodeBuilder(session),
     pageBuilder: new PageBuilder(session)
 ])
@@ -72,6 +76,9 @@ try {
 
     System.setOut(originalOut)
     System.setErr(originalErr)
+
+	resourceResolver.close()
+	session.logout()
 }
 
 def time = getRunningTime(startTime)
@@ -90,6 +97,20 @@ json {
 }
 
 out.println json.toString()
+
+def getSession() {
+	def repository = sling.getService(SlingRepository)
+
+	repository.loginAdministrative(null)
+}
+
+def getResourceResolver() {
+	def authenticationInfo = [:]
+
+	authenticationInfo[JcrResourceConstants.AUTHENTICATION_INFO_SESSION] = session
+
+	sling.getService(ResourceResolverFactory).getResourceResolver(authenticationInfo)
+}
 
 def addMetaClass(script) {
     script.metaClass {

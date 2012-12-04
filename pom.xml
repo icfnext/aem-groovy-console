@@ -37,21 +37,27 @@
         <slf4j.version>1.6.4</slf4j.version>
         <groovy.version>2.0.5</groovy.version>
         <spock.version>0.7-groovy-2.0</spock.version>
+        <cglib.version>2.2</cglib.version>
+        <objenesis.version>1.2</objenesis.version>
         <junit.version>4.8.2</junit.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
+        <osgi.version>1.2.0</osgi.version>
         <cq.version>5.5.0</cq.version>
         <cq.commons.version>5.5.0</cq.commons.version>
         <cq.wcm.core.version>5.5.36</cq.wcm.core.version>
+        <cq.replication.version>5.5.14</cq.replication.version>
+        <cq.msm.api.version>5.5.0</cq.msm.api.version>
         <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
+        <sling.jcr.resource.version>2.0.11-R1239966</sling.jcr.resource.version>
         <sling.testing.version>2.0.10</sling.testing.version>
         <scr.annotations.version>1.7.0</scr.annotations.version>
 
         <!-- plugin versions -->
         <compiler.version>1.6</compiler.version>
         <compiler.plugin.version>2.5.1</compiler.plugin.version>
-        <surefire.plugin.version>2.11</surefire.plugin.version>
+        <surefire.plugin.version>2.12.4</surefire.plugin.version>
         <exec.plugin.version>1.2</exec.plugin.version>
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <scr.plugin.version>1.8.0</scr.plugin.version>
@@ -83,6 +89,7 @@
                 <cq.version>5.4.0</cq.version>
                 <cq.commons.version>5.4.6</cq.commons.version>
                 <sling.api.version>2.2.0</sling.api.version>
+                <sling.jcr.resource.version>2.0.9-R1067909</sling.jcr.resource.version>
             </properties>
         </profile>
         <profile>
@@ -153,6 +160,10 @@
                         <include>**/*Spec*</include>
                         <include>**/*Test*</include>
                     </includes>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>src/main/content/jcr_root/apps/groovyconsole/components/console</additionalClasspathElement>
+                        <additionalClasspathElement>src/main/scripts</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
             <plugin>
@@ -295,6 +306,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
             <version>${cq.commons.version}</version>
@@ -307,6 +330,18 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-msm-api</artifactId>
+            <version>${cq.msm.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.granite</groupId>
+            <artifactId>com.adobe.granite.replication.core</artifactId>
+            <version>${cq.replication.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
             <version>${sling.api.version}</version>
@@ -316,6 +351,12 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
             <version>${sling.jcr.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <version>${sling.jcr.resource.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -371,6 +412,18 @@
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
             <version>${spock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>${objenesis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

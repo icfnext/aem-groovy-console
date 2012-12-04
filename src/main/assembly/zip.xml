@@ -28,6 +28,12 @@
             <filtered>true</filtered>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>src/main/filters/filter.xml</source>
+            <outputDirectory>META-INF/vault</outputDirectory>
+        </file>
+    </files>
     <dependencySets>
         <dependencySet>
             <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>

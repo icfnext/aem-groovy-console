@@ -31,10 +31,18 @@ class NodeBuilderSpec extends AbstractRepositorySpec {
         nodeBuilder.foo(properties)
 
         expect:
-        def foo = session.getNode('/foo')
-
-        nodeHasExpectedProperties(foo, properties)
+        nodeHasExpectedProperties('/foo', properties)
     }
+
+	def 'build node with non-string properties'() {
+		setup:
+		def properties = ['date': Calendar.instance, 'number': 1L, 'array': ['one', 'two', 'three'].toArray(new String[0])]
+
+		nodeBuilder.foo(properties)
+
+		expect:
+		nodeHasExpectedProperties('/foo', properties)
+	}
 
     def 'build node with type and properties'() {
         setup:
@@ -43,9 +51,7 @@ class NodeBuilderSpec extends AbstractRepositorySpec {
         nodeBuilder.foo('sling:Folder', properties)
 
         expect:
-        def foo = session.getNode('/foo')
-
-        nodeHasExpectedProperties(foo, properties)
+		nodeHasExpectedTypeAndProperties('/foo', 'sling:Folder', properties)
     }
 
     def 'build node hierarchy'() {
@@ -65,8 +71,8 @@ class NodeBuilderSpec extends AbstractRepositorySpec {
         }
 
         expect:
-        session.getNode('/foo').primaryNodeType.name == 'sling:Folder'
-        session.getNode('/foo/bar').primaryNodeType.name == 'sling:Folder'
+		nodeHasExpectedTypeAndProperties('/foo', 'sling:Folder', [:])
+		nodeHasExpectedTypeAndProperties('/foo/bar', 'sling:Folder', [:])
     }
 
     def 'build node hierarchy with type and properties'() {
@@ -79,14 +85,23 @@ class NodeBuilderSpec extends AbstractRepositorySpec {
         }
 
         expect:
-        def foo = session.getNode('/foo')
-        def bar = session.getNode('/foo/bar')
-
-        nodeHasExpectedProperties(foo, fooProperties)
-        nodeHasExpectedProperties(bar, barProperties)
+        nodeHasExpectedTypeAndProperties('/foo', 'sling:Folder', fooProperties)
+        nodeHasExpectedTypeAndProperties('/foo/bar', 'sling:Folder', barProperties)
     }
 
-    void nodeHasExpectedProperties(node, properties) {
+	void nodeHasExpectedTypeAndProperties(path, type, properties) {
+		def node = session.getNode(path)
+
+		assert node.primaryNodeType.name == type
+
+		properties.each { k, v ->
+			assert node.get(k) == v
+		}
+	}
+
+    void nodeHasExpectedProperties(path, properties) {
+		def node = session.getNode(path)
+
         properties.each { k, v ->
             assert node.get(k) == v
         }
