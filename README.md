@@ -6,14 +6,9 @@
 
 The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.  After installing the package in CQ5 (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
-## Installation Requirements
+## Requirements
 
 * CQ 5.4 or 5.5 running on localhost:4502
-
-## Build Requirements (optional)
-
-* [Maven](http://maven.apache.org/) 2.x+
-* [cURL](http://curl.haxx.se/)
 
 ## Installation
 
@@ -28,6 +23,8 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 **OR**
 
 ### Build from Source
+
+[Maven](http://maven.apache.org/) 2.x+ and [cURL](http://curl.haxx.se/) are required to build the project.
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
@@ -47,13 +44,9 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
-Sample code:
+## Notes
 
-    getPage('/content/geometrixx').recurse { page ->
-        println "page title = ${page.title}, path = ${page.path}"
-    }
-
-Additional sample scripts can be found in src/main/scripts.
+Sample scripts can be found in the src/main/scripts directory.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
 
