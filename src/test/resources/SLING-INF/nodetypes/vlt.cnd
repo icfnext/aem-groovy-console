@@ -1,0 +1,27 @@
+<vlt = 'http://www.day.com/jcr/vault/1.0'>
+
+[vlt:FullCoverage]
+  mixin
+
+[vlt:HierarchyNode] > nt:hierarchyNode
+  mixin
+
+[vlt:Package]
+  orderable mixin
+  + vlt:definition (nt:base) = vlt:PackageDefinition
+
+[vlt:PackageDefinition] > nt:unstructured
+  orderable
+  - groupId (string)
+  - version (string)
+  - jcr:lastModifiedBy (string)
+  - lastUnpackedBy (string)
+  - dependencies (string) multiple
+  - jcr:createdBy (string)
+  - jcr:description (string)
+  - lastUnpacked (date)
+  - jcr:created (date)
+  - artifactId (string)
+  - jcr:lastModified (date)
+  + filter (nt:base) = nt:unstructured
+  + thumbnail (nt:base) = nt:unstructured

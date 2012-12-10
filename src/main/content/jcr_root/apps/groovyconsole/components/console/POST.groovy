@@ -77,8 +77,8 @@ try {
     System.setOut(originalOut)
     System.setErr(originalErr)
 
-	resourceResolver.close()
-	session.logout()
+    resourceResolver.close()
+    session.logout()
 }
 
 def time = getRunningTime(startTime)
@@ -99,17 +99,17 @@ json {
 out.println json.toString()
 
 def getSession() {
-	def repository = sling.getService(SlingRepository)
+    def repository = sling.getService(SlingRepository)
 
-	repository.loginAdministrative(null)
+    repository.loginAdministrative(null)
 }
 
 def getResourceResolver() {
-	def authenticationInfo = [:]
+    def authenticationInfo = [:]
 
-	authenticationInfo[JcrResourceConstants.AUTHENTICATION_INFO_SESSION] = session
+    authenticationInfo[JcrResourceConstants.AUTHENTICATION_INFO_SESSION] = session
 
-	sling.getService(ResourceResolverFactory).getResourceResolver(authenticationInfo)
+    sling.getService(ResourceResolverFactory).getResourceResolver(authenticationInfo)
 }
 
 def addMetaClass(script) {

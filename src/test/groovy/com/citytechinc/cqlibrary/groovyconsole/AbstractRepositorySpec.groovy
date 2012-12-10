@@ -9,14 +9,15 @@ import spock.lang.Specification
 
 import com.citytechinc.cqlibrary.groovyconsole.builders.NodeBuilder
 import com.citytechinc.cqlibrary.groovyconsole.builders.PageBuilder
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry;
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
+import com.citytechinc.cqlibrary.groovyconsole.mock.MockResourceResolver
 
 /**
  * Abstract Spock specification for JCR-based testing.
  */
 abstract class AbstractRepositorySpec extends Specification {
 
-    static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
+    static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam', 'vlt']
 
     static final def SYSTEM_NODE_NAMES = ['jcr:system', 'rep:policy']
 
@@ -24,12 +25,15 @@ abstract class AbstractRepositorySpec extends Specification {
 
     @Shared session
 
+    @Shared resourceResolver
+
     @Shared nodeBuilder
 
     @Shared pageBuilder
 
     def setupSpec() {
         session = getRepository().loginAdministrative(null)
+        resourceResolver = new MockResourceResolver(session)
         nodeBuilder = new NodeBuilder(session)
         pageBuilder = new PageBuilder(session)
 
