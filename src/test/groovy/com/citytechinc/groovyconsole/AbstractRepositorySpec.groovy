@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.groovyconsole
+package com.citytechinc.groovyconsole
 
 import groovy.transform.Synchronized
 
@@ -7,9 +7,9 @@ import org.apache.sling.commons.testing.jcr.RepositoryUtil
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.citytechinc.cqlibrary.groovyconsole.builders.NodeBuilder
-import com.citytechinc.cqlibrary.groovyconsole.builders.PageBuilder
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry;
+import com.citytechinc.groovyconsole.builders.NodeBuilder
+import com.citytechinc.groovyconsole.builders.PageBuilder
+import com.citytechinc.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
 
 /**
  * Abstract Spock specification for JCR-based testing.
