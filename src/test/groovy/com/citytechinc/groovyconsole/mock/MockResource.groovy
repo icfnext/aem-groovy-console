@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.groovyconsole.mock
+package com.citytechinc.groovyconsole.mock
 
 import javax.jcr.Node
 

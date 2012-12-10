@@ -9,8 +9,6 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 ## Requirements
 
 * CQ 5.4 or 5.5 running on localhost:4502
-* Maven 2.x+
-* [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
 ## Installation
 
@@ -25,6 +23,8 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 **OR**
 
 ### Build from Source
+
+[Maven](http://maven.apache.org/) 2.x+ and [cURL](http://curl.haxx.se/) are required to build the project.
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
@@ -44,13 +44,9 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
-Sample code:
+## Notes
 
-    getPage('/content/geometrixx').recurse { page ->
-        println "page title = ${page.title}, path = ${page.path}"
-    }
-
-Additional sample scripts can be found in src/main/scripts.
+Sample scripts can be found in the src/main/scripts directory.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
 
