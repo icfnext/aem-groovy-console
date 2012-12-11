@@ -96,7 +96,7 @@ function initializeButtons() {
 
             $.ajax({
                 type: 'POST',
-                url: CQURLInfo.requestPath + '/jcr:content.html',
+                url: '/etc/groovyconsole/jcr:content.html',
                 data: {
                 	script: script
             	},
