@@ -1,4 +1,4 @@
-package com.citytechinc.groovyconsole.servlets
+package com.citytechinc.cqlibrary.groovyconsole.servlets
 
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate

@@ -12,23 +12,11 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Installation
 
-### Download
-
-1.  [Download](https://github.com/Citytechinc/cq5-groovy-console/downloads) the latest release from GitHub.
-
-2.  Install package via [CQ5 Package Manager](http://localhost:4502/crx/packmgr/).
-
-3.  Verify the installation by navigating to [/etc/groovyconsole.html](http://localhost:4502/etc/groovyconsole.html) on the target CQ5 instance.
-
-**OR**
-
-### Build from Source
-
 [Maven](http://maven.apache.org/) 2.x+ and [cURL](http://curl.haxx.se/) are required to build the project.
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    a. If you already have the Groovy bundle installed in the Felix container:
+    a. If you already have the [Groovy](http://groovy.codehaus.org/Download) bundle installed in the Felix container:
 
         mvn install -P local-author
 

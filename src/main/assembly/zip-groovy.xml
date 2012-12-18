@@ -43,7 +43,7 @@
             <scope>provided</scope>
             <unpack>false</unpack>
             <includes>
-                <include>com.citytechinc.groovyconsole</include>
+                <include>com.citytechinc.cqlibrary.groovyconsole</include>
                 <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>

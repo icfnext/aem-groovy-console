@@ -1,4 +1,4 @@
-package com.citytechinc.groovyconsole.builders
+package com.citytechinc.cqlibrary.groovyconsole.builders
 
 class NodeBuilder extends BuilderSupport {
 

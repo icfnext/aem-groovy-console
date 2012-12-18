@@ -1,6 +1,6 @@
-package com.citytechinc.groovyconsole.builders
+package com.citytechinc.cqlibrary.groovyconsole.builders
 
-import com.citytechinc.groovyconsole.AbstractRepositorySpec
+import com.citytechinc.cqlibrary.groovyconsole.AbstractRepositorySpec
 
 import spock.lang.Shared
 
