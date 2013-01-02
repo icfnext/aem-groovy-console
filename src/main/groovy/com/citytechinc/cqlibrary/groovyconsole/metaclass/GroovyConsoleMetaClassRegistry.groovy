@@ -1,4 +1,4 @@
-package com.citytechinc.groovyconsole.metaclass
+package com.citytechinc.cqlibrary.groovyconsole.metaclass
 
 import javax.jcr.Node
 import javax.jcr.PropertyType

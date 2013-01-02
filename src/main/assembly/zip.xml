@@ -41,7 +41,7 @@
             <useStrictFiltering>true</useStrictFiltering>
             <unpack>false</unpack>
             <includes>
-                <include>com.citytechinc.groovyconsole</include>
+                <include>com.citytechinc.cqlibrary.groovyconsole</include>
             </includes>
         </dependencySet>
     </dependencySets>

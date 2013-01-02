@@ -19,8 +19,6 @@ if (definition.hasNode("filter")) {
     filter.set("sling:resourceType", "cq/packaging/components/pack/definition/filterlist")
 }
 
-session.save()
-
 paths.eachWithIndex { path, i ->
     def f = filter.addNode("filter$i")
 
@@ -29,4 +27,4 @@ paths.eachWithIndex { path, i ->
     f.set("rules", new String[0])
 }
 
-session.save()
+save()
