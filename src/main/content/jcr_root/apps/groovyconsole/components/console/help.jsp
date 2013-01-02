@@ -9,6 +9,48 @@
     <li>sling - <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/scripting/SlingScriptHelper.html">org.apache.sling.api.scripting.SlingScriptHelper</a></li>
     <li>log - <a href="http://www.slf4j.org/api/org/slf4j/Logger.html">org.slf4j.Logger</a></li>
 </ul>
+<h4>Builders</h4>
+<p>Additional bindings are provided for the following builders.  <a href="http://groovy.codehaus.org/Builders">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
+<ul>
+    <li>nodeBuilder - <span class="muted">each "node" in the syntax tree corresponds to a Node in the repository.  A new Node is created only if there is no existing node for the current name.</span>
+        <pre>
+nodeBuilder.etc {
+    satirists('sling:Folder') {
+        bierce(firstName: 'Ambrose', lastName: 'Bierce', birthDate: Calendar.instance.updated(year: 1842, month: 5, date: 24))
+        mencken(firstName: 'H.L.', lastName: 'Mencken', birthDate: Calendar.instance.updated(year: 1880, month: 8, date: 12))
+        other('sling:Folder', 'jcr:title': 'Other')
+    }
+}
+        </pre>
+        <ul>
+            <li>a single string argument represents the node type name for the node ('satirists')</li>
+            <li>a map argument uses the provided key:value pairs to set property values on the node ('bierce' and 'mencken')</li>
+            <li>both string and map arguments will set the node type and property value(s) for the node ('other')</li>
+        </ul>
+    </li>
+    <li>pageBuilder - <span class="muted">each "node" in the syntax tree corresponds to a cq:Page node, unless the node is a descendant of a "jcr:content" node, in which case nodes are treated in the same manner as described for the Node builder above.</span>
+        <pre>
+pageBuilder.content {
+    beer {
+        styles('Styles') {
+            'jcr:content'(lastModifiedBy: 'me', lastModifiedDate: Calendar.instance) {
+                data('sling:Folder')
+            }
+            dubbel('Dubbel')
+            tripel('Tripel')
+            saison('Saison')
+        }
+        breweries('Breweries', lastModifiedBy: 'me', lastModifiedDate: Calendar.instance)
+    }
+}
+        </pre>
+        <ul>
+            <li>a single string argument is used to set the page title rather than the node type ('styles')</li>
+            <li>descendants of 'jcr:content' nodes are not created with the cq:Page type by default and can have their own node type specified as described for the Node builder ('data')</li>
+            <li>page properties can be passed directly as arguments on the page node without explicitly creating a jcr:content node first ('breweries')</li>
+        </ul>
+    </li>
+</ul>
 <h4>Methods</h4>
 <ul>
     <li>getPage(String path) - <span class="muted">get the <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/Page.html">Page</a> for the given path, or null if it does not exist.</span></li>

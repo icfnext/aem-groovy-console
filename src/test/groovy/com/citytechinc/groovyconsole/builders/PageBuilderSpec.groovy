@@ -16,6 +16,20 @@ class PageBuilderSpec extends AbstractRepositorySpec {
         session.getNode('/foo').primaryNodeType.name == 'cq:Page'
     }
 
+	def 'build page with properties'() {
+		setup:
+		def pageProperties = ['sling:resourceType': 'foundation/components/page']
+
+		pageBuilder.content {
+			citytechinc('CITYTECH, Inc.', pageProperties)
+		}
+
+		expect:
+		def pageNode = session.getNode('/content/citytechinc')
+
+		pageHasExpectedProperties(pageNode, 'CITYTECH, Inc.', pageProperties)
+	}
+
     def 'build page with content'() {
         setup:
         def pageProperties = ['sling:resourceType': 'foundation/components/page']
@@ -36,6 +50,20 @@ class PageBuilderSpec extends AbstractRepositorySpec {
         pageHasExpectedProperties(pageNode, 'CITYTECH, Inc.', pageProperties)
         nodeHasExpectedProperties(parNode, parProperties)
     }
+
+	def 'build page with descendant node of given type'() {
+		setup:
+		pageBuilder.content {
+			citytechinc('CITYTECH, Inc.') {
+				'jcr:content' {
+					derp('sling:Folder')
+				}
+			}
+		}
+
+		expect:
+		session.getNode('/content/citytechinc/jcr:content/derp').primaryNodeType.name == 'sling:Folder'
+	}
 
     def 'build pages with content'() {
         setup:
