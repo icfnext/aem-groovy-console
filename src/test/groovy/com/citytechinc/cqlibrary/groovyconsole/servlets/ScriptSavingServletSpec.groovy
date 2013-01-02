@@ -12,7 +12,9 @@ import com.day.cq.commons.jcr.JcrConstants
 
 class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
-    static final def SCRIPT_NAME = 'Script.groovy'
+    static final def SCRIPT_NAME = 'Script'
+
+    static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
     @Shared servlet
 
@@ -20,9 +22,10 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
     def setupSpec() {
         servlet = new ScriptSavingServlet()
+
         servlet.session = session
 
-        this.class.getResourceAsStream("/$SCRIPT_NAME").withStream { stream ->
+        this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
             script = stream.text
         }
     }
@@ -63,9 +66,9 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
         def folderNode = consoleNode.getNode(ScriptSavingServlet.SCRIPT_FOLDER_REL_PATH)
 
         assert folderNode.primaryNodeType.name == JcrConstants.NT_FOLDER
-        assert folderNode.hasNode(SCRIPT_NAME)
+        assert folderNode.hasNode(SCRIPT_FILE_NAME)
 
-        def fileNode = folderNode.getNode(SCRIPT_NAME)
+        def fileNode = folderNode.getNode(SCRIPT_FILE_NAME)
 
         assert fileNode.primaryNodeType.name == JcrConstants.NT_FILE
         assert fileNode.hasNode(JcrConstants.JCR_CONTENT)
