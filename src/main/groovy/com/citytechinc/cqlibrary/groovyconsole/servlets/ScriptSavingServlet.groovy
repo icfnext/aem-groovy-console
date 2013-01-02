@@ -70,9 +70,9 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
     def getScriptBinary(script) {
         def binary = null
 
-		new ByteArrayInputStream(script.getBytes('UTF-8')).withStream { stream ->
-			binary = session.valueFactory.createBinary(stream)
-		}
+        new ByteArrayInputStream(script.getBytes('UTF-8')).withStream { stream ->
+            binary = session.valueFactory.createBinary(stream)
+        }
 
         return binary
     }

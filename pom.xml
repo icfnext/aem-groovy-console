@@ -43,7 +43,7 @@
 
         <!-- dependency versions -->
         <slf4j.version>1.6.4</slf4j.version>
-        <groovy.version>2.0.5</groovy.version>
+        <groovy.version>2.0.6</groovy.version>
         <spock.version>0.7-groovy-2.0</spock.version>
         <jcr.version>2.0</jcr.version>
         <servlet.version>2.4</servlet.version>
@@ -62,7 +62,8 @@
         <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
         <scr.plugin.version>1.8.0</scr.plugin.version>
         <assembly.plugin.version>2.3</assembly.plugin.version>
-        <groovy.eclipse.compiler.version>2.7.0-01</groovy.eclipse.compiler.version>
+        <gmaven.version>1.4</gmaven.version>
+        <gmaven.provider.version>2.0</gmaven.provider.version>
     </properties>
 
     <profiles>
@@ -137,16 +138,33 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler.plugin.version}</version>
                 <configuration>
-                    <compilerId>groovy-eclipse-compiler</compilerId>
                     <source>${compiler.version}</source>
                     <target>${compiler.version}</target>
                     <encoding>utf-8</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>${gmaven.version}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <providerSelection>${gmaven.provider.version}</providerSelection>
+                        </configuration>
+                        <goals>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-eclipse-compiler</artifactId>
-                        <version>${groovy.eclipse.compiler.version}</version>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
