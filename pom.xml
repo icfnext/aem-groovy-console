@@ -51,6 +51,7 @@
         <cq.commons.version>5.5.0</cq.commons.version>
         <sling.api.version>2.2.4</sling.api.version>
         <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
+        <sling.jcr.resource.version>2.0.11-R1239966</sling.jcr.resource.version>
         <sling.testing.version>2.0.10</sling.testing.version>
         <scr.annotations.version>1.7.0</scr.annotations.version>
 
@@ -309,6 +310,18 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.jcr.resource</artifactId>
+            <version>${sling.jcr.resource.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq.wcm</groupId>
+            <artifactId>cq-wcm-api</artifactId>
+            <version>${cq.version}</version>
             <scope>runtime</scope>
         </dependency>
 
