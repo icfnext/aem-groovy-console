@@ -6,8 +6,9 @@
     <groupId>com.citytechinc.cqlibrary.groovyconsole</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>CQ5 Groovy Console</name>
+    <description>The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.</description>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -216,6 +217,7 @@
                 <version>${assembly.plugin.version}</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>${project.artifactId}</finalName>
                     <descriptors>
                         <descriptor>${assembly.descriptor}</descriptor>
                     </descriptors>
@@ -247,8 +249,8 @@
                                 <argument>-u</argument>
                                 <argument>${sling.user}:${sling.password}</argument>
                                 <argument>-F</argument>
-                                <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
-                                <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
+                                <argument>file=@./target/${project.artifactId}.zip</argument>
+                                <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
                                 <argument>-F</argument>
                                 <argument>install=true</argument>
                             </arguments>
