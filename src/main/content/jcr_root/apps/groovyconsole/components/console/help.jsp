@@ -32,14 +32,14 @@ nodeBuilder.etc {
 pageBuilder.content {
     beer {
         styles('Styles') {
-            'jcr:content'(lastModifiedBy: 'me', lastModifiedDate: Calendar.instance) {
+            'jcr:content'('jcr:lastModifiedBy': 'me', 'jcr:lastModified': Calendar.instance) {
                 data('sling:Folder')
             }
             dubbel('Dubbel')
             tripel('Tripel')
             saison('Saison')
         }
-        breweries('Breweries', lastModifiedBy: 'me', lastModifiedDate: Calendar.instance)
+        breweries('Breweries', 'jcr:lastModifiedBy': 'me', 'jcr:lastModified': Calendar.instance)
     }
 }</pre>
         <ul>
