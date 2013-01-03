@@ -28,6 +28,13 @@
             <filtered>true</filtered>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>src/main/filters/filter-groovy.xml</source>
+            <outputDirectory>META-INF/vault</outputDirectory>
+            <destName>filter.xml</destName>
+        </file>
+    </files>
     <dependencySets>
         <dependencySet>
             <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>
@@ -36,7 +43,7 @@
             <scope>provided</scope>
             <unpack>false</unpack>
             <includes>
-                <include>com.citytechinc.cqlibrary:groovyconsole</include>
+                <include>com.citytechinc.cqlibrary.groovyconsole</include>
                 <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>

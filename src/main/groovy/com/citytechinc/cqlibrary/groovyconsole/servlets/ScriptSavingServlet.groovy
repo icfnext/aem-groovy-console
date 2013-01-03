@@ -11,10 +11,10 @@ import org.apache.sling.jcr.api.SlingRepository
 
 import com.day.cq.commons.jcr.JcrConstants
 
-@SlingServlet(paths = "/bin/groovyconsole/save", methods = "POST", description = "Writes script to nt:file node.")
+@SlingServlet(paths = "/bin/groovyconsole/save", description = "Writes script to nt:file node.")
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
-    private static final long serialVersionUID = 1L
+    static final long serialVersionUID = 1L
 
     static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
@@ -24,8 +24,10 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     static final String SCRIPT_CONTENT_PARAM = "scriptContent"
 
+    static final String EXTENSION_GROOVY = ".groovy"
+
     @Reference
-    private SlingRepository repository
+    SlingRepository repository
 
     def session
 
@@ -34,57 +36,58 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         def name = request.getParameter(FILE_NAME_PARAM)
         def script = request.getParameter(SCRIPT_CONTENT_PARAM)
 
+        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
+
         def binary = getScriptBinary(script)
 
         def folderNode = getScriptFolderNode()
 
-        if (folderNode.hasNode(name)) {
-            folderNode.getNode(name).remove()
+        if (folderNode.hasNode(fileName)) {
+            folderNode.getNode(fileName).remove()
         }
 
-        def fileNode = folderNode.addNode(name, JcrConstants.NT_FILE)
+        def fileNode = folderNode.addNode(fileName, JcrConstants.NT_FILE)
         def resNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
-        resNode.set(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
-        resNode.set(JcrConstants.JCR_DATA, binary)
+        resNode.setProperty(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
+        resNode.setProperty(JcrConstants.JCR_DATA, binary)
 
         session.save()
 
         binary.dispose()
     }
 
-    private def getScriptFolderNode() {
+    def getScriptFolderNode() {
         def consoleNode = session.getNode(CONSOLE_ROOT)
 
-        consoleNode.getOrAddNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
+        def scriptFolderNode
+
+        if (consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)) {
+            scriptFolderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
+        } else {
+            scriptFolderNode = consoleNode.addNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
+        }
+
+        scriptFolderNode
     }
 
-    private def getScriptBinary(script) {
-        def valueFactory = session.valueFactory
-
-        def stream = null
+    def getScriptBinary(script) {
         def binary = null
 
-        try {
-            stream = new ByteArrayInputStream(script.getBytes("UTF-8"))
-
-            binary = valueFactory.createBinary(stream)
-        } finally {
-            if (stream) {
-                stream.close()
-            }
+        new ByteArrayInputStream(script.getBytes("UTF-8")).withStream { stream ->
+            binary = session.valueFactory.createBinary(stream)
         }
 
         return binary
     }
 
     @Activate
-    private void activate() {
+    void activate() {
         session = repository.loginAdministrative(null)
     }
 
     @Deactivate
-    private void deactivate() {
+    void deactivate() {
         if (session) {
             session.logout()
         }

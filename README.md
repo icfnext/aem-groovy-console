@@ -2,17 +2,21 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
+## Overview
+
+The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.  After installing the package in CQ5 (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+
 ## Requirements
 
 * CQ 5.4 or 5.5 running on localhost:4502
-* Maven 2.x+
-* [cURL](http://curl.haxx.se/) for automated deployment (optional)
 
 ## Installation
 
+[Maven](http://maven.apache.org/) 2.x+ and [cURL](http://curl.haxx.se/) are required to build the project.
+
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    a. If you already have the Groovy bundle installed in the Felix container:
+    a. If you already have the [Groovy](http://groovy.codehaus.org/Download) bundle installed in the Felix container:
 
         mvn install -P local-author
 
@@ -24,17 +28,13 @@
 
         mvn install -P cq5.4,local-author
 
-2.  [Test the installation](http://localhost:4502/etc/groovyconsole.html)
+2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
-Sample code:
+## Notes
 
-    getPage('/content/geometrixx').recurse { page ->
-        println "${page.title} - ${page.path}"
-    }
-
-Additional sample scripts can be found in src/main/scripts.
+Sample scripts can be found in the src/main/scripts directory.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
 
@@ -44,7 +44,7 @@ Follows [Semantic Versioning](http://semver.org/) guidelines.
 
 ## License
 
-Copyright 2012 CITYTECH, Inc.
+Copyright 2013 CITYTECH, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

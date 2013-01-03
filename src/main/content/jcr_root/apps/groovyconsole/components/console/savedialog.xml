@@ -11,7 +11,7 @@
                 <fileName
                     jcr:primaryType="cq:Widget"
                     fieldLabel="File Name"
-                    fieldDescription="Warning: will overwrite existing file with same name."
+                    fieldDescription="Warning: will overwrite existing file with same name.  The '.groovy' extension will be automatically appended to the file name."
                     allowBlank="{Boolean}false"
                     regex="/^[a-zA-Z0-9_\\.\\-]+$/"
                     regexText="File name should only contain characters, numbers or _.-"

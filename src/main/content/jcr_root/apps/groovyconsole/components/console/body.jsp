@@ -14,7 +14,7 @@
             <span class="message"></span>
         </div>
 
-        <pre id="editor" class="pre-scrollable"></pre>
+        <div id="editor" class="ace_editor_wrapper"></div>
 
         <cq:include script="footer.jsp" />
     </div>

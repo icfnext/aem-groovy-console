@@ -1,4 +1,4 @@
-function initialize(path) {
+$(function() {
     window.editor = ace.edit('editor');
 
     var GroovyMode = ace.require('ace/mode/groovy').Mode;
@@ -7,8 +7,8 @@ function initialize(path) {
     editor.renderer.setShowPrintMargin(false);
 
     initializeThemeMenu();
-    initializeButtons(path);
-}
+    initializeButtons();
+});
 
 function initializeThemeMenu() {
     var theme = $.cookie('theme');
@@ -40,7 +40,7 @@ function initializeThemeMenu() {
     });
 }
 
-function initializeButtons(path) {
+function initializeButtons() {
     $('#new-script').click(function() {
         if ($(this).hasClass('disabled')) {
             return;
@@ -96,8 +96,10 @@ function initializeButtons(path) {
 
             $.ajax({
                 type: 'POST',
-                url: path,
-                data: { script: script },
+                url: '/etc/groovyconsole/jcr:content.html',
+                data: {
+                	script: script
+            	},
                 dataType: 'json'
             }).done(function(data) {
                 var result = data.executionResult;
@@ -182,7 +184,7 @@ function saveScript(fileName) {
         showError('Save failed, check error.log file.');
     }).always(function() {
         enableToolbar();
-    });;
+    });
 }
 
 function refreshOpenDialog(dialog) {

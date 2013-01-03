@@ -1,38 +1,14 @@
 package com.citytechinc.cqlibrary.groovyconsole.metaclass
 
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Deactivate
-
 import javax.jcr.Node
 import javax.jcr.PropertyType
 import javax.jcr.Value
 
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Property
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.slf4j.LoggerFactory
 
 import com.day.cq.wcm.api.Page
 
-@Component(immediate = true, label = "Groovy Console MetaClass Registry")
-@Property(name = "service.description", value = "Groovy Console MetaClass Registry")
 class GroovyConsoleMetaClassRegistry {
-
-    static final def LOG = LoggerFactory.getLogger(GroovyConsoleMetaClassRegistry)
-
-    @Activate
-    void activate() {
-        LOG.info("activate() activating metaclass registry")
-
-        GroovyConsoleMetaClassRegistry.registerMetaClasses()
-    }
-
-    @Deactivate
-    void deactivate() {
-        LOG.info("deactivate() deactivating metaclass registry")
-
-        GroovyConsoleMetaClassRegistry.removeMetaClasses()
-    }
 
     static void registerMetaClasses() {
         removeMetaClasses()
@@ -178,6 +154,14 @@ class GroovyConsoleMetaClassRegistry {
                 if (node) {
                     node.set(name, value)
                 }
+            }
+
+            activate {
+
+            }
+
+            deactivate {
+
             }
         }
     }

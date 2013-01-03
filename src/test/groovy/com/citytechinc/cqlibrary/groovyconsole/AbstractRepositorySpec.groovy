@@ -1,47 +1,77 @@
 package com.citytechinc.cqlibrary.groovyconsole
 
+import groovy.transform.Synchronized
+
 import org.apache.sling.commons.testing.jcr.RepositoryUtil
 
 import spock.lang.Shared
 import spock.lang.Specification
 
+import com.citytechinc.cqlibrary.groovyconsole.builders.NodeBuilder
+import com.citytechinc.cqlibrary.groovyconsole.builders.PageBuilder
+import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
+
+/**
+ * Abstract Spock specification for JCR-based testing.
+ */
 abstract class AbstractRepositorySpec extends Specification {
 
-    static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam']
+    static final def NODE_TYPES = ['sling', 'replication', 'tagging', 'core', 'dam', 'vlt']
+
+    static final def SYSTEM_NODE_NAMES = ['jcr:system', 'rep:policy']
 
     static def repository
 
     @Shared session
 
+    @Shared nodeBuilder
+
+    @Shared pageBuilder
+
     def setupSpec() {
         session = getRepository().loginAdministrative(null)
 
-        NODE_TYPES.each { type ->
-            registerNodeType("/SLING-INF/nodetypes/${type}.cnd")
-        }
+        nodeBuilder = new NodeBuilder(session)
+        pageBuilder = new PageBuilder(session)
+
+        GroovyConsoleMetaClassRegistry.registerNodeMetaClass()
     }
 
     def cleanupSpec() {
         session.logout()
     }
 
+    def cleanup() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
+    }
+
+    @Synchronized
     def getRepository() {
-        synchronized (AbstractRepositorySpec) {
-            if (!repository) {
-                RepositoryUtil.startRepository()
+        if (!repository) {
+            RepositoryUtil.startRepository()
 
-                repository = RepositoryUtil.getRepository()
+            repository = RepositoryUtil.getRepository()
 
-                addShutdownHook {
-                    RepositoryUtil.stopRepository()
-                }
+            registerNodeTypes()
+
+            addShutdownHook {
+                RepositoryUtil.stopRepository()
             }
         }
 
         repository
     }
 
-    def registerNodeType(cndPath) {
-        RepositoryUtil.registerNodeType(session, AbstractRepositorySpec.class.getResourceAsStream(cndPath))
+    private def registerNodeTypes() {
+        session = getRepository().loginAdministrative(null)
+
+        NODE_TYPES.each { type ->
+            this.class.getResourceAsStream("/SLING-INF/nodetypes/${type}.cnd").withStream { stream ->
+                RepositoryUtil.registerNodeType(session, stream)
+            }
+        }
+
+        session.logout()
     }
 }

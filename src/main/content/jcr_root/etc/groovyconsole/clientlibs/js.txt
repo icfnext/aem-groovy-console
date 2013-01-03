@@ -1,0 +1,10 @@
+#base=js
+
+jquery-1.7.2.min.js
+jquery.cookie.js
+bootstrap.min.js
+ace-noconflict.js
+mode-groovy-noconflict.js
+themes-noconflict.js
+theme-textmate-uncompressed.js
+console.js
