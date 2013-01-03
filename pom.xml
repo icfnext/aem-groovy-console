@@ -6,7 +6,7 @@
     <groupId>com.citytechinc.cqlibrary.groovyconsole</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <name>CQ5 Groovy Console</name>
 
     <organization>
