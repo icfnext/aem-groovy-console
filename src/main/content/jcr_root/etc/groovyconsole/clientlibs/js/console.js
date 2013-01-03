@@ -94,13 +94,8 @@ function initializeButtons() {
 
             $('#run-script-text').text('Running...');
 
-            $.ajax({
-                type: 'POST',
-                url: '/etc/groovyconsole/jcr:content.html',
-                data: {
-                	script: script
-            	},
-                dataType: 'json'
+            $.post('/etc/groovyconsole/jcr:content.html', {
+                script: script
             }).done(function(data) {
                 var result = data.executionResult;
                 var output = data.outputText;
