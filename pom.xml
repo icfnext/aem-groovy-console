@@ -6,7 +6,7 @@
     <groupId>com.citytechinc.cqlibrary.groovyconsole</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>3.0.1</version>
     <name>CQ5 Groovy Console</name>
     <description>The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.</description>
 
