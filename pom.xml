@@ -66,6 +66,7 @@
         <assembly.plugin.version>2.3</assembly.plugin.version>
         <gmaven.version>1.4</gmaven.version>
         <gmaven.provider.version>2.0</gmaven.provider.version>
+        <status.plugin.version>0.3.0</status.plugin.version>
     </properties>
 
     <profiles>
@@ -76,6 +77,7 @@
             </activation>
             <properties>
                 <skip>true</skip>
+                <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
             </properties>
         </profile>
         <profile>
@@ -114,7 +116,7 @@
             <properties>
                 <sling.host>localhost</sling.host>
                 <sling.port>4502</sling.port>
-                <sling.user>admin</sling.user>
+                <sling.username>admin</sling.username>
                 <sling.password>admin</sling.password>
             </properties>
         </profile>
@@ -128,7 +130,7 @@
             <properties>
                 <sling.host>localhost</sling.host>
                 <sling.port>4503</sling.port>
-                <sling.user>admin</sling.user>
+                <sling.username>admin</sling.username>
                 <sling.password>admin</sling.password>
             </properties>
         </profile>
@@ -247,13 +249,35 @@
                                 <argument>-f</argument>
                                 <argument>-v</argument>
                                 <argument>-u</argument>
-                                <argument>${sling.user}:${sling.password}</argument>
+                                <argument>${sling.username}:${sling.password}</argument>
                                 <argument>-F</argument>
                                 <argument>file=@./target/${project.artifactId}.zip</argument>
                                 <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
                                 <argument>-F</argument>
                                 <argument>install=true</argument>
                             </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.citytechinc.maven.plugins</groupId>
+                <artifactId>osgi-bundle-status-maven-plugin</artifactId>
+                <version>${status.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>status</goal>
+                        </goals>
+                        <configuration>
+                            <bundleNames>
+                                <bundleName>groovy-all</bundleName>
+                                <bundleName>com.citytechinc.cqlibrary.cq5-groovy-console</bundleName>
+                            </bundleNames>
+                            <host>${sling.host}</host>
+                            <port>${sling.port}</port>
+                            <user>${sling.username}</user>
+                            <password>${sling.password}</password>
                         </configuration>
                     </execution>
                 </executions>
