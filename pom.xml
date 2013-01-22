@@ -66,7 +66,7 @@
         <assembly.plugin.version>2.3</assembly.plugin.version>
         <gmaven.version>1.4</gmaven.version>
         <gmaven.provider.version>2.0</gmaven.provider.version>
-        <status.plugin.version>0.3.0</status.plugin.version>
+        <status.plugin.version>0.4.0</status.plugin.version>
     </properties>
 
     <profiles>
@@ -276,7 +276,7 @@
                             </bundleNames>
                             <host>${sling.host}</host>
                             <port>${sling.port}</port>
-                            <user>${sling.username}</user>
+                            <username>${sling.username}</username>
                             <password>${sling.password}</password>
                         </configuration>
                     </execution>
