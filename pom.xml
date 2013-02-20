@@ -2,11 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+	<parent>
+		<groupId>com.citytechinc.cq</groupId>
+		<artifactId>parent</artifactId>
+		<version>5.6.0-SNAPSHOT</version>
+	</parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.cqlibrary</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>CQ5 Groovy Console</name>
     <description>The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.</description>
 
@@ -29,44 +35,17 @@
         <url>https://github.com/Citytechinc/cq5-groovy-console</url>
     </scm>
 
-    <repositories>
-        <repository>
-            <id>adobe</id>
-            <url>http://repo.adobe.com/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>citytech-public</id>
+			<url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
+		</repository>
+	</repositories>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <assembly.descriptor>src/main/assembly/zip.xml</assembly.descriptor>
-
-        <!-- dependency versions -->
-        <slf4j.version>1.6.4</slf4j.version>
-        <groovy.version>2.0.6</groovy.version>
-        <spock.version>0.7-groovy-2.0</spock.version>
-        <jcr.version>2.0</jcr.version>
-        <servlet.version>2.4</servlet.version>
-        <cq.version>5.5.0</cq.version>
-        <cq.commons.version>5.5.0</cq.commons.version>
-        <sling.api.version>2.2.4</sling.api.version>
-        <sling.jcr.api.version>2.1.0</sling.jcr.api.version>
-        <sling.jcr.resource.version>2.0.11-R1239966</sling.jcr.resource.version>
-        <sling.testing.version>2.0.10</sling.testing.version>
-        <scr.annotations.version>1.7.0</scr.annotations.version>
-
-        <!-- plugin versions -->
-        <compiler.version>1.6</compiler.version>
-        <compiler.plugin.version>2.5.1</compiler.plugin.version>
-        <surefire.plugin.version>2.12.4</surefire.plugin.version>
-        <exec.plugin.version>1.2</exec.plugin.version>
-        <felix.bundle.plugin.version>2.3.7</felix.bundle.plugin.version>
-        <scr.plugin.version>1.8.0</scr.plugin.version>
-        <assembly.plugin.version>2.3</assembly.plugin.version>
-        <gmaven.version>1.4</gmaven.version>
-        <gmaven.provider.version>2.0</gmaven.provider.version>
-        <status.plugin.version>0.4.0</status.plugin.version>
     </properties>
 
     <profiles>
@@ -78,21 +57,6 @@
             <properties>
                 <skip>true</skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>cq5.4</id>
-            <activation>
-                <property>
-                    <name>cq5.4</name>
-                </property>
-            </activation>
-            <properties>
-                <slf4j.version>1.5.2</slf4j.version>
-                <cq.version>5.4.0</cq.version>
-                <cq.commons.version>5.4.6</cq.commons.version>
-                <sling.api.version>2.2.0</sling.api.version>
-                <sling.jcr.resource.version>2.0.9-R1067909</sling.jcr.resource.version>
             </properties>
         </profile>
         <profile>
@@ -114,10 +78,10 @@
                 </property>
             </activation>
             <properties>
-                <sling.host>localhost</sling.host>
-                <sling.port>4502</sling.port>
-                <sling.username>admin</sling.username>
-                <sling.password>admin</sling.password>
+                <cq.host>localhost</cq.host>
+                <cq.port>4502</cq.port>
+                <cq.username>admin</cq.username>
+                <cq.password>admin</cq.password>
             </properties>
         </profile>
         <profile>
@@ -128,10 +92,10 @@
                 </property>
             </activation>
             <properties>
-                <sling.host>localhost</sling.host>
-                <sling.port>4503</sling.port>
-                <sling.username>admin</sling.username>
-                <sling.password>admin</sling.password>
+                <cq.host>localhost</cq.host>
+                <cq.port>4503</cq.port>
+                <cq.username>admin</cq.username>
+                <cq.password>admin</cq.password>
             </properties>
         </profile>
     </profiles>
@@ -140,21 +104,21 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler.plugin.version}</version>
+                <version>2.5.1</version>
                 <configuration>
-                    <source>${compiler.version}</source>
-                    <target>${compiler.version}</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                     <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>${gmaven.version}</version>
+                <version>1.5</version>
                 <executions>
                     <execution>
                         <configuration>
-                            <providerSelection>${gmaven.provider.version}</providerSelection>
+                            <providerSelection>2.0</providerSelection>
                         </configuration>
                         <goals>
                             <goal>generateStubs</goal>
@@ -168,13 +132,13 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
+                        <version>2.1.1</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.plugin.version}</version>
+                <version>2.13</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
@@ -184,7 +148,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>${scr.plugin.version}</version>
+                <version>1.9.0</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -198,7 +162,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix.bundle.plugin.version}</version>
+                <version>2.3.7</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -216,7 +180,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>${assembly.plugin.version}</version>
+                <version>2.3</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
                     <finalName>${project.artifactId}</finalName>
@@ -236,7 +200,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec.plugin.version}</version>
+                <version>1.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -249,10 +213,10 @@
                                 <argument>-f</argument>
                                 <argument>-v</argument>
                                 <argument>-u</argument>
-                                <argument>${sling.username}:${sling.password}</argument>
+                                <argument>${cq.username}:${cq.password}</argument>
                                 <argument>-F</argument>
                                 <argument>file=@./target/${project.artifactId}.zip</argument>
-                                <argument>http://${sling.host}:${sling.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
+                                <argument>http://${cq.host}:${cq.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
                                 <argument>-F</argument>
                                 <argument>install=true</argument>
                             </arguments>
@@ -263,7 +227,7 @@
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>${status.plugin.version}</version>
+                <version>0.5.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -274,10 +238,10 @@
                                 <bundleName>groovy-all</bundleName>
                                 <bundleName>com.citytechinc.cqlibrary.cq5-groovy-console</bundleName>
                             </bundleNames>
-                            <host>${sling.host}</host>
-                            <port>${sling.port}</port>
-                            <username>${sling.username}</username>
-                            <password>${sling.password}</password>
+                            <host>${cq.host}</host>
+                            <port>${cq.port}</port>
+                            <username>${cq.username}</username>
+                            <password>${cq.password}</password>
                         </configuration>
                     </execution>
                 </executions>
@@ -286,76 +250,62 @@
     </build>
 
     <dependencies>
-        <!-- compile -->
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>${scr.annotations.version}</version>
-        </dependency>
-
-        <!-- provided -->
+	    <!-- inherited -->
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
-            <version>${jcr.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>${servlet.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
-            <version>${sling.api.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
-            <version>${sling.jcr.api.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
-            <version>${cq.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-commons</artifactId>
-            <version>${cq.commons.version}</version>
-            <scope>provided</scope>
         </dependency>
+	    <dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+		    <groupId>org.apache.sling</groupId>
+		    <artifactId>org.apache.sling.jcr.resource</artifactId>
+		    <scope>runtime</scope>
+	    </dependency>
+
+	    <!-- compile -->
+	    <dependency>
+		    <groupId>org.apache.felix</groupId>
+		    <artifactId>org.apache.felix.scr.annotations</artifactId>
+		    <version>1.7.0</version>
+	    </dependency>
+
+	    <!-- provided -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
+            <version>2.1.1</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- runtime -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.jcr.resource</artifactId>
-            <version>${sling.jcr.resource.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- test -->
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.commons.testing</artifactId>
-            <version>${sling.testing.version}</version>
+            <version>2.0.10</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -371,13 +321,13 @@
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
+            <version>0.7-groovy-2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.version}</version>
+            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
