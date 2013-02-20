@@ -8,7 +8,8 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Requirements
 
-* CQ 5.4 or 5.5 running on localhost:4502
+* CQ (AEM) 5.6 running on localhost:4502
+* Versions 3.x.x are compatible with CQ 5.4 and 5.5 (see GitHub tags).
 
 ## Installation
 
@@ -23,10 +24,6 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
     b. If you do not have the Groovy bundle installed:
 
         mvn install -P install-groovy,local-author
-
-    NOTE: if you are running CQ 5.4, add the profile 'cq5.4' to the above Maven commands to resolve the correct dependencies.
-
-        mvn install -P cq5.4,local-author
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 

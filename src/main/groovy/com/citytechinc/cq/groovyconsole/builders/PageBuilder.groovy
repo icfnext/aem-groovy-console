@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.groovyconsole.builders
+package com.citytechinc.cq.groovyconsole.builders
 
 class PageBuilder extends BuilderSupport {
 

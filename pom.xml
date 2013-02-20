@@ -9,7 +9,7 @@
 	</parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.cqlibrary</groupId>
+    <groupId>com.citytechinc.cq</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
     <version>4.0.0-SNAPSHOT</version>
@@ -173,7 +173,8 @@
                 </executions>
                 <configuration>
                     <instructions>
-                        <Export-Package>com.citytechinc.cqlibrary.groovyconsole.*</Export-Package>
+	                    <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>com.citytechinc.cq.groovyconsole.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
@@ -236,7 +237,7 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>groovy-all</bundleName>
-                                <bundleName>com.citytechinc.cqlibrary.cq5-groovy-console</bundleName>
+                                <bundleName>cq5-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port}</port>
@@ -259,6 +260,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
+	    <dependency>
+		    <groupId>org.osgi</groupId>
+		    <artifactId>org.osgi.core</artifactId>
+	    </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.api</artifactId>
@@ -278,12 +283,6 @@
 	    <dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
-		    <scope>runtime</scope>
-	    </dependency>
-	    <dependency>
-		    <groupId>org.apache.sling</groupId>
-		    <artifactId>org.apache.sling.jcr.resource</artifactId>
-		    <scope>runtime</scope>
 	    </dependency>
 
 	    <!-- compile -->

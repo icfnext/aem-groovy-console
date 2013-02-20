@@ -1,4 +1,4 @@
-package com.citytechinc.cqlibrary.groovyconsole.servlets
+package com.citytechinc.cq.groovyconsole.servlets
 
 import javax.jcr.RepositoryException
 
@@ -7,7 +7,7 @@ import org.apache.sling.api.SlingHttpServletResponse
 
 import spock.lang.Shared
 
-import com.citytechinc.cqlibrary.groovyconsole.AbstractRepositorySpec
+import com.citytechinc.cq.groovyconsole.AbstractRepositorySpec
 import com.day.cq.commons.jcr.JcrConstants
 
 class ScriptSavingServletSpec extends AbstractRepositorySpec {

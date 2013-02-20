@@ -14,7 +14,7 @@ function initializeThemeMenu() {
     var theme = $.cookie('theme');
 
     if (theme == null) {
-        theme = 'ace/theme/solarized_dark';
+        theme = 'ace/theme/idle_fingers';
     }
 
     editor.setTheme(theme);
@@ -94,10 +94,10 @@ function initializeButtons() {
 
             $('#run-script-text').text('Running...');
 
-            $.post('/etc/groovyconsole/jcr:content.html', {
+            $.post('/bin/groovyconsole/post.json', {
                 script: script
             }).done(function(data) {
-                var result = data.executionResult;
+                var result = data.executionResult;\
                 var output = data.outputText;
                 var stacktrace = data.stacktraceText;
                 var runtime = data.runningTime;
