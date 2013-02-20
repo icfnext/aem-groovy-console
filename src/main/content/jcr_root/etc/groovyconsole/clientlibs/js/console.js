@@ -97,7 +97,7 @@ function initializeButtons() {
             $.post('/bin/groovyconsole/post.json', {
                 script: script
             }).done(function(data) {
-                var result = data.executionResult;\
+                var result = data.executionResult;
                 var output = data.outputText;
                 var stacktrace = data.stacktraceText;
                 var runtime = data.runningTime;
