@@ -25,9 +25,22 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
 	static final long serialVersionUID = 1L
 
+	static final def SCRIPT_PARAM = "script"
+
 	static final def ENCODING = "UTF-8"
 
 	static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
+
+	static final def RUNNING_TIME = { closure ->
+		def start = System.currentTimeMillis()
+
+		closure.call()
+
+		def date = new Date()
+
+		date.setTime(System.currentTimeMillis() - start)
+		date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
+	}
 
 	@Reference
 	SlingRepository repository
@@ -52,24 +65,25 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 		def stackTrace = new StringWriter()
 		def errorWriter = new PrintWriter(stackTrace)
 
-		def result = ""
-
-		def startTime = System.currentTimeMillis()
-
-		LOG.debug "doPost() script execution started"
-
 		def oldClassLoader = Thread.currentThread().contextClassLoader
 
 		Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
+		def result = ""
+		def runningTime = ""
+
 		try {
 			GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
-			def script = shell.parse(request.getRequestParameter("script").getString(ENCODING))
+			def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
 
 			addMetaClass(script)
 
-			result = script.run()
+			runningTime = RUNNING_TIME {
+				result = script.run()
+			}
+
+			LOG.debug "doPost() script execution completed, running time = $runningTime"
 		} catch (MultipleCompilationErrorsException e) {
 			LOG.error("script compilation error", e)
 			e.printStackTrace(errorWriter)
@@ -80,17 +94,13 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 			Thread.currentThread().setContextClassLoader(oldClassLoader)
 		}
 
-		def time = getRunningTime(startTime)
-
-		LOG.debug "doPost() script execution completed, running time = $time"
-
 		response.contentType = "application/json"
 
 		def json = new JsonBuilder([
 			executionResult: result as String,
 			outputText: stream.toString(ENCODING),
 			stacktraceText: stackTrace.toString(),
-			runningTime: time
+			runningTime: runningTime
 		])
 
 		json.writeTo(response.writer)
@@ -144,14 +154,6 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 				bundleContext.getService(ref)
 			}
 		}
-	}
-
-	def getRunningTime(startTime) {
-		def date = new Date()
-
-		date.setTime(System.currentTimeMillis() - startTime)
-
-		date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
 	}
 
 	@Activate
