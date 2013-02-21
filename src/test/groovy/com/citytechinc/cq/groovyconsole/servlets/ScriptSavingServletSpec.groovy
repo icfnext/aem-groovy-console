@@ -1,14 +1,13 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import javax.jcr.RepositoryException
-
+import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
+import com.citytechinc.cq.testing.AbstractRepositorySpec
+import com.day.cq.commons.jcr.JcrConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-
 import spock.lang.Shared
 
-import com.citytechinc.cq.groovyconsole.AbstractRepositorySpec
-import com.day.cq.commons.jcr.JcrConstants
+import javax.jcr.RepositoryException
 
 class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
@@ -28,7 +27,14 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
         this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
             script = stream.text
         }
+
+	    GroovyMetaClassRegistry.registerMetaClasses()
     }
+
+	def cleanup() {
+		session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+		session.save()
+	}
 
     def "save script"() {
         setup: "mock request with file name and script parameters"

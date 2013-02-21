@@ -1,5 +1,6 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
+import com.day.cq.commons.jcr.JcrConstants
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
@@ -8,8 +9,6 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
-
-import com.day.cq.commons.jcr.JcrConstants
 
 @SlingServlet(paths = "/bin/groovyconsole/save", label = "Groovy Console Script Saving Servlet", description = "Writes script to nt:file node.")
 class ScriptSavingServlet extends SlingAllMethodsServlet {

@@ -45,7 +45,6 @@
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <assembly.descriptor>src/main/assembly/zip.xml</assembly.descriptor>
     </properties>
 
     <profiles>
@@ -57,17 +56,6 @@
             <properties>
                 <skip>true</skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>install-groovy</id>
-            <activation>
-                <property>
-                    <name>install-groovy</name>
-                </property>
-            </activation>
-            <properties>
-                <assembly.descriptor>src/main/assembly/zip-groovy.xml</assembly.descriptor>
             </properties>
         </profile>
         <profile>
@@ -186,7 +174,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <finalName>${project.artifactId}</finalName>
                     <descriptors>
-                        <descriptor>${assembly.descriptor}</descriptor>
+                        <descriptor>src/main/assembly/zip.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
@@ -281,6 +269,14 @@
             <artifactId>cq-commons</artifactId>
         </dependency>
 	    <dependency>
+		    <groupId>com.day.cq</groupId>
+		    <artifactId>cq-tagging</artifactId>
+	    </dependency>
+	    <dependency>
+		    <groupId>com.adobe.granite</groupId>
+		    <artifactId>com.adobe.granite.replication.core</artifactId>
+	    </dependency>
+	    <dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
 	    </dependency>
@@ -299,30 +295,20 @@
             <version>2.1.1</version>
             <scope>provided</scope>
         </dependency>
+	    <dependency>
+		    <groupId>com.citytechinc.cq</groupId>
+			<artifactId>cq5-groovy-tools</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		    <scope>provided</scope>
+	    </dependency>
 
         <!-- test -->
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.commons.testing</artifactId>
-            <version>2.0.10</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.spockframework</groupId>
-            <artifactId>spock-core</artifactId>
-            <version>0.7-groovy-2.0</version>
-            <scope>test</scope>
-        </dependency>
+	    <dependency>
+		    <groupId>com.citytechinc.cq</groupId>
+		    <artifactId>cq5-testing</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		    <scope>test</scope>
+	    </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>

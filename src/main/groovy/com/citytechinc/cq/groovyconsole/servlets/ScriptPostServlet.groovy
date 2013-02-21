@@ -1,8 +1,10 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovyconsole.builders.NodeBuilder
-import com.citytechinc.cq.groovyconsole.builders.PageBuilder
-import com.citytechinc.cq.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
+import com.citytechinc.cq.groovy.builders.NodeBuilder
+import com.citytechinc.cq.groovy.builders.PageBuilder
+import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
+import com.day.cq.replication.ReplicationActionType
+import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
 import org.apache.felix.scr.annotations.Activate
@@ -48,6 +50,9 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 	@Reference
 	ResourceResolverFactory resourceResolverFactory
 
+	@Reference
+	Replicator replicator
+
 	def session
 
 	def resourceResolver
@@ -65,7 +70,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 		def stackTrace = new StringWriter()
 		def errorWriter = new PrintWriter(stackTrace)
 
-		def oldClassLoader = Thread.currentThread().contextClassLoader
+		def classLoader = Thread.currentThread().contextClassLoader
 
 		Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
@@ -73,7 +78,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 		def runningTime = ""
 
 		try {
-			GroovyConsoleMetaClassRegistry.registerMetaClasses()
+			GroovyMetaClassRegistry.registerMetaClasses()
 
 			def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
 
@@ -91,7 +96,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 			LOG.error("error running script", t)
 			t.printStackTrace(errorWriter)
 		} finally {
-			Thread.currentThread().setContextClassLoader(oldClassLoader)
+			Thread.currentThread().setContextClassLoader(classLoader)
 		}
 
 		response.contentType = "application/json"
@@ -152,6 +157,14 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 				def ref = bundleContext.getServiceReference(serviceType)
 
 				bundleContext.getService(ref)
+			}
+
+			delegate.activate = { path ->
+				replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+			}
+
+			delegate.deactivate = { path ->
+				replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
 			}
 		}
 	}
