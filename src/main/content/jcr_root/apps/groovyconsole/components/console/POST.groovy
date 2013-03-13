@@ -76,9 +76,6 @@ try {
 
     System.setOut(originalOut)
     System.setErr(originalErr)
-
-    resourceResolver.close()
-    session.logout()
 }
 
 def time = getRunningTime(startTime)
@@ -97,6 +94,9 @@ json {
 }
 
 out.println json.toString()
+
+resourceResolver.close()
+session.logout()
 
 def getSession() {
     def repository = sling.getService(SlingRepository)
