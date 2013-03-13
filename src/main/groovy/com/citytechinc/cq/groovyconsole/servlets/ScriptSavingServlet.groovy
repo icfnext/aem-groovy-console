@@ -87,8 +87,6 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     @Deactivate
     void deactivate() {
-        if (session) {
-            session.logout()
-        }
+        session?.logout()
     }
 }

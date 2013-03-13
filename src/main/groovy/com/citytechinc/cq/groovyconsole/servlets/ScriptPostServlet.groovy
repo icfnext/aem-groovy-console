@@ -25,167 +25,162 @@ import javax.servlet.ServletException
 @SlingServlet(paths = "/bin/groovyconsole/post", label = "Groovy Console POST Servlet", description = "Groovy script execution servlet.")
 class ScriptPostServlet extends SlingAllMethodsServlet {
 
-	static final long serialVersionUID = 1L
+    static final long serialVersionUID = 1L
 
-	static final def SCRIPT_PARAM = "script"
+    static final def SCRIPT_PARAM = "script"
 
-	static final def ENCODING = "UTF-8"
+    static final def ENCODING = "UTF-8"
 
-	static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
+    static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
 
-	static final def RUNNING_TIME = { closure ->
-		def start = System.currentTimeMillis()
+    static final def RUNNING_TIME = { closure ->
+        def start = System.currentTimeMillis()
 
-		closure.call()
+        closure.call()
 
-		def date = new Date()
+        def date = new Date()
 
-		date.setTime(System.currentTimeMillis() - start)
-		date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
-	}
+        date.setTime(System.currentTimeMillis() - start)
+        date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
+    }
 
-	@Reference
-	SlingRepository repository
+    @Reference
+    SlingRepository repository
 
-	@Reference
-	ResourceResolverFactory resourceResolverFactory
+    @Reference
+    ResourceResolverFactory resourceResolverFactory
 
-	@Reference
-	Replicator replicator
+    @Reference
+    Replicator replicator
 
-	def session
+    def session
 
-	def resourceResolver
+    def resourceResolver
 
-	def pageManager
+    def pageManager
 
-	def bundleContext
+    def bundleContext
 
-	@Override
+    @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
-		def stream = new ByteArrayOutputStream()
-		def binding = createBinding(request, stream)
-		def shell = new GroovyShell(binding)
+        def stream = new ByteArrayOutputStream()
+        def binding = createBinding(request, stream)
+        def shell = new GroovyShell(binding)
 
-		def stackTrace = new StringWriter()
-		def errorWriter = new PrintWriter(stackTrace)
+        def stackTrace = new StringWriter()
+        def errorWriter = new PrintWriter(stackTrace)
 
-		def classLoader = Thread.currentThread().contextClassLoader
+        def classLoader = Thread.currentThread().contextClassLoader
 
-		Thread.currentThread().contextClassLoader = new GroovyClassLoader()
+        Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
-		def result = ""
-		def runningTime = ""
+        def result = ""
+        def runningTime = ""
 
-		try {
-			GroovyMetaClassRegistry.registerMetaClasses()
+        try {
+            GroovyMetaClassRegistry.registerMetaClasses()
 
-			def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
+            def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
 
-			addMetaClass(script)
+            addMetaClass(script)
 
-			runningTime = RUNNING_TIME {
-				result = script.run()
-			}
+            runningTime = RUNNING_TIME {
+                result = script.run()
+            }
 
-			LOG.debug "doPost() script execution completed, running time = $runningTime"
-		} catch (MultipleCompilationErrorsException e) {
-			LOG.error("script compilation error", e)
-			e.printStackTrace(errorWriter)
-		} catch (Throwable t) {
-			LOG.error("error running script", t)
-			t.printStackTrace(errorWriter)
-		} finally {
-			Thread.currentThread().setContextClassLoader(classLoader)
-		}
+            LOG.debug "doPost() script execution completed, running time = $runningTime"
+        } catch (MultipleCompilationErrorsException e) {
+            LOG.error("script compilation error", e)
+            e.printStackTrace(errorWriter)
+        } catch (Throwable t) {
+            LOG.error("error running script", t)
+            t.printStackTrace(errorWriter)
+        } finally {
+            Thread.currentThread().setContextClassLoader(classLoader)
+        }
 
-		response.contentType = "application/json"
+        response.contentType = "application/json"
 
-		def json = new JsonBuilder([
-			executionResult: result as String,
-			outputText: stream.toString(ENCODING),
-			stacktraceText: stackTrace.toString(),
-			runningTime: runningTime
-		])
+        def json = new JsonBuilder([
+                executionResult: result as String,
+                outputText: stream.toString(ENCODING),
+                stacktraceText: stackTrace.toString(),
+                runningTime: runningTime
+        ])
 
-		json.writeTo(response.writer)
-	}
+        json.writeTo(response.writer)
+    }
 
-	def createBinding(request, stream) {
-		def printStream = new PrintStream(stream, true, ENCODING)
+    def createBinding(request, stream) {
+        def printStream = new PrintStream(stream, true, ENCODING)
 
-		new Binding([
-			out: printStream,
-			log: LoggerFactory.getLogger("groovyconsole"),
-			session: session,
-			slingRequest: request,
-			pageManager: pageManager,
-			resourceResolver: resourceResolver,
-			nodeBuilder: new NodeBuilder(session),
-			pageBuilder: new PageBuilder(session)
-		])
-	}
+        new Binding([
+                out: printStream,
+                log: LoggerFactory.getLogger("groovyconsole"),
+                session: session,
+                slingRequest: request,
+                pageManager: pageManager,
+                resourceResolver: resourceResolver,
+                nodeBuilder: new NodeBuilder(session),
+                pageBuilder: new PageBuilder(session)
+        ])
+    }
 
-	def addMetaClass(script) {
-		script.metaClass {
-			delegate.getNode = { path ->
-				session.getNode(path)
-			}
+    def addMetaClass(script) {
+        script.metaClass {
+            delegate.getNode = { path ->
+                session.getNode(path)
+            }
 
-			delegate.getPage = { path ->
-				pageManager.getPage(path)
-			}
+            delegate.getPage = { path ->
+                pageManager.getPage(path)
+            }
 
-			delegate.move = { src ->
-				["to": { dst ->
-					session.move(src, dst)
-					session.save()
-				}]
-			}
+            delegate.move = { src ->
+                ["to": { dst ->
+                    session.move(src, dst)
+                    session.save()
+                }]
+            }
 
-			delegate.copy = { src ->
-				["to": { dst ->
-					session.workspace.copy(src, dst)
-				}]
-			}
+            delegate.copy = { src ->
+                ["to": { dst ->
+                    session.workspace.copy(src, dst)
+                }]
+            }
 
-			delegate.save = {
-				session.save()
-			}
+            delegate.save = {
+                session.save()
+            }
 
-			delegate.getService = { serviceType ->
-				def ref = bundleContext.getServiceReference(serviceType)
+            delegate.getService = { serviceType ->
+                def ref = bundleContext.getServiceReference(serviceType)
 
-				bundleContext.getService(ref)
-			}
+                bundleContext.getService(ref)
+            }
 
-			delegate.activate = { path ->
-				replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
-			}
+            delegate.activate = { path ->
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            }
 
-			delegate.deactivate = { path ->
-				replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
-			}
-		}
-	}
+            delegate.deactivate = { path ->
+                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
+            }
+        }
+    }
 
-	@Activate
-	void activate(BundleContext bundleContext) {
-		this.bundleContext = bundleContext
+    @Activate
+    void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext
 
-		session = repository.loginAdministrative(null)
-		resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null)
-		pageManager = resourceResolver.adaptTo(PageManager)
-	}
+        session = repository.loginAdministrative(null)
+        resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null)
+        pageManager = resourceResolver.adaptTo(PageManager)
+    }
 
-	@Deactivate
-	void deactivate() {
-		if (session) {
-			session.logout()
-		}
-
-		if (resourceResolver) {
-			resourceResolver.close()
-		}
-	}
+    @Deactivate
+    void deactivate() {
+        session?.logout()
+        resourceResolver?.close()
+    }
 }
