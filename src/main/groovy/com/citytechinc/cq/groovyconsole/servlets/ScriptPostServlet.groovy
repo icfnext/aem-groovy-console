@@ -62,7 +62,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 	def bundleContext
 
 	@Override
-	protected void doPost(final SlingHttpServletRequest request, final SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
 		def stream = new ByteArrayOutputStream()
 		def binding = createBinding(request, stream)
 		def shell = new GroovyShell(binding)
@@ -170,7 +170,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 	}
 
 	@Activate
-	void activate(final BundleContext bundleContext) {
+	void activate(BundleContext bundleContext) {
 		this.bundleContext = bundleContext
 
 		session = repository.loginAdministrative(null)
