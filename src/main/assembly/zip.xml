@@ -35,7 +35,7 @@
             <unpack>false</unpack>
             <includes>
                 <include>com.citytechinc.cq:cq5-groovy-console</include>
-	            <include>com.citytechinc.cq:cq5-groovy-tools</include>
+	            <include>com.citytechinc.cq:cq5-groovy-extension</include>
 	            <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>

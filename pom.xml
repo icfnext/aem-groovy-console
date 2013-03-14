@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.0-SNAPSHOT</version>
+        <version>5.6.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -48,6 +48,7 @@
     </repositories>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
@@ -221,7 +222,7 @@
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>0.5.1</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -230,6 +231,7 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>groovy-all</bundleName>
+                                <bundleName>cq5-groovy-extension</bundleName>
                                 <bundleName>cq5-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
@@ -302,8 +304,8 @@
         </dependency>
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
-            <artifactId>cq5-groovy-tools</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>cq5-groovy-extension</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -311,7 +313,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq5-testing</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
