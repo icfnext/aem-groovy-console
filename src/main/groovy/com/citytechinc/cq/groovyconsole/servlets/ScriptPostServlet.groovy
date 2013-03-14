@@ -3,6 +3,7 @@ package com.citytechinc.cq.groovyconsole.servlets
 import com.citytechinc.cq.groovy.builders.NodeBuilder
 import com.citytechinc.cq.groovy.builders.PageBuilder
 import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
+import com.citytechinc.cq.groovy.services.OsgiComponentService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
@@ -52,6 +53,9 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
     @Reference
     Replicator replicator
+
+    @Reference
+    OsgiComponentService componentService
 
     def session
 
@@ -115,14 +119,14 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         def printStream = new PrintStream(stream, true, ENCODING)
 
         new Binding([
-                out: printStream,
-                log: LoggerFactory.getLogger("groovyconsole"),
-                session: session,
-                slingRequest: request,
-                pageManager: pageManager,
-                resourceResolver: resourceResolver,
-                nodeBuilder: new NodeBuilder(session),
-                pageBuilder: new PageBuilder(session)
+            out: printStream,
+            log: LoggerFactory.getLogger("groovyconsole"),
+            session: session,
+            slingRequest: request,
+            pageManager: pageManager,
+            resourceResolver: resourceResolver,
+            nodeBuilder: new NodeBuilder(session),
+            pageBuilder: new PageBuilder(session)
         ])
     }
 
@@ -165,6 +169,10 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
             delegate.deactivate = { path ->
                 replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
+            }
+
+            delegate.doWhileDisabled = { componentClassName, closure ->
+                componentService.doWhileDisabled(componentClassName, closure)
             }
         }
     }
