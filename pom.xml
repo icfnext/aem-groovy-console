@@ -51,6 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
+        <groovy.version>[2.0.0,2.1.1]</groovy.version>
     </properties>
 
     <profiles>
@@ -126,7 +127,7 @@
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-all</artifactId>
-                        <version>2.1.1</version>
+                        <version>${groovy.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -299,13 +300,13 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.1.1</version>
+            <version>${groovy.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq5-groovy-extension</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.1.0</version>
             <scope>provided</scope>
         </dependency>
 
