@@ -224,7 +224,7 @@
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>0.5.1</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <goals>
