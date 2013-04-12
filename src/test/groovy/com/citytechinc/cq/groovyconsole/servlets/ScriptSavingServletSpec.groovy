@@ -9,6 +9,8 @@ import spock.lang.Shared
 
 import javax.jcr.RepositoryException
 
+import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.*
+
 class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
     static final def SCRIPT_NAME = 'Script'
@@ -42,7 +44,7 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
         def response = mockResponse()
 
         and: "create console root node"
-        session.rootNode.getOrAddNode(ScriptSavingServlet.CONSOLE_ROOT.substring(1))
+        session.rootNode.getOrAddNode(CONSOLE_ROOT.substring(1))
         session.save()
 
         when: "post to servlet"
@@ -65,11 +67,11 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
     }
 
     void scriptNodeCreated() {
-        def consoleNode = session.getNode(ScriptSavingServlet.CONSOLE_ROOT)
+        def consoleNode = session.getNode(CONSOLE_ROOT)
 
-        assert consoleNode.hasNode(ScriptSavingServlet.SCRIPT_FOLDER_REL_PATH)
+        assert consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)
 
-        def folderNode = consoleNode.getNode(ScriptSavingServlet.SCRIPT_FOLDER_REL_PATH)
+        def folderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
 
         assert folderNode.primaryNodeType.name == JcrConstants.NT_FOLDER
         assert folderNode.hasNode(SCRIPT_FILE_NAME)
@@ -89,8 +91,8 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
     def mockRequest() {
         def request = Mock(SlingHttpServletRequest)
 
-        request.getParameter(ScriptSavingServlet.FILE_NAME_PARAM) >> SCRIPT_NAME
-        request.getParameter(ScriptSavingServlet.SCRIPT_CONTENT_PARAM) >> script
+        request.getParameter(FILE_NAME_PARAM) >> SCRIPT_NAME
+        request.getParameter(SCRIPT_CONTENT_PARAM) >> script
 
         request
     }
