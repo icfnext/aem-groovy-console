@@ -6,17 +6,14 @@
     <h6>Result</h6>
     <pre></pre>
 </div>
-
 <div id="output" class="alert alert-success" style="display: none;">
     <h6>Output</h6>
     <pre></pre>
 </div>
-
 <div id="running-time" class="alert alert-info" style="display: none;">
     <h6>Running Time</h6>
     <pre></pre>
 </div>
-
 <div class="accordion" id="accordion">
     <div class="accordion-group">
         <div class="accordion-heading">

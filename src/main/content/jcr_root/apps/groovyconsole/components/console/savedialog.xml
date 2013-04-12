@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    jcr:primaryType="cq:Dialog"
-    title="Save Script"
-    xtype="dialog">
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Dialog"
+          title="Save Script"
+          xtype="dialog">
     <items jcr:primaryType="cq:WidgetCollection">
         <panel
             jcr:primaryType="cq:Widget"
@@ -16,7 +18,7 @@
                     regex="/^[a-zA-Z0-9_\\.\\-]+$/"
                     regexText="File name should only contain characters, numbers or _.-"
                     name="./fileName"
-                    xtype="textfield"/>
+                    xtype="textfield" />
             </items>
         </panel>
     </items>
@@ -28,5 +30,5 @@
             return false;
         }"
         hide="function() { enableToolbar(); }"
-    />
+        />
 </jcr:root>

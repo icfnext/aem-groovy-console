@@ -1,20 +1,23 @@
 $(function() {
+    initializeEditor();
+    initializeThemeMenu();
+    initializeButtons();
+});
+
+function initializeEditor() {
     window.editor = ace.edit('editor');
 
     var GroovyMode = ace.require('ace/mode/groovy').Mode;
 
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
-
-    initializeThemeMenu();
-    initializeButtons();
-});
+}
 
 function initializeThemeMenu() {
     var theme = $.cookie('theme');
 
     if (theme == null) {
-        theme = 'ace/theme/solarized_dark';
+        theme = 'ace/theme/idle_fingers';
     }
 
     editor.setTheme(theme);
@@ -33,7 +36,6 @@ function initializeThemeMenu() {
         editor.setTheme(theme);
 
         $('#dropdown-themes li').removeClass('active');
-
         $(this).addClass('active');
 
         $.cookie('theme', theme, { expires: 365 });
@@ -94,7 +96,7 @@ function initializeButtons() {
 
             $('#run-script-text').text('Running...');
 
-            $.post('/etc/groovyconsole/jcr:content.html', {
+            $.post('/bin/groovyconsole/post.json', {
                 script: script
             }).done(function(data) {
                 var result = data.executionResult;
