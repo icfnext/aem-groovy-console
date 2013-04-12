@@ -63,6 +63,7 @@
             <properties>
                 <skip>true</skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
+                <cq.username>admin</cq.username>
             </properties>
         </profile>
         <profile>
