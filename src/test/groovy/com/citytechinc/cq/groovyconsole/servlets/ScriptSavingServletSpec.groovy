@@ -1,7 +1,6 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
 import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
-import com.citytechinc.cq.testing.AbstractRepositorySpec
 import com.day.cq.commons.jcr.JcrConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
@@ -11,7 +10,7 @@ import javax.jcr.RepositoryException
 
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.*
 
-class ScriptSavingServletSpec extends AbstractRepositorySpec {
+class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
 
     static final def SCRIPT_NAME = 'Script'
 
@@ -26,9 +25,7 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
         servlet.session = session
 
-        this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
-            script = stream.text
-        }
+        script = getScriptAsString(SCRIPT_NAME)
 
 	    GroovyMetaClassRegistry.registerMetaClasses()
     }

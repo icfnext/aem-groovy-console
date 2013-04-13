@@ -20,6 +20,7 @@
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
+    <url>http://citytechinc.github.io/cq5-groovy-console/</url>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -40,6 +41,11 @@
         <url>https://github.com/Citytechinc/cq5-groovy-console</url>
     </scm>
 
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/Citytechinc/cq5-groovy-console/issues</url>
+    </issueManagement>
+
     <repositories>
         <repository>
             <id>citytech-public</id>
@@ -49,6 +55,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <groovy.version>2.1.2</groovy.version>
@@ -93,6 +100,36 @@
                 <cq.username>admin</cq.username>
                 <cq.password>admin</cq.password>
             </properties>
+        </profile>
+        <profile>
+            <id>github-site</id>
+            <activation>
+                <property>
+                    <name>github-site</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <version>0.7</version>
+                        <configuration>
+                            <message>site for ${project.version}</message>
+                            <server>github</server>
+                            <merge>true</merge>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                                <phase>site</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -243,6 +280,52 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.6</version>
+                            <configuration>
+                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                            </configuration>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <!--<report>dependencies</report>-->
+                                        <report>index</report>
+                                        <report>license</report>
+                                        <!--<report>plugins</report>-->
+                                        <report>scm</report>
+                                        <report>summary</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                            <version>2.14.1</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-changes-plugin</artifactId>
+                            <version>2.9</version>
+                            <configuration>
+                                <includeOpenIssues>false</includeOpenIssues>
+                            </configuration>
+                            <reportSets>
+                                <reportSet>
+                                    <reports>
+                                        <report>github-report</report>
+                                    </reports>
+                                </reportSet>
+                            </reportSets>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
             </plugin>
         </plugins>
     </build>

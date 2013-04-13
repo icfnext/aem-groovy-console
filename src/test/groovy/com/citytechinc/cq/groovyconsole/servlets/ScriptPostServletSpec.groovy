@@ -1,7 +1,6 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
 import com.citytechinc.cq.groovy.services.OsgiComponentService
-import com.citytechinc.cq.testing.AbstractRepositorySpec
 import com.citytechinc.cq.testing.mock.MockResourceResolver
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
@@ -15,7 +14,7 @@ import spock.lang.Shared
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.ENCODING
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.SCRIPT_PARAM
 
-class ScriptPostServletSpec extends AbstractRepositorySpec {
+class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
 
     @Shared servlet
 
@@ -33,9 +32,7 @@ class ScriptPostServletSpec extends AbstractRepositorySpec {
         servlet.componentService = Mock(OsgiComponentService)
         servlet.bundleContext = Mock(BundleContext)
 
-        this.class.getResourceAsStream("/Script.groovy").withStream { stream ->
-            script = stream.text
-        }
+        script = getScriptAsString("Script")
 
         writer = new StringWriter()
     }
