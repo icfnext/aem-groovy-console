@@ -6,5 +6,6 @@
         cq:template="/apps/groovyconsole/templates/console"
         jcr:primaryType="cq:PageContent"
         jcr:title="Groovy Console"
-        sling:resourceType="groovyconsole/components/console"/>
+        sling:resourceType="groovyconsole/components/console"
+        sling:vanityPath="[/groovyconsole]"/>
 </jcr:root>
