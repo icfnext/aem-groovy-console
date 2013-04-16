@@ -13,8 +13,8 @@
     <li>getPage(String path) - <span class="muted">Get the <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/Page.html">Page</a> for the given path, or null if it does not exist.</span></li>
     <li>getNode(String path) - <span class="muted">Get the <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Node.html">Node</a> for the given path.  Throws <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/RepositoryException.html">javax.jcr.RepositoryException</a> if it does not exist.</span></li>
     <li>getService(Class&lt;ServiceType&gt; serviceType) - <span class="muted">Get the OSGi service instance for the given type, e.g. <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/workflow/WorkflowService.html">com.day.cq.workflow.WorkflowService</a>.</span></li>
-    <li>copy 'sourceAbsolutePath' to 'destinationAbsolutePath' - <span class="muted">Groovy DSL syntax for copying a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Workspace.html#copy(java.lang.String, java.lang.String)">session.workspace.copy(sourceAbsolutePath, destinationAbsolutePath)</a>.</span></li>
-    <li>move 'sourceAbsolutePath' to 'destinationAbsolutePath' - <span class="muted">Groovy DSL syntax for moving a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html#move(java.lang.String, java.lang.String)">session.move(sourceAbsolutePath, destinationAbsolutePath)</a>, except that the Session is saved automatically when the move is completed.</span></li>
+    <li>copy "sourceAbsolutePath" to "destinationAbsolutePath" - <span class="muted">Groovy DSL syntax for copying a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Workspace.html#copy(java.lang.String, java.lang.String)">session.workspace.copy(sourceAbsolutePath, destinationAbsolutePath)</a>.</span></li>
+    <li>move "sourceAbsolutePath" to "destinationAbsolutePath" - <span class="muted">Groovy DSL syntax for moving a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html#move(java.lang.String, java.lang.String)">session.move(sourceAbsolutePath, destinationAbsolutePath)</a>, except that the Session is saved automatically when the move is completed.</span></li>
     <li>save() - <span class="muted">Save the current JCR session.</span></li>
     <li>activate(String path) - <span class="muted">Activate the node at the given path.</span></li>
     <li>deactivate(String path) - <span class="muted">Deactivate the node at the given path.</span></li>
@@ -51,37 +51,37 @@
     <li>nodeBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a Node in the repository.  A new Node is created only if there is no existing node for the current name.</span>
         <pre>
 nodeBuilder.etc {
-    satirists('sling:Folder') {
-        bierce(firstName: 'Ambrose', lastName: 'Bierce', birthDate: Calendar.instance.updated(year: 1842, month: 5, date: 24))
-        mencken(firstName: 'H.L.', lastName: 'Mencken', birthDate: Calendar.instance.updated(year: 1880, month: 8, date: 12))
-        other('sling:Folder', 'jcr:title': 'Other')
+    satirists("sling:Folder") {
+        bierce(firstName: "Ambrose", lastName: "Bierce", birthDate: Calendar.instance.updated(year: 1842, month: 5, date: 24))
+        mencken(firstName: "H.L.", lastName: "Mencken", birthDate: Calendar.instance.updated(year: 1880, month: 8, date: 12))
+        other("sling:Folder", "jcr:title": "Other")
     }
 }</pre>
         <ul>
-            <li>A single string argument represents the node type name for the node ('satirists').</li>
-            <li>A map argument uses the provided key:value pairs to set property values on the node ('bierce' and 'mencken').</li>
-            <li>Both string and map arguments will set the node type and property value(s) for the node ('other').</li>
+            <li>A single string argument represents the node type name for the node ("satirists").</li>
+            <li>A map argument uses the provided key:value pairs to set property values on the node ("bierce" and "mencken").</li>
+            <li>Both string and map arguments will set the node type and property value(s) for the node ("other").</li>
         </ul>
     </li>
     <li>pageBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a cq:Page node, unless the node is a descendant of a "jcr:content" node, in which case nodes are treated in the same manner as described for the Node builder above.</span>
         <pre>
 pageBuilder.content {
     beer {
-        styles('Styles') {
-            'jcr:content'('jcr:lastModifiedBy': 'me', 'jcr:lastModified': Calendar.instance) {
-                data('sling:Folder')
+        styles("Styles") {
+            "jcr:content"("jcr:lastModifiedBy": "me", "jcr:lastModified": Calendar.instance) {
+                data("sling:Folder")
             }
-            dubbel('Dubbel')
-            tripel('Tripel')
-            saison('Saison')
+            dubbel("Dubbel")
+            tripel("Tripel")
+            saison("Saison")
         }
-        breweries('Breweries', 'jcr:lastModifiedBy': 'me', 'jcr:lastModified': Calendar.instance)
+        breweries("Breweries", "jcr:lastModifiedBy": "me", "jcr:lastModified": Calendar.instance)
     }
 }</pre>
         <ul>
-            <li>A single string argument is used to set the page title rather than the node type ('styles').</li>
-            <li>Descendants of 'jcr:content' nodes are not created with the cq:Page type by default and can have their own node type specified as described for the Node builder ('data').</li>
-            <li>Page properties can be passed directly as arguments on the page node without explicitly creating a jcr:content node first ('breweries').</li>
+            <li>A single string argument is used to set the page title rather than the node type ("styles").</li>
+            <li>Descendants of "jcr:content" nodes are not created with the cq:Page type by default and can have their own node type specified as described for the Node builder ("data").</li>
+            <li>Page properties can be passed directly as arguments on the page node without explicitly creating a jcr:content node first ("breweries").</li>
         </ul>
     </li>
 </ul>
