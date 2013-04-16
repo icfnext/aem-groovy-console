@@ -407,5 +407,29 @@
             <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.gebish</groupId>
+            <artifactId>geb-core</artifactId>
+            <version>0.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.gebish</groupId>
+            <artifactId>geb-spock</artifactId>
+            <version>0.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>2.26.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>2.26.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
