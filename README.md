@@ -17,7 +17,7 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    mvn install -P local-author
+        mvn install -P local-author
 
 2.  [Verify](http://localhost:4502/groovyconsole) the installation.
 
