@@ -13,7 +13,7 @@
     <groupId>com.citytechinc.cq</groupId>
     <artifactId>cq5-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.0</version>
+    <version>4.0.1-SNAPSHOT</version>
     <name>CQ5 Groovy Console</name>
     <description>
         The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container. Scripts
