@@ -6,7 +6,10 @@ class ConsolePage extends Page {
 
     static url = "/groovyconsole"
 
+    static at = { title == "Groovy Console" }
+
     static content = {
+        title { $("title").text() }
         runButton { $("#run-script") }
         newButton { $("#new-script") }
         openButton { $("#open-script") }

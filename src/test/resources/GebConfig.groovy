@@ -1,5 +1,5 @@
-import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.firefox.FirefoxDriver
 
-driver = { new ChromeDriver() }
+driver = { new FirefoxDriver() }
 baseUrl = "http://localhost:4502"
-// reportsDir = "target/geb-reports"
+reportsDir = "target/geb-reports"

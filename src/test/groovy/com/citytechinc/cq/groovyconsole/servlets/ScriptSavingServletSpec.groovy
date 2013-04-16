@@ -4,12 +4,14 @@ import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
 import com.day.cq.commons.jcr.JcrConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import spock.lang.Ignore
 import spock.lang.Shared
 
 import javax.jcr.RepositoryException
 
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.*
 
+@Ignore
 class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
 
     static final def SCRIPT_NAME = 'Script'
