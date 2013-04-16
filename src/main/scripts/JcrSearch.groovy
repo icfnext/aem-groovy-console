@@ -1,6 +1,6 @@
-def start = getPage('/content/geometrixx')
+def start = getPage("/content/geometrixx")
 
-def query = createXPathQuery(start, 'beer')
+def query = createXPathQuery(start, "beer")
 
 println "query = ${query.statement}"
 
@@ -19,7 +19,7 @@ def createXPathQuery(page, term) {
 
     def statement = "/jcr:root${page.path}//element(*, cq:Page)[jcr:contains(., \'$term\')]/(rep:excerpt(.)) order by @jcr:score descending"
 
-    def query = queryManager.createQuery(statement, 'xpath')
+    def query = queryManager.createQuery(statement, "xpath")
 
     query
 }

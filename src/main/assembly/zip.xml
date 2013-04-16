@@ -12,8 +12,6 @@
         <fileSet>
             <directory>${basedir}/src/main/content/jcr_root</directory>
             <excludes>
-                <exclude>**/.vlt</exclude>
-                <exclude>**/.vltignore</exclude>
                 <exclude>**/.DS_Store</exclude>
             </excludes>
             <outputDirectory>jcr_root</outputDirectory>
@@ -33,9 +31,12 @@
             <outputDirectory>jcr_root/apps/groovyconsole/install</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useStrictFiltering>true</useStrictFiltering>
+	        <scope>provided</scope>
             <unpack>false</unpack>
             <includes>
-                <include>com.citytechinc.cqlibrary:groovyconsole</include>
+                <include>com.citytechinc.cq:cq5-groovy-console</include>
+	            <include>com.citytechinc.cq:cq5-groovy-extension</include>
+	            <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>
     </dependencySets>

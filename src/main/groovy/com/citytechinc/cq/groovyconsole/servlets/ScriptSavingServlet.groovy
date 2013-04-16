@@ -1,5 +1,6 @@
-package com.citytechinc.cqlibrary.groovyconsole.servlets
+package com.citytechinc.cq.groovyconsole.servlets
 
+import com.day.cq.commons.jcr.JcrConstants
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
@@ -9,23 +10,23 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 
-import com.day.cq.commons.jcr.JcrConstants
-
-@SlingServlet(paths = '/bin/groovyconsole/save', methods = 'POST', description = 'Writes script to nt:file node.')
+@SlingServlet(paths = "/bin/groovyconsole/save", label = "Groovy Console Script Saving Servlet", description = "Writes script to nt:file node.")
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
-    private static final long serialVersionUID = 1L
+    static final long serialVersionUID = 1L
 
-    static final String SCRIPT_FOLDER_REL_PATH = 'scripts'
+    static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
-    static final String CONSOLE_ROOT = '/etc/groovyconsole'
+    static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    static final String FILE_NAME_PARAM = 'fileName'
+    static final String FILE_NAME_PARAM = "fileName"
 
-    static final String SCRIPT_CONTENT_PARAM = 'scriptContent'
+    static final String SCRIPT_CONTENT_PARAM = "scriptContent"
+
+    static final String EXTENSION_GROOVY = ".groovy"
 
     @Reference
-    private SlingRepository repository
+    SlingRepository repository
 
     def session
 
@@ -34,18 +35,20 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         def name = request.getParameter(FILE_NAME_PARAM)
         def script = request.getParameter(SCRIPT_CONTENT_PARAM)
 
+        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
+
         def binary = getScriptBinary(script)
 
         def folderNode = getScriptFolderNode()
 
-        if (folderNode.hasNode(name)) {
-            folderNode.getNode(name).remove()
+        if (folderNode.hasNode(fileName)) {
+            folderNode.getNode(fileName).remove()
         }
 
-        def fileNode = folderNode.addNode(name, JcrConstants.NT_FILE)
+        def fileNode = folderNode.addNode(fileName, JcrConstants.NT_FILE)
         def resNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
-        resNode.setProperty(JcrConstants.JCR_MIMETYPE, 'application/octet-stream')
+        resNode.setProperty(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
         resNode.setProperty(JcrConstants.JCR_DATA, binary)
 
         session.save()
@@ -53,7 +56,7 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         binary.dispose()
     }
 
-    private def getScriptFolderNode() {
+    def getScriptFolderNode() {
         def consoleNode = session.getNode(CONSOLE_ROOT)
 
         def scriptFolderNode
@@ -67,34 +70,23 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         scriptFolderNode
     }
 
-    private def getScriptBinary(script) {
-        def valueFactory = session.valueFactory
-
-        def stream = null
+    def getScriptBinary(script) {
         def binary = null
 
-        try {
-            stream = new ByteArrayInputStream(script.getBytes('UTF-8'))
-
-            binary = valueFactory.createBinary(stream)
-        } finally {
-            if (stream) {
-                stream.close()
-            }
+        new ByteArrayInputStream(script.getBytes("UTF-8")).withStream { stream ->
+            binary = session.valueFactory.createBinary(stream)
         }
 
         return binary
     }
 
     @Activate
-    private void activate() {
+    void activate() {
         session = repository.loginAdministrative(null)
     }
 
     @Deactivate
-    private void deactivate() {
-        if (session) {
-            session.logout()
-        }
+    void deactivate() {
+        session?.logout()
     }
 }

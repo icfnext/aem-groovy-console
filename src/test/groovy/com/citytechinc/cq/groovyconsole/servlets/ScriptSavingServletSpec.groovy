@@ -1,44 +1,47 @@
-package com.citytechinc.cqlibrary.groovyconsole.servlets
+package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cqlibrary.groovyconsole.AbstractRepositorySpec
-import com.citytechinc.cqlibrary.groovyconsole.metaclass.GroovyConsoleMetaClassRegistry
-
+import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
+import com.day.cq.commons.jcr.JcrConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-
-import com.day.cq.commons.jcr.JcrConstants
+import spock.lang.Shared
 
 import javax.jcr.RepositoryException
 
-import spock.lang.Shared
+import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.*
 
-class ScriptSavingServletSpec extends AbstractRepositorySpec {
+class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
 
-    static final def SCRIPT_NAME = 'Script.groovy'
+    static final def SCRIPT_NAME = 'Script'
+
+    static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
     @Shared servlet
 
     @Shared script
 
     def setupSpec() {
-        GroovyConsoleMetaClassRegistry.registerNodeMetaClass()
-
         servlet = new ScriptSavingServlet()
+
         servlet.session = session
 
-        this.class.getResourceAsStream("/$SCRIPT_NAME").withStream { stream ->
-            script = stream.text
-        }
+        script = getScriptAsString(SCRIPT_NAME)
+
+	    GroovyMetaClassRegistry.registerMetaClasses()
     }
+
+	def cleanup() {
+		session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+		session.save()
+	}
 
     def "save script"() {
         setup: "mock request with file name and script parameters"
         def request = mockRequest()
         def response = mockResponse()
 
-        and: "create console node"
-        def consoleNode = session.rootNode.getOrAddNode(ScriptSavingServlet.CONSOLE_ROOT.substring(1))
-
+        and: "create console root node"
+        session.rootNode.getOrAddNode(CONSOLE_ROOT.substring(1))
         session.save()
 
         when: "post to servlet"
@@ -46,22 +49,6 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
 
         then: "script node has been created"
         scriptNodeCreated()
-    }
-
-    def "overwrite existing script"() {
-        setup: "mock request with file name and script parameters"
-        def request = mockRequest()
-        def response = mockResponse()
-
-        when: "post to servlet"
-        servlet.doPost(request, response)
-
-        then: "script node has been created"
-        scriptNodeCreated()
-
-        cleanup: "remove test node"
-        session.getNode('/etc').remove()
-        session.save()
     }
 
     def "missing console root node"() {
@@ -77,16 +64,16 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
     }
 
     void scriptNodeCreated() {
-        def consoleNode = session.getNode(ScriptSavingServlet.CONSOLE_ROOT)
+        def consoleNode = session.getNode(CONSOLE_ROOT)
 
-        assert consoleNode.hasNode(ScriptSavingServlet.SCRIPT_FOLDER_REL_PATH)
+        assert consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)
 
-        def folderNode = consoleNode.getNode(ScriptSavingServlet.SCRIPT_FOLDER_REL_PATH)
+        def folderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
 
         assert folderNode.primaryNodeType.name == JcrConstants.NT_FOLDER
-        assert folderNode.hasNode(SCRIPT_NAME)
+        assert folderNode.hasNode(SCRIPT_FILE_NAME)
 
-        def fileNode = folderNode.getNode(SCRIPT_NAME)
+        def fileNode = folderNode.getNode(SCRIPT_FILE_NAME)
 
         assert fileNode.primaryNodeType.name == JcrConstants.NT_FILE
         assert fileNode.hasNode(JcrConstants.JCR_CONTENT)
@@ -101,8 +88,8 @@ class ScriptSavingServletSpec extends AbstractRepositorySpec {
     def mockRequest() {
         def request = Mock(SlingHttpServletRequest)
 
-        request.getParameter(ScriptSavingServlet.FILE_NAME_PARAM) >> SCRIPT_NAME
-        request.getParameter(ScriptSavingServlet.SCRIPT_CONTENT_PARAM) >> script
+        request.getParameter(FILE_NAME_PARAM) >> SCRIPT_NAME
+        request.getParameter(SCRIPT_CONTENT_PARAM) >> script
 
         request
     }

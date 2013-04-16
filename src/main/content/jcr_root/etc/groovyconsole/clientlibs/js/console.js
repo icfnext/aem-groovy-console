@@ -1,20 +1,23 @@
-function initialize(path) {
+$(function() {
+    initializeEditor();
+    initializeThemeMenu();
+    initializeButtons();
+});
+
+function initializeEditor() {
     window.editor = ace.edit('editor');
 
     var GroovyMode = ace.require('ace/mode/groovy').Mode;
 
     editor.getSession().setMode(new GroovyMode());
     editor.renderer.setShowPrintMargin(false);
-
-    initializeThemeMenu();
-    initializeButtons(path);
 }
 
 function initializeThemeMenu() {
     var theme = $.cookie('theme');
 
     if (theme == null) {
-        theme = 'ace/theme/solarized_dark';
+        theme = 'ace/theme/idle_fingers';
     }
 
     editor.setTheme(theme);
@@ -33,14 +36,13 @@ function initializeThemeMenu() {
         editor.setTheme(theme);
 
         $('#dropdown-themes li').removeClass('active');
-
         $(this).addClass('active');
 
         $.cookie('theme', theme, { expires: 365 });
     });
 }
 
-function initializeButtons(path) {
+function initializeButtons() {
     $('#new-script').click(function() {
         if ($(this).hasClass('disabled')) {
             return;
@@ -94,11 +96,8 @@ function initializeButtons(path) {
 
             $('#run-script-text').text('Running...');
 
-            $.ajax({
-                type: 'POST',
-                url: path,
-                data: { script: script },
-                dataType: 'json'
+            $.post('/bin/groovyconsole/post.json', {
+                script: script
             }).done(function(data) {
                 var result = data.executionResult;
                 var output = data.outputText;
@@ -182,7 +181,7 @@ function saveScript(fileName) {
         showError('Save failed, check error.log file.');
     }).always(function() {
         enableToolbar();
-    });;
+    });
 }
 
 function refreshOpenDialog(dialog) {
