@@ -17,15 +17,9 @@ The CQ5 Groovy Console provides an interface for running [Groovy](http://groovy.
 
 1.  Install the console package (NOTE: if cURL is not installed, the package can be uploaded manually via Package Manager)
 
-    a. If you already have the [Groovy](http://groovy.codehaus.org/Download) bundle installed in the Felix container:
-
         mvn install -P local-author
 
-    b. If you do not have the Groovy bundle installed:
-
-        mvn install -P install-groovy,local-author
-
-2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
+2.  [Verify](http://localhost:4502/groovyconsole) the installation.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
@@ -38,19 +32,3 @@ Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any ques
 ## Versioning
 
 Follows [Semantic Versioning](http://semver.org/) guidelines.
-
-## License
-
-Copyright 2013 CITYTECH, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
