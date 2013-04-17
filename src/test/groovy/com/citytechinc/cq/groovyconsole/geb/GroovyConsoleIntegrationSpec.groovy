@@ -13,8 +13,8 @@ class GroovyConsoleIntegrationSpec extends GebReportingSpec {
         to LoginPage
 
         when:
-        username = "admin"
-        password = "admin"
+        username = config.rawConfig.username
+        password = config.rawConfig.password
 
         and:
         signIn.click()
