@@ -9,13 +9,11 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.request.RequestParameter
 import org.osgi.framework.BundleContext
-import spock.lang.Ignore
 import spock.lang.Shared
 
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.ENCODING
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.SCRIPT_PARAM
 
-@Ignore
 class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
 
     @Shared servlet
