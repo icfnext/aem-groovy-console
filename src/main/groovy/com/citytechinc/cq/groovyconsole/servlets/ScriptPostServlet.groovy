@@ -37,7 +37,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
 
-        closure.call()
+        closure()
 
         def date = new Date()
 
@@ -79,6 +79,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
         def result = ""
+        def executionResult = ""
         def runningTime = ""
 
         try {
@@ -93,6 +94,8 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
             }
 
             LOG.debug "doPost() script execution completed, running time = $runningTime"
+
+            executionResult = result as String
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
             e.printStackTrace(errorWriter)
@@ -106,7 +109,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         response.contentType = "application/json"
 
         def json = new JsonBuilder([
-            executionResult: result as String,
+            executionResult: executionResult,
             outputText: stream.toString(ENCODING),
             stacktraceText: stackTrace.toString(),
             runningTime: runningTime
