@@ -69,6 +69,7 @@
             </activation>
             <properties>
                 <skip>true</skip>
+                <skipITs>true</skipITs>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
                 <cq.username>admin</cq.username>
             </properties>
@@ -176,6 +177,9 @@
                     <includes>
                         <include>**/*Spec*</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/*IntegrationSpec*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -264,6 +268,7 @@
                 <version>1.0.0</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>status</goal>
                         </goals>
@@ -277,6 +282,22 @@
                             <port>${cq.port}</port>
                             <username>${cq.username}</username>
                             <password>${cq.password}</password>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.14.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IntegrationSpec*</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,11 +1,12 @@
 package com.citytechinc.cq.groovyconsole.geb
 
+import com.citytechinc.cq.groovyconsole.geb.pages.ConsolePage
 import com.citytechinc.cq.groovyconsole.geb.pages.LoginPage
 import geb.spock.GebReportingSpec
 import spock.lang.Stepwise
 
 @Stepwise
-class GroovyConsoleSpec extends GebReportingSpec {
+class GroovyConsoleIntegrationSpec extends GebReportingSpec {
 
     def "login"() {
         given:
@@ -22,13 +23,11 @@ class GroovyConsoleSpec extends GebReportingSpec {
         title == "AEM Projects"
     }
 
-    /*
     def "console page has required elements"() {
         when:
         to ConsolePage
 
         then:
-
+        title == "Groovy Console"
     }
-    */
 }
