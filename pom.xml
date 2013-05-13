@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.1</version>
+        <version>5.6.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -144,7 +144,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -227,7 +227,6 @@
                 <version>2.3</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>${project.artifactId}</finalName>
                     <descriptors>
                         <descriptor>src/main/assembly/zip.xml</descriptor>
                     </descriptors>
@@ -259,8 +258,8 @@
                                 <argument>-u</argument>
                                 <argument>${cq.username}:${cq.password}</argument>
                                 <argument>-F</argument>
-                                <argument>file=@./target/${project.artifactId}.zip</argument>
-                                <argument>http://${cq.host}:${cq.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
+                                <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
+                                <argument>http://${cq.host}:${cq.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
                                 <argument>-F</argument>
                                 <argument>install=true</argument>
                             </arguments>
@@ -425,7 +424,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq5-testing</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0-SNAPSHOT</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
