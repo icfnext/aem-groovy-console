@@ -2,7 +2,6 @@ package com.citytechinc.cq.groovyconsole.servlets
 
 import com.citytechinc.cq.groovy.builders.NodeBuilder
 import com.citytechinc.cq.groovy.builders.PageBuilder
-import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
 import com.citytechinc.cq.groovy.services.OsgiComponentService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
@@ -74,17 +73,11 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         def stackTrace = new StringWriter()
         def errorWriter = new PrintWriter(stackTrace)
 
-        def classLoader = Thread.currentThread().contextClassLoader
-
-        Thread.currentThread().contextClassLoader = new GroovyClassLoader()
-
         def result = ""
         def executionResult = ""
         def runningTime = ""
 
         try {
-            GroovyMetaClassRegistry.registerMetaClasses()
-
             def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
 
             addMetaClass(script)
@@ -102,20 +95,16 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         } catch (Throwable t) {
             LOG.error("error running script", t)
             t.printStackTrace(errorWriter)
-        } finally {
-            Thread.currentThread().setContextClassLoader(classLoader)
         }
 
         response.contentType = "application/json"
 
-        def json = new JsonBuilder([
+        new JsonBuilder([
             executionResult: executionResult,
             outputText: stream.toString(ENCODING),
             stacktraceText: stackTrace.toString(),
             runningTime: runningTime
-        ])
-
-        json.writeTo(response.writer)
+        ]).writeTo(response.writer)
     }
 
     def createBinding(request, stream) {

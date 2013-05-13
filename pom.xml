@@ -58,7 +58,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <groovy.version>2.1.2</groovy.version>
+        <groovy.version>2.1.3</groovy.version>
     </properties>
 
     <profiles>
@@ -217,8 +217,9 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>com.citytechinc.cq.groovyconsole.*</Export-Package>
+                        <Private-Package>com.citytechinc.cq.groovyconsole.*</Private-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -416,7 +417,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq5-groovy-extension</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
