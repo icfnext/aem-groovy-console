@@ -1,6 +1,5 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
 import com.day.cq.commons.jcr.JcrConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
@@ -26,14 +25,12 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
         servlet.session = session
 
         script = getScriptAsString(SCRIPT_NAME)
-
-	    GroovyMetaClassRegistry.registerMetaClasses()
     }
 
-	def cleanup() {
-		session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-		session.save()
-	}
+    def cleanup() {
+        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
+        session.save()
+    }
 
     def "save script"() {
         setup: "mock request with file name and script parameters"
@@ -41,7 +38,7 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
         def response = mockResponse()
 
         and: "create console root node"
-        session.rootNode.getOrAddNode(CONSOLE_ROOT.substring(1))
+        session.rootNode.getOrAddNode("etc").getOrAddNode("groovyconsole")
         session.save()
 
         when: "post to servlet"
