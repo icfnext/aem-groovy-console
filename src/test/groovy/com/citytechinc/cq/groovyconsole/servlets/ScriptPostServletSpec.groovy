@@ -46,10 +46,10 @@ class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
         servlet.doPost(request, response)
 
         then: "script is executed"
-        jsonResponseIsValid()
+        assertJsonResponse()
     }
 
-    void jsonResponseIsValid() {
+    void assertJsonResponse() {
         def json = new JsonSlurper().parseText(writer.toString())
 
         assert !json.executionResult

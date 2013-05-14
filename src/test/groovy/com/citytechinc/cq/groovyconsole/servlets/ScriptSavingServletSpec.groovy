@@ -15,6 +15,12 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
 
     static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
+    static final def PATH_FOLDER = "/etc/groovyconsole/$SCRIPT_FOLDER_REL_PATH"
+
+    static final def PATH_FILE = "$PATH_FOLDER/$SCRIPT_FILE_NAME"
+
+    static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
+
     @Shared servlet
 
     @Shared script
@@ -45,7 +51,11 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
         servlet.doPost(request, response)
 
         then: "script node has been created"
-        scriptNodeCreated()
+        assertNodeExists(PATH_FOLDER, JcrConstants.NT_FOLDER)
+        assertNodeExists(PATH_FILE, JcrConstants.NT_FILE)
+        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE, [(JcrConstants.JCR_MIMETYPE): "application/octet-stream"])
+
+        assert session.getNode(PATH_FILE_CONTENT).get(JcrConstants.JCR_DATA).stream.text == script
     }
 
     def "missing console root node"() {
@@ -58,28 +68,6 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
 
         then: "exception getting console node"
         thrown(RepositoryException)
-    }
-
-    void scriptNodeCreated() {
-        def consoleNode = session.getNode(CONSOLE_ROOT)
-
-        assert consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)
-
-        def folderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
-
-        assert folderNode.primaryNodeType.name == JcrConstants.NT_FOLDER
-        assert folderNode.hasNode(SCRIPT_FILE_NAME)
-
-        def fileNode = folderNode.getNode(SCRIPT_FILE_NAME)
-
-        assert fileNode.primaryNodeType.name == JcrConstants.NT_FILE
-        assert fileNode.hasNode(JcrConstants.JCR_CONTENT)
-
-        def contentNode = fileNode.getNode(JcrConstants.JCR_CONTENT)
-
-        assert contentNode.primaryNodeType.name == JcrConstants.NT_RESOURCE
-        assert contentNode.get(JcrConstants.JCR_MIMETYPE) == "application/octet-stream"
-        assert contentNode.get(JcrConstants.JCR_DATA).stream.text == script
     }
 
     def mockRequest() {
