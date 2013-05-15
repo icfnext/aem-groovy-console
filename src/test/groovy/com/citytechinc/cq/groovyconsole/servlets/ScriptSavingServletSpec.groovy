@@ -34,8 +34,7 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
     }
 
     def cleanup() {
-        session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-        session.save()
+        removeAllNodes()
     }
 
     def "save script"() {
