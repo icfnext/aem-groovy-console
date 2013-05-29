@@ -6,21 +6,21 @@
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.2</version>
+        <version>5.6.4</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.citytechinc.cq</groupId>
-    <artifactId>cq5-groovy-console</artifactId>
+    <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
     <version>4.0.1-SNAPSHOT</version>
-    <name>CQ5 Groovy Console</name>
+    <name>CQ Groovy Console</name>
     <description>
-        The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container. Scripts
+        The CQ Groovy Console provides an interface for running Groovy scripts in the CQ5 container. Scripts
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
-    <url>http://citytechinc.github.io/cq5-groovy-console/</url>
+    <url>http://citytechinc.github.io/cq-groovy-console/</url>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -36,14 +36,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq5-groovy-console</url>
+        <connection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</developerConnection>
+        <url>https://github.com/Citytechinc/cq-groovy-console</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Citytechinc/cq5-groovy-console/issues</url>
+        <url>https://github.com/Citytechinc/cq-groovy-console/issues</url>
     </issueManagement>
 
     <repositories>
@@ -114,7 +114,7 @@
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
-                        <version>0.7</version>
+                        <version>0.8</version>
                         <configuration>
                             <message>site for ${project.version}</message>
                             <server>github</server>
@@ -416,16 +416,16 @@
         </dependency>
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
-            <artifactId>cq5-groovy-extension</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <artifactId>cq-groovy-extension</artifactId>
+            <version>0.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- test -->
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
-            <artifactId>cq5-testing</artifactId>
-            <version>0.2.2</version>
+            <artifactId>cq-groovy-testing</artifactId>
+            <version>0.2.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
