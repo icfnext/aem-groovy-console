@@ -1,16 +1,16 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
-import com.citytechinc.cq.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
 
 abstract class AbstractGroovyConsoleSpec extends AbstractRepositorySpec {
 
     def setupSpec() {
-        GroovyMetaClassRegistry.registerMetaClasses()
+        GroovyExtensionMetaClassRegistry.registerMetaClasses()
     }
 
     def cleanupSpec() {
-        GroovyMetaClassRegistry.removeMetaClasses()
+        GroovyExtensionMetaClassRegistry.removeMetaClasses()
     }
 
     def getScriptAsString(name) {

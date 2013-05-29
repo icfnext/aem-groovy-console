@@ -1,7 +1,7 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
 import com.citytechinc.cq.groovy.services.OsgiComponentService
-import com.citytechinc.cq.testing.resource.TestingResourceResolver
+import com.citytechinc.cq.groovy.testing.resource.TestingResourceResolver
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonSlurper
