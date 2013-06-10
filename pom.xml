@@ -420,7 +420,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq-groovy-extension</artifactId>
-            <version>0.3.2</version>
+            <version>0.3.3</version>
             <scope>provided</scope>
         </dependency>
 
