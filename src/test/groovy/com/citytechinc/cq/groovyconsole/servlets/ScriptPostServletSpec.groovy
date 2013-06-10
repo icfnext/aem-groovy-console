@@ -1,7 +1,6 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.services.OsgiComponentService
-import com.citytechinc.cq.groovy.testing.resource.TestingResourceResolver
+import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonSlurper
@@ -26,7 +25,7 @@ class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
         servlet = new ScriptPostServlet()
 
         servlet.session = session
-        servlet.resourceResolver = new TestingResourceResolver(session)
+        servlet.resourceResolver = resourceResolver
         servlet.pageManager = Mock(PageManager)
         servlet.replicator = Mock(Replicator)
         servlet.componentService = Mock(OsgiComponentService)

@@ -1,9 +1,9 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.cq.groovy.testing.AbstractRepositorySpec
+import com.citytechinc.cq.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
+import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
 
-abstract class AbstractGroovyConsoleSpec extends AbstractRepositorySpec {
+abstract class AbstractGroovyConsoleSpec extends AbstractSlingRepositorySpec {
 
     def setupSpec() {
         GroovyExtensionMetaClassRegistry.registerMetaClasses()

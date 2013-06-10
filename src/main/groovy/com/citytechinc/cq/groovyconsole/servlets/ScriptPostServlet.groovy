@@ -1,8 +1,8 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.builders.NodeBuilder
-import com.citytechinc.cq.groovy.builders.PageBuilder
-import com.citytechinc.cq.groovy.services.OsgiComponentService
+import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
+import com.citytechinc.cq.groovy.extension.builders.PageBuilder
+import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
