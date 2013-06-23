@@ -286,8 +286,8 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>groovy-all</bundleName>
-                                <bundleName>cq5-groovy-extension</bundleName>
-                                <bundleName>cq5-groovy-console</bundleName>
+                                <bundleName>cq-groovy-extension</bundleName>
+                                <bundleName>cq-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port}</port>
