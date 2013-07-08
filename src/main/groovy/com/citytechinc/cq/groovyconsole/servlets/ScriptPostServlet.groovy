@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
 
 import javax.servlet.ServletException
 
-@SlingServlet(paths = "/bin/groovyconsole/post", label = "Groovy Console POST Servlet", description = "Groovy script execution servlet.")
+@SlingServlet(paths = "/bin/groovyconsole/post")
 class ScriptPostServlet extends SlingAllMethodsServlet {
 
     static final long serialVersionUID = 1L

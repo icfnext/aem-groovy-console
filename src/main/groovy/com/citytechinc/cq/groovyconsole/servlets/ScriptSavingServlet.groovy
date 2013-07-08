@@ -10,7 +10,7 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 
-@SlingServlet(paths = "/bin/groovyconsole/save", label = "Groovy Console Script Saving Servlet", description = "Writes script to nt:file node.")
+@SlingServlet(paths = "/bin/groovyconsole/save")
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     static final long serialVersionUID = 1L

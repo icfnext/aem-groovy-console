@@ -4,22 +4,16 @@ import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonSlurper
-import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.request.RequestParameter
 import org.osgi.framework.BundleContext
 import spock.lang.Shared
 
-import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.ENCODING
 import static com.citytechinc.cq.groovyconsole.servlets.ScriptPostServlet.SCRIPT_PARAM
 
-class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
+class ScriptPostServletSpec extends AbstractServletSpec {
 
     @Shared servlet
 
     @Shared script
-
-    @Shared writer
 
     def setupSpec() {
         servlet = new ScriptPostServlet()
@@ -32,46 +26,31 @@ class ScriptPostServletSpec extends AbstractGroovyConsoleSpec {
         servlet.bundleContext = Mock(BundleContext)
 
         script = getScriptAsString("Script")
-
-        writer = new StringWriter()
     }
 
     def "run script"() {
         setup: "mock request with script parameter"
-        def request = mockRequest()
-        def response = mockResponse()
+        def parameterMap = [(SCRIPT_PARAM): [script]]
+
+        def request = requestBuilder.build {
+            parameters parameterMap
+        }
+
+        def response = responseBuilder.build()
 
         when: "post to servlet"
         servlet.doPost(request, response)
 
         then: "script is executed"
-        assertJsonResponse()
+        assertJsonResponse(response)
     }
 
-    void assertJsonResponse() {
-        def json = new JsonSlurper().parseText(writer.toString())
+    void assertJsonResponse(response) {
+        def json = new JsonSlurper().parseText(response.output.toString())
 
         assert !json.executionResult
         assert json.outputText == "BEER\n"
         assert !json.stacktraceText
         assert json.runningTime
-    }
-
-    def mockRequest() {
-        def request = Mock(SlingHttpServletRequest)
-        def requestParameter = Mock(RequestParameter)
-
-        requestParameter.getString(ENCODING) >> script
-        request.getRequestParameter(SCRIPT_PARAM) >> requestParameter
-
-        request
-    }
-
-    def mockResponse() {
-        def response = Mock(SlingHttpServletResponse)
-
-        response.writer >> new PrintWriter(writer)
-
-        response
     }
 }
