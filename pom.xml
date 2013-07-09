@@ -15,7 +15,7 @@
     <version>4.0.1-SNAPSHOT</version>
     <name>CQ Groovy Console</name>
     <description>
-        The CQ Groovy Console provides an interface for running Groovy scripts in the CQ5 container. Scripts
+        The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
@@ -193,7 +193,6 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
                 <version>1.13.0</version>
-                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
