@@ -19,7 +19,8 @@
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
-    <url>http://citytechinc.github.io/cq-groovy-console/</url>
+
+    <url>http://code.citytechinc.com/cq-groovy-console/</url>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -38,6 +39,7 @@
         <connection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</connection>
         <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</developerConnection>
         <url>https://github.com/Citytechinc/cq-groovy-console</url>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
@@ -66,8 +68,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <skip>true</skip>
                 <skipITs>true</skipITs>
+                <crx.skip>true</crx.skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
                 <cq.username>admin</cq.username>
             </properties>
@@ -245,36 +247,27 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2</version>
+                <groupId>com.cognifide.maven.plugins</groupId>
+                <artifactId>maven-crx-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <url>http://${cq.host}:${cq.port}</url>
+                    <user>${cq.username}</user>
+                    <password>${cq.password}</password>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>install</goal>
                         </goals>
-                        <configuration>
-                            <executable>curl</executable>
-                            <arguments>
-                                <argument>-f</argument>
-                                <argument>-v</argument>
-                                <argument>-u</argument>
-                                <argument>${cq.username}:${cq.password}</argument>
-                                <argument>-F</argument>
-                                <argument>file=@./target/${project.artifactId}-${project.version}.zip</argument>
-                                <argument>http://${cq.host}:${cq.port}/crx/packmgr/service.jsp?name=${project.artifactId}-${project.version}</argument>
-                                <argument>-F</argument>
-                                <argument>install=true</argument>
-                            </arguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.2.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -283,7 +276,6 @@
                         </goals>
                         <configuration>
                             <bundleNames>
-                                <bundleName>groovy-all</bundleName>
                                 <bundleName>cq-groovy-extension</bundleName>
                                 <bundleName>cq-groovy-console</bundleName>
                             </bundleNames>
