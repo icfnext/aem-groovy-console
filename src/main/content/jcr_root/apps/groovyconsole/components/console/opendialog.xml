@@ -4,7 +4,7 @@
           xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
           jcr:primaryType="cq:Dialog"
           parBrowse="{Boolean}false"
-          ok="function() { loadScript(this.getSelectedPath()); this.hide(); }"
+          ok="function() { GroovyConsole.loadScript(this.getSelectedPath()); this.hide(); }"
           title="Load Script"
           xtype="browsedialog">
     <treeRoot
@@ -16,7 +16,11 @@
         expanded="{Boolean}true" />
     <listeners
         jcr:primaryType="nt:unstructured"
-        beforeshow="function() { refreshOpenDialog(this); }"
-        hide="function() { enableToolbar(); }"
+        beforeshow="function() {
+            GroovyConsole.refreshOpenDialog(this);
+        }"
+        hide="function() {
+            GroovyConsole.enableToolbar();
+        }"
         />
 </jcr:root>
