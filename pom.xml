@@ -20,7 +20,7 @@
         Sling, or JCR APIs.
     </description>
 
-    <url>http://code.citytechinc.com/cq-groovy-console/</url>
+    <url>http://code.citytechinc.com/cq-groovy-console</url>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -425,7 +425,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq-groovy-extension</artifactId>
-            <version>0.3.3</version>
+            <version>0.3.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -433,7 +433,7 @@
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
             <artifactId>cq-groovy-testing</artifactId>
-            <version>0.3.5</version>
+            <version>0.3.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>

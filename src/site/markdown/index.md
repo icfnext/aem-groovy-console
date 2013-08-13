@@ -28,7 +28,3 @@ Additional build profiles may be added in the project's pom.xml to support deplo
 Sample scripts can be found in the src/main/scripts directory.
 
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
-
-## Versioning
-
-Follows [Semantic Versioning](http://semver.org/) guidelines.
