@@ -2,7 +2,7 @@
 %><%@page import="com.day.cq.wcm.api.WCMMode" %>
 
 <head>
-    <title>Groovy Console</title>
+    <title>CQ Groovy Console</title>
 
     <c:if test="<%= WCMMode.fromRequest(slingRequest) != WCMMode.DISABLED %>">
         <cq:includeClientLib categories="cq.wcm.edit" />

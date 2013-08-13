@@ -3,19 +3,50 @@
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
 
     <skin>
-        <groupId>org.apache.maven.skins</groupId>
-        <artifactId>maven-fluido-skin</artifactId>
-        <version>1.3.0</version>
+        <groupId>com.citytechinc.maven</groupId>
+        <artifactId>citytech-maven-skin</artifactId>
+        <version>1.0.0</version>
     </skin>
 
+    <bannerRight>
+        <name>${project.name}</name>
+        <href>http://code.citytechinc.com/cq-groovy-console</href>
+    </bannerRight>
+
+    <googleAnalyticsAccountId>UA-928005-4</googleAnalyticsAccountId>
+
     <custom>
-        <fluidoSkin>
-            <topBarEnabled>false</topBarEnabled>
-            <sideBarEnabled>true</sideBarEnabled>
-        </fluidoSkin>
+        <reflowSkin>
+            <skinAttribution>false</skinAttribution>
+            <protocolRelativeURLs>false</protocolRelativeURLs>
+            <smoothScroll>true</smoothScroll>
+            <titleTemplate>%2$s | %1$s</titleTemplate>
+            <breadcrumbs>false</breadcrumbs>
+            <markPageHeader>false</markPageHeader>
+            <toc>false</toc>
+            <highlightJs>true</highlightJs>
+            <highlightJsTheme>github</highlightJsTheme>
+            <topNav>Overview|reports</topNav>
+            <brand>
+                <name>${project.name}</name>
+                <href>http://code.citytechinc.com/cq-groovy-console</href>
+            </brand>
+            <slogan position="bannerRight"></slogan>
+            <body />
+            <bottomNav>
+                <column>Overview</column>
+                <column>reports</column>
+            </bottomNav>
+        </reflowSkin>
     </custom>
 
     <body>
+        <links>
+            <item name="GitHub" href="https://github.com/Citytechinc/cq-groovy-console" />
+        </links>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+        </menu>
         <menu ref="reports"/>
     </body>
 </project>

@@ -25,10 +25,12 @@
     <listeners
         jcr:primaryType="nt:unstructured"
         beforesubmit="function(dialog) {
-            saveScript(dialog.find('name', './fileName')[0].getValue());
+            GroovyConsole.saveScript(dialog.find('name', './fileName')[0].getValue());
             this.hide();
             return false;
         }"
-        hide="function() { enableToolbar(); }"
+        hide="function() {
+            GroovyConsole.enableToolbar();
+        }"
         />
 </jcr:root>

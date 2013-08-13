@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.citytechinc.cq</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.1</version>
+        <version>5.6.4</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.cq</groupId>
-    <artifactId>cq5-groovy-console</artifactId>
+    <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.0</version>
-    <name>CQ5 Groovy Console</name>
+    <version>4.1.0</version>
+    <name>CQ Groovy Console</name>
     <description>
-        The CQ5 Groovy Console provides an interface for running Groovy scripts in the CQ5 container. Scripts
+        The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
-    <url>http://citytechinc.github.io/cq5-groovy-console/</url>
+
+    <url>http://code.citytechinc.com/cq-groovy-console</url>
 
     <organization>
         <name>CITYTECH, Inc.</name>
@@ -36,14 +34,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq5-groovy-console.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq5-groovy-console</url>
+        <connection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</connection>
+        <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</developerConnection>
+        <url>https://github.com/Citytechinc/cq-groovy-console</url>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Citytechinc/cq5-groovy-console/issues</url>
+        <url>https://github.com/Citytechinc/cq-groovy-console/issues</url>
     </issueManagement>
 
     <repositories>
@@ -58,7 +57,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <groovy.version>2.1.2</groovy.version>
     </properties>
 
     <profiles>
@@ -68,7 +66,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <skip>true</skip>
+                <skipITs>true</skipITs>
+                <crx.skip>true</crx.skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
                 <cq.username>admin</cq.username>
             </properties>
@@ -113,7 +112,7 @@
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
-                        <version>0.7</version>
+                        <version>0.8</version>
                         <configuration>
                             <message>site for ${project.version}</message>
                             <server>github</server>
@@ -134,55 +133,66 @@
     </profiles>
 
     <build>
+        <sourceDirectory>src/main/groovy</sourceDirectory>
+        <testSourceDirectory>src/test/groovy</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-eclipse-compiler</artifactId>
+                <version>2.7.0-01</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.1.3-01</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <configuration>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
                     <source>1.6</source>
                     <target>1.6</target>
                     <encoding>utf-8</encoding>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <providerSelection>2.0</providerSelection>
-                        </configuration>
-                        <goals>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
-                            <goal>generateTestStubs</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.7.0-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.1.3-01</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14.1</version>
+                <version>2.15</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/*IntegrationSpec*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.9.0</version>
-                <extensions>true</extensions>
+                <version>1.13.0</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
@@ -191,11 +201,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <scanClasses>true</scanClasses>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
+                <version>2.4.0</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -207,8 +220,9 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>com.citytechinc.cq.groovyconsole.*</Export-Package>
+                        <Private-Package>com.citytechinc.cq.groovyconsole.*</Private-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -217,7 +231,6 @@
                 <version>2.3</version>
                 <configuration>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>${project.artifactId}</finalName>
                     <descriptors>
                         <descriptor>src/main/assembly/zip.xml</descriptor>
                     </descriptors>
@@ -232,46 +245,37 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2</version>
+                <groupId>com.cognifide.maven.plugins</groupId>
+                <artifactId>maven-crx-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <url>http://${cq.host}:${cq.port}</url>
+                    <user>${cq.username}</user>
+                    <password>${cq.password}</password>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>install</goal>
                         </goals>
-                        <configuration>
-                            <executable>curl</executable>
-                            <arguments>
-                                <argument>-f</argument>
-                                <argument>-v</argument>
-                                <argument>-u</argument>
-                                <argument>${cq.username}:${cq.password}</argument>
-                                <argument>-F</argument>
-                                <argument>file=@./target/${project.artifactId}.zip</argument>
-                                <argument>http://${cq.host}:${cq.port}/crx/packmgr/service.jsp?name=${project.artifactId}</argument>
-                                <argument>-F</argument>
-                                <argument>install=true</argument>
-                            </arguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.2.0</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>status</goal>
                         </goals>
                         <configuration>
                             <bundleNames>
-                                <bundleName>groovy-all</bundleName>
-                                <bundleName>cq5-groovy-extension</bundleName>
-                                <bundleName>cq5-groovy-console</bundleName>
+                                <bundleName>cq-groovy-extension</bundleName>
+                                <bundleName>cq-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port}</port>
@@ -282,8 +286,41 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.15</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IntegrationSpec*</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>lt.velykis.maven.skins</groupId>
+                        <artifactId>reflow-velocity-tools</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.velocity</groupId>
+                        <artifactId>velocity</artifactId>
+                        <version>1.7</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <reportPlugins>
                         <plugin>
@@ -295,11 +332,7 @@
                             <reportSets>
                                 <reportSet>
                                     <reports>
-                                        <!--<report>dependencies</report>-->
-                                        <report>index</report>
                                         <report>license</report>
-                                        <!--<report>plugins</report>-->
-                                        <report>scm</report>
                                         <report>summary</report>
                                     </reports>
                                 </reportSet>
@@ -307,7 +340,7 @@
                         </plugin>
                         <plugin>
                             <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.14.1</version>
+                            <version>2.15</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -325,6 +358,21 @@
                             </reportSets>
                         </plugin>
                     </reportPlugins>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jgitflow-plugin</artifactId>
+                <version>1.0-alpha14</version>
+                <configuration>
+                    <enableFeatureVersions>false</enableFeatureVersions>
+                    <noFeatureBuild>true</noFeatureBuild>
+                    <noReleaseBuild>true</noReleaseBuild>
+                    <flowInitContext>
+                        <featureBranchPrefix>feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                    </flowInitContext>
                 </configuration>
             </plugin>
         </plugins>
@@ -377,34 +425,52 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.9.0</version>
+            <version>1.9.4</version>
         </dependency>
 
         <!-- provided -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>${groovy.version}</version>
+            <version>2.1.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
-            <artifactId>cq5-groovy-extension</artifactId>
-            <version>0.1.0</version>
+            <artifactId>cq-groovy-extension</artifactId>
+            <version>0.3.4</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- test -->
         <dependency>
             <groupId>com.citytechinc.cq</groupId>
-            <artifactId>cq5-testing</artifactId>
-            <version>0.1.0</version>
+            <artifactId>cq-groovy-testing</artifactId>
+            <version>0.3.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>1.6.4</version>
+            <groupId>org.gebish</groupId>
+            <artifactId>geb-spock</artifactId>
+            <version>0.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>2.31.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

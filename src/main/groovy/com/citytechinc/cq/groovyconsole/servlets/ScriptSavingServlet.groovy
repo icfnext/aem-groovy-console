@@ -10,7 +10,7 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 
-@SlingServlet(paths = "/bin/groovyconsole/save", label = "Groovy Console Script Saving Servlet", description = "Writes script to nt:file node.")
+@SlingServlet(paths = "/bin/groovyconsole/save")
 class ScriptSavingServlet extends SlingAllMethodsServlet {
 
     static final long serialVersionUID = 1L
@@ -39,35 +39,19 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
 
         def binary = getScriptBinary(script)
 
-        def folderNode = getScriptFolderNode()
+        def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
 
-        if (folderNode.hasNode(fileName)) {
-            folderNode.getNode(fileName).remove()
-        }
+        folderNode.removeNode(fileName)
 
         def fileNode = folderNode.addNode(fileName, JcrConstants.NT_FILE)
-        def resNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
+        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
-        resNode.setProperty(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
-        resNode.setProperty(JcrConstants.JCR_DATA, binary)
+        resourceNode.set(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
+        resourceNode.set(JcrConstants.JCR_DATA, binary)
 
         session.save()
 
         binary.dispose()
-    }
-
-    def getScriptFolderNode() {
-        def consoleNode = session.getNode(CONSOLE_ROOT)
-
-        def scriptFolderNode
-
-        if (consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)) {
-            scriptFolderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
-        } else {
-            scriptFolderNode = consoleNode.addNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
-        }
-
-        scriptFolderNode
     }
 
     def getScriptBinary(script) {

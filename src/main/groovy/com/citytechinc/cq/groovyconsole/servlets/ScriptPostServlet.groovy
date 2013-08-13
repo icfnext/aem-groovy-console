@@ -1,9 +1,8 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.builders.NodeBuilder
-import com.citytechinc.cq.groovy.builders.PageBuilder
-import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
-import com.citytechinc.cq.groovy.services.OsgiComponentService
+import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
+import com.citytechinc.cq.groovy.extension.builders.PageBuilder
+import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory
 
 import javax.servlet.ServletException
 
-@SlingServlet(paths = "/bin/groovyconsole/post", label = "Groovy Console POST Servlet", description = "Groovy script execution servlet.")
+@SlingServlet(paths = "/bin/groovyconsole/post")
 class ScriptPostServlet extends SlingAllMethodsServlet {
 
     static final long serialVersionUID = 1L
@@ -37,7 +36,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
 
-        closure.call()
+        closure()
 
         def date = new Date()
 
@@ -74,16 +73,11 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         def stackTrace = new StringWriter()
         def errorWriter = new PrintWriter(stackTrace)
 
-        def classLoader = Thread.currentThread().contextClassLoader
-
-        Thread.currentThread().contextClassLoader = new GroovyClassLoader()
-
         def result = ""
+        def executionResult = ""
         def runningTime = ""
 
         try {
-            GroovyMetaClassRegistry.registerMetaClasses()
-
             def script = shell.parse(request.getRequestParameter(SCRIPT_PARAM).getString(ENCODING))
 
             addMetaClass(script)
@@ -93,26 +87,24 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
             }
 
             LOG.debug "doPost() script execution completed, running time = $runningTime"
+
+            executionResult = result as String
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
             e.printStackTrace(errorWriter)
         } catch (Throwable t) {
             LOG.error("error running script", t)
             t.printStackTrace(errorWriter)
-        } finally {
-            Thread.currentThread().setContextClassLoader(classLoader)
         }
 
         response.contentType = "application/json"
 
-        def json = new JsonBuilder([
-            executionResult: result as String,
+        new JsonBuilder([
+            executionResult: executionResult,
             outputText: stream.toString(ENCODING),
             stacktraceText: stackTrace.toString(),
             runningTime: runningTime
-        ])
-
-        json.writeTo(response.writer)
+        ]).writeTo(response.writer)
     }
 
     def createBinding(request, stream) {

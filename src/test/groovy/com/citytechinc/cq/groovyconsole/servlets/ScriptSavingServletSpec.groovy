@@ -1,20 +1,25 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
-import com.citytechinc.cq.groovy.metaclass.GroovyMetaClassRegistry
 import com.day.cq.commons.jcr.JcrConstants
-import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
 import spock.lang.Shared
 
 import javax.jcr.RepositoryException
 
-import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.*
+import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.getFILE_NAME_PARAM
+import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.getSCRIPT_CONTENT_PARAM
+import static com.citytechinc.cq.groovyconsole.servlets.ScriptSavingServlet.getSCRIPT_FOLDER_REL_PATH
 
-class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
+class ScriptSavingServletSpec extends AbstractServletSpec {
 
     static final def SCRIPT_NAME = 'Script'
 
     static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
+
+    static final def PATH_FOLDER = "/etc/groovyconsole/$SCRIPT_FOLDER_REL_PATH"
+
+    static final def PATH_FILE = "$PATH_FOLDER/$SCRIPT_FILE_NAME"
+
+    static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
     @Shared servlet
 
@@ -26,35 +31,38 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
         servlet.session = session
 
         script = getScriptAsString(SCRIPT_NAME)
-
-	    GroovyMetaClassRegistry.registerMetaClasses()
     }
 
-	def cleanup() {
-		session.rootNode.nodes.findAll { !SYSTEM_NODE_NAMES.contains(it.name) }*.remove()
-		session.save()
-	}
+    def cleanup() {
+        removeAllNodes()
+    }
 
     def "save script"() {
         setup: "mock request with file name and script parameters"
-        def request = mockRequest()
-        def response = mockResponse()
+        def request = buildRequest()
+        def response = responseBuilder.build()
 
         and: "create console root node"
-        session.rootNode.getOrAddNode(CONSOLE_ROOT.substring(1))
-        session.save()
+        nodeBuilder.etc {
+            groovyconsole()
+        }
 
         when: "post to servlet"
         servlet.doPost(request, response)
 
         then: "script node has been created"
-        scriptNodeCreated()
+        assertNodeExists(PATH_FOLDER, JcrConstants.NT_FOLDER)
+        assertNodeExists(PATH_FILE, JcrConstants.NT_FILE)
+        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE, [(JcrConstants.JCR_MIMETYPE):
+            "application/octet-stream"])
+
+        assert session.getNode(PATH_FILE_CONTENT).get(JcrConstants.JCR_DATA).stream.text == script
     }
 
     def "missing console root node"() {
         setup: "mock request with file name and script parameters"
-        def request = mockRequest()
-        def response = mockResponse()
+        def request = buildRequest()
+        def response = responseBuilder.build()
 
         when: "post to servlet"
         servlet.doPost(request, response)
@@ -63,38 +71,11 @@ class ScriptSavingServletSpec extends AbstractGroovyConsoleSpec {
         thrown(RepositoryException)
     }
 
-    void scriptNodeCreated() {
-        def consoleNode = session.getNode(CONSOLE_ROOT)
+    def buildRequest() {
+        def parameterMap = [(FILE_NAME_PARAM): [(SCRIPT_NAME)], (SCRIPT_CONTENT_PARAM): [script]]
 
-        assert consoleNode.hasNode(SCRIPT_FOLDER_REL_PATH)
-
-        def folderNode = consoleNode.getNode(SCRIPT_FOLDER_REL_PATH)
-
-        assert folderNode.primaryNodeType.name == JcrConstants.NT_FOLDER
-        assert folderNode.hasNode(SCRIPT_FILE_NAME)
-
-        def fileNode = folderNode.getNode(SCRIPT_FILE_NAME)
-
-        assert fileNode.primaryNodeType.name == JcrConstants.NT_FILE
-        assert fileNode.hasNode(JcrConstants.JCR_CONTENT)
-
-        def contentNode = fileNode.getNode(JcrConstants.JCR_CONTENT)
-
-        assert contentNode.primaryNodeType.name == JcrConstants.NT_RESOURCE
-        assert contentNode.get(JcrConstants.JCR_MIMETYPE) == "application/octet-stream"
-        assert contentNode.get(JcrConstants.JCR_DATA).stream.text == script
-    }
-
-    def mockRequest() {
-        def request = Mock(SlingHttpServletRequest)
-
-        request.getParameter(FILE_NAME_PARAM) >> SCRIPT_NAME
-        request.getParameter(SCRIPT_CONTENT_PARAM) >> script
-
-        request
-    }
-
-    def mockResponse() {
-        Mock(SlingHttpServletResponse)
+        requestBuilder.build {
+            parameters parameterMap
+        }
     }
 }

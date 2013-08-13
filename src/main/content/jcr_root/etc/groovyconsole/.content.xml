@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    jcr:primaryType="cq:Page">
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:Page">
     <jcr:content
         cq:defaultView="html"
         cq:template="/apps/groovyconsole/templates/console"
         jcr:primaryType="cq:PageContent"
         jcr:title="Groovy Console"
         sling:resourceType="groovyconsole/components/console"
-        sling:vanityPath="[/groovyconsole]"/>
+        sling:vanityPath="[/groovyconsole]" />
 </jcr:root>
