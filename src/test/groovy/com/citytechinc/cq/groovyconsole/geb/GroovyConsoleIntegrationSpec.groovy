@@ -28,6 +28,6 @@ class GroovyConsoleIntegrationSpec extends GebReportingSpec {
         to ConsolePage
 
         then:
-        title == "Groovy Console"
+        title == "CQ Groovy Console"
     }
 }
