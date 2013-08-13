@@ -27,4 +27,5 @@ Additional build profiles may be added in the project's pom.xml to support deplo
 
 Sample scripts can be found in the src/main/scripts directory.
 
-Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions.
+Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions; issues can be submitted via
+[GitHub](https://github.com/Citytechinc/cq-groovy-console/issues).
