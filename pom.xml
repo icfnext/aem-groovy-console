@@ -334,8 +334,10 @@
                             <reportSets>
                                 <reportSet>
                                     <reports>
-                                        <report>license</report>
                                         <report>summary</report>
+                                        <report>dependencies</report>
+                                        <report>plugins</report>
+                                        <report>license</report>
                                     </reports>
                                 </reportSet>
                             </reportSets>
