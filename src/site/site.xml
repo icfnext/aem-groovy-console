@@ -26,7 +26,7 @@
             <toc>false</toc>
             <highlightJs>true</highlightJs>
             <highlightJsTheme>github</highlightJsTheme>
-            <topNav>Overview|reports</topNav>
+            <topNav>reports</topNav>
             <brand>
                 <name>${project.name}</name>
                 <href>http://code.citytechinc.com/cq-groovy-console</href>
@@ -34,7 +34,6 @@
             <slogan position="bannerRight"></slogan>
             <body />
             <bottomNav>
-                <column>Overview</column>
                 <column>reports</column>
             </bottomNav>
         </reflowSkin>
@@ -43,10 +42,8 @@
     <body>
         <links>
             <item name="GitHub" href="https://github.com/Citytechinc/cq-groovy-console" />
+            <item name="Overview" href="index.html" />
         </links>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-        </menu>
         <menu ref="reports"/>
     </body>
 </project>
