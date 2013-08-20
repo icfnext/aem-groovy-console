@@ -8,6 +8,21 @@ var GroovyConsole = function () {
 
             editor.getSession().setMode(new GroovyMode());
             editor.renderer.setShowPrintMargin(false);
+
+            var editorDiv = $('#editor');
+            editorDiv.resizable({
+                resize: function( event, ui ) {
+                    editor.resize(true);
+                    GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
+                },
+                handles: "s"
+            });
+            editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
+
+            editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
+            editor.getSession().getDocument().on('change', function(e) {
+                GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
+            });
         },
 
         initializeThemeMenu: function () {
@@ -223,6 +238,41 @@ var GroovyConsole = function () {
         }
     };
 }();
+
+GroovyConsole.localStorage = new function() {
+    var LS_EDITOR_HEIGHT = "GroovyConsole.editorHeight";
+    var LS_EDITOR_DATA   = "GroovyConsole.editorData";
+
+    this.loadValue = function(name, defaultValue) {
+        if (Modernizr.localstorage) {
+            return window.localStorage[name] || defaultValue || '';
+        }
+
+        return defaultValue || '';
+    };
+
+    this.saveValue = function(name, value) {
+        if (Modernizr.localstorage) {
+            window.localStorage[name] = value;
+        }
+    };
+
+    this.saveEditorHeight = function(value) {
+        this.saveValue(LS_EDITOR_HEIGHT, value);
+    };
+
+    this.loadEditorHeight = function() {
+        return this.loadValue(LS_EDITOR_HEIGHT, $("#editor").css('height'));
+    };
+
+    this.saveEditorData = function(value) {
+        this.saveValue(LS_EDITOR_DATA, value);
+    };
+
+    this.loadEditorData = function() {
+        return this.loadValue(LS_EDITOR_DATA, '');
+    };
+};
 
 $(function () {
     GroovyConsole.initializeEditor();
