@@ -4,10 +4,14 @@
     <list id="d095e0c3-3a42-467e-84c9-29fa4196c4f5" name="Default" comment="" />
     <list id="6552385c-5821-480e-bea1-b56f265133e2" name="Show Groovy version on console" comment="" />
     <list id="b6f57dc7-6d8a-4801-8e9e-38d31319fbbd" name="Settings dialog" comment="" />
-    <list default="true" id="a0bec919-373f-4cd7-90c1-ae892e6661c3" name="Show Groovy version in console" comment="Show Groovy version in console" />
+    <list id="a0bec919-373f-4cd7-90c1-ae892e6661c3" name="Show Groovy version in console" comment="Show Groovy version in console" />
+    <list default="true" id="7342a5a7-e562-4f8f-9f20-551d929deebb" name="Ignore IntelliJ project files" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cq-groovy-console.iws" afterPath="$PROJECT_DIR$/cq-groovy-console.iws" />
+    </list>
     <ignored path="cq-groovy-console.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="a0bec919-373f-4cd7-90c1-ae892e6661c3" time="1377038760788" ignored="false" />
+    <file path="/Dummy.txt" changelist="a0bec919-373f-4cd7-90c1-ae892e6661c3" time="1377039040460" ignored="false" />
     <file path="/*.regexp" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1372291183163" ignored="false" />
     <file path="$PROJECT_DIR$/target/classes/META-INF/MANIFEST.MF" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1372291208306" ignored="false" />
     <file path="/a.dummy" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1375307405144" ignored="false" />
@@ -20,6 +24,7 @@
     <file path="/toolbar.jsp" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1372704300935" ignored="false" />
     <file path="/body.jsp" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1375304536255" ignored="false" />
     <file path="$PROJECT_DIR$/../../Citytechinc/Graco/graco-www/trunk/graco-www/graco-www-ui/src/main/content/jcr_root/apps/graco-www/templates/intermediatepage/.content.xml" changelist="d095e0c3-3a42-467e-84c9-29fa4196c4f5" time="1375307400620" ignored="false" />
+    <file path="/.gitignore" changelist="a0bec919-373f-4cd7-90c1-ae892e6661c3" time="1377039017104" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,10 +94,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="body.jsp" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="body.jsp" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/content/jcr_root/apps/groovyconsole/components/console/body.jsp">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.34969324">
+            <state line="19" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="-11.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="5" selection-start="27" selection-end="27" vertical-scroll-proportion="0.05363528">
               <folding />
             </state>
           </provider>
@@ -133,6 +147,7 @@
         <option value="$PROJECT_DIR$/src/main/content/jcr_root/etc/groovyconsole/clientlibs/js.txt" />
         <option value="$PROJECT_DIR$/src/main/content/jcr_root/etc/groovyconsole/clientlibs/js/console.js" />
         <option value="$PROJECT_DIR$/src/main/content/jcr_root/apps/groovyconsole/components/console/body.jsp" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -732,6 +747,7 @@
       <changelist id="6552385c-5821-480e-bea1-b56f265133e2" name="Show Groovy version on console" comment="" />
       <changelist id="b6f57dc7-6d8a-4801-8e9e-38d31319fbbd" name="Settings dialog" comment="" />
       <changelist id="a0bec919-373f-4cd7-90c1-ae892e6661c3" name="Show Groovy version in console" comment="" />
+      <changelist id="7342a5a7-e562-4f8f-9f20-551d929deebb" name="Ignore IntelliJ project files" comment="" />
       <created>1372283438736</created>
       <updated>1372283438736</updated>
     </task>
@@ -926,7 +942,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/content/jcr_root/apps/groovyconsole/components/console/body.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.34969324">
+        <state line="19" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="-11.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cq-groovy-console.iws">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="5" selection-start="27" selection-end="27" vertical-scroll-proportion="0.05363528">
           <folding />
         </state>
       </provider>
