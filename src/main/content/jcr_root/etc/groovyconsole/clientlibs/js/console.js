@@ -68,7 +68,6 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                // GroovyConsole.reset();
                 GroovyConsole.disableToolbar();
                 GroovyConsole.showOpenDialog();
             });
@@ -77,8 +76,6 @@ var GroovyConsole = function () {
                 if ($(this).hasClass('disabled')) {
                     return;
                 }
-
-                GroovyConsole.reset();
 
                 var script = editor.getSession().getValue();
 
@@ -188,11 +185,15 @@ var GroovyConsole = function () {
         },
 
         saveScript: function (fileName) {
+            GroovyConsole.reset();
+
             $.post('/bin/groovyconsole/save', {
                 fileName: fileName,
                 scriptContent: editor.getSession().getValue()
-            }).done(function () {
+            }).done(function (data) {
                 GroovyConsole.showSuccess('Script saved successfully.');
+
+                $('#script-name').text(data.scriptName).fadeIn('fast');
             }).fail(function () {
                 GroovyConsole.showError('Save failed, check error.log file.');
             }).always(function () {
