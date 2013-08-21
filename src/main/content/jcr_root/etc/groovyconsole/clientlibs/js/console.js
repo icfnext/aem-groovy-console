@@ -28,11 +28,7 @@ var GroovyConsole = function () {
         },
 
         initializeThemeMenu: function () {
-            var theme = $.cookie('theme');
-
-            if (theme == null) {
-                theme = 'ace/theme/idle_fingers';
-            }
+            var theme = GroovyConsole.localStorage.loadTheme();
 
             editor.setTheme(theme);
 
@@ -52,7 +48,7 @@ var GroovyConsole = function () {
                 $('#dropdown-themes li').removeClass('active');
                 $(this).addClass('active');
 
-                $.cookie('theme', theme, { expires: 365 });
+                GroovyConsole.localStorage.saveTheme(theme);
             });
         },
 
@@ -72,7 +68,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                GroovyConsole.reset();
+                // GroovyConsole.reset();
                 GroovyConsole.disableToolbar();
                 GroovyConsole.showOpenDialog();
             });
@@ -174,15 +170,21 @@ var GroovyConsole = function () {
         },
 
         loadScript: function (scriptPath) {
+            GroovyConsole.reset();
+
             $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
                 GroovyConsole.showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
+
+                var scriptName = scriptPath.substring(scriptPath.lastIndexOf('/') + 1);
+
+                $('#script-name').text(scriptName).fadeIn('fast');
             }).fail(function () {
-                    GroovyConsole.showError('Load failed, check error.log file.');
-                }).always(function () {
-                    GroovyConsole.enableToolbar();
-                });
+                GroovyConsole.showError('Load failed, check error.log file.');
+            }).always(function () {
+                GroovyConsole.enableToolbar();
+            });
         },
 
         saveScript: function (fileName) {
@@ -190,12 +192,12 @@ var GroovyConsole = function () {
                 fileName: fileName,
                 scriptContent: editor.getSession().getValue()
             }).done(function () {
-                    GroovyConsole.showSuccess('Script saved successfully.');
-                }).fail(function () {
-                    GroovyConsole.showError('Save failed, check error.log file.');
-                }).always(function () {
-                    GroovyConsole.enableToolbar();
-                });
+                GroovyConsole.showSuccess('Script saved successfully.');
+            }).fail(function () {
+                GroovyConsole.showError('Save failed, check error.log file.');
+            }).always(function () {
+                GroovyConsole.enableToolbar();
+            });
         },
 
         refreshOpenDialog: function (dialog) {
@@ -215,11 +217,19 @@ var GroovyConsole = function () {
         showSuccess: function (message) {
             $('#message-success .message').text(message);
             $('#message-success').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-success').fadeOut('slow');
+            }, 3000);
         },
 
         showError: function (message) {
             $('#message-error .message').text(message);
             $('#message-error').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-error').fadeOut('slow');
+            }, 3000);
         },
 
         reset: function () {
@@ -228,6 +238,7 @@ var GroovyConsole = function () {
             $('#message-success').fadeOut('fast');
             $('#message-error .message').text('');
             $('#message-error').fadeOut('fast');
+            $('#script-name').text('').fadeOut('fast');
 
             // clear results
             $('#stacktrace').text('').fadeOut('fast');
@@ -244,6 +255,7 @@ var GroovyConsole = function () {
 GroovyConsole.localStorage = new function () {
     var LS_EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
     var LS_EDITOR_DATA = 'GroovyConsole.editorData';
+    var THEME = 'GroovyConsole.theme';
 
     this.loadValue = function (name, defaultValue) {
         if (Modernizr.localstorage) {
@@ -273,6 +285,14 @@ GroovyConsole.localStorage = new function () {
 
     this.loadEditorData = function () {
         return this.loadValue(LS_EDITOR_DATA, '');
+    };
+
+    this.saveTheme = function (value) {
+        this.saveValue(THEME, value);
+    };
+
+    this.loadTheme = function () {
+        return this.loadValue(THEME, 'ace/theme/idle_fingers');
     };
 };
 
