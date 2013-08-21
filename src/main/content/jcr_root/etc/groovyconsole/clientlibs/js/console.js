@@ -10,17 +10,19 @@ var GroovyConsole = function () {
             editor.renderer.setShowPrintMargin(false);
 
             var editorDiv = $('#editor');
+
             editorDiv.resizable({
-                resize: function( event, ui ) {
+                resize: function () {
                     editor.resize(true);
                     GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
                 },
-                handles: "s"
+                handles: 's'
             });
+
             editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
 
             editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
-            editor.getSession().getDocument().on('change', function(e) {
+            editor.getSession().getDocument().on('change', function () {
                 GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
             });
         },
@@ -177,10 +179,10 @@ var GroovyConsole = function () {
 
                 editor.getSession().setValue(script);
             }).fail(function () {
-                GroovyConsole.showError('Load failed, check error.log file.');
-            }).always(function () {
-                GroovyConsole.enableToolbar();
-            });
+                    GroovyConsole.showError('Load failed, check error.log file.');
+                }).always(function () {
+                    GroovyConsole.enableToolbar();
+                });
         },
 
         saveScript: function (fileName) {
@@ -188,12 +190,12 @@ var GroovyConsole = function () {
                 fileName: fileName,
                 scriptContent: editor.getSession().getValue()
             }).done(function () {
-                GroovyConsole.showSuccess('Script saved successfully.');
-            }).fail(function () {
-                GroovyConsole.showError('Save failed, check error.log file.');
-            }).always(function () {
-                GroovyConsole.enableToolbar();
-            });
+                    GroovyConsole.showSuccess('Script saved successfully.');
+                }).fail(function () {
+                    GroovyConsole.showError('Save failed, check error.log file.');
+                }).always(function () {
+                    GroovyConsole.enableToolbar();
+                });
         },
 
         refreshOpenDialog: function (dialog) {
@@ -239,11 +241,11 @@ var GroovyConsole = function () {
     };
 }();
 
-GroovyConsole.localStorage = new function() {
-    var LS_EDITOR_HEIGHT = "GroovyConsole.editorHeight";
-    var LS_EDITOR_DATA   = "GroovyConsole.editorData";
+GroovyConsole.localStorage = new function () {
+    var LS_EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
+    var LS_EDITOR_DATA = 'GroovyConsole.editorData';
 
-    this.loadValue = function(name, defaultValue) {
+    this.loadValue = function (name, defaultValue) {
         if (Modernizr.localstorage) {
             return window.localStorage[name] || defaultValue || '';
         }
@@ -251,25 +253,25 @@ GroovyConsole.localStorage = new function() {
         return defaultValue || '';
     };
 
-    this.saveValue = function(name, value) {
+    this.saveValue = function (name, value) {
         if (Modernizr.localstorage) {
             window.localStorage[name] = value;
         }
     };
 
-    this.saveEditorHeight = function(value) {
+    this.saveEditorHeight = function (value) {
         this.saveValue(LS_EDITOR_HEIGHT, value);
     };
 
-    this.loadEditorHeight = function() {
-        return this.loadValue(LS_EDITOR_HEIGHT, $("#editor").css('height'));
+    this.loadEditorHeight = function () {
+        return this.loadValue(LS_EDITOR_HEIGHT, $('#editor').css('height'));
     };
 
-    this.saveEditorData = function(value) {
+    this.saveEditorData = function (value) {
         this.saveValue(LS_EDITOR_DATA, value);
     };
 
-    this.loadEditorData = function() {
+    this.loadEditorData = function () {
         return this.loadValue(LS_EDITOR_DATA, '');
     };
 };

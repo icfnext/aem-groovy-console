@@ -9,11 +9,12 @@
         <div class="alert alert-success" id="message-success" style="display: none;">
             <span class="message"></span>
         </div>
+
         <div class="alert alert-error" id="message-error" style="display: none;">
             <span class="message"></span>
         </div>
+
         <div id="editor" class="ace_editor_wrapper"></div>
-        <div id="groovy-version" style="float: right; clear: both;">Groovy Version : <%= groovy.lang.GroovySystem.getVersion() %></div>
 
         <cq:include script="footer.jsp" />
     </div>
