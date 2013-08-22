@@ -21,6 +21,12 @@ var GroovyConsole = function () {
 
             editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
 
+            var scriptName = GroovyConsole.localStorage.loadScriptName();
+
+            if (scriptName.length) {
+                GroovyConsole.setScriptName(scriptName);
+            }
+
             editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
             editor.getSession().getDocument().on('change', function () {
                 GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
@@ -59,6 +65,7 @@ var GroovyConsole = function () {
                 }
 
                 GroovyConsole.reset();
+                GroovyConsole.clearScriptName();
 
                 editor.getSession().setValue('');
             });
@@ -176,7 +183,7 @@ var GroovyConsole = function () {
 
                 var scriptName = scriptPath.substring(scriptPath.lastIndexOf('/') + 1);
 
-                $('#script-name').text(scriptName).fadeIn('fast');
+                GroovyConsole.setScriptName(scriptName);
             }).fail(function () {
                 GroovyConsole.showError('Load failed, check error.log file.');
             }).always(function () {
@@ -192,8 +199,7 @@ var GroovyConsole = function () {
                 scriptContent: editor.getSession().getValue()
             }).done(function (data) {
                 GroovyConsole.showSuccess('Script saved successfully.');
-
-                $('#script-name').text(data.scriptName).fadeIn('fast');
+                GroovyConsole.setScriptName(data.scriptName);
             }).fail(function () {
                 GroovyConsole.showError('Save failed, check error.log file.');
             }).always(function () {
@@ -233,13 +239,24 @@ var GroovyConsole = function () {
             }, 3000);
         },
 
+        setScriptName: function (scriptName) {
+            $('#script-name').text(scriptName).fadeIn('fast');
+
+            GroovyConsole.localStorage.saveScriptName(scriptName);
+        },
+
+        clearScriptName: function () {
+            $('#script-name').text('').fadeOut('fast');
+
+            GroovyConsole.localStorage.clearScriptName();
+        },
+
         reset: function () {
             // clear messages
             $('#message-success .message').text('');
             $('#message-success').fadeOut('fast');
             $('#message-error .message').text('');
             $('#message-error').fadeOut('fast');
-            $('#script-name').text('').fadeOut('fast');
 
             // clear results
             $('#stacktrace').text('').fadeOut('fast');
@@ -254,8 +271,9 @@ var GroovyConsole = function () {
 }();
 
 GroovyConsole.localStorage = new function () {
-    var LS_EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
-    var LS_EDITOR_DATA = 'GroovyConsole.editorData';
+    var EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
+    var EDITOR_DATA = 'GroovyConsole.editorData';
+    var SCRIPT_NAME = 'GroovyConsole.scriptName';
     var THEME = 'GroovyConsole.theme';
 
     this.loadValue = function (name, defaultValue) {
@@ -272,21 +290,39 @@ GroovyConsole.localStorage = new function () {
         }
     };
 
+    this.clearValue = function (name) {
+        if (Modernizr.localstorage) {
+            window.localStorage[name] = '';
+        }
+    };
+
     this.saveEditorHeight = function (value) {
-        this.saveValue(LS_EDITOR_HEIGHT, value);
+        this.saveValue(EDITOR_HEIGHT, value);
     };
 
     this.loadEditorHeight = function () {
-        return this.loadValue(LS_EDITOR_HEIGHT, $('#editor').css('height'));
+        return this.loadValue(EDITOR_HEIGHT, $('#editor').css('height'));
     };
 
     this.saveEditorData = function (value) {
-        this.saveValue(LS_EDITOR_DATA, value);
+        this.saveValue(EDITOR_DATA, value);
     };
 
     this.loadEditorData = function () {
-        return this.loadValue(LS_EDITOR_DATA, '');
+        return this.loadValue(EDITOR_DATA, '');
     };
+
+    this.saveScriptName = function (scriptName) {
+        this.saveValue(SCRIPT_NAME, scriptName);
+    };
+
+    this.loadScriptName = function () {
+        return this.loadValue(SCRIPT_NAME, '');
+    };
+
+    this.clearScriptName = function () {
+        return this.clearValue(SCRIPT_NAME);
+    }
 
     this.saveTheme = function (value) {
         this.saveValue(THEME, value);
