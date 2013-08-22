@@ -1,6 +1,7 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
 import com.day.cq.commons.jcr.JcrConstants
+import groovy.json.JsonBuilder
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
@@ -52,6 +53,10 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         session.save()
 
         binary.dispose()
+
+        response.contentType = "application/json"
+
+        new JsonBuilder([scriptName: fileName]).writeTo(response.writer)
     }
 
     def getScriptBinary(script) {

@@ -8,14 +8,33 @@ var GroovyConsole = function () {
 
             editor.getSession().setMode(new GroovyMode());
             editor.renderer.setShowPrintMargin(false);
+
+            var editorDiv = $('#editor');
+
+            editorDiv.resizable({
+                resize: function () {
+                    editor.resize(true);
+                    GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
+                },
+                handles: 's'
+            });
+
+            editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
+
+            var scriptName = GroovyConsole.localStorage.loadScriptName();
+
+            if (scriptName.length) {
+                GroovyConsole.setScriptName(scriptName);
+            }
+
+            editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
+            editor.getSession().getDocument().on('change', function () {
+                GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
+            });
         },
 
         initializeThemeMenu: function () {
-            var theme = $.cookie('theme');
-
-            if (theme == null) {
-                theme = 'ace/theme/idle_fingers';
-            }
+            var theme = GroovyConsole.localStorage.loadTheme();
 
             editor.setTheme(theme);
 
@@ -35,7 +54,7 @@ var GroovyConsole = function () {
                 $('#dropdown-themes li').removeClass('active');
                 $(this).addClass('active');
 
-                $.cookie('theme', theme, { expires: 365 });
+                GroovyConsole.localStorage.saveTheme(theme);
             });
         },
 
@@ -46,6 +65,7 @@ var GroovyConsole = function () {
                 }
 
                 GroovyConsole.reset();
+                GroovyConsole.clearScriptName();
 
                 editor.getSession().setValue('');
             });
@@ -55,7 +75,6 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                GroovyConsole.reset();
                 GroovyConsole.disableToolbar();
                 GroovyConsole.showOpenDialog();
             });
@@ -64,8 +83,6 @@ var GroovyConsole = function () {
                 if ($(this).hasClass('disabled')) {
                     return;
                 }
-
-                GroovyConsole.reset();
 
                 var script = editor.getSession().getValue();
 
@@ -157,10 +174,16 @@ var GroovyConsole = function () {
         },
 
         loadScript: function (scriptPath) {
+            GroovyConsole.reset();
+
             $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
                 GroovyConsole.showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
+
+                var scriptName = scriptPath.substring(scriptPath.lastIndexOf('/') + 1);
+
+                GroovyConsole.setScriptName(scriptName);
             }).fail(function () {
                 GroovyConsole.showError('Load failed, check error.log file.');
             }).always(function () {
@@ -169,11 +192,14 @@ var GroovyConsole = function () {
         },
 
         saveScript: function (fileName) {
+            GroovyConsole.reset();
+
             $.post('/bin/groovyconsole/save', {
                 fileName: fileName,
                 scriptContent: editor.getSession().getValue()
-            }).done(function () {
+            }).done(function (data) {
                 GroovyConsole.showSuccess('Script saved successfully.');
+                GroovyConsole.setScriptName(data.scriptName);
             }).fail(function () {
                 GroovyConsole.showError('Save failed, check error.log file.');
             }).always(function () {
@@ -198,11 +224,31 @@ var GroovyConsole = function () {
         showSuccess: function (message) {
             $('#message-success .message').text(message);
             $('#message-success').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-success').fadeOut('slow');
+            }, 3000);
         },
 
         showError: function (message) {
             $('#message-error .message').text(message);
             $('#message-error').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-error').fadeOut('slow');
+            }, 3000);
+        },
+
+        setScriptName: function (scriptName) {
+            $('#script-name').text(scriptName).fadeIn('fast');
+
+            GroovyConsole.localStorage.saveScriptName(scriptName);
+        },
+
+        clearScriptName: function () {
+            $('#script-name').text('').fadeOut('fast');
+
+            GroovyConsole.localStorage.clearScriptName();
         },
 
         reset: function () {
@@ -223,6 +269,69 @@ var GroovyConsole = function () {
         }
     };
 }();
+
+GroovyConsole.localStorage = new function () {
+    var EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
+    var EDITOR_DATA = 'GroovyConsole.editorData';
+    var SCRIPT_NAME = 'GroovyConsole.scriptName';
+    var THEME = 'GroovyConsole.theme';
+
+    this.loadValue = function (name, defaultValue) {
+        if (Modernizr.localstorage) {
+            return window.localStorage[name] || defaultValue || '';
+        }
+
+        return defaultValue || '';
+    };
+
+    this.saveValue = function (name, value) {
+        if (Modernizr.localstorage) {
+            window.localStorage[name] = value;
+        }
+    };
+
+    this.clearValue = function (name) {
+        if (Modernizr.localstorage) {
+            window.localStorage[name] = '';
+        }
+    };
+
+    this.saveEditorHeight = function (value) {
+        this.saveValue(EDITOR_HEIGHT, value);
+    };
+
+    this.loadEditorHeight = function () {
+        return this.loadValue(EDITOR_HEIGHT, $('#editor').css('height'));
+    };
+
+    this.saveEditorData = function (value) {
+        this.saveValue(EDITOR_DATA, value);
+    };
+
+    this.loadEditorData = function () {
+        return this.loadValue(EDITOR_DATA, '');
+    };
+
+    this.saveScriptName = function (scriptName) {
+        this.saveValue(SCRIPT_NAME, scriptName);
+    };
+
+    this.loadScriptName = function () {
+        return this.loadValue(SCRIPT_NAME, '');
+    };
+
+    this.clearScriptName = function () {
+        return this.clearValue(SCRIPT_NAME);
+    }
+
+    this.saveTheme = function (value) {
+        this.saveValue(THEME, value);
+    };
+
+    this.loadTheme = function () {
+        return this.loadValue(THEME, 'ace/theme/idle_fingers');
+    };
+};
 
 $(function () {
     GroovyConsole.initializeEditor();
