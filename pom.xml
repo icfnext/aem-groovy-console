@@ -422,6 +422,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
+            <artifactId>cq-search</artifactId>
+            <scope>provided</scope>
+        </dependency>   
 
         <!-- compile -->
         <dependency>
