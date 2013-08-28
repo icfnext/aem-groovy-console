@@ -122,7 +122,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
             slingRequest: request,
             pageManager: pageManager,
             resourceResolver: resourceResolver,
-			queryBuilder: queryBuilder,
+            queryBuilder: queryBuilder,
             nodeBuilder: new NodeBuilder(session),
             pageBuilder: new PageBuilder(session)
         ])
@@ -173,9 +173,9 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
                 componentService.doWhileDisabled(componentClassName, closure)
             }
 			
-			createQuery { Map predicates ->
-				queryBuilder.createQuery(PredicateGroup.create(predicates), session)
-			}
+            createQuery { Map predicates ->
+                queryBuilder.createQuery(PredicateGroup.create(predicates), session)
+            }
         }
     }
 
