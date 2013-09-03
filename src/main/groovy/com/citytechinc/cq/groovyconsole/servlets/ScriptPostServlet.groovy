@@ -6,6 +6,8 @@ import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
+import com.day.cq.search.QueryBuilder
+import com.day.cq.search.PredicateGroup
 import groovy.json.JsonBuilder
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
@@ -55,6 +57,9 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
     @Reference
     OsgiComponentService componentService
+	
+    @Reference
+    QueryBuilder queryBuilder
 
     def session
 
@@ -117,6 +122,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
             slingRequest: request,
             pageManager: pageManager,
             resourceResolver: resourceResolver,
+            queryBuilder: queryBuilder,
             nodeBuilder: new NodeBuilder(session),
             pageBuilder: new PageBuilder(session)
         ])
@@ -165,6 +171,10 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
             delegate.doWhileDisabled = { componentClassName, closure ->
                 componentService.doWhileDisabled(componentClassName, closure)
+            }
+			
+            createQuery { Map predicates ->
+                queryBuilder.createQuery(PredicateGroup.create(predicates), session)
             }
         }
     }
