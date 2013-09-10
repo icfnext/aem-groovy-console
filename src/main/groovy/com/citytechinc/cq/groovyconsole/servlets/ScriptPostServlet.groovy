@@ -128,6 +128,10 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
                 session.getNode(path)
             }
 
+            delegate.getResource = { path ->
+                resourceResolver.getResource(path)
+            }
+
             delegate.getPage = { path ->
                 pageManager.getPage(path)
             }
