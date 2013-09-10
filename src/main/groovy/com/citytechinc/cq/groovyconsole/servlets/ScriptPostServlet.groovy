@@ -1,16 +1,14 @@
 package com.citytechinc.cq.groovyconsole.servlets
-
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
+import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
-import com.day.cq.security.User
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
-import org.apache.commons.mail.Email
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
@@ -24,11 +22,10 @@ import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.runtime.StackTraceUtils
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
-import javax.jcr.Binary
-import javax.jcr.Node
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
@@ -66,7 +63,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     ResourceResolverFactory resourceResolverFactory
 
     @Reference
-    GroovyConsoleConfigurationService groovyConsoleService
+    GroovyConsoleConfigurationService configurationService
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_UNARY)
     MailService emailService
@@ -89,11 +86,11 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         def errorWriter = new PrintWriter(stackTrace)
 
         def result = ""
-        def executionResult = ""
         def runningTime = ""
+        def output = ""
+        def error = ""
 
         def scriptContent = request.getRequestParameter(SCRIPT_PARAM)?.getString(ENCODING)
-        def outputData = "", errorData = ""
 
         try {
             def script = shell.parse(scriptContent)
@@ -106,28 +103,30 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
             LOG.debug "doPost() script execution completed, running time = $runningTime"
 
-            executionResult = result as String
+            output = stream.toString(ENCODING);
 
-            outputData = stream.toString(ENCODING);
-            saveResultToCRX(outputData)
-            sendEmailNotification(scriptContent, outputData, runningTime)
+            saveResultToCRX(output)
+            sendEmailNotification(scriptContent, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
-            e.printStackTrace(errorWriter)
+
+            StackTraceUtils.printSanitizedStackTrace(e, errorWriter)
         } catch (Throwable t) {
             LOG.error("error running script", t)
-            t.printStackTrace(errorWriter)
 
-            errorData = stackTrace.toString()
-            sendEmailNotification(scriptContent, errorData, runningTime)
+            StackTraceUtils.printSanitizedStackTrace(t, errorWriter)
+
+            error = stackTrace.toString()
+
+            sendEmailNotification(scriptContent, error, runningTime)
         }
 
         response.contentType = "application/json"
 
         new JsonBuilder([
-            executionResult: executionResult,
-            outputText: outputData,
-            stacktraceText: errorData,
+            executionResult: result as String,
+            outputText: output,
+            stacktraceText: error,
             runningTime: runningTime
         ]).writeTo(response.writer)
     }
@@ -215,13 +214,13 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     }
 
     def sendEmailNotification(scriptContent, outputData, time) {
-        if (groovyConsoleService?.isEmailNotificationEnabled() && emailService != null) {
-            User currentUser = resourceResolver.adaptTo(User.class)
-            def executedBy = "$currentUser.name ($currentUser.principal.name)"
+        if (configurationService.emailNotificationEnabled && emailService != null) {
+            def executedBy = session.userID
+            def email = new HtmlEmail()
 
-            Email email = new HtmlEmail()
             email.setCharset(ENCODING)
-            groovyConsoleService.getEmailRecipients().each { name ->
+
+            configurationService.emailRecipients.each { name ->
                 email.addTo(name)
             }
 
@@ -237,36 +236,28 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     }
 
     def saveResultToCRX(outputData) {
-        if (groovyConsoleService?.isSaveOutputToCRXEnabled()) {
-            User currentUser = resourceResolver.adaptTo(User.class)
-            def rootPath = "${groovyConsoleService.defaultOutputFolder}/${new Date().format('yyyy/MM/dd')}";
-            Node tmpConsoleNode = getOrAddNode(session.rootNode, rootPath);
+        if (configurationService.saveOutputToCRXEnabled) {
+            def rootPath = "${configurationService.defaultOutputFolder}/${new Date().format('yyyy/MM/dd')}"
+
+            def rootNode = session.rootNode.getOrAddNode(rootPath)
 
             def fileName = "${new Date().format('hhmmss')}"
-            Node fileNode = tmpConsoleNode.addNode(Text.escapeIllegalJcrChars(fileName), "nt:file")
-            Node resNode = fileNode.addNode("jcr:content", "nt:resource")
-            resNode.setProperty("jcr:mimeType", "text/plain")
-            resNode.setProperty("jcr:encoding", ENCODING)
-            Binary binary = session.getValueFactory().createBinary(
-                    new ByteArrayInputStream(outputData.getBytes(ENCODING)));
-            resNode.setProperty("jcr:data", binary)
-            resNode.setProperty("jcr:lastModified", new Date().time)
-            resNode.setProperty("jcr:lastModifiedBy", currentUser.getName())
+
+            def fileNode = rootNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
+
+            def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
+
+            resourceNode.set(JcrConstants.JCR_MIMETYPE, "text/plain")
+            resourceNode.set(JcrConstants.JCR_ENCODING, ENCODING)
+
+            def binary = session.valueFactory.createBinary(new ByteArrayInputStream(outputData.getBytes(ENCODING)))
+
+            resourceNode.set(JcrConstants.JCR_DATA, binary)
+            resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
+            resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
             session.save()
+            binary.dispose()
         }
     }
-
-    def getOrAddNode = { Node node, String name ->
-        name.split("/").each { path ->
-            if (node.hasNode(path)) {
-                node = node.getNode(path)
-            } else {
-                node = node.addNode(path)
-            }
-        }
-
-        node
-    }
-
 }
