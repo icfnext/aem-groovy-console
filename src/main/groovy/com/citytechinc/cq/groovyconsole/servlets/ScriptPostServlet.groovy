@@ -4,11 +4,13 @@ import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
+import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
+import groovy.text.GStringTemplateEngine
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate
@@ -20,7 +22,6 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.jcr.api.SlingRepository
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.codehaus.groovy.runtime.StackTraceUtils
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
@@ -108,11 +109,11 @@ class ScriptPostServlet extends AbstractScriptServlet {
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            StackTraceUtils.printSanitizedStackTrace(e, errorWriter)
+            e.printStackTrace(errorWriter)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            StackTraceUtils.printSanitizedStackTrace(t, errorWriter)
+            t.printStackTrace(errorWriter)
 
             error = stackTrace.toString()
 
@@ -216,7 +217,6 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     def sendEmailNotification(scriptContent, output, runningTime) {
         if (configurationService.emailEnabled && emailService) {
-            def executedBy = session.userID
             def email = new HtmlEmail()
 
             email.setCharset(ENCODING)
@@ -225,18 +225,30 @@ class ScriptPostServlet extends AbstractScriptServlet {
                 email.addTo(name)
             }
 
-            email.setSubject("CQ Groovy Console script execution result")
+            email.setSubject("CQ Groovy Console Script Execution Result")
 
-            // def message = "Groovy script was executed by <b>$executedBy</b> on <b>${new Date().format('dd-MM-yyyy hh:mm:ss')}</b>"
+            def binding = [
+                userId: session.userID,
+                timestamp: new Date().format('dd-MM-yyyy hh:mm:ss'),
+                script: scriptContent,
+                output: output,
+                runningTime: runningTime
+            ]
 
-            email.setMsg("Groovy script was executed by <b>$executedBy</b> " +
-                "on <b>${new Date().format('dd-MM-yyyy hh:mm:ss')}</b>\n\n" +
-                "<h4>Script content</h4>\n<p>$scriptContent</p>\n\n" +
-                "Execution time: $runningTime\n\n" +
-                "<h4>Output</h4>\n${output ?: '<none>'}")
+            def message = buildEmailMessage(binding)
 
-            emailService.send(email)
+            email.setHtmlMsg(message)
+
+            Thread.start {
+                emailService.send(email)
+            }
         }
+    }
+
+    def buildEmailMessage(binding) {
+        def template = new GStringTemplateEngine().createTemplate(this.class.getResource("/email.template"))
+
+        template.make(binding).toString()
     }
 
     def saveOutput(output) {
@@ -244,7 +256,12 @@ class ScriptPostServlet extends AbstractScriptServlet {
             def date = new Date()
 
             def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
-            def folderNode = session.rootNode.getOrAddNode(folderPath)
+
+            def folderNode = session.rootNode
+
+            folderPath.tokenize("/").each { name ->
+                folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
+            }
 
             def fileName = date.format('hhmmss')
 
