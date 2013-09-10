@@ -1,9 +1,9 @@
 package com.citytechinc.cq.groovyconsole.servlets
+
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
-import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
@@ -15,11 +15,9 @@ import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
-import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolverFactory
-import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.runtime.StackTraceUtils
@@ -29,13 +27,11 @@ import org.slf4j.LoggerFactory
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
-class ScriptPostServlet extends SlingAllMethodsServlet {
+class ScriptPostServlet extends AbstractScriptServlet {
 
     static final long serialVersionUID = 1L
 
     protected static final def SCRIPT_PARAM = "script"
-
-    static final def ENCODING = "UTF-8"
 
     static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
 
@@ -77,7 +73,8 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
     def bundleContext
 
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
+        ServletException, IOException {
         def stream = new ByteArrayOutputStream()
         def binding = createBinding(request, stream)
         def shell = new GroovyShell(binding)
@@ -105,7 +102,8 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
 
             output = stream.toString(ENCODING);
 
-            saveResultToCRX(output)
+            saveOutput(output)
+
             sendEmailNotification(scriptContent, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
@@ -119,6 +117,9 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
             error = stackTrace.toString()
 
             sendEmailNotification(scriptContent, error, runningTime)
+        } finally {
+            stream.close()
+            errorWriter.close()
         }
 
         response.contentType = "application/json"
@@ -213,8 +214,8 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         pageManager = null
     }
 
-    def sendEmailNotification(scriptContent, outputData, time) {
-        if (configurationService.emailNotificationEnabled && emailService != null) {
+    def sendEmailNotification(scriptContent, output, runningTime) {
+        if (configurationService.emailEnabled && emailService) {
             def executedBy = session.userID
             def email = new HtmlEmail()
 
@@ -224,40 +225,34 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
                 email.addTo(name)
             }
 
-            email.setSubject("Groovy script execution results")
+            email.setSubject("CQ Groovy Console script execution result")
+
+            // def message = "Groovy script was executed by <b>$executedBy</b> on <b>${new Date().format('dd-MM-yyyy hh:mm:ss')}</b>"
+
             email.setMsg("Groovy script was executed by <b>$executedBy</b> " +
-                         "on <b>${new Date().format('dd-MM-yyyy hh:mm:ss')}</b>\n\n" +
-                         "<h4>Script content</h4>\n<p>$scriptContent</p>\n\n" +
-                         "Execution time: $time\n\n" +
-                         "<h4>Output</h4>\n${outputData ?: '<none>'}")
+                "on <b>${new Date().format('dd-MM-yyyy hh:mm:ss')}</b>\n\n" +
+                "<h4>Script content</h4>\n<p>$scriptContent</p>\n\n" +
+                "Execution time: $runningTime\n\n" +
+                "<h4>Output</h4>\n${output ?: '<none>'}")
 
             emailService.send(email)
         }
     }
 
-    def saveResultToCRX(outputData) {
-        if (configurationService.saveOutputToCRXEnabled) {
-            def rootPath = "${configurationService.defaultOutputFolder}/${new Date().format('yyyy/MM/dd')}"
+    def saveOutput(output) {
+        if (configurationService.crxOutputEnabled) {
+            def date = new Date()
 
-            def rootNode = session.rootNode.getOrAddNode(rootPath)
+            def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
+            def folderNode = session.rootNode.getOrAddNode(folderPath)
 
-            def fileName = "${new Date().format('hhmmss')}"
+            def fileName = date.format('hhmmss')
 
-            def fileNode = rootNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
-
-            def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
-
-            resourceNode.set(JcrConstants.JCR_MIMETYPE, "text/plain")
-            resourceNode.set(JcrConstants.JCR_ENCODING, ENCODING)
-
-            def binary = session.valueFactory.createBinary(new ByteArrayInputStream(outputData.getBytes(ENCODING)))
-
-            resourceNode.set(JcrConstants.JCR_DATA, binary)
-            resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
-            resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
-
-            session.save()
-            binary.dispose()
+            new ByteArrayInputStream(output.getBytes(ENCODING)).withStream { stream ->
+                session.valueFactory.createBinary(stream).withBinary { binary ->
+                    saveFile(session, folderNode, fileName, "text/plain", binary)
+                }
+            }
         }
     }
 }

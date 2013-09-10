@@ -2,11 +2,11 @@ package com.citytechinc.cq.groovyconsole.services
 
 interface GroovyConsoleConfigurationService {
 
-    boolean isEmailNotificationEnabled()
+    boolean isEmailEnabled()
 
     String[] getEmailRecipients()
 
-    boolean isSaveOutputToCRXEnabled()
+    boolean isCrxOutputEnabled()
 
-    String getDefaultOutputFolder()
+    String getCrxOutputFolder()
 }

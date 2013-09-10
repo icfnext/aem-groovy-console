@@ -11,36 +11,33 @@ import org.apache.felix.scr.annotations.Service
 @Component(immediate = true, metatype = true)
 class DefaultGroovyConsoleConfigurationService implements GroovyConsoleConfigurationService {
 
-    @Property(label = "Enable Email Notification",
-        description = "Option to enable/disable Email Notification",
-        boolValue = true)
-    static final String EMAIL_NOTIFICATION_ENABLED = "email.enabled";
+    @Property(label = "Email Enabled?",
+        description = "Check to enable email notification on completion of script execution.", boolValue = true)
+    static final String EMAIL_ENABLED = "email.enabled"
 
     @Property(label = "Email Recipients",
-        description = "Set email recipients addresses",
-        cardinality = 20)
-    static final String EMAIL_RECIPIENTS = "email.recipients";
+        description = "Email addresses to receive notification.", cardinality = 20)
+    static final String EMAIL_RECIPIENTS = "email.recipients"
 
-    @Property(label = "Enable Saving Script Output to CRX",
-        description = "Option to enable/disable saving script output to CRX",
-        boolValue = true)
-    static final String SAVE_OUTPUT_TO_CRX_ENABLED = "crx.output.enabled";
+    @Property(label = "Save Script Output to CRX Enabled?",
+        description = "Check to enable saving script output to CRX.", boolValue = true)
+    static final String CRX_OUTPUT_ENABLED = "crx.output.enabled"
 
-    @Property(label = "Default Output Folder",
-        description = "Set default folder where groovy scripts' output will be stored")
-    static final String DEFAULT_OUTPUT_FOLDER = "crx.output.folder";
+    @Property(label = "Script Output Folder",
+        description = "CRX path to root folder for script output.  Will be created if it does not exist.")
+    static final String CRX_OUTPUT_FOLDER = "crx.output.folder"
 
-    def enableEmailNotification
-
-    def saveOutputToCRX
+    def emailEnabled
 
     def emailRecipients
 
-    def defaultOutputFolder
+    def crxOutputEnabled
+
+    def crxOutputFolder
 
     @Override
-    boolean isEmailNotificationEnabled() {
-        enableEmailNotification
+    boolean isEmailEnabled() {
+        emailEnabled
     }
 
     @Override
@@ -49,21 +46,21 @@ class DefaultGroovyConsoleConfigurationService implements GroovyConsoleConfigura
     }
 
     @Override
-    boolean isSaveOutputToCRXEnabled() {
-        saveOutputToCRX
+    boolean isCrxOutputEnabled() {
+        crxOutputEnabled
     }
 
     @Override
-    String getDefaultOutputFolder() {
-        defaultOutputFolder
+    String getCrxOutputFolder() {
+        crxOutputFolder
     }
 
     @Activate
     @Modified
     synchronized void modified(final Map<String, Object> properties) {
-        enableEmailNotification = properties.get(EMAIL_NOTIFICATION_ENABLED) ?: false;
+        emailEnabled = properties.get(EMAIL_ENABLED) ?: false;
         emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: [];
-        saveOutputToCRX = properties.get(SAVE_OUTPUT_TO_CRX_ENABLED) ?: false;
-        defaultOutputFolder = properties.get(DEFAULT_OUTPUT_FOLDER) ?: "tmp/groovyconsole";
+        crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false;
+        crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: "/tmp/groovyconsole";
     }
 }

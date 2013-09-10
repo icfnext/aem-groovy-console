@@ -25,7 +25,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
         servlet.replicator = Mock(Replicator)
         servlet.componentService = Mock(OsgiComponentService)
         servlet.bundleContext = Mock(BundleContext)
-        servlet.bundleContext = Mock(GroovyConsoleConfigurationService)
+        servlet.configurationService = Mock(GroovyConsoleConfigurationService)
 
         script = getScriptAsString("Script")
     }
@@ -51,7 +51,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
         def json = new JsonSlurper().parseText(response.output.toString())
 
         assert !json.executionResult
-        assert json.outputText == "BEER\r\n"
+        assert json.outputText == "BEER\n"
         assert !json.stacktraceText
         assert json.runningTime
     }
