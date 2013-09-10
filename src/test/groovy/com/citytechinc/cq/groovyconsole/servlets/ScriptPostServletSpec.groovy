@@ -1,6 +1,7 @@
 package com.citytechinc.cq.groovyconsole.servlets
 
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
+import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonSlurper
@@ -24,6 +25,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
         servlet.replicator = Mock(Replicator)
         servlet.componentService = Mock(OsgiComponentService)
         servlet.bundleContext = Mock(BundleContext)
+        servlet.bundleContext = Mock(GroovyConsoleConfigurationService)
 
         script = getScriptAsString("Script")
     }
@@ -49,7 +51,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
         def json = new JsonSlurper().parseText(response.output.toString())
 
         assert !json.executionResult
-        assert json.outputText == "BEER\n"
+        assert json.outputText == "BEER\r\n"
         assert !json.stacktraceText
         assert json.runningTime
     }
