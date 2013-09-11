@@ -1,5 +1,4 @@
 package com.citytechinc.cq.groovyconsole.servlets
-
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
@@ -13,7 +12,6 @@ import groovy.json.JsonBuilder
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
@@ -25,6 +23,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
+import javax.jcr.Session
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
@@ -73,17 +72,15 @@ class ScriptPostServlet extends AbstractScriptServlet {
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_UNARY)
     MailService emailService
 
-    def session
-
-    def resourceResolver
-
-    def pageManager
-
     def bundleContext
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
+        def resourceResolver = request.resourceResolver
+        def session = resourceResolver.adaptTo(Session)
+        def pageManager = resourceResolver.adaptTo(PageManager)
+
         def stream = new ByteArrayOutputStream()
         def binding = createBinding(request, stream)
         def shell = new GroovyShell(binding)
@@ -101,7 +98,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
         try {
             def script = shell.parse(scriptContent)
 
-            addMetaClass(script)
+            addMetaClass(resourceResolver, session, pageManager, script)
 
             runningTime = RUNNING_TIME {
                 result = script.run()
@@ -111,9 +108,9 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             output = stream.toString(ENCODING);
 
-            saveOutput(output)
+            saveOutput(session, output)
 
-            sendEmailSuccess(scriptContent, output, runningTime)
+            sendEmailSuccess(session, scriptContent, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
@@ -125,7 +122,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             error = stackTrace.toString()
 
-            sendEmailFail(scriptContent, error)
+            sendEmailFail(session, scriptContent, error)
         } finally {
             stream.close()
             errorWriter.close()
@@ -144,19 +141,22 @@ class ScriptPostServlet extends AbstractScriptServlet {
     def createBinding(request, stream) {
         def printStream = new PrintStream(stream, true, ENCODING)
 
+        def resourceResolver = request.resourceResolver
+        def session = resourceResolver.adaptTo(Session)
+
         new Binding([
             out: printStream,
             log: LoggerFactory.getLogger("groovyconsole"),
             session: session,
             slingRequest: request,
-            pageManager: pageManager,
+            pageManager: resourceResolver.adaptTo(PageManager),
             resourceResolver: resourceResolver,
             nodeBuilder: new NodeBuilder(session),
             pageBuilder: new PageBuilder(session)
         ])
     }
 
-    def addMetaClass(script) {
+    def addMetaClass(resourceResolver, session, pageManager, script) {
         script.metaClass {
             delegate.getNode = { path ->
                 session.getNode(path)
@@ -210,28 +210,17 @@ class ScriptPostServlet extends AbstractScriptServlet {
     @Activate
     void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext
-
-        session = repository.loginAdministrative(null)
-        resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null)
-        pageManager = resourceResolver.adaptTo(PageManager)
     }
 
-    @Deactivate
-    void deactivate() {
-        session?.logout()
-        resourceResolver?.close()
-        pageManager = null
+    def sendEmailSuccess(session, scriptContent, output, runningTime) {
+        sendEmail(session, EMAIL_TEMPLATE_SUCCESS, scriptContent, output, runningTime)
     }
 
-    def sendEmailSuccess(scriptContent, output, runningTime) {
-        sendEmail(EMAIL_TEMPLATE_SUCCESS, scriptContent, output, runningTime)
+    def sendEmailFail(session, scriptContent, error) {
+        sendEmail(session, EMAIL_TEMPLATE_FAIL, scriptContent, error, null)
     }
 
-    def sendEmailFail(scriptContent, error) {
-        sendEmail(EMAIL_TEMPLATE_FAIL, scriptContent, error, null)
-    }
-
-    def sendEmail(emailTemplate, scriptContent, output, runningTime) {
+    def sendEmail(session, emailTemplate, scriptContent, output, runningTime) {
         if (configurationService.emailEnabled) {
             def recipients = configurationService.emailRecipients
 
@@ -271,7 +260,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
         }
     }
 
-    def saveOutput(output) {
+    def saveOutput(session, output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
 
