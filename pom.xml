@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <name>CQ Groovy Console</name>
     <description>
         The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
@@ -57,6 +57,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
+        <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
     </properties>
 
     <profiles>
@@ -67,37 +68,36 @@
             </activation>
             <properties>
                 <skipITs>true</skipITs>
-                <crx.skip>true</crx.skip>
+                <cq.package.skip>true</cq.package.skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
-                <cq.username>admin</cq.username>
             </properties>
         </profile>
         <profile>
-            <id>local-author</id>
+            <id>local</id>
             <activation>
                 <property>
-                    <name>local-author</name>
+                    <name>local</name>
                 </property>
             </activation>
             <properties>
+                <cq.package.goal>install</cq.package.goal>
                 <cq.host>localhost</cq.host>
-                <cq.port>4502</cq.port>
+                <cq.port.author>4502</cq.port.author>
+                <cq.port.publish>4503</cq.port.publish>
                 <cq.username>admin</cq.username>
                 <cq.password>admin</cq.password>
             </properties>
         </profile>
         <profile>
-            <id>local-publish</id>
+            <id>replicate</id>
             <activation>
                 <property>
-                    <name>local-publish</name>
+                    <name>replicate</name>
                 </property>
             </activation>
             <properties>
-                <cq.host>localhost</cq.host>
-                <cq.port>4503</cq.port>
-                <cq.username>admin</cq.username>
-                <cq.password>admin</cq.password>
+                <cq.package.goal>replicate</cq.package.goal>
+                <osgi.bundle.status.skip.publish>false</osgi.bundle.status.skip.publish>
             </properties>
         </profile>
         <profile>
@@ -250,22 +250,23 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.cognifide.maven.plugins</groupId>
-                <artifactId>maven-crx-plugin</artifactId>
-                <version>1.0.3</version>
-                <configuration>
-                    <url>http://${cq.host}:${cq.port}</url>
-                    <user>${cq.username}</user>
-                    <password>${cq.password}</password>
-                </configuration>
+                <groupId>com.citytechinc.maven.plugins</groupId>
+                <artifactId>cq-package-maven-plugin</artifactId>
+                <version>0.1.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>install</goal>
+                            <goal>${cq.package.goal}</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <host>${cq.host}</host>
+                    <port>${cq.port.author}</port>
+                    <username>${cq.username}</username>
+                    <password>${cq.password}</password>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
@@ -273,6 +274,7 @@
                 <version>1.2.0</version>
                 <executions>
                     <execution>
+                        <id>status-author</id>
                         <phase>package</phase>
                         <goals>
                             <goal>status</goal>
@@ -283,9 +285,27 @@
                                 <bundleName>cq-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
-                            <port>${cq.port}</port>
+                            <port>${cq.port.author}</port>
                             <username>${cq.username}</username>
                             <password>${cq.password}</password>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>status-publish</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>status</goal>
+                        </goals>
+                        <configuration>
+                            <bundleNames>
+                                <bundleName>cq-groovy-extension</bundleName>
+                                <bundleName>cq-groovy-console</bundleName>
+                            </bundleNames>
+                            <host>${cq.host}</host>
+                            <port>${cq.port.publish}</port>
+                            <username>${cq.username}</username>
+                            <password>${cq.password}</password>
+                            <skip>${osgi.bundle.status.skip.publish}</skip>
                         </configuration>
                     </execution>
                 </executions>
