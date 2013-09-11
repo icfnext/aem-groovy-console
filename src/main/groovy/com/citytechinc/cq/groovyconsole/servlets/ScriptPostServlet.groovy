@@ -125,7 +125,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             error = stackTrace.toString()
 
-            sendEmailFail(scriptContent, error, runningTime)
+            sendEmailFail(scriptContent, error)
         } finally {
             stream.close()
             errorWriter.close()
@@ -227,8 +227,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
         sendEmail(EMAIL_TEMPLATE_SUCCESS, scriptContent, output, runningTime)
     }
 
-    def sendEmailFail(scriptContent, error, runningTime) {
-        sendEmail(EMAIL_TEMPLATE_FAIL, scriptContent, error, runningTime)
+    def sendEmailFail(scriptContent, error) {
+        sendEmail(EMAIL_TEMPLATE_FAIL, scriptContent, error, null)
     }
 
     def sendEmail(emailTemplate, scriptContent, output, runningTime) {

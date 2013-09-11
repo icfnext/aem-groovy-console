@@ -2,6 +2,6 @@
 <h5>Script</h5>
 <pre>$script</pre>
 <h5>Output</h5>
-<pre>${output ?: '<none>'}</pre>
+<pre>${output ?: '[No Output]'}</pre>
 <h5>Running Time</h5>
 <pre>$runningTime</pre>
