@@ -1,0 +1,7 @@
+<p>Script executed by <b>$userId</b> on <b>$timestamp</b>.</p>
+<h5>Script</h5>
+<pre>$script</pre>
+<h5>Stack Trace</h5>
+<pre>$stackTrace</pre>
+<h5>Running Time</h5>
+<pre>$runningTime</pre>

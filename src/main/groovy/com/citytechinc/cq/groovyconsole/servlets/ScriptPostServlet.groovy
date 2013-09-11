@@ -34,9 +34,17 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     protected static final def SCRIPT_PARAM = "script"
 
+    static final def EMAIL_SUBJECT = "CQ Groovy Console Script Execution Result"
+
+    static final def EMAIL_TEMPLATE_SUCCESS = "/email-success.template"
+
+    static final def EMAIL_TEMPLATE_FAIL = "/email-fail.template"
+
+    static final def FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
+
     static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
 
-    private static final def RUNNING_TIME = { closure ->
+    static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
 
         closure()
@@ -105,7 +113,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             saveOutput(output)
 
-            sendEmailNotification(scriptContent, output, runningTime)
+            sendEmailSuccess(scriptContent, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
@@ -117,7 +125,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             error = stackTrace.toString()
 
-            sendEmailNotification(scriptContent, error, runningTime)
+            sendEmailFail(scriptContent, error, runningTime)
         } finally {
             stream.close()
             errorWriter.close()
@@ -215,40 +223,52 @@ class ScriptPostServlet extends AbstractScriptServlet {
         pageManager = null
     }
 
-    def sendEmailNotification(scriptContent, output, runningTime) {
-        if (configurationService.emailEnabled && emailService) {
-            def email = new HtmlEmail()
-
-            email.setCharset(ENCODING)
-
-            configurationService.emailRecipients.each { name ->
-                email.addTo(name)
-            }
-
-            email.setSubject("CQ Groovy Console Script Execution Result")
-
-            def binding = [
-                userId: session.userID,
-                timestamp: new Date().format('dd-MM-yyyy hh:mm:ss'),
-                script: scriptContent,
-                output: output,
-                runningTime: runningTime
-            ]
-
-            def message = buildEmailMessage(binding)
-
-            email.setHtmlMsg(message)
-
-            Thread.start {
-                emailService.send(email)
-            }
-        }
+    def sendEmailSuccess(scriptContent, output, runningTime) {
+        sendEmail(EMAIL_TEMPLATE_SUCCESS, scriptContent, output, runningTime)
     }
 
-    def buildEmailMessage(binding) {
-        def template = new GStringTemplateEngine().createTemplate(this.class.getResource("/email.template"))
+    def sendEmailFail(scriptContent, error, runningTime) {
+        sendEmail(EMAIL_TEMPLATE_FAIL, scriptContent, error, runningTime)
+    }
 
-        template.make(binding).toString()
+    def sendEmail(emailTemplate, scriptContent, output, runningTime) {
+        if (configurationService.emailEnabled) {
+            def recipients = configurationService.emailRecipients
+
+            if (recipients) {
+                if (emailService) {
+                    def email = new HtmlEmail()
+
+                    email.charset = ENCODING
+
+                    recipients.each { name ->
+                        email.addTo(name)
+                    }
+
+                    email.subject = EMAIL_SUBJECT
+
+                    def binding = [
+                        userId: session.userID,
+                        timestamp: new Date().format(FORMAT_TIMESTAMP),
+                        script: scriptContent,
+                        output: output,
+                        runningTime: runningTime
+                    ]
+
+                    def template = new GStringTemplateEngine().createTemplate(this.class.getResource(emailTemplate))
+
+                    email.htmlMsg = template.make(binding).toString()
+
+                    Thread.start {
+                        emailService.send(email)
+                    }
+                } else {
+                    LOG.warn "email service not available"
+                }
+            } else {
+                LOG.error "email enabled but no recipients configured"
+            }
+        }
     }
 
     def saveOutput(output) {
