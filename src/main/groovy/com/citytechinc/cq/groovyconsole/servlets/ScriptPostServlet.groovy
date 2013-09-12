@@ -51,7 +51,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
         def date = new Date()
 
-        date.setTime(System.currentTimeMillis() - start)
+        date.time = System.currentTimeMillis() - start
         date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
     }
 
@@ -240,7 +240,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
                     email.subject = EMAIL_SUBJECT
 
                     def binding = [
-                        userId: session.userID,
+                        username: session.userID,
                         timestamp: new Date().format(FORMAT_TIMESTAMP),
                         script: scriptContent,
                         output: output,

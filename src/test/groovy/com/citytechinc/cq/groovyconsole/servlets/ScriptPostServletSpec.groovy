@@ -1,9 +1,7 @@
 package com.citytechinc.cq.groovyconsole.servlets
-
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
 import com.day.cq.replication.Replicator
-import com.day.cq.wcm.api.PageManager
 import com.day.cq.search.QueryBuilder
 import groovy.json.JsonSlurper
 import org.osgi.framework.BundleContext
@@ -30,7 +28,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
     }
 
     def "run script"() {
-        setup: "mock request with script parameter"
+        given: "mock request with script parameter"
         def parameterMap = [(SCRIPT_PARAM): [script]]
 
         def request = requestBuilder.build {

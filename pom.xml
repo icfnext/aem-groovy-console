@@ -225,6 +225,8 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Private-Package>com.citytechinc.cq.groovyconsole.*</Private-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
@@ -463,7 +465,7 @@
             <groupId>com.day.cq</groupId>
             <artifactId>cq-search</artifactId>
             <scope>provided</scope>
-        </dependency>   
+        </dependency>
 
         <!-- compile -->
         <dependency>
