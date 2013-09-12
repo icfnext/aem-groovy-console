@@ -1,4 +1,5 @@
 package com.citytechinc.cq.groovyconsole.servlets
+
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
@@ -7,9 +8,9 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
-import com.day.cq.wcm.api.PageManager
-import com.day.cq.search.QueryBuilder
 import com.day.cq.search.PredicateGroup
+import com.day.cq.search.QueryBuilder
+import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.mail.HtmlEmail
@@ -19,8 +20,6 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.resource.ResourceResolverFactory
-import org.apache.sling.jcr.api.SlingRepository
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
@@ -57,9 +56,6 @@ class ScriptPostServlet extends AbstractScriptServlet {
     }
 
     @Reference
-    SlingRepository repository
-
-    @Reference
     Replicator replicator
 
     @Reference
@@ -67,9 +63,6 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     @Reference
     QueryBuilder queryBuilder
-
-    @Reference
-    ResourceResolverFactory resourceResolverFactory
 
     @Reference
     GroovyConsoleConfigurationService configurationService
