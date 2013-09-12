@@ -8,6 +8,8 @@ import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
+import com.day.cq.search.QueryBuilder
+import com.day.cq.search.PredicateGroup
 import groovy.json.JsonBuilder
 import groovy.text.GStringTemplateEngine
 import org.apache.commons.mail.HtmlEmail
@@ -62,6 +64,9 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     @Reference
     OsgiComponentService componentService
+
+    @Reference
+    QueryBuilder queryBuilder
 
     @Reference
     ResourceResolverFactory resourceResolverFactory
@@ -151,6 +156,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
             slingRequest: request,
             pageManager: resourceResolver.adaptTo(PageManager),
             resourceResolver: resourceResolver,
+            queryBuilder: queryBuilder,
             nodeBuilder: new NodeBuilder(session),
             pageBuilder: new PageBuilder(session)
         ])
@@ -203,6 +209,10 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             delegate.doWhileDisabled = { componentClassName, closure ->
                 componentService.doWhileDisabled(componentClassName, closure)
+            }
+
+            delegate.createQuery { Map predicates ->
+                queryBuilder.createQuery(PredicateGroup.create(predicates), session)
             }
         }
     }

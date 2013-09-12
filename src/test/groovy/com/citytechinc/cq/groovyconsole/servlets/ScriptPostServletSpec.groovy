@@ -4,6 +4,7 @@ import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
 import com.day.cq.replication.Replicator
 import com.day.cq.wcm.api.PageManager
+import com.day.cq.search.QueryBuilder
 import groovy.json.JsonSlurper
 import org.osgi.framework.BundleContext
 import spock.lang.Shared
@@ -19,13 +20,11 @@ class ScriptPostServletSpec extends AbstractServletSpec {
     def setupSpec() {
         servlet = new ScriptPostServlet()
 
-        servlet.session = session
-        servlet.resourceResolver = resourceResolver
-        servlet.pageManager = Mock(PageManager)
         servlet.replicator = Mock(Replicator)
         servlet.componentService = Mock(OsgiComponentService)
         servlet.bundleContext = Mock(BundleContext)
         servlet.configurationService = Mock(GroovyConsoleConfigurationService)
+        servlet.queryBuilder = Mock(QueryBuilder)
 
         script = getScriptAsString("Script")
     }
