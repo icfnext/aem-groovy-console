@@ -1,5 +1,4 @@
 package com.citytechinc.cq.groovyconsole.servlets
-
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
@@ -23,12 +22,13 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
 import javax.jcr.Session
 import javax.servlet.ServletException
+
+import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
 @Slf4j("LOG")
@@ -143,9 +143,13 @@ class ScriptPostServlet extends AbstractScriptServlet {
     }
 
     def createConfiguration() {
-        def importCustomizer = new ImportCustomizer().addStarImports(STAR_IMPORTS)
+        def configuration = new CompilerConfiguration()
 
-        new CompilerConfiguration().addCompilationCustomizers(importCustomizer)
+        withConfig(configuration) {
+            imports {
+                star STAR_IMPORTS
+            }
+        }
     }
 
     def createBinding(request, stream) {
@@ -169,26 +173,26 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     def addMetaClass(resourceResolver, session, pageManager, script) {
         script.metaClass {
-            delegate.getNode = { path ->
+            delegate.getNode = { String path ->
                 session.getNode(path)
             }
 
-            delegate.getResource = { path ->
+            delegate.getResource = { String path ->
                 resourceResolver.getResource(path)
             }
 
-            delegate.getPage = { path ->
+            delegate.getPage = { String path ->
                 pageManager.getPage(path)
             }
 
-            delegate.move = { src ->
-                ["to": { dst ->
+            delegate.move = { String src ->
+                ["to": { String dst ->
                     session.move(src, dst)
                     session.save()
                 }]
             }
 
-            delegate.copy = { src ->
+            delegate.copy = { String src ->
                 ["to": { dst ->
                     session.workspace.copy(src, dst)
                 }]
@@ -204,15 +208,15 @@ class ScriptPostServlet extends AbstractScriptServlet {
                 bundleContext.getService(ref)
             }
 
-            delegate.activate = { path ->
+            delegate.activate = { String path ->
                 replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
             }
 
-            delegate.deactivate = { path ->
+            delegate.deactivate = { String path ->
                 replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
             }
 
-            delegate.doWhileDisabled = { componentClassName, closure ->
+            delegate.doWhileDisabled = { String componentClassName, Closure closure ->
                 componentService.doWhileDisabled(componentClassName, closure)
             }
 

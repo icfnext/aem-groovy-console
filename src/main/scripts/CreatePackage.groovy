@@ -23,7 +23,7 @@ def getOrAddDefinitionNode() {
     if (session.nodeExists(definitionPath)) {
         definitionNode = getNode(definitionPath)
     } else {
-        def fileNode = session.getNode(packagesPath).addNode("${packageName}.zip", "nt:file")
+        def fileNode = getNode(packagesPath).addNode("${packageName}.zip", "nt:file")
 
         def contentNode = fileNode.addNode("jcr:content", "nt:resource")
 
