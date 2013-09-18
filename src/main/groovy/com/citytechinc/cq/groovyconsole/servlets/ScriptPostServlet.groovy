@@ -13,6 +13,7 @@ import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
 import groovy.text.GStringTemplateEngine
+import groovy.util.logging.Slf4j
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Reference
@@ -20,7 +21,9 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
@@ -28,6 +31,7 @@ import javax.jcr.Session
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
+@Slf4j("LOG")
 class ScriptPostServlet extends AbstractScriptServlet {
 
     static final long serialVersionUID = 1L
@@ -42,7 +46,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     static final def FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
 
-    static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
+    static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -81,7 +86,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
         def stream = new ByteArrayOutputStream()
         def binding = createBinding(request, stream)
-        def shell = new GroovyShell(binding)
+        def configuration = createConfiguration()
+        def shell = new GroovyShell(binding, configuration)
 
         def stackTrace = new StringWriter()
         def errorWriter = new PrintWriter(stackTrace)
@@ -134,6 +140,12 @@ class ScriptPostServlet extends AbstractScriptServlet {
             stacktraceText: error,
             runningTime: runningTime
         ]).writeTo(response.writer)
+    }
+
+    def createConfiguration() {
+        def importCustomizer = new ImportCustomizer().addStarImports(STAR_IMPORTS)
+
+        new CompilerConfiguration().addCompilationCustomizers(importCustomizer)
     }
 
     def createBinding(request, stream) {
