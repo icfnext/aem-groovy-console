@@ -9,6 +9,16 @@
     <li>queryBuilder - <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/QueryBuilder.html" target="_blank">com.day.cq.search.QueryBuilder</a></li>
     <li>log - <a href="http://www.slf4j.org/api/org/slf4j/Logger.html" target="_blank">org.slf4j.Logger</a></li>
 </ul>
+<h4>Imports</h4>
+<p>Additional packages imported by default.</p>
+<ul>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/package-summary.html" target="_blank">com.day.cq.search</a></li>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/tagging/package-summary.html" target="_blank">com.day.cq.tagging</a></li>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/wcm/api/package-summary.html" target="_blank">com.day.cq.wcm.api</a></li>
+    <li><a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/package-summary.html" target="_blank">javax.jcr</a></li>
+    <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/package-summary.html" target="_blank">org.apache.sling.api</a></li>
+    <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/package-summary.html" target="_blank">org.apache.sling.api.resource</a></li>
+</ul>
 <h4>Methods</h4>
 <ul>
     <li>getPage(String path) - <span class="muted">Get the <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/Page.html" target="_blank">Page</a> for the given path, or null if it does not exist.</span></li>
