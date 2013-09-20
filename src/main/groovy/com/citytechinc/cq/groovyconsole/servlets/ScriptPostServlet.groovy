@@ -13,6 +13,7 @@ import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
 import groovy.text.GStringTemplateEngine
+import groovy.util.logging.Slf4j
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Reference
@@ -20,6 +21,7 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
@@ -27,10 +29,11 @@ import org.slf4j.LoggerFactory
 import javax.jcr.Session
 import javax.servlet.ServletException
 
-@SlingServlet(paths = "/bin/groovyconsole/post")
-class ScriptPostServlet extends AbstractScriptServlet {
+import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
-    static final long serialVersionUID = 1L
+@SlingServlet(paths = "/bin/groovyconsole/post")
+@Slf4j("LOG")
+class ScriptPostServlet extends AbstractScriptServlet {
 
     protected static final def SCRIPT_PARAM = "script"
 
@@ -42,7 +45,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     static final def FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
 
-    static final def LOG = LoggerFactory.getLogger(ScriptPostServlet)
+    static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -81,7 +85,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
         def stream = new ByteArrayOutputStream()
         def binding = createBinding(request, stream)
-        def shell = new GroovyShell(binding)
+        def configuration = createConfiguration()
+        def shell = new GroovyShell(binding, configuration)
 
         def stackTrace = new StringWriter()
         def errorWriter = new PrintWriter(stackTrace)
@@ -136,6 +141,16 @@ class ScriptPostServlet extends AbstractScriptServlet {
         ]).writeTo(response.writer)
     }
 
+    def createConfiguration() {
+        def configuration = new CompilerConfiguration()
+
+        withConfig(configuration) {
+            imports {
+                star STAR_IMPORTS
+            }
+        }
+    }
+
     def createBinding(request, stream) {
         def printStream = new PrintStream(stream, true, ENCODING)
 
@@ -157,26 +172,26 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
     def addMetaClass(resourceResolver, session, pageManager, script) {
         script.metaClass {
-            delegate.getNode = { path ->
+            delegate.getNode = { String path ->
                 session.getNode(path)
             }
 
-            delegate.getResource = { path ->
+            delegate.getResource = { String path ->
                 resourceResolver.getResource(path)
             }
 
-            delegate.getPage = { path ->
+            delegate.getPage = { String path ->
                 pageManager.getPage(path)
             }
 
-            delegate.move = { src ->
-                ["to": { dst ->
+            delegate.move = { String src ->
+                ["to": { String dst ->
                     session.move(src, dst)
                     session.save()
                 }]
             }
 
-            delegate.copy = { src ->
+            delegate.copy = { String src ->
                 ["to": { dst ->
                     session.workspace.copy(src, dst)
                 }]
@@ -192,15 +207,15 @@ class ScriptPostServlet extends AbstractScriptServlet {
                 bundleContext.getService(ref)
             }
 
-            delegate.activate = { path ->
+            delegate.activate = { String path ->
                 replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
             }
 
-            delegate.deactivate = { path ->
+            delegate.deactivate = { String path ->
                 replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
             }
 
-            delegate.doWhileDisabled = { componentClassName, closure ->
+            delegate.doWhileDisabled = { String componentClassName, Closure closure ->
                 componentService.doWhileDisabled(componentClassName, closure)
             }
 
