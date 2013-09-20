@@ -38,7 +38,7 @@ class ScriptSavingServletSpec extends AbstractServletSpec {
     }
 
     def "save script"() {
-        setup: "mock request with file name and script parameters"
+        given: "mock request with file name and script parameters"
         def request = buildRequest()
         def response = responseBuilder.build()
 
@@ -60,7 +60,7 @@ class ScriptSavingServletSpec extends AbstractServletSpec {
     }
 
     def "missing console root node"() {
-        setup: "mock request with file name and script parameters"
+        given: "mock request with file name and script parameters"
         def request = buildRequest()
         def response = responseBuilder.build()
 

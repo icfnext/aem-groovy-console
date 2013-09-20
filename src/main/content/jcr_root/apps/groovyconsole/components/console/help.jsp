@@ -6,12 +6,24 @@
     <li>pageManager - <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html" target="_blank">com.day.cq.wcm.api.PageManager</a></li>
     <li>resourceResolver - <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/ResourceResolver.html" target="_blank">org.apache.sling.api.resource.ResourceResolver</a></li>
     <li>slingRequest - <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/SlingHttpServletRequest.html" target="_blank">org.apache.sling.api.SlingHttpServletRequest</a></li>
+    <li>queryBuilder - <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/QueryBuilder.html" target="_blank">com.day.cq.search.QueryBuilder</a></li>
     <li>log - <a href="http://www.slf4j.org/api/org/slf4j/Logger.html" target="_blank">org.slf4j.Logger</a></li>
+</ul>
+<h4>Imports</h4>
+<p>Additional packages imported by default.</p>
+<ul>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/package-summary.html" target="_blank">com.day.cq.search</a></li>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/tagging/package-summary.html" target="_blank">com.day.cq.tagging</a></li>
+    <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/wcm/api/package-summary.html" target="_blank">com.day.cq.wcm.api</a></li>
+    <li><a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/package-summary.html" target="_blank">javax.jcr</a></li>
+    <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/package-summary.html" target="_blank">org.apache.sling.api</a></li>
+    <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/package-summary.html" target="_blank">org.apache.sling.api.resource</a></li>
 </ul>
 <h4>Methods</h4>
 <ul>
     <li>getPage(String path) - <span class="muted">Get the <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/Page.html" target="_blank">Page</a> for the given path, or null if it does not exist.</span></li>
     <li>getNode(String path) - <span class="muted">Get the <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Node.html" target="_blank">Node</a> for the given path.  Throws <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/RepositoryException.html">javax.jcr.RepositoryException</a> if it does not exist.</span></li>
+    <li>getResource(String path) - <span class="muted">Get the <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/Resource.html" target="_blank">Resource</a> for the given path, or null if it does not exist.</li>
     <li>getService(Class&lt;ServiceType&gt; serviceType) - <span class="muted">Get the OSGi service instance for the given type, e.g. <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/workflow/WorkflowService.html" target="_blank">com.day.cq.workflow.WorkflowService</a>.</span></li>
     <li>copy "sourceAbsolutePath" to "destinationAbsolutePath" - <span class="muted">Groovy DSL syntax for copying a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Workspace.html#copy(java.lang.String, java.lang.String)" target="_blank">session.workspace.copy(sourceAbsolutePath, destinationAbsolutePath)</a>.</span></li>
     <li>move "sourceAbsolutePath" to "destinationAbsolutePath" - <span class="muted">Groovy DSL syntax for moving a node, equivalent to calling <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html#move(java.lang.String, java.lang.String)" target="_blank">session.move(sourceAbsolutePath, destinationAbsolutePath)</a>, except that the Session is saved automatically when the move is completed.</span></li>
@@ -19,6 +31,7 @@
     <li>activate(String path) - <span class="muted">Activate the node at the given path.</span></li>
     <li>deactivate(String path) - <span class="muted">Deactivate the node at the given path.</span></li>
     <li>doWhileDisabled(String componentClassName, Closure closure) - <span class="muted">Execute the provided closure while the specified OSGi component is disabled.</span></li>
+    <li>createQuery(Map predicates) - <span class="muted">Create a <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/Query.html" target="_blank">Query</a> instance from the <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/QueryBuilder.html" target="_blank">QueryBuilder</a> for the current JCR session.</span></li>
 </ul>
 <h4>Enhancements</h4>
 <ul>

@@ -8,13 +8,10 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.servlets.SlingAllMethodsServlet
 import org.apache.sling.jcr.api.SlingRepository
 
 @SlingServlet(paths = "/bin/groovyconsole/save")
-class ScriptSavingServlet extends SlingAllMethodsServlet {
-
-    static final long serialVersionUID = 1L
+class ScriptSavingServlet extends AbstractScriptServlet {
 
     static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
@@ -36,23 +33,15 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
         def name = request.getParameter(FILE_NAME_PARAM)
         def script = request.getParameter(SCRIPT_CONTENT_PARAM)
 
-        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
-
-        def binary = getScriptBinary(script)
-
         def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(SCRIPT_FOLDER_REL_PATH, JcrConstants.NT_FOLDER)
+
+        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
         folderNode.removeNode(fileName)
 
-        def fileNode = folderNode.addNode(fileName, JcrConstants.NT_FILE)
-        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
-
-        resourceNode.set(JcrConstants.JCR_MIMETYPE, "application/octet-stream")
-        resourceNode.set(JcrConstants.JCR_DATA, binary)
-
-        session.save()
-
-        binary.dispose()
+        getScriptBinary(script).withBinary { binary ->
+            saveFile(session, folderNode, fileName, "application/octet-stream", binary)
+        }
 
         response.contentType = "application/json"
 
@@ -66,7 +55,7 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
             binary = session.valueFactory.createBinary(stream)
         }
 
-        return binary
+        binary
     }
 
     @Activate

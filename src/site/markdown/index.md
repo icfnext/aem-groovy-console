@@ -17,7 +17,13 @@ scripts are included in the package for reference.
 
 1.  Install the console package.
 
-        mvn install -P local-author
+        mvn install -P local
+
+	or
+
+        mvn install -P local,replicate
+
+    The optional `replicate` profile activates the deployed package to the local publish instance.
 
 2.  [Verify](http://localhost:4502/groovyconsole) the installation.
 
