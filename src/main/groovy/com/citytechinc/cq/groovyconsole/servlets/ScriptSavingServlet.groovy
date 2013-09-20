@@ -13,8 +13,6 @@ import org.apache.sling.jcr.api.SlingRepository
 @SlingServlet(paths = "/bin/groovyconsole/save")
 class ScriptSavingServlet extends AbstractScriptServlet {
 
-    static final long serialVersionUID = 1L
-
     static final String SCRIPT_FOLDER_REL_PATH = "scripts"
 
     static final String CONSOLE_ROOT = "/etc/groovyconsole"

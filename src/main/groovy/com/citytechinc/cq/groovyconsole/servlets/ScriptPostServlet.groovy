@@ -1,4 +1,5 @@
 package com.citytechinc.cq.groovyconsole.servlets
+
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
@@ -33,8 +34,6 @@ import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizat
 @SlingServlet(paths = "/bin/groovyconsole/post")
 @Slf4j("LOG")
 class ScriptPostServlet extends AbstractScriptServlet {
-
-    static final long serialVersionUID = 1L
 
     protected static final def SCRIPT_PARAM = "script"
 
