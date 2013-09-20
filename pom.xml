@@ -57,6 +57,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
+        <cq.package.goal>install</cq.package.goal>
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
     </properties>
 
@@ -80,7 +81,6 @@
                 </property>
             </activation>
             <properties>
-                <cq.package.goal>install</cq.package.goal>
                 <cq.host>localhost</cq.host>
                 <cq.port.author>4502</cq.port.author>
                 <cq.port.publish>4503</cq.port.publish>
