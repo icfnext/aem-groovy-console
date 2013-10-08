@@ -118,6 +118,8 @@ class ScriptPostServlet extends AbstractScriptServlet {
             LOG.error("script compilation error", e)
 
             e.printStackTrace(errorWriter)
+
+            error = stackTrace.toString()
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
