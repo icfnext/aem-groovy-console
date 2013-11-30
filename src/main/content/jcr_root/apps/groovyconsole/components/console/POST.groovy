@@ -56,13 +56,19 @@ ClassLoader oldClassLoader = Thread.currentThread().contextClassLoader
 Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
 try {
-    GroovyConsoleMetaClassRegistry.registerMetaClasses()
+    requestSession = request.getResourceResolver().adaptTo(Session)
+    if (requestSession == null || !requestSession.hasPermission("/", "set_property")) {
+      errWriter.println("You don't have administrative access to repository. Not sufficient privileges.")
+      errWriter.println("Please login with administrative access.")
+    } else {
+        GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
-    def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
+        def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
 
-    addMetaClass(script)
+        addMetaClass(script)
 
-    result = script.run()
+        result = script.run()
+    }
 } catch (MultipleCompilationErrorsException e) {
     log.error('script compilation error', e)
 
