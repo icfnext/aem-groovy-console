@@ -57,9 +57,10 @@ Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
 try {
     requestSession = request.getResourceResolver().adaptTo(Session)
-    if (requestSession == null || !requestSession.hasPermission("/", "set_property")) {
-      errWriter.println("You don't have administrative access to repository. Not sufficient privileges.")
-      errWriter.println("Please login with administrative access.")
+
+    if (!requestSession || !requestSession.hasPermission("/", "set_property")) {
+        errWriter.println("You don't have administrative access to repository. Not sufficient privileges.")
+        errWriter.println("Please login with administrative access.")
     } else {
         GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
