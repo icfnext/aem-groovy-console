@@ -7,16 +7,13 @@ import groovy.json.JsonBuilder
 
 import javax.jcr.Session
 
-import org.apache.sling.api.resource.ResourceResolverFactory
-import org.apache.sling.jcr.api.SlingRepository
-import org.apache.sling.jcr.resource.JcrResourceConstants
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.slf4j.LoggerFactory
 
 // global variables
 log = LoggerFactory.getLogger('groovyconsole')
-session = getSession()
-resourceResolver = getResourceResolver()
+session = request.resourceResolver.adaptTo(Session)
+resourceResolver = request.resourceResolver
 pageManager = resourceResolver.adaptTo(PageManager)
 
 def encoding = 'UTF-8'
@@ -56,20 +53,13 @@ ClassLoader oldClassLoader = Thread.currentThread().contextClassLoader
 Thread.currentThread().contextClassLoader = new GroovyClassLoader()
 
 try {
-    requestSession = request.getResourceResolver().adaptTo(Session)
+    GroovyConsoleMetaClassRegistry.registerMetaClasses()
 
-    if (!requestSession || !requestSession.hasPermission("/", "set_property")) {
-        errWriter.println("You don't have administrative access to repository. Not sufficient privileges.")
-        errWriter.println("Please login with administrative access.")
-    } else {
-        GroovyConsoleMetaClassRegistry.registerMetaClasses()
+    def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
 
-        def script = shell.parse(request.getRequestParameter('script').getString('UTF-8'))
+    addMetaClass(script)
 
-        addMetaClass(script)
-
-        result = script.run()
-    }
+    result = script.run()
 } catch (MultipleCompilationErrorsException e) {
     log.error('script compilation error', e)
 
@@ -104,20 +94,6 @@ json {
 }
 
 out.println json.toString()
-
-def getSession() {
-    def repository = sling.getService(SlingRepository)
-
-    repository.loginAdministrative(null)
-}
-
-def getResourceResolver() {
-    def authenticationInfo = [:]
-
-    authenticationInfo[JcrResourceConstants.AUTHENTICATION_INFO_SESSION] = session
-
-    sling.getService(ResourceResolverFactory).getResourceResolver(authenticationInfo)
-}
 
 def addMetaClass(script) {
     script.metaClass {
