@@ -13,7 +13,7 @@ import org.apache.felix.scr.annotations.Service
 import javax.jcr.Session
 
 @Service
-@Component(immediate = true, metatype = true, label = "Groovy Console Email Service")
+@Component
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
 

@@ -1,6 +1,7 @@
 package com.citytechinc.cq.groovyconsole.servlets
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
+import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import groovy.json.JsonSlurper
@@ -23,6 +24,7 @@ class ScriptPostServletSpec extends AbstractServletSpec {
         servlet.bundleContext = Mock(BundleContext)
         servlet.configurationService = Mock(ConfigurationService)
         servlet.queryBuilder = Mock(QueryBuilder)
+        servlet.emailService = Mock(EmailService)
 
         script = getScriptAsString("Script")
     }
