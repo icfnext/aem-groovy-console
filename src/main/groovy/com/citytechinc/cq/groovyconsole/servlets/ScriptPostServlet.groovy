@@ -1,23 +1,19 @@
 package com.citytechinc.cq.groovyconsole.servlets
-
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleConfigurationService
+import com.citytechinc.cq.groovyconsole.services.ConfigurationService
+import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.mailer.MailService
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import groovy.json.JsonBuilder
-import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
-import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
@@ -69,10 +65,10 @@ class ScriptPostServlet extends AbstractScriptServlet {
     QueryBuilder queryBuilder
 
     @Reference
-    GroovyConsoleConfigurationService configurationService
+    ConfigurationService configurationService
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_UNARY)
-    MailService emailService
+    @Reference
+    EmailService emailService
 
     def bundleContext
 
@@ -113,7 +109,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             saveOutput(session, output)
 
-            sendEmailSuccess(session, scriptContent, output, runningTime)
+            emailService.sendEmail(session, scriptContent, output, runningTime, true)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
@@ -127,7 +123,7 @@ class ScriptPostServlet extends AbstractScriptServlet {
 
             error = stackTrace.toString()
 
-            sendEmailFail(session, scriptContent, error)
+            emailService.sendEmail(session, scriptContent, output, null, false)
         } finally {
             stream.close()
             errorWriter.close()
@@ -230,54 +226,6 @@ class ScriptPostServlet extends AbstractScriptServlet {
     @Activate
     void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext
-    }
-
-    def sendEmailSuccess(session, scriptContent, output, runningTime) {
-        sendEmail(session, EMAIL_TEMPLATE_SUCCESS, scriptContent, output, runningTime)
-    }
-
-    def sendEmailFail(session, scriptContent, error) {
-        sendEmail(session, EMAIL_TEMPLATE_FAIL, scriptContent, error, null)
-    }
-
-    def sendEmail(session, emailTemplate, scriptContent, output, runningTime) {
-        if (configurationService.emailEnabled) {
-            def recipients = configurationService.emailRecipients
-
-            if (recipients) {
-                if (emailService) {
-                    def email = new HtmlEmail()
-
-                    email.charset = ENCODING
-
-                    recipients.each { name ->
-                        email.addTo(name)
-                    }
-
-                    email.subject = EMAIL_SUBJECT
-
-                    def binding = [
-                        username: session.userID,
-                        timestamp: new Date().format(FORMAT_TIMESTAMP),
-                        script: scriptContent,
-                        output: output,
-                        runningTime: runningTime
-                    ]
-
-                    def template = new GStringTemplateEngine().createTemplate(this.class.getResource(emailTemplate))
-
-                    email.htmlMsg = template.make(binding).toString()
-
-                    Thread.start {
-                        emailService.send(email)
-                    }
-                } else {
-                    LOG.warn "email service not available"
-                }
-            } else {
-                LOG.error "email enabled but no recipients configured"
-            }
-        }
     }
 
     def saveOutput(session, output) {
