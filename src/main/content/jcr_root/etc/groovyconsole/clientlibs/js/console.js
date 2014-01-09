@@ -38,7 +38,9 @@ var GroovyConsole = function () {
 
             editor.setTheme(theme);
 
-            var selectedElement = $.grep($('#dropdown-themes li'), function (element) {
+            var themes = $('#dropdown-themes li');
+
+            var selectedElement = $.grep(themes, function (element) {
                 return $(element).find('a').data('target') == theme;
             });
 
@@ -46,12 +48,12 @@ var GroovyConsole = function () {
                 $(selectedElement).addClass('active');
             }
 
-            $('#dropdown-themes li').click(function () {
+            themes.click(function () {
                 var theme = $(this).find('a').data('target');
 
                 editor.setTheme(theme);
 
-                $('#dropdown-themes li').removeClass('active');
+                themes.removeClass('active');
                 $(this).addClass('active');
 
                 GroovyConsole.localStorage.saveTheme(theme);
@@ -94,7 +96,7 @@ var GroovyConsole = function () {
                 }
             });
 
-            $('#run-script').click(function (event) {
+            $('#run-script').click(function () {
                 if ($('#run-script').hasClass('disabled')) {
                     return;
                 }
@@ -196,7 +198,7 @@ var GroovyConsole = function () {
 
             $.post('/bin/groovyconsole/save', {
                 fileName: fileName,
-                scriptContent: editor.getSession().getValue()
+                script: editor.getSession().getValue()
             }).done(function (data) {
                 GroovyConsole.showSuccess('Script saved successfully.');
                 GroovyConsole.setScriptName(data.scriptName);

@@ -4,5 +4,5 @@ import javax.jcr.Session
 
 interface EmailService {
 
-    void sendEmail(Session session, String scriptContent, String output, String runningTime, boolean success)
+    void sendEmail(Session session, String script, String output, String runningTime, boolean success)
 }

@@ -1,1 +1,1 @@
-println 'BEER'
+println "BEER"

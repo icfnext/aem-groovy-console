@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>5.0.2-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
     <name>CQ Groovy Console</name>
     <description>
         The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
@@ -436,6 +436,10 @@
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
+            <artifactId>cq-search</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
             <artifactId>cq-mailer</artifactId>
         </dependency>
         <dependency>
@@ -455,9 +459,8 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-search</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- compile -->

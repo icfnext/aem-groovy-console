@@ -1,9 +1,11 @@
 package com.citytechinc.cq.groovyconsole.services.impl
+
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.mailer.MailService
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.CharEncoding
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -16,8 +18,6 @@ import javax.jcr.Session
 @Component
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
-
-    static final def ENCODING = "UTF-8"
 
     static final def SUBJECT = "CQ Groovy Console Script Execution Result"
 
@@ -34,7 +34,7 @@ class DefaultEmailService implements EmailService {
     MailService mailService
 
     @Override
-    void sendEmail(Session session, String scriptContent, String output, String runningTime, boolean success) {
+    void sendEmail(Session session, String script, String output, String runningTime, boolean success) {
         if (configurationService.emailEnabled) {
             def recipients = configurationService.emailRecipients
 
@@ -42,7 +42,7 @@ class DefaultEmailService implements EmailService {
                 if (mailService) {
                     def email = new HtmlEmail()
 
-                    email.charset = ENCODING
+                    email.charset = CharEncoding.UTF_8
 
                     recipients.each { name ->
                         email.addTo(name)
@@ -53,7 +53,7 @@ class DefaultEmailService implements EmailService {
                     def binding = [
                         username: session.userID,
                         timestamp: new Date().format(FORMAT_TIMESTAMP),
-                        script: scriptContent,
+                        script: script,
                         output: output,
                         runningTime: runningTime
                     ]
@@ -72,6 +72,8 @@ class DefaultEmailService implements EmailService {
             } else {
                 LOG.error "email enabled but no recipients configured"
             }
+        } else {
+            LOG.info "email not enabled"
         }
     }
 }

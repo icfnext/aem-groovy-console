@@ -1,56 +1,51 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
+import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
-import com.citytechinc.cq.groovyconsole.services.GroovyRunService
+import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
-import groovy.json.JsonBuilder
 import groovy.util.logging.Slf4j
+import org.apache.commons.lang3.CharEncoding
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
+import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.resource.ResourceResolver
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
 import javax.jcr.Session
-import javax.servlet.ServletException
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
-/**
- * @author Daniel Madejek
- */
 @Service
 @Component
 @Slf4j("LOG")
-public class GroovyRunServiceImpl implements GroovyRunService{
+class DefaultGroovyConsoleService implements GroovyConsoleService {
 
+    static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    static final def ENCODING = "UTF-8"
+    static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    static final def EMAIL_SUBJECT = "CQ Groovy Console Script Execution Result"
+    static final String PARAMETER_FILE_NAME = "fileName"
 
-    static final def EMAIL_TEMPLATE_SUCCESS = "/email-success.template"
+    static final String PARAMETER_SCRIPT = "script"
 
-    static final def EMAIL_TEMPLATE_FAIL = "/email-fail.template"
-
-    static final def FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
+    static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-            "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -81,8 +76,7 @@ public class GroovyRunServiceImpl implements GroovyRunService{
     def bundleContext
 
     @Override
-    public JsonBuilder runGroovyScript(String scriptContent,SlingHttpServletRequest request) {
-
+    Map<String, String> runScript(SlingHttpServletRequest request) {
         def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
         def pageManager = resourceResolver.adaptTo(PageManager)
@@ -100,6 +94,8 @@ public class GroovyRunServiceImpl implements GroovyRunService{
         def output = ""
         def error = ""
 
+        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+
         try {
             def script = shell.parse(scriptContent)
 
@@ -109,9 +105,9 @@ public class GroovyRunServiceImpl implements GroovyRunService{
                 result = script.run()
             }
 
-            LOG.debug "doPost() script execution completed, running time = $runningTime"
+            LOG.debug "script execution completed, running time = $runningTime"
 
-            output = stream.toString(ENCODING);
+            output = stream.toString(CharEncoding.UTF_8)
 
             saveOutput(session, output)
 
@@ -135,12 +131,27 @@ public class GroovyRunServiceImpl implements GroovyRunService{
             errorWriter.close()
         }
 
-        return new JsonBuilder([
-                executionResult: result as String,
-                outputText: output,
-                stacktraceText: error,
-                runningTime: runningTime
-        ])
+        [executionResult: result as String, outputText: output, stacktraceText: error, runningTime: runningTime]
+    }
+
+    @Override
+    Map<String, String> saveScript(SlingHttpServletRequest request) {
+        def name = request.getParameter(PARAMETER_FILE_NAME)
+        def script = request.getParameter(PARAMETER_SCRIPT)
+
+        def session = request.resourceResolver.adaptTo(Session)
+
+        def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
+
+        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
+
+        folderNode.removeNode(fileName)
+
+        getScriptBinary(session, script).withBinary { binary ->
+            saveFile(session, folderNode, fileName, "application/octet-stream", binary)
+        }
+
+        [scriptName: fileName]
     }
 
     def createConfiguration() {
@@ -154,21 +165,21 @@ public class GroovyRunServiceImpl implements GroovyRunService{
     }
 
     def createBinding(request, stream) {
-        def printStream = new PrintStream(stream, true, ENCODING)
+        def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
 
         def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
 
         new Binding([
-                out: printStream,
-                log: LoggerFactory.getLogger("groovyconsole"),
-                session: session,
-                slingRequest: request,
-                pageManager: resourceResolver.adaptTo(PageManager),
-                resourceResolver: resourceResolver,
-                queryBuilder: queryBuilder,
-                nodeBuilder: new com.citytechinc.cq.groovy.extension.builders.NodeBuilder(session),
-                pageBuilder: new PageBuilder(session)
+            out: printStream,
+            log: LoggerFactory.getLogger("groovyconsole"),
+            session: session,
+            slingRequest: request,
+            pageManager: resourceResolver.adaptTo(PageManager),
+            resourceResolver: resourceResolver,
+            queryBuilder: queryBuilder,
+            nodeBuilder: new NodeBuilder(session),
+            pageBuilder: new PageBuilder(session)
         ])
     }
 
@@ -227,11 +238,6 @@ public class GroovyRunServiceImpl implements GroovyRunService{
         }
     }
 
-    @Activate
-    void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext
-    }
-
     def saveOutput(session, output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
@@ -244,13 +250,42 @@ public class GroovyRunServiceImpl implements GroovyRunService{
                 folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
             }
 
-            def fileName = date.format('hhmmss')
+            def fileName = date.format("hhmmss")
 
-            new ByteArrayInputStream(output.getBytes(ENCODING)).withStream { stream ->
+            new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
                 session.valueFactory.createBinary(stream).withBinary { binary ->
                     saveFile(session, folderNode, fileName, "text/plain", binary)
                 }
             }
         }
+    }
+
+    def getScriptBinary(session, script) {
+        def binary = null
+
+        new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
+            binary = session.valueFactory.createBinary(stream)
+        }
+
+        binary
+    }
+
+    void saveFile(session, folderNode, fileName, mimeType, binary) {
+        def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
+
+        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
+
+        resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
+        resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
+        resourceNode.set(JcrConstants.JCR_DATA, binary)
+        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
+        resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
+
+        session.save()
+    }
+
+    @Activate
+    void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext
     }
 }
