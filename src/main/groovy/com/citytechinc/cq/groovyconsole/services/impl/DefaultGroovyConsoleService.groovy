@@ -125,7 +125,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             error = stackTrace.toString()
 
-            emailService.sendEmail(session, scriptContent, output, null, false)
+            emailService.sendEmail(session, scriptContent, error, null, false)
         } finally {
             stream.close()
             errorWriter.close()
