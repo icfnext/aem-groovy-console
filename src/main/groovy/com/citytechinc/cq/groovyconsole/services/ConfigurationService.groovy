@@ -1,6 +1,6 @@
 package com.citytechinc.cq.groovyconsole.services
 
-interface GroovyConsoleConfigurationService {
+interface ConfigurationService {
 
     boolean isEmailEnabled()
 

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>5.0.1</version>
+    <version>5.1.0</version>
     <name>CQ Groovy Console</name>
     <description>
         The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
@@ -52,12 +52,20 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>citytech-public</id>
+            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <cq.package.goal>install</cq.package.goal>
+        <cq.username>admin</cq.username>
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
     </properties>
 
@@ -112,7 +120,7 @@
                     <plugin>
                         <groupId>com.github.github</groupId>
                         <artifactId>site-maven-plugin</artifactId>
-                        <version>0.8</version>
+                        <version>0.9</version>
                         <configuration>
                             <message>site for ${project.version}</message>
                             <server>github</server>
@@ -184,7 +192,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.15</version>
+                <version>2.16</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
@@ -197,7 +205,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.0</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
@@ -254,7 +262,7 @@
             <plugin>
                 <groupId>com.citytechinc.maven.plugins</groupId>
                 <artifactId>cq-package-maven-plugin</artifactId>
-                <version>0.1.1</version>
+                <version>0.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -314,7 +322,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.15</version>
+                <version>2.16</version>
                 <executions>
                     <execution>
                         <goals>
@@ -369,7 +377,7 @@
                         </plugin>
                         <plugin>
                             <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>2.15</version>
+                            <version>2.16</version>
                         </plugin>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
@@ -387,21 +395,6 @@
                             </reportSets>
                         </plugin>
                     </reportPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-jgitflow-plugin</artifactId>
-                <version>1.0-alpha14</version>
-                <configuration>
-                    <enableFeatureVersions>false</enableFeatureVersions>
-                    <noFeatureBuild>true</noFeatureBuild>
-                    <noReleaseBuild>true</noReleaseBuild>
-                    <flowInitContext>
-                        <featureBranchPrefix>feature-</featureBranchPrefix>
-                        <releaseBranchPrefix>release-</releaseBranchPrefix>
-                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                    </flowInitContext>
                 </configuration>
             </plugin>
         </plugins>
@@ -443,6 +436,10 @@
         </dependency>
         <dependency>
             <groupId>com.day.cq</groupId>
+            <artifactId>cq-search</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.day.cq</groupId>
             <artifactId>cq-mailer</artifactId>
         </dependency>
         <dependency>
@@ -462,16 +459,15 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-search</artifactId>
-            <scope>provided</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- compile -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.9.4</version>
+            <version>1.9.6</version>
         </dependency>
 
         <!-- provided -->
