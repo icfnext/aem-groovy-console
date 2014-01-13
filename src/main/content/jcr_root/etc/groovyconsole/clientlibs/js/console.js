@@ -112,7 +112,7 @@ var GroovyConsole = function () {
 
                     $('#run-script-text').text('Running...');
 
-                    $.post('/bin/groovyconsole/post.json', {
+                    $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script
                     }).done(function (data) {
                         var result = data.executionResult;
@@ -178,7 +178,7 @@ var GroovyConsole = function () {
         loadScript: function (scriptPath) {
             GroovyConsole.reset();
 
-            $.get('/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
+            $.get(CQ.shared.HTTP.getContextPath() + '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
                 GroovyConsole.showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
@@ -196,7 +196,7 @@ var GroovyConsole = function () {
         saveScript: function (fileName) {
             GroovyConsole.reset();
 
-            $.post('/bin/groovyconsole/save', {
+            $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/save', {
                 fileName: fileName,
                 script: editor.getSession().getValue()
             }).done(function (data) {

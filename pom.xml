@@ -66,6 +66,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <cq.package.goal>install</cq.package.goal>
         <cq.username>admin</cq.username>
+        <cq.context.path></cq.context.path>
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
     </properties>
 
@@ -274,6 +275,7 @@
                 <configuration>
                     <host>${cq.host}</host>
                     <port>${cq.port.author}</port>
+                    <contextPath>${cq.context.path}</contextPath>
                     <username>${cq.username}</username>
                     <password>${cq.password}</password>
                 </configuration>
@@ -296,6 +298,7 @@
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port.author}</port>
+                            <path>${cq.context.path}/system/console</path>
                             <username>${cq.username}</username>
                             <password>${cq.password}</password>
                         </configuration>
@@ -313,6 +316,7 @@
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port.publish}</port>
+                            <path>${cq.context.path}/system/console</path>
                             <username>${cq.username}</username>
                             <password>${cq.password}</password>
                             <skip>${osgi.bundle.status.skip.publish}</skip>
