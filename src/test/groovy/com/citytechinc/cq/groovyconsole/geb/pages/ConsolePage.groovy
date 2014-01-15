@@ -4,7 +4,7 @@ import geb.Page
 
 class ConsolePage extends Page {
 
-    static url = "/groovyconsole"
+    static url = "groovyconsole"
 
     static at = { title == "CQ Groovy Console" }
 
