@@ -29,6 +29,12 @@ scripts are included in the package for reference.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost CQ5 servers.
 
+## Context Path Support
+
+If you are running AEM with a context path, set the Maven property `cq.context.path` during installation.
+
+    mvn install -P local -Dcq.context.path=/context
+
 ## Notes
 
 Sample scripts can be found in the src/main/scripts directory.
