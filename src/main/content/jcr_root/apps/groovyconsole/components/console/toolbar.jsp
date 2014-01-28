@@ -15,6 +15,14 @@
         	<a class="btn" href="#" id="save-script"><i class="icon-hdd"></i> Save</a>
         </c:if>
     </div>
+
+    <div id="btn-group-adapters" class="btn-group pull-right" style="display: none;">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Resource Resolver Adapters <span class="caret"></span></button>
+        <ul class="dropdown-menu" id="dropdown-adapters">
+
+        </ul>
+    </div>
+
     <div id="loader" class="pull-right" style="display: none;">
         <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
     </div>

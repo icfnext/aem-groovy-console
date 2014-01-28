@@ -1,0 +1,3 @@
+import $className
+
+def $variableName = resourceResolver.adaptTo($simpleName)

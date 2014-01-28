@@ -60,6 +60,22 @@ var GroovyConsole = function () {
             });
         },
 
+        initializeAdaptersMenu: function () {
+            $.getJSON('/bin/groovyconsole/adapters', function (adapters) {
+                $.each(adapters, function (className, script) {
+                    var li = $('<li><a href="#">' + className + '</a></li>');
+
+                    li.click(function () {
+                        editor.getSession().setValue(script);
+                    });
+
+                    $('#dropdown-adapters').append(li);
+                });
+
+                $('#btn-group-adapters').fadeIn('fast');
+            });
+        },
+
         initializeButtons: function () {
             $('#new-script').click(function () {
                 if ($(this).hasClass('disabled')) {
@@ -338,5 +354,6 @@ GroovyConsole.localStorage = new function () {
 $(function () {
     GroovyConsole.initializeEditor();
     GroovyConsole.initializeThemeMenu();
+    GroovyConsole.initializeAdaptersMenu();
     GroovyConsole.initializeButtons();
 });
