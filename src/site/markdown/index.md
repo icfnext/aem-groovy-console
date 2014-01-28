@@ -39,5 +39,11 @@ If you are running AEM with a context path, set the Maven property `cq.context.p
 
 Sample scripts can be found in the src/main/scripts directory.
 
+## Versioning
+
+Follows [Semantic Versioning](http://semver.org/) guidelines.
+
+## Issues
+
 Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions; issues can be submitted via
 [GitHub](https://github.com/Citytechinc/cq-groovy-console/issues).
