@@ -273,10 +273,10 @@ var GroovyConsole = function () {
 }();
 
 GroovyConsole.localStorage = new function () {
-    var EDITOR_HEIGHT = 'GroovyConsole.editorHeight';
-    var EDITOR_DATA = 'GroovyConsole.editorData';
-    var SCRIPT_NAME = 'GroovyConsole.scriptName';
-    var THEME = 'GroovyConsole.theme';
+    var EDITOR_HEIGHT = 'groovyconsole.editor.height';
+    var EDITOR_DATA = 'groovyconsole.editor.data';
+    var SCRIPT_NAME = 'groovyconsole.script.name';
+    var THEME = 'groovyconsole.theme';
 
     this.loadValue = function (name, defaultValue) {
         if (Modernizr.localstorage) {
