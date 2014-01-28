@@ -300,7 +300,6 @@
                             <contextPath>${cq.context.path}</contextPath>
                             <username>${cq.username}</username>
                             <password>${cq.password}</password>
-                            <quiet></quiet>
                         </configuration>
                     </execution>
                     <execution>
