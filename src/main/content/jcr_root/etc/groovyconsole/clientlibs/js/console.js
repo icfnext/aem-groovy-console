@@ -1,5 +1,28 @@
 var GroovyConsole = function () {
 
+    function initializeMenu(id, items) {
+        $.each(items, function (className, item) {
+            var li = $('<li><a href="#">' + className + '</a></li>');
+
+            li.click(function () {
+                editor.moveCursorTo(0, 0);
+                editor.insert(item.import);
+                editor.insert('\n\n');
+                editor.navigateFileEnd();
+
+                if (editor.getCursorPosition().column > 0) {
+                    editor.insert('\n\n');
+                }
+
+                editor.insert(item.declaration);
+            });
+
+            $('#dropdown-' + id).append(li);
+        });
+
+        $('#btn-group-' + id).css('visibility', 'visible').hide().fadeIn('fast');
+    }
+
     return {
         initializeEditor: function () {
             window.editor = ace.edit('editor');
@@ -7,7 +30,7 @@ var GroovyConsole = function () {
             var GroovyMode = ace.require('ace/mode/groovy').Mode;
 
             editor.getSession().setMode(new GroovyMode());
-            editor.renderer.setShowPrintMargin(false);
+            editor.setShowPrintMargin(false);
 
             var editorDiv = $('#editor');
 
@@ -28,7 +51,7 @@ var GroovyConsole = function () {
             }
 
             editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
-            editor.getSession().getDocument().on('change', function () {
+            editor.on('change', function () {
                 GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
             });
         },
@@ -62,17 +85,13 @@ var GroovyConsole = function () {
 
         initializeAdaptersMenu: function () {
             $.getJSON('/bin/groovyconsole/adapters', function (adapters) {
-                $.each(adapters, function (className, script) {
-                    var li = $('<li><a href="#">' + className + '</a></li>');
+                initializeMenu('adapters', adapters);
+            });
+        },
 
-                    li.click(function () {
-                        editor.getSession().setValue(script);
-                    });
-
-                    $('#dropdown-adapters').append(li);
-                });
-
-                $('#btn-group-adapters').fadeIn('fast');
+        initializeServicesMenu: function () {
+            $.getJSON('/bin/groovyconsole/services', function (services) {
+                initializeMenu('services', services);
             });
         },
 
@@ -355,5 +374,6 @@ $(function () {
     GroovyConsole.initializeEditor();
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeAdaptersMenu();
+    GroovyConsole.initializeServicesMenu();
     GroovyConsole.initializeButtons();
 });

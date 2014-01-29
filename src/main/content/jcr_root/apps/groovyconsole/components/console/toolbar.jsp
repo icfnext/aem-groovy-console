@@ -16,9 +16,16 @@
         </c:if>
     </div>
 
-    <div id="btn-group-adapters" class="btn-group pull-right" style="display: none;">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">Resource Resolver Adapters <span class="caret"></span></button>
+    <div id="btn-group-adapters" class="btn-group pull-right" style="visibility: hidden;">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Adapters <span class="caret"></span></button>
         <ul class="dropdown-menu" id="dropdown-adapters">
+
+        </ul>
+    </div>
+
+    <div id="btn-group-services" class="btn-group pull-right" style="visibility: hidden;">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Services <span class="caret"></span></button>
+        <ul class="dropdown-menu" id="dropdown-services">
 
         </ul>
     </div>

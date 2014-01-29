@@ -10,19 +10,17 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet
 
 import javax.servlet.ServletException
 
-@SlingServlet(paths = "/bin/groovyconsole/adapters")
-class ResourceResolverAdaptersServlet extends SlingSafeMethodsServlet {
+@SlingServlet(paths = "/bin/groovyconsole/services")
+class ServicesMenuServlet extends SlingSafeMethodsServlet {
 
     @Reference
     ConfigurationService configurationService
 
     @Override
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse
-    response) throws ServletException, IOException {
-        def adapters = configurationService.resourceResolverAdapters
-
+        response) throws ServletException, IOException {
         response.contentType = "application/json"
 
-        new JsonBuilder(adapters).writeTo(response.writer)
+        new JsonBuilder(configurationService.services).writeTo(response.writer)
     }
 }
