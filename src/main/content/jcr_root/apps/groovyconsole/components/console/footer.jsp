@@ -15,24 +15,10 @@
     <pre></pre>
 </div>
 <div class="accordion" id="accordion">
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" href="#help" data-toggle="collapse" data-target="#help" data-parent="#accordion">Help</a>
-        </div>
-        <div id="help" class="accordion-body collapse">
-            <div class="accordion-inner">
-                <cq:include script="help.jsp" />
-            </div>
-        </div>
-    </div>
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" href="#about" data-toggle="collapse" data-target="#about" data-parent="#accordion">About</a>
-        </div>
-        <div id="about" class="accordion-body collapse in">
-            <div class="accordion-inner">
-                <cq:include script="about.jsp" />
-            </div>
-        </div>
-    </div>
+    <cq:include script="bindings.jsp" />
+    <cq:include script="imports.jsp" />
+    <cq:include script="methods.jsp" />
+    <cq:include script="enhancements.jsp" />
+    <cq:include script="builders.jsp" />
+    <cq:include script="about.jsp" />
 </div>
