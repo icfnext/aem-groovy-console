@@ -190,11 +190,11 @@ var GroovyConsole = function () {
 
         disableToolbar: function () {
             $('.btn-toolbar .btn').addClass('disabled');
-            $('#loader').fadeIn('fast');
+            $('#loader').css('visibility', 'visible');
         },
 
         enableToolbar: function () {
-            $('#loader').fadeOut('fast');
+            $('#loader').css('visibility', 'hidden');
             $('.btn-toolbar .btn').removeClass('disabled');
         },
 

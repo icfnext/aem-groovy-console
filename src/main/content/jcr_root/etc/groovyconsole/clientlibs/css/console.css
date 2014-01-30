@@ -3,6 +3,20 @@
     height: 400px;
 }
 
+#loader {
+    display: inline-block;
+    margin-left: 5px;
+    visibility: hidden;
+}
+
+#btn-group-adapters {
+    visibility: hidden;
+}
+
+#btn-group-services {
+    visibility: hidden;
+}
+
 .ace_editor_wrapper {
     border: 1px solid #DDD;
     border-radius: 4px;

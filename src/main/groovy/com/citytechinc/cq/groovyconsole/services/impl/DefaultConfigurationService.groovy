@@ -1,5 +1,4 @@
 package com.citytechinc.cq.groovyconsole.services.impl
-
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.StringUtils
@@ -133,6 +132,17 @@ class DefaultConfigurationService implements ConfigurationService {
         crxOutputFolder
     }
 
+    @Activate
+    @Modified
+    synchronized void modified(final Map<String, Object> properties) {
+        emailEnabled = properties.get(EMAIL_ENABLED) ?: false
+        emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: []
+        crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false
+        crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
+        resourceResolverAdapters = properties.get(RESOURCE_RESOLVER_ADAPTERS) ?: []
+        osgiServices = properties.get(OSGI_SERVICES) ?: []
+    }
+
     static def loadClassMapping(defaultClassNames, additionalClassNames) {
         def mapping = []
 
@@ -151,16 +161,5 @@ class DefaultConfigurationService implements ConfigurationService {
         }
 
         mapping
-    }
-
-    @Activate
-    @Modified
-    synchronized void modified(final Map<String, Object> properties) {
-        emailEnabled = properties.get(EMAIL_ENABLED) ?: false
-        emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: []
-        crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false
-        crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
-        resourceResolverAdapters = properties.get(RESOURCE_RESOLVER_ADAPTERS) ?: []
-        osgiServices = properties.get(OSGI_SERVICES) ?: []
     }
 }
