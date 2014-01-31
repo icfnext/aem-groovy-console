@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>5.2.1-SNAPSHOT</version>
+    <version>5.3.0-SNAPSHOT</version>
     <name>CQ Groovy Console</name>
     <description>
         The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
@@ -235,7 +235,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Private-Package>com.citytechinc.cq.groovyconsole.*</Private-Package>
+                        <Export-Package>!*.impl,com.citytechinc.cq.groovyconsole.services.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
                     </instructions>

@@ -1,0 +1,50 @@
+<%@include file="/libs/foundation/global.jsp" %>
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" href="#builders" data-toggle="collapse" data-target="#builders" data-parent="#accordion">Builders</a>
+    </div>
+    <div id="builders" class="accordion-body collapse">
+        <div class="accordion-inner">
+            <p>Additional bindings are provided for the following builders.  <a href="http://groovy.codehaus.org/Builders" target="_blank">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
+            <ul>
+                <li>nodeBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a Node in the repository.  A new Node is created only if there is no existing node for the current name.</span>
+        <pre>
+nodeBuilder.etc {
+    satirists("sling:Folder") {
+        bierce(firstName: "Ambrose", lastName: "Bierce", birthDate: Calendar.instance.updated(year: 1842, month: 5, date: 24))
+        mencken(firstName: "H.L.", lastName: "Mencken", birthDate: Calendar.instance.updated(year: 1880, month: 8, date: 12))
+        other("sling:Folder", "jcr:title": "Other")
+    }
+}</pre>
+                    <ul>
+                        <li>A single string argument represents the node type name for the node ("satirists").</li>
+                        <li>A map argument uses the provided key:value pairs to set property values on the node ("bierce" and "mencken").</li>
+                        <li>Both string and map arguments will set the node type and property value(s) for the node ("other").</li>
+                    </ul>
+                </li>
+                <li>pageBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a cq:Page node, unless the node is a descendant of a "jcr:content" node, in which case nodes are treated in the same manner as described for the Node builder above.</span>
+        <pre>
+pageBuilder.content {
+    beer {
+        styles("Styles") {
+            "jcr:content"("jcr:lastModifiedBy": "me", "jcr:lastModified": Calendar.instance) {
+                data("sling:Folder")
+            }
+            dubbel("Dubbel")
+            tripel("Tripel")
+            saison("Saison")
+        }
+        breweries("Breweries", "jcr:lastModifiedBy": "me", "jcr:lastModified": Calendar.instance)
+    }
+}</pre>
+                    <ul>
+                        <li>A single string argument is used to set the page title rather than the node type ("styles").</li>
+                        <li>Descendants of "jcr:content" nodes are not created with the cq:Page type by default and can have their own node type specified as described for the Node builder ("data").</li>
+                        <li>Page properties can be passed directly as arguments on the page node without explicitly creating a jcr:content node first ("breweries").</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

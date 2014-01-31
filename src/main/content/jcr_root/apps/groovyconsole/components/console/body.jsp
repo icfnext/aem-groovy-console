@@ -1,6 +1,6 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<body style="padding-top: 40px;">
+<body>
     <cq:include script="header.jsp" />
 
     <div class="container">

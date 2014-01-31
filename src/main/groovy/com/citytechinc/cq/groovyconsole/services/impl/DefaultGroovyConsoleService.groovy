@@ -2,7 +2,6 @@ package com.citytechinc.cq.groovyconsole.services.impl
 
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
@@ -14,6 +13,7 @@ import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
+import org.apache.felix.scr.ScrService
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -62,9 +62,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     Replicator replicator
 
     @Reference
-    OsgiComponentService componentService
-
-    @Reference
     QueryBuilder queryBuilder
 
     @Reference
@@ -72,6 +69,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Reference
     EmailService emailService
+
+    @Reference
+    ScrService scrService
 
     def bundleContext
 
@@ -229,7 +229,22 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             }
 
             delegate.doWhileDisabled = { String componentClassName, Closure closure ->
-                componentService.doWhileDisabled(componentClassName, closure)
+                def component = scrService.components.find { it.className == componentClassName }
+                def result = null
+
+                if (component) {
+                    component.disable()
+
+                    try {
+                        result = closure()
+                    } finally {
+                        component.enable()
+                    }
+                } else {
+                    result = closure()
+                }
+
+                result
             }
 
             delegate.createQuery { Map predicates ->
