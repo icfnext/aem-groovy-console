@@ -2,6 +2,8 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
+[![Stories in Ready](https://badge.waffle.io/citytechinc/cq-groovy-console.png?label=ready)](http://waffle.io/citytechinc/cq-groovy-console)
+
 ## Overview
 
 The CQ Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the Adobe CQ5
