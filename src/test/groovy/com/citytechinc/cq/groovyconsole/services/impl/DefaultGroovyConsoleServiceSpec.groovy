@@ -42,7 +42,6 @@ class DefaultGroovyConsoleServiceSpec extends AbstractSlingRepositorySpec {
         consoleService = new DefaultGroovyConsoleService()
 
         consoleService.replicator = Mock(Replicator)
-        consoleService.componentService = Mock(OsgiComponentService)
         consoleService.bundleContext = Mock(BundleContext)
         consoleService.configurationService = Mock(ConfigurationService)
         consoleService.queryBuilder = Mock(QueryBuilder)
