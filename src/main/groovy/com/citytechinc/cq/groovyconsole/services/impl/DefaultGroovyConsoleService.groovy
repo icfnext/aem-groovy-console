@@ -179,7 +179,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             resourceResolver: resourceResolver,
             queryBuilder: queryBuilder,
             nodeBuilder: new NodeBuilder(session),
-            pageBuilder: new PageBuilder(session)
+            pageBuilder: new PageBuilder(session),
+            bundleContext: bundleContext
         ])
     }
 
