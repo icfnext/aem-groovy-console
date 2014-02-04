@@ -1,28 +1,5 @@
 var GroovyConsole = function () {
 
-    function initializeMenu(id, items) {
-        $.each(items, function (className, item) {
-            var li = $('<li><a href="#">' + className + '</a></li>');
-
-            li.click(function () {
-                editor.moveCursorTo(0, 0);
-                editor.insert(item.import);
-                editor.insert('\n\n');
-                editor.navigateFileEnd();
-
-                if (editor.getCursorPosition().column > 0) {
-                    editor.insert('\n\n');
-                }
-
-                editor.insert(item.declaration);
-            });
-
-            $('#dropdown-' + id).append(li);
-        });
-
-        $('#btn-group-' + id).css('visibility', 'visible').hide().fadeIn('fast');
-    }
-
     function setScriptName(scriptName) {
         $('#script-name').text(scriptName).fadeIn('fast');
 
@@ -124,15 +101,26 @@ var GroovyConsole = function () {
             });
         },
 
-        initializeAdaptersMenu: function () {
-            $.getJSON('/bin/groovyconsole/adapters', function (adapters) {
-                initializeMenu('adapters', adapters);
-            });
-        },
-
-        initializeServicesMenu: function () {
+        initializeServicesList: function () {
             $.getJSON('/bin/groovyconsole/services', function (services) {
-                initializeMenu('services', services);
+                $('#services-list').typeahead({
+                    source: Object.keys(services),
+                    updater: function (key) {
+                        var declaration = services[key];
+
+                        editor.navigateFileEnd();
+
+                        if (editor.getCursorPosition().column > 0) {
+                            editor.insert('\n\n');
+                        }
+
+                        editor.insert(declaration);
+
+                        return '';
+                    }
+                });
+
+                $('#btn-group-services').css('visibility', 'visible').hide().fadeIn('fast');
             });
         },
 
@@ -306,7 +294,6 @@ var GroovyConsole = function () {
 $(function () {
     GroovyConsole.initializeEditor();
     GroovyConsole.initializeThemeMenu();
-    GroovyConsole.initializeAdaptersMenu();
-    GroovyConsole.initializeServicesMenu();
+    GroovyConsole.initializeServicesList();
     GroovyConsole.initializeButtons();
 });

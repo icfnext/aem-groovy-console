@@ -29,7 +29,7 @@ import javax.jcr.Session
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
-@Service
+@Service(GroovyConsoleService)
 @Component
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
@@ -73,7 +73,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     ScrService scrService
 
-    def bundleContext
+    BundleContext bundleContext
 
     @Override
     Map<String, String> runScript(SlingHttpServletRequest request) {
@@ -215,10 +215,28 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 session.save()
             }
 
-            delegate.getService = { serviceType ->
-                def ref = bundleContext.getServiceReference(serviceType)
+            delegate.getService = { Class serviceType ->
+                def serviceReference = bundleContext.getServiceReference(serviceType)
 
-                bundleContext.getService(ref)
+                bundleContext.getService(serviceReference)
+            }
+
+            delegate.getService = { String className ->
+                def serviceReference = bundleContext.getServiceReference(className)
+
+                bundleContext.getService(serviceReference)
+            }
+
+            delegate.getServices = { Class serviceType, String filter ->
+                def serviceReferences = bundleContext.getServiceReferences(serviceType, filter)
+
+                serviceReferences.collect { bundleContext.getService(it) }
+            }
+
+            delegate.getServices = { String className, String filter ->
+                def serviceReferences = bundleContext.getServiceReferences(className, filter)
+
+                serviceReferences.collect { bundleContext.getService(it) }
             }
 
             delegate.activate = { String path ->

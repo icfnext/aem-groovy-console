@@ -21,13 +21,7 @@
         <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
     </div>
 
-    <div id="btn-group-adapters" class="btn-group pull-right">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">Adapters <span class="caret"></span></button>
-        <ul class="dropdown-menu" id="dropdown-adapters"></ul>
-    </div>
-
     <div id="btn-group-services" class="btn-group pull-right">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">Services <span class="caret"></span></button>
-        <ul class="dropdown-menu" id="dropdown-services"></ul>
+        <input id="services-list" type="text" placeholder="Enter a Service Name...">
     </div>
 </div>

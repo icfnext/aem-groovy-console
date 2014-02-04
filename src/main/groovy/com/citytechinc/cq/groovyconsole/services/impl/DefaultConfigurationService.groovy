@@ -8,7 +8,7 @@ import org.apache.felix.scr.annotations.Modified
 import org.apache.felix.scr.annotations.Property
 import org.apache.felix.scr.annotations.Service
 
-@Service
+@Service(ConfigurationService)
 @Component(immediate = true, metatype = true, label = "Groovy Console Configuration Service")
 @Slf4j("LOG")
 class DefaultConfigurationService implements ConfigurationService {
