@@ -6,6 +6,8 @@ import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.apache.sling.api.adapter.AdapterFactory
+import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet
 import org.osgi.framework.BundleContext
 import org.osgi.framework.Constants
@@ -20,12 +22,29 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
 
     @Override
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse
-    response) throws ServletException, IOException {
+        response) throws ServletException, IOException {
+        def adapters = getAdaptersMap()
         def services = getServicesMap()
 
         response.contentType = "application/json"
 
-        new JsonBuilder(services).writeTo(response.writer)
+        new JsonBuilder(adapters + services).writeTo(response.writer)
+    }
+
+    def getAdaptersMap() {
+        def adapters = [:] as TreeMap
+
+        def serviceReferences = bundleContext.getServiceReferences(AdapterFactory, null).findAll { serviceReference ->
+            serviceReference.getProperty(AdapterFactory.ADAPTABLE_CLASSES).contains(ResourceResolver.class.name)
+        }
+
+        serviceReferences.each { serviceReference ->
+            serviceReference.getProperty(AdapterFactory.ADAPTER_CLASSES).each { adapterClassName ->
+                adapters[adapterClassName] = getAdapterDeclaration(adapterClassName)
+            }
+        }
+
+        adapters
     }
 
     def getServicesMap() {
@@ -48,11 +67,11 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
         }
 
         allServices.each { className, implementationClassNames ->
-            services[className] = getDeclaration(className, null)
+            services[className] = getServiceDeclaration(className, null)
 
             if (implementationClassNames.size() > 1) {
                 implementationClassNames.each { implementationClassName ->
-                    services[implementationClassName] = getDeclaration(className, implementationClassName)
+                    services[implementationClassName] = getServiceDeclaration(className, implementationClassName)
                 }
             }
         }
@@ -60,7 +79,14 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
         services
     }
 
-    def getDeclaration(className, implementationClassName) {
+    def getAdapterDeclaration(className) {
+        def simpleName = className.tokenize('.').last()
+        def variableName = StringUtils.uncapitalize(simpleName)
+
+        "def $variableName = resourceResolver.adaptTo($className)"
+    }
+
+    def getServiceDeclaration(className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration

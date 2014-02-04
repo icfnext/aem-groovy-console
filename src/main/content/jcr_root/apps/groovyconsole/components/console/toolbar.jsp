@@ -22,6 +22,6 @@
     </div>
 
     <div id="btn-group-services" class="btn-group pull-right">
-        <input id="services-list" type="text" placeholder="Enter a Service Name...">
+        <input id="services-list" type="text" placeholder="Service or Adapter Name">
     </div>
 </div>

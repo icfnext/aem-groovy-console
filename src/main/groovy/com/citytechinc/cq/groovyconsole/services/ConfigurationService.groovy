@@ -6,10 +6,6 @@ interface ConfigurationService {
 
     String[] getEmailRecipients()
 
-    Map<String, String> getAdapters()
-
-    Map<String, String> getServices()
-
     boolean isCrxOutputEnabled()
 
     boolean isEmailEnabled()

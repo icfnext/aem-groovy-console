@@ -120,7 +120,7 @@ var GroovyConsole = function () {
                     }
                 });
 
-                $('#btn-group-services').css('visibility', 'visible').hide().fadeIn('fast');
+                $('#btn-group-services').fadeIn('fast');
             });
         },
 

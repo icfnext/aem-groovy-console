@@ -13,12 +13,8 @@ body {
     visibility: hidden;
 }
 
-#btn-group-adapters {
-    visibility: hidden;
-}
-
 #btn-group-services {
-    visibility: hidden;
+    display: none;
 }
 
 .ace_editor_wrapper {
