@@ -2,7 +2,6 @@ package com.citytechinc.cq.groovyconsole.services.impl
 
 import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
 import com.citytechinc.cq.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
 import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService

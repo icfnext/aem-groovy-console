@@ -34,8 +34,8 @@
 	        <scope>provided</scope>
             <unpack>false</unpack>
             <includes>
-                <include>com.citytechinc.cq:cq-groovy-console</include>
-	            <include>com.citytechinc.cq:cq-groovy-extension</include>
+                <include>com.citytechinc.aem:cq-groovy-console</include>
+	            <include>com.citytechinc.aem:cq-groovy-extension</include>
 	            <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>
