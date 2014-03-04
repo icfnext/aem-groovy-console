@@ -1,7 +1,7 @@
-package com.citytechinc.cq.groovyconsole.geb
+package com.citytechinc.aem.groovy.console.geb
 
-import com.citytechinc.cq.groovyconsole.geb.pages.ConsolePage
-import com.citytechinc.cq.groovyconsole.geb.pages.LoginPage
+import com.citytechinc.aem.groovy.console.geb.pages.ConsolePage
+import com.citytechinc.aem.groovy.console.geb.pages.LoginPage
 import geb.spock.GebReportingSpec
 import spock.lang.Stepwise
 

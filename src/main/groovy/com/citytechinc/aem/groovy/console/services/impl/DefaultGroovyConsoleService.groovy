@@ -1,10 +1,10 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
-import com.citytechinc.cq.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
+import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
+import com.citytechinc.aem.groovy.extension.builders.PageBuilder
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.EmailService
+import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
@@ -34,15 +34,15 @@ import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizat
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
-    static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
+    protected static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    static final String CONSOLE_ROOT = "/etc/groovyconsole"
+    protected static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    static final String PARAMETER_FILE_NAME = "fileName"
+    protected static final String PARAMETER_FILE_NAME = "fileName"
 
-    static final String PARAMETER_SCRIPT = "script"
+    protected static final String PARAMETER_SCRIPT = "script"
 
-    static final String EXTENSION_GROOVY = ".groovy"
+    protected static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
         "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
@@ -105,7 +105,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug "script execution completed, running time = $runningTime"
+            LOG.debug "runScript() script execution completed, running time = $runningTime"
 
             output = stream.toString(CharEncoding.UTF_8)
 
@@ -294,7 +294,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    def getScriptBinary(session, script) {
+    static def getScriptBinary(session, script) {
         def binary = null
 
         new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
@@ -304,7 +304,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         binary
     }
 
-    void saveFile(session, folderNode, fileName, mimeType, binary) {
+    static void saveFile(session, folderNode, fileName, mimeType, binary) {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
 
         def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)

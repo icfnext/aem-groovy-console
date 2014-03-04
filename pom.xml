@@ -4,16 +4,17 @@
     <parent>
         <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.0.0-SNAPSHOT</version>
+        <version>6.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cq-groovy-console</artifactId>
+    <groupId>com.citytechinc.aem.groovy.console</groupId>
+    <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
     <version>6.0.0-SNAPSHOT</version>
-    <name>CQ Groovy Console</name>
+    <name>AEM Groovy Console</name>
     <description>
-        The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ5 container. Scripts
+        The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
@@ -63,7 +64,6 @@
     </pluginRepositories>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -239,9 +239,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Export-Package>!*.impl,com.citytechinc.cq.groovyconsole.services.*</Export-Package>
+                        <Export-Package>!*.impl,com.citytechinc.aem.groovy.console.services.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.citytechinc.aem.groovy.console.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -296,8 +296,8 @@
                         </goals>
                         <configuration>
                             <bundleNames>
-                                <bundleName>cq-groovy-extension</bundleName>
-                                <bundleName>cq-groovy-console</bundleName>
+                                <bundleName>aem-groovy-extension-bundle</bundleName>
+                                <bundleName>aem-groovy-console</bundleName>
                             </bundleNames>
                             <host>${cq.host}</host>
                             <port>${cq.port.author}</port>
@@ -506,17 +506,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.citytechinc.aem</groupId>
-            <artifactId>cq-groovy-extension</artifactId>
-            <version>0.6.0-SNAPSHOT</version>
+            <groupId>com.citytechinc.aem.groovy.extension</groupId>
+            <artifactId>aem-groovy-extension-bundle</artifactId>
+            <version>0.6.0</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- test -->
         <dependency>
-            <groupId>com.citytechinc.aem</groupId>
-            <artifactId>cq-groovy-testing</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
+            <groupId>com.citytechinc.aem.spock</groupId>
+            <artifactId>spock-aem</artifactId>
+            <version>0.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

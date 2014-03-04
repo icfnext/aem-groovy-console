@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovyconsole.geb.pages
+package com.citytechinc.aem.groovy.console.geb.pages
 
 import geb.Page
 

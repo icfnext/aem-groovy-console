@@ -45,5 +45,4 @@ Follows [Semantic Versioning](http://semver.org/) guidelines.
 
 ## Issues
 
-Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions; issues can be submitted via
-[GitHub](https://github.com/Citytechinc/cq-groovy-console/issues).
+Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions or create an issue [here](https://github.com/Citytechinc/cq-groovy-console/issues).

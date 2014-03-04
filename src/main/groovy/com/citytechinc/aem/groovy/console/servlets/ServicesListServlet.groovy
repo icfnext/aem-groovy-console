@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovyconsole.servlets
+package com.citytechinc.aem.groovy.console.servlets
 
 import groovy.json.JsonBuilder
 import org.apache.commons.lang3.StringUtils

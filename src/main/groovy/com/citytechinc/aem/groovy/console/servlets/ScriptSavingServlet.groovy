@@ -1,17 +1,15 @@
-package com.citytechinc.cq.groovyconsole.servlets
+package com.citytechinc.aem.groovy.console.servlets
 
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
-import groovy.json.JsonBuilder
+import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.servlets.SlingAllMethodsServlet
 
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/save")
-class ScriptSavingServlet extends SlingAllMethodsServlet {
+class ScriptSavingServlet extends AbstractJsonResponseServlet {
 
     @Reference
     GroovyConsoleService consoleService
@@ -19,10 +17,6 @@ class ScriptSavingServlet extends SlingAllMethodsServlet {
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
-        def result = consoleService.saveScript(request)
-
-        response.contentType = "application/json"
-
-        new JsonBuilder(result).writeTo(response.writer)
+        writeJsonResponse(response, consoleService.saveScript(request))
     }
 }

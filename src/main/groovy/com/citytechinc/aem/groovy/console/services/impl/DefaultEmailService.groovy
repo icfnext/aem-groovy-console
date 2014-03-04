@@ -1,7 +1,7 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.EmailService
 import com.day.cq.mailer.MailService
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
