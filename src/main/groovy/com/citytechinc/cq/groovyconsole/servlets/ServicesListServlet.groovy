@@ -79,14 +79,14 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
         services
     }
 
-    def getAdapterDeclaration(className) {
+    static def getAdapterDeclaration(className) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
 
         "def $variableName = resourceResolver.adaptTo($className)"
     }
 
-    def getServiceDeclaration(className, implementationClassName) {
+    static def getServiceDeclaration(className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration

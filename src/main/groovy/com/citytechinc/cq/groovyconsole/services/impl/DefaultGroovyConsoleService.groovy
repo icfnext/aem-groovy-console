@@ -1,7 +1,7 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
-import com.citytechinc.cq.groovy.extension.builders.PageBuilder
+import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
+import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService

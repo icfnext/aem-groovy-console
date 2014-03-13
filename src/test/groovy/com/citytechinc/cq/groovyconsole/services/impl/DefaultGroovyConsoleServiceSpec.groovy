@@ -1,9 +1,6 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
-import com.citytechinc.cq.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
-import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
-import com.citytechinc.cq.groovy.testing.specs.AbstractSlingRepositorySpec
+import com.citytechinc.aem.prosper.specs.AemSpec
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.commons.jcr.JcrConstants
@@ -18,7 +15,7 @@ import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsol
 import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
 import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
 
-class DefaultGroovyConsoleServiceSpec extends AbstractSlingRepositorySpec {
+class DefaultGroovyConsoleServiceSpec extends AemSpec {
 
     static final def SCRIPT_NAME = "Script"
 
@@ -30,26 +27,18 @@ class DefaultGroovyConsoleServiceSpec extends AbstractSlingRepositorySpec {
 
     static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
-    @Shared nodeBuilder
-
     @Shared consoleService
 
     def setupSpec() {
-        GroovyExtensionMetaClassRegistry.registerMetaClasses()
-
-        nodeBuilder = new NodeBuilder(session)
-
         consoleService = new DefaultGroovyConsoleService()
 
-        consoleService.replicator = Mock(Replicator)
-        consoleService.bundleContext = Mock(BundleContext)
-        consoleService.configurationService = Mock(ConfigurationService)
-        consoleService.queryBuilder = Mock(QueryBuilder)
-        consoleService.emailService = Mock(EmailService)
-    }
-
-    def cleanupSpec() {
-        GroovyExtensionMetaClassRegistry.removeMetaClasses()
+        with(consoleService) {
+            replicator = Mock(Replicator)
+            bundleContext = Mock(BundleContext)
+            configurationService = Mock(ConfigurationService)
+            queryBuilder = Mock(QueryBuilder)
+            emailService = Mock(EmailService)
+        }
     }
 
     def "run script"() {
