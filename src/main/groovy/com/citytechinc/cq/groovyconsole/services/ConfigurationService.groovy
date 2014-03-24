@@ -9,4 +9,6 @@ interface ConfigurationService {
     boolean isCrxOutputEnabled()
 
     boolean isEmailEnabled()
+
+	String getAllowedGroup()
 }
