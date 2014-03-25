@@ -3,7 +3,6 @@ package com.citytechinc.cq.groovyconsole.servlets
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
 import groovy.json.JsonBuilder
-import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.jackrabbit.api.security.user.UserManager
@@ -16,7 +15,6 @@ import javax.servlet.ServletException
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
-@Slf4j("LOG")
 class ScriptPostServlet extends SlingAllMethodsServlet {
 
 	@Reference
