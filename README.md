@@ -2,8 +2,6 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
-[![Stories in Ready](https://badge.waffle.io/citytechinc/cq-groovy-console.png?label=ready)](http://waffle.io/citytechinc/cq-groovy-console)
-
 ## Overview
 
 The CQ Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the Adobe CQ5
@@ -16,10 +14,9 @@ scripts are included in the package for reference.
 
 * CQ (AEM) 5.6 running on localhost:4502
 * Versions 3.x.x are compatible with CQ 5.4 and 5.5 (see GitHub tags).
+* [Maven](http://maven.apache.org/) 2.x or 3.x
 
 ## Installation
-
-[Maven](http://maven.apache.org/) 2.x+ is required to build the project.
 
 1.  Install the console package.
 
