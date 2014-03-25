@@ -7,6 +7,7 @@
             <i class="icon-play icon-white"></i> <span id="run-script-text">Run Script</span>
         </a>
     </div>
+
     <div class="btn-group">
         <a class="btn" href="#" id="new-script"><i class="icon-pencil"></i> New</a>
 
@@ -15,7 +16,12 @@
         	<a class="btn" href="#" id="save-script"><i class="icon-hdd"></i> Save</a>
         </c:if>
     </div>
-    <div id="loader" class="pull-right" style="display: none;">
+
+    <div id="loader">
         <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
+    </div>
+
+    <div id="btn-group-services" class="btn-group pull-right">
+        <input id="services-list" type="text" placeholder="Service or Adapter Name">
     </div>
 </div>

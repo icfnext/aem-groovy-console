@@ -14,7 +14,7 @@ import org.apache.felix.scr.annotations.Service
 
 import javax.jcr.Session
 
-@Service
+@Service(EmailService)
 @Component
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
@@ -62,6 +62,8 @@ class DefaultEmailService implements EmailService {
                     def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
 
                     email.htmlMsg = template.make(binding).toString()
+
+                    LOG.debug "sending email, recipients = {}", recipients
 
                     Thread.start {
                         mailService.send(email)

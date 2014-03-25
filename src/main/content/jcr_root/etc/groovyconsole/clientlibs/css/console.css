@@ -1,6 +1,20 @@
+body {
+    padding-top: 40px;
+}
+
 #editor {
     position: relative;
     height: 400px;
+}
+
+#loader {
+    display: inline-block;
+    margin-left: 5px;
+    visibility: hidden;
+}
+
+#btn-group-services {
+    display: none;
 }
 
 .ace_editor_wrapper {

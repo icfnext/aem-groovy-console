@@ -1,8 +1,7 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.cq.groovy.extension.builders.NodeBuilder
-import com.citytechinc.cq.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovy.extension.services.OsgiComponentService
+import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
+import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
@@ -14,6 +13,7 @@ import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
+import org.apache.felix.scr.ScrService
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -29,7 +29,7 @@ import javax.jcr.Session
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
-@Service
+@Service(GroovyConsoleService)
 @Component
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
@@ -45,7 +45,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"]
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -62,9 +62,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     Replicator replicator
 
     @Reference
-    OsgiComponentService componentService
-
-    @Reference
     QueryBuilder queryBuilder
 
     @Reference
@@ -73,7 +70,10 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     EmailService emailService
 
-    def bundleContext
+    @Reference
+    ScrService scrService
+
+    BundleContext bundleContext
 
     @Override
     Map<String, String> runScript(SlingHttpServletRequest request) {
@@ -159,7 +159,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         withConfig(configuration) {
             imports {
-                star STAR_IMPORTS
+                star STAR_IMPORTS.toArray(new String[STAR_IMPORTS.size()])
             }
         }
     }
@@ -179,7 +179,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             resourceResolver: resourceResolver,
             queryBuilder: queryBuilder,
             nodeBuilder: new NodeBuilder(session),
-            pageBuilder: new PageBuilder(session)
+            pageBuilder: new PageBuilder(session),
+            bundleContext: bundleContext
         ])
     }
 
@@ -214,10 +215,28 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 session.save()
             }
 
-            delegate.getService = { serviceType ->
-                def ref = bundleContext.getServiceReference(serviceType)
+            delegate.getService = { Class serviceType ->
+                def serviceReference = bundleContext.getServiceReference(serviceType)
 
-                bundleContext.getService(ref)
+                bundleContext.getService(serviceReference)
+            }
+
+            delegate.getService = { String className ->
+                def serviceReference = bundleContext.getServiceReference(className)
+
+                bundleContext.getService(serviceReference)
+            }
+
+            delegate.getServices = { Class serviceType, String filter ->
+                def serviceReferences = bundleContext.getServiceReferences(serviceType, filter)
+
+                serviceReferences.collect { bundleContext.getService(it) }
+            }
+
+            delegate.getServices = { String className, String filter ->
+                def serviceReferences = bundleContext.getServiceReferences(className, filter)
+
+                serviceReferences.collect { bundleContext.getService(it) }
             }
 
             delegate.activate = { String path ->
@@ -229,7 +248,22 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             }
 
             delegate.doWhileDisabled = { String componentClassName, Closure closure ->
-                componentService.doWhileDisabled(componentClassName, closure)
+                def component = scrService.components.find { it.className == componentClassName }
+                def result = null
+
+                if (component) {
+                    component.disable()
+
+                    try {
+                        result = closure()
+                    } finally {
+                        component.enable()
+                    }
+                } else {
+                    result = closure()
+                }
+
+                result
             }
 
             delegate.createQuery { Map predicates ->

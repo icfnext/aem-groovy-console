@@ -9,3 +9,4 @@ themes-noconflict.js
 theme-textmate-uncompressed.js
 modernizr.custom.2.6.2.js
 console.js
+local-storage.js

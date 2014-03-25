@@ -2,11 +2,13 @@ package com.citytechinc.cq.groovyconsole.services
 
 interface ConfigurationService {
 
-    boolean isEmailEnabled()
+    Set<String> getAllowedGroups()
 
-    String[] getEmailRecipients()
+    String getCrxOutputFolder()
+
+    Set<String> getEmailRecipients()
 
     boolean isCrxOutputEnabled()
 
-    String getCrxOutputFolder()
+    boolean isEmailEnabled()
 }
