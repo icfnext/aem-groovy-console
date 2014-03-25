@@ -202,8 +202,12 @@ var GroovyConsole = function () {
                                 $('#output').fadeIn('fast');
                             }
                         }
-                    }).fail(function () {
-                        showError('Script execution failed.  Check error.log file.');
+                    }).fail(function (jqXHR) {
+                        if (jqXHR.status == 403) {
+                            showError('You do not have permission to run scripts in the Groovy Console.');
+                        } else {
+                            showError('Script execution failed.  Check error.log file.');
+                        }
                     }).always(function () {
                         editor.setReadOnly(false);
 

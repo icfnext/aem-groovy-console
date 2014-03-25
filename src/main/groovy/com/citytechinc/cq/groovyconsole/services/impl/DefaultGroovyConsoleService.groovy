@@ -45,7 +45,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"]
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -159,7 +159,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         withConfig(configuration) {
             imports {
-                star STAR_IMPORTS
+                star STAR_IMPORTS.toArray(new String[STAR_IMPORTS.size()])
             }
         }
     }
