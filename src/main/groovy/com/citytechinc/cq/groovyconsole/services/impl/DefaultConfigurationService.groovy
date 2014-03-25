@@ -33,6 +33,11 @@ class DefaultConfigurationService implements ConfigurationService {
         value = "/tmp/groovyconsole")
     static final String CRX_OUTPUT_FOLDER = "crx.output.folder"
 
+	@Property(label = "Allowed Group",
+		description = "If provided, the console will only be usable by this group. If blank, no auth check is performed.",
+		value = "")
+	static final String ALLOWED_GROUP = "group.allowed"
+
     def emailEnabled
 
     def emailRecipients
@@ -40,6 +45,8 @@ class DefaultConfigurationService implements ConfigurationService {
     def crxOutputEnabled
 
     def crxOutputFolder
+
+	def allowedGroup
 
     @Override
     boolean isEmailEnabled() {
@@ -61,12 +68,18 @@ class DefaultConfigurationService implements ConfigurationService {
         crxOutputFolder
     }
 
-    @Activate
+	@Override
+	String getAllowedGroup() {
+		allowedGroup
+	}
+
+	@Activate
     @Modified
     synchronized void modified(final Map<String, Object> properties) {
         emailEnabled = properties.get(EMAIL_ENABLED) ?: false
         emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: []
         crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false
         crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
+		allowedGroup = properties.get(ALLOWED_GROUP) ?: ""
     }
 }
