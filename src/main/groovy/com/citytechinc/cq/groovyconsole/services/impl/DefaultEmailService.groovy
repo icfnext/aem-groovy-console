@@ -63,6 +63,8 @@ class DefaultEmailService implements EmailService {
 
                     email.htmlMsg = template.make(binding).toString()
 
+                    LOG.debug "sending email, recipients = {}", recipients
+
                     Thread.start {
                         mailService.send(email)
                     }
