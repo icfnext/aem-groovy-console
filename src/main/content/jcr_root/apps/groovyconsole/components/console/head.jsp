@@ -4,9 +4,7 @@
 <head>
     <title>CQ Groovy Console</title>
 
-    <c:if test="<%= WCMMode.fromRequest(slingRequest) != WCMMode.DISABLED %>">
-        <cq:includeClientLib categories="cq.wcm.edit" />
-    </c:if>
+    <cq:includeClientLib categories="cq.wcm.edit" />
 
 	<cq:includeClientLib categories="groovyconsole" />
 </head>

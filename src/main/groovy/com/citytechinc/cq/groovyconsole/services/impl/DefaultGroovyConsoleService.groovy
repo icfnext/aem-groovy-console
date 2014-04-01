@@ -205,6 +205,22 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 }]
             }
 
+            delegate.rename = { javax.jcr.Node node ->
+                ["to": { String newname ->
+                    def parent = node.parent
+                    def isOrderable = parent.primaryNodeType.hasOrderableChildNodes()
+                    def nextSib = null
+                    if(isOrderable){
+                        nextSib = node.getNextSibling()
+                    }
+                    delegate.move node.path to parent.path + "/" + newname
+                    if(isOrderable && nextSib){
+                        parent.orderBefore(newname, nextSib.name)
+                    }
+                    session.save()
+                }]
+            }
+
             delegate.copy = { String src ->
                 ["to": { dst ->
                     session.workspace.copy(src, dst)
