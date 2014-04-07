@@ -1,5 +1,4 @@
 package com.citytechinc.cq.groovyconsole.services.impl
-
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
@@ -25,6 +24,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
@@ -201,6 +201,24 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             delegate.move = { String src ->
                 ["to": { String dst ->
                     session.move(src, dst)
+                    session.save()
+                }]
+            }
+
+            delegate.rename = { Node node ->
+                ["to": { String newName ->
+                    def parent = node.parent
+
+                    delegate.move node.path to parent.path + "/" + newName
+
+                    if (parent.primaryNodeType.hasOrderableChildNodes()) {
+                        def nextSibling = node.nextSibling
+
+                        if (nextSibling) {
+                            parent.orderBefore(newName, nextSibling.name)
+                        }
+                    }
+
                     session.save()
                 }]
             }

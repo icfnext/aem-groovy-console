@@ -293,8 +293,6 @@ var GroovyConsole = function () {
     };
 }();
 
-
-
 $(function () {
     GroovyConsole.initializeEditor();
     GroovyConsole.initializeThemeMenu();
