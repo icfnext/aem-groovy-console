@@ -1,4 +1,5 @@
 package com.citytechinc.cq.groovyconsole.services.impl
+
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
@@ -295,7 +296,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             def date = new Date()
 
             def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
-
             def folderNode = session.rootNode
 
             folderPath.tokenize("/").each { name ->
@@ -306,7 +306,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
                 session.valueFactory.createBinary(stream).withBinary { binary ->
-                    saveFile(session, folderNode, fileName, "text/plain", binary)
+                    saveFile(session, folderNode, fileName, date, "text/plain", binary)
                 }
             }
         }
@@ -322,15 +322,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         binary
     }
 
-    void saveFile(session, folderNode, fileName, mimeType, binary) {
+    void saveFile(session, folderNode, fileName, date, mimeType, binary) {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
-
         def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
         resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
         resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
         resourceNode.set(JcrConstants.JCR_DATA, binary)
-        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
+        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, date.time)
         resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
         session.save()
