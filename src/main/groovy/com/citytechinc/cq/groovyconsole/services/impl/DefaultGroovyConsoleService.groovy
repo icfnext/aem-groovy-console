@@ -1,5 +1,4 @@
 package com.citytechinc.cq.groovyconsole.services.impl
-
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
@@ -25,6 +24,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
+import javax.jcr.Node
 import javax.jcr.Session
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
@@ -205,18 +205,20 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 }]
             }
 
-            delegate.rename = { javax.jcr.Node node ->
-                ["to": { String newname ->
+            delegate.rename = { Node node ->
+                ["to": { String newName ->
                     def parent = node.parent
-                    def isOrderable = parent.primaryNodeType.hasOrderableChildNodes()
-                    def nextSib = null
-                    if(isOrderable){
-                        nextSib = node.getNextSibling()
+
+                    delegate.move node.path to parent.path + "/" + newName
+
+                    if (parent.primaryNodeType.hasOrderableChildNodes()) {
+                        def nextSibling = node.nextSibling
+
+                        if (nextSibling) {
+                            parent.orderBefore(newName, nextSibling.name)
+                        }
                     }
-                    delegate.move node.path to parent.path + "/" + newname
-                    if(isOrderable && nextSib){
-                        parent.orderBefore(newname, nextSib.name)
-                    }
+
                     session.save()
                 }]
             }
