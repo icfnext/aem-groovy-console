@@ -1,0 +1,56 @@
+#granite_editor {
+    position: relative;
+    height: 400px !important;
+}
+
+#loader {
+    display: inline-block;
+    margin-left: 5px;
+    visibility: hidden;
+}
+
+#run-script {
+	font-size: 2em;
+}
+
+.toolbar {
+	position: relative;
+	margin: 5px;
+    display: inline;
+}
+
+.ace_editor_wrapper {
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.ace_scroller {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#script-name {
+	display: inline;
+}
+
+#editor-header {
+	overflow: inherit;
+}
+
+.ui-body-b {
+	background-color: #fff;
+	background-image: none;
+}
+
+.ui-body-d .ui-link:active,
+.ui-body-d .ui-link:focus,
+.ui-body-d .ui-link:hover,
+.ui-body-d .ui-link:visited,
+.ui-body-b .ui-link:active,
+.ui-body-b .ui-link:focus,
+.ui-body-b .ui-link:hover,
+.ui-body-b .ui-link:visited {
+	color: #000 !important;
+	text-decoration: none;
+}

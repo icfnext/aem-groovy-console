@@ -1,0 +1,11 @@
+<div class="toolbar btn-group pull-right">
+    <button class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
+    <ul class="dropdown-menu" id="dropdown-themes" data-role="none">
+	    {{#each themes}}
+	    <li><a href="#" data-role="none" data-target="{{path}}">{{name}}</a></li>
+	    {{/each}}
+    </ul>
+</div> 
+<div id="btn-group-services" class="toolbar btn-group pull-right">
+     <input id="services-list" type="text" placeholder="Service or Adapter Name">
+</div>
