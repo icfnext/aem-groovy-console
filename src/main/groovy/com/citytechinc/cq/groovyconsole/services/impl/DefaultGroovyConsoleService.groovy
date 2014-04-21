@@ -7,6 +7,7 @@ import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.ReplicationActionType
+import com.day.cq.replication.ReplicationOptions
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
@@ -258,12 +259,12 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 serviceReferences.collect { bundleContext.getService(it) }
             }
 
-            delegate.activate = { String path ->
-                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            delegate.activate = { String path, ReplicationOptions options = null  ->
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path, options)
             }
 
-            delegate.deactivate = { String path ->
-                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
+            delegate.deactivate = { String path, ReplicationOptions options = null  ->
+                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path, options)
             }
 
             delegate.doWhileDisabled = { String componentClassName, Closure closure ->
