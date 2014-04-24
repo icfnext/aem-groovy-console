@@ -27,6 +27,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
+import javax.jcr.Binary
 import javax.jcr.Node
 import javax.jcr.Session
 
@@ -48,7 +49,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"]
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api", "com.day.cq.replication"]
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -143,15 +144,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         def session = request.resourceResolver.adaptTo(Session)
-
         def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
-
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
         folderNode.removeNode(fileName)
 
-        getScriptBinary(session, script).withBinary { binary ->
-            saveFile(session, folderNode, fileName, "application/octet-stream", binary)
+        getScriptBinary(session, script).withBinary { Binary binary ->
+            saveFile(session, folderNode, fileName, new Date(), "application/octet-stream", binary)
         }
 
         [scriptName: fileName]
@@ -293,7 +292,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    def saveOutput(session, output) {
+    def saveOutput(Session session, String output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
 
@@ -307,14 +306,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             def fileName = date.format("hhmmss")
 
             new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-                session.valueFactory.createBinary(stream).withBinary { binary ->
+                session.valueFactory.createBinary(stream).withBinary { Binary binary ->
                     saveFile(session, folderNode, fileName, date, "text/plain", binary)
                 }
             }
         }
     }
 
-    def getScriptBinary(session, script) {
+    def getScriptBinary(Session session, String script) {
         def binary = null
 
         new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
@@ -324,7 +323,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         binary
     }
 
-    void saveFile(session, folderNode, fileName, date, mimeType, binary) {
+    void saveFile(Session session, Node folderNode, String fileName, Date date, String mimeType, Binary binary) {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
         def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 

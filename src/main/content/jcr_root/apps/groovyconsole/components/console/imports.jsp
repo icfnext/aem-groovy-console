@@ -11,6 +11,7 @@
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/package-summary.html" target="_blank">com.day.cq.search</a></li>
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/tagging/package-summary.html" target="_blank">com.day.cq.tagging</a></li>
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/wcm/api/package-summary.html" target="_blank">com.day.cq.wcm.api</a></li>
+                <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/replication/package-summary.html" target="_blank">com.day.cq.replication</a></li>
                 <li><a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/package-summary.html" target="_blank">javax.jcr</a></li>
                 <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/package-summary.html" target="_blank">org.apache.sling.api</a></li>
                 <li><a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/package-summary.html" target="_blank">org.apache.sling.api.resource</a></li>
