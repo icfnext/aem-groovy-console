@@ -21,6 +21,7 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.resource.ResourceResolver
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
@@ -186,7 +187,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         ])
     }
 
-    def addMetaClass(resourceResolver, session, pageManager, script) {
+    def addMetaClass(ResourceResolver resourceResolver, Session session, PageManager pageManager, Script script) {
         script.metaClass {
             delegate.getNode = { String path ->
                 session.getNode(path)
