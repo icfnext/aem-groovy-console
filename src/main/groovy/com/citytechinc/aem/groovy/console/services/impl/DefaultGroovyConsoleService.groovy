@@ -1,12 +1,13 @@
 package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
-import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
 import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
+import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
+import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.ReplicationActionType
+import com.day.cq.replication.ReplicationOptions
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
@@ -20,11 +21,14 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.resource.ResourceResolver
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
+import javax.jcr.Binary
+import javax.jcr.Node
 import javax.jcr.Session
 
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
@@ -34,18 +38,18 @@ import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizat
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
-    protected static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
+    static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    protected static final String CONSOLE_ROOT = "/etc/groovyconsole"
+    static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    protected static final String PARAMETER_FILE_NAME = "fileName"
+    static final String PARAMETER_FILE_NAME = "fileName"
 
-    protected static final String PARAMETER_SCRIPT = "script"
+    static final String PARAMETER_SCRIPT = "script"
 
-    protected static final String EXTENSION_GROOVY = ".groovy"
+    static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"].toArray(new String[0])
+        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api", "com.day.cq.replication"]
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -105,7 +109,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug "runScript() script execution completed, running time = $runningTime"
+            LOG.debug "script execution completed, running time = $runningTime"
 
             output = stream.toString(CharEncoding.UTF_8)
 
@@ -140,15 +144,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         def session = request.resourceResolver.adaptTo(Session)
-
         def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
-
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
         folderNode.removeNode(fileName)
 
-        getScriptBinary(session, script).withBinary { binary ->
-            saveFile(session, folderNode, fileName, "application/octet-stream", binary)
+        getScriptBinary(session, script).withBinary { Binary binary ->
+            saveFile(session, folderNode, fileName, new Date(), "application/octet-stream", binary)
         }
 
         [scriptName: fileName]
@@ -159,7 +161,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         withConfig(configuration) {
             imports {
-                star STAR_IMPORTS
+                star STAR_IMPORTS.toArray(new String[STAR_IMPORTS.size()])
             }
         }
     }
@@ -184,7 +186,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         ])
     }
 
-    def addMetaClass(resourceResolver, session, pageManager, script) {
+    def addMetaClass(ResourceResolver resourceResolver, Session session, PageManager pageManager, Script script) {
         script.metaClass {
             delegate.getNode = { String path ->
                 session.getNode(path)
@@ -201,6 +203,24 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             delegate.move = { String src ->
                 ["to": { String dst ->
                     session.move(src, dst)
+                    session.save()
+                }]
+            }
+
+            delegate.rename = { Node node ->
+                ["to": { String newName ->
+                    def parent = node.parent
+
+                    delegate.move node.path to parent.path + "/" + newName
+
+                    if (parent.primaryNodeType.hasOrderableChildNodes()) {
+                        def nextSibling = node.nextSibling
+
+                        if (nextSibling) {
+                            parent.orderBefore(newName, nextSibling.name)
+                        }
+                    }
+
                     session.save()
                 }]
             }
@@ -239,12 +259,12 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 serviceReferences.collect { bundleContext.getService(it) }
             }
 
-            delegate.activate = { String path ->
-                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            delegate.activate = { String path, ReplicationOptions options = null  ->
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path, options)
             }
 
-            delegate.deactivate = { String path ->
-                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
+            delegate.deactivate = { String path, ReplicationOptions options = null  ->
+                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path, options)
             }
 
             delegate.doWhileDisabled = { String componentClassName, Closure closure ->
@@ -272,12 +292,11 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    def saveOutput(session, output) {
+    def saveOutput(Session session, String output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
 
             def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
-
             def folderNode = session.rootNode
 
             folderPath.tokenize("/").each { name ->
@@ -287,14 +306,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             def fileName = date.format("hhmmss")
 
             new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-                session.valueFactory.createBinary(stream).withBinary { binary ->
-                    saveFile(session, folderNode, fileName, "text/plain", binary)
+                session.valueFactory.createBinary(stream).withBinary { Binary binary ->
+                    saveFile(session, folderNode, fileName, date, "text/plain", binary)
                 }
             }
         }
     }
 
-    static def getScriptBinary(session, script) {
+    def getScriptBinary(Session session, String script) {
         def binary = null
 
         new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
@@ -304,15 +323,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         binary
     }
 
-    static void saveFile(session, folderNode, fileName, mimeType, binary) {
+    void saveFile(Session session, Node folderNode, String fileName, Date date, String mimeType, Binary binary) {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
-
         def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
         resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
         resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
         resourceNode.set(JcrConstants.JCR_DATA, binary)
-        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
+        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, date.time)
         resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
         session.save()

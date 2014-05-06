@@ -2,9 +2,11 @@ package com.citytechinc.aem.groovy.console.services
 
 interface ConfigurationService {
 
+    Set<String> getAllowedGroups()
+
     String getCrxOutputFolder()
 
-    String[] getEmailRecipients()
+    Set<String> getEmailRecipients()
 
     boolean isCrxOutputEnabled()
 

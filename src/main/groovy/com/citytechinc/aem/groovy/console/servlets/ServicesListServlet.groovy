@@ -1,6 +1,5 @@
 package com.citytechinc.aem.groovy.console.servlets
 
-import groovy.json.JsonBuilder
 import org.apache.commons.lang3.StringUtils
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.sling.SlingServlet
@@ -8,7 +7,6 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet
 import org.osgi.framework.BundleContext
 import org.osgi.framework.Constants
 import org.osgi.service.component.ComponentConstants
@@ -16,7 +14,7 @@ import org.osgi.service.component.ComponentConstants
 import javax.servlet.ServletException
 
 @SlingServlet(paths = "/bin/groovyconsole/services")
-class ServicesListServlet extends SlingSafeMethodsServlet {
+class ServicesListServlet extends AbstractJsonResponseServlet {
 
     def bundleContext
 
@@ -26,9 +24,7 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
         def adapters = getAdaptersMap()
         def services = getServicesMap()
 
-        response.contentType = "application/json"
-
-        new JsonBuilder(adapters + services).writeTo(response.writer)
+        writeJsonResponse(response, adapters + services)
     }
 
     def getAdaptersMap() {
@@ -79,14 +75,14 @@ class ServicesListServlet extends SlingSafeMethodsServlet {
         services
     }
 
-    def getAdapterDeclaration(className) {
+    static def getAdapterDeclaration(className) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
 
         "def $variableName = resourceResolver.adaptTo($className)"
     }
 
-    def getServiceDeclaration(className, implementationClassName) {
+    static def getServiceDeclaration(className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration

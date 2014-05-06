@@ -19,7 +19,7 @@ import javax.jcr.Session
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
 
-    static final def SUBJECT = "CQ Groovy Console Script Execution Result"
+    static final def SUBJECT = "AEM Groovy Console Script Execution Result"
 
     static final def TEMPLATE_PATH_SUCCESS = "/email-success.template"
 
@@ -35,45 +35,49 @@ class DefaultEmailService implements EmailService {
 
     @Override
     void sendEmail(Session session, String script, String output, String runningTime, boolean success) {
-        if (configurationService.emailEnabled) {
+        if (configurationService.emailEnabled  && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
-                if (mailService) {
-                    def email = new HtmlEmail()
+                def email = createEmail(recipients, session, script, output, runningTime, success)
 
-                    email.charset = CharEncoding.UTF_8
+                LOG.debug "sending email, recipients = {}", recipients
 
-                    recipients.each { name ->
-                        email.addTo(name)
-                    }
-
-                    email.subject = SUBJECT
-
-                    def binding = [
-                        username: session.userID,
-                        timestamp: new Date().format(FORMAT_TIMESTAMP),
-                        script: script,
-                        output: output,
-                        runningTime: runningTime
-                    ]
-
-                    def templatePath = success ? TEMPLATE_PATH_SUCCESS : TEMPLATE_PATH_FAIL
-                    def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
-
-                    email.htmlMsg = template.make(binding).toString()
-
-                    Thread.start {
-                        mailService.send(email)
-                    }
-                } else {
-                    LOG.warn "email service not available"
+                Thread.start {
+                    mailService.send(email)
                 }
             } else {
                 LOG.error "email enabled but no recipients configured"
             }
         } else {
-            LOG.info "email not enabled"
+            LOG.info "email disabled or mail service unavailable"
         }
+    }
+
+    def createEmail(Set<String> recipients, Session session, String script, String output, String runningTime, boolean success) {
+        def email = new HtmlEmail()
+
+        email.charset = CharEncoding.UTF_8
+
+        recipients.each { name ->
+            email.addTo(name)
+        }
+
+        email.subject = SUBJECT
+
+        def binding = [
+            username: session.userID,
+            timestamp: new Date().format(FORMAT_TIMESTAMP),
+            script: script,
+            output: output,
+            runningTime: runningTime
+        ]
+
+        def templatePath = success ? TEMPLATE_PATH_SUCCESS : TEMPLATE_PATH_FAIL
+        def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
+
+        email.htmlMsg = template.make(binding).toString()
+
+        email
     }
 }
