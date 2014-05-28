@@ -1,7 +1,7 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.EmailService
 import com.day.cq.mailer.MailService
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
@@ -19,7 +19,7 @@ import javax.jcr.Session
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
 
-    static final def SUBJECT = "CQ Groovy Console Script Execution Result"
+    static final def SUBJECT = "AEM Groovy Console Script Execution Result"
 
     static final def TEMPLATE_PATH_SUCCESS = "/email-success.template"
 
@@ -54,7 +54,7 @@ class DefaultEmailService implements EmailService {
         }
     }
 
-    def createEmail(recipients, Session session, String script, String output, String runningTime, boolean success) {
+    def createEmail(Set<String> recipients, Session session, String script, String output, String runningTime, boolean success) {
         def email = new HtmlEmail()
 
         email.charset = CharEncoding.UTF_8

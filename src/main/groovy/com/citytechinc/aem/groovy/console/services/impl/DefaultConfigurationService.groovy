@@ -1,6 +1,7 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Modified
@@ -9,6 +10,7 @@ import org.apache.felix.scr.annotations.Service
 
 @Service(ConfigurationService)
 @Component(immediate = true, metatype = true, label = "Groovy Console Configuration Service")
+@Slf4j("LOG")
 class DefaultConfigurationService implements ConfigurationService {
 
     static final String DEFAULT_CRX_OUTPUT_FOLDER = "/tmp/groovyconsole"

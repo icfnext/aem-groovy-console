@@ -1,10 +1,10 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.EmailService
+import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.ReplicationOptions

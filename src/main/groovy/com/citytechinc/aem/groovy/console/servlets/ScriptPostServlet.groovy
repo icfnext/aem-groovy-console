@@ -1,24 +1,22 @@
-package com.citytechinc.cq.groovyconsole.servlets
+package com.citytechinc.aem.groovy.console.servlets
 
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
-import groovy.json.JsonBuilder
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.jackrabbit.api.security.user.UserManager
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.api.servlets.SlingAllMethodsServlet
 
 import javax.servlet.ServletException
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
-class ScriptPostServlet extends SlingAllMethodsServlet {
+class ScriptPostServlet extends AbstractJsonResponseServlet {
 
-	@Reference
-	ConfigurationService configurationService
+    @Reference
+    ConfigurationService configurationService
 
     @Reference
     GroovyConsoleService consoleService
@@ -29,9 +27,7 @@ class ScriptPostServlet extends SlingAllMethodsServlet {
         if (hasPermission(request)) {
             def result = consoleService.runScript(request)
 
-            response.contentType = "application/json"
-
-            new JsonBuilder(result).writeTo(response.writer)
+            writeJsonResponse(response, result)
         } else {
             response.setStatus(SC_FORBIDDEN)
         }

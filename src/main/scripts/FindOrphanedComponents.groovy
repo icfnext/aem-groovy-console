@@ -1,6 +1,6 @@
 import com.day.cq.wcm.api.components.ComponentManager
 
-def componentManager = getService(ComponentManager)
+def componentManager = resourceResolver.adaptTo(ComponentManager)
 
 def validResourceTypes = componentManager.components*.resourceType
 

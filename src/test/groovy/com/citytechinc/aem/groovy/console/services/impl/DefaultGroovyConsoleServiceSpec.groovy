@@ -1,8 +1,8 @@
-package com.citytechinc.cq.groovyconsole.services.impl
+package com.citytechinc.aem.groovy.console.services.impl
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
+import com.citytechinc.aem.groovy.console.services.EmailService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
@@ -11,9 +11,9 @@ import spock.lang.Shared
 
 import javax.jcr.RepositoryException
 
-import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
-import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
-import static com.citytechinc.cq.groovyconsole.services.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
+import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
+import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
+import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 

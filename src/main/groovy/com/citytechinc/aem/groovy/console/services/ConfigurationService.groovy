@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovyconsole.services
+package com.citytechinc.aem.groovy.console.services
 
 interface ConfigurationService {
 

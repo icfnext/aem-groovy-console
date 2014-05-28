@@ -2,18 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>com.citytechinc.cq</groupId>
+        <groupId>com.citytechinc.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>5.6.5</version>
+        <version>6.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cq-groovy-console</artifactId>
+    <groupId>com.citytechinc.aem.groovy.console</groupId>
+    <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>6.1.0-SNAPSHOT</version>
-    <name>CQ Groovy Console</name>
+    <version>7.0.0-SNAPSHOT</version>
+    <name>AEM Groovy Console</name>
     <description>
-        The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ container. Scripts
+        The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
         can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
         Sling, or JCR APIs.
     </description>
@@ -47,6 +48,10 @@
             <id>citytech-public</id>
             <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
         </repository>
+        <repository>
+            <id>localhost</id>
+            <url>http://localhost:4502/maven/repository</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -57,13 +62,12 @@
     </pluginRepositories>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <cq.package.goal>install</cq.package.goal>
-        <cq.username>admin</cq.username>
-        <cq.context.path></cq.context.path>
+        <aem.package.goal>install</aem.package.goal>
+        <aem.username>admin</aem.username>
+        <aem.context.path></aem.context.path>
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
     </properties>
 
@@ -74,8 +78,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <skipITs>true</skipITs>
-                <cq.package.skip>true</cq.package.skip>
+                <aem.package.skip>true</aem.package.skip>
                 <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
             </properties>
         </profile>
@@ -87,11 +90,11 @@
                 </property>
             </activation>
             <properties>
-                <cq.host>localhost</cq.host>
-                <cq.port.author>4502</cq.port.author>
-                <cq.port.publish>4503</cq.port.publish>
-                <cq.username>admin</cq.username>
-                <cq.password>admin</cq.password>
+                <aem.host>localhost</aem.host>
+                <aem.port.author>4502</aem.port.author>
+                <aem.port.publish>4503</aem.port.publish>
+                <aem.username>admin</aem.username>
+                <aem.password>admin</aem.password>
             </properties>
         </profile>
         <profile>
@@ -102,7 +105,7 @@
                 </property>
             </activation>
             <properties>
-                <cq.package.goal>replicate</cq.package.goal>
+                <aem.package.goal>replicate</aem.package.goal>
                 <osgi.bundle.status.skip.publish>false</osgi.bundle.status.skip.publish>
             </properties>
         </profile>
@@ -116,6 +119,12 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.groovy</groupId>
@@ -154,14 +163,11 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
+                <version>2.17</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
                     </includes>
-                    <excludes>
-                        <exclude>**/*IntegrationSpec*</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -197,9 +203,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Export-Package>!*.impl,com.citytechinc.cq.groovyconsole.services.*</Export-Package>
+                        <Export-Package>!*.impl,com.citytechinc.aem.groovy.console.services.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
+                        <Bundle-Activator>com.citytechinc.aem.groovy.console.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -229,16 +235,17 @@
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>${cq.package.goal}</goal>
+                            <goal>${aem.package.goal}</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <host>${cq.host}</host>
-                    <port>${cq.port.author}</port>
-                    <contextPath>${cq.context.path}</contextPath>
-                    <username>${cq.username}</username>
-                    <password>${cq.password}</password>
+                    <host>${aem.host}</host>
+                    <port>${aem.port.author}</port>
+                    <contextPath>${aem.context.path}</contextPath>
+                    <username>${aem.username}</username>
+                    <password>${aem.password}</password>
+                    <skip>${aem.package.skip}</skip>
                 </configuration>
             </plugin>
             <plugin>
@@ -255,13 +262,13 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>aem-groovy-extension-bundle</bundleName>
-                                <bundleName>cq-groovy-console</bundleName>
+                                <bundleName>aem-groovy-console</bundleName>
                             </bundleNames>
-                            <host>${cq.host}</host>
-                            <port>${cq.port.author}</port>
-                            <contextPath>${cq.context.path}</contextPath>
-                            <username>${cq.username}</username>
-                            <password>${cq.password}</password>
+                            <host>${aem.host}</host>
+                            <port>${aem.port.author}</port>
+                            <contextPath>${aem.context.path}</contextPath>
+                            <username>${aem.username}</username>
+                            <password>${aem.password}</password>
                         </configuration>
                     </execution>
                     <execution>
@@ -275,11 +282,11 @@
                                 <bundleName>aem-groovy-extension-bundle</bundleName>
                                 <bundleName>cq-groovy-console</bundleName>
                             </bundleNames>
-                            <host>${cq.host}</host>
-                            <port>${cq.port.publish}</port>
-                            <contextPath>${cq.context.path}</contextPath>
-                            <username>${cq.username}</username>
-                            <password>${cq.password}</password>
+                            <host>${aem.host}</host>
+                            <port>${aem.port.publish}</port>
+                            <contextPath>${aem.context.path}</contextPath>
+                            <username>${aem.username}</username>
+                            <password>${aem.password}</password>
                             <skip>${osgi.bundle.status.skip.publish}</skip>
                         </configuration>
                     </execution>
@@ -319,6 +326,10 @@
             <artifactId>org.apache.sling.jcr.resource</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.event</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-api</artifactId>
         </dependency>
@@ -354,7 +365,10 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-api</artifactId>
@@ -377,7 +391,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>0.7.0</version>
+            <version>0.8.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -385,7 +399,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>0.10.0</version>
+            <version>0.11.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

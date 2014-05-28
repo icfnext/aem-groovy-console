@@ -1,4 +1,4 @@
-package com.citytechinc.cq.groovyconsole
+package com.citytechinc.aem.groovy.console
 
 import com.citytechinc.aem.groovy.extension.metaclass.GroovyExtensionMetaClassRegistry
 import org.osgi.framework.BundleActivator
