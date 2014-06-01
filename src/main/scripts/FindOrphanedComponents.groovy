@@ -4,9 +4,9 @@ def componentManager = resourceResolver.adaptTo(ComponentManager)
 
 def validResourceTypes = componentManager.components*.resourceType
 
-// def result = []
+def result = []
 
-// result.add(["Path", "Resource Type"])
+result.add(["Path", "Resource Type"])
 
 getPage("/content/geometrixx").recurse { page ->
     def content = page.node
@@ -17,7 +17,7 @@ getPage("/content/geometrixx").recurse { page ->
         if (resourceType && !validResourceTypes.contains(resourceType)) {
             println "component at path ${node.path} has invalid resource type = $resourceType"
 
-            // result.add([node.path, resourceType])
+            result.add([node.path, resourceType])
         }
     }
 }
