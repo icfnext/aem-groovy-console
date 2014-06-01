@@ -1,5 +1,7 @@
 var GroovyConsole = function () {
 
+    var GOOGLE_TABLE_CLASS_NAME = 'google-visualization-table-table';
+
     function setScriptName(scriptName) {
         $('#script-name').text(scriptName).fadeIn('fast');
 
@@ -38,10 +40,56 @@ var GroovyConsole = function () {
         // clear results
         $('#stacktrace').text('').fadeOut('fast');
         $('#result,#output,#running-time').fadeOut('fast');
+        $('#table').html('').fadeOut('fast');
         $('#result pre,#output pre,#running-time pre').text('');
     }
 
+    function updateTableClassName() {
+        $('.' + GOOGLE_TABLE_CLASS_NAME).removeClass(GOOGLE_TABLE_CLASS_NAME).addClass('table');
+    }
+
+    function showTable(data) {
+        var resultJson = data.executionResultJson;
+
+        if (Array.isArray(resultJson) && resultJson.length) {
+            var tableData = new google.visualization.DataTable();
+
+            try {
+                var headers = resultJson.shift();
+
+                $.each(headers, function (i, header) {
+                    tableData.addColumn('string', header);
+                });
+
+                tableData.addRows(resultJson);
+
+                var tableContainer = $('#table');
+
+                var table = new google.visualization.Table(tableContainer[0]);
+
+                table.draw(tableData);
+
+                google.visualization.events.addListener(table, 'sort', updateTableClassName);
+
+                updateTableClassName();
+
+                tableContainer.fadeIn('fast');
+            } catch (e) {
+                console.log('error drawing table : ' + e.message);
+            }
+        }
+    }
+
     return {
+        initialize: function () {
+            $(function () {
+                GroovyConsole.initializeEditor();
+                GroovyConsole.initializeThemeMenu();
+                GroovyConsole.initializeServicesList();
+                GroovyConsole.initializeButtons();
+            });
+        },
+
         initializeEditor: function () {
             window.editor = ace.edit('editor');
 
@@ -195,6 +243,8 @@ var GroovyConsole = function () {
                             if (result && result.length) {
                                 $('#result pre').text(result);
                                 $('#result').fadeIn('fast');
+
+                                showTable(data);
                             }
 
                             if (output && output.length) {
@@ -293,9 +343,4 @@ var GroovyConsole = function () {
     };
 }();
 
-$(function () {
-    GroovyConsole.initializeEditor();
-    GroovyConsole.initializeThemeMenu();
-    GroovyConsole.initializeServicesList();
-    GroovyConsole.initializeButtons();
-});
+google.load('visualization', '1.0', { packages: ['table'], callback: GroovyConsole.initialize});

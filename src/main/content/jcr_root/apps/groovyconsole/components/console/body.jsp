@@ -20,6 +20,8 @@
 
         <pre id="stacktrace" class="prettyprint alert-error" style="display: none;"></pre>
 
+        <div id="table" style="display: none;"></div>
+
         <div id="result" class="alert alert-success" style="display: none;">
             <h6>Result</h6>
             <pre></pre>
@@ -29,8 +31,6 @@
             <h6>Output</h6>
             <pre></pre>
         </div>
-
-        <div id="chart" style="display: none;"></div>
 
         <div id="running-time" class="alert alert-info" style="display: none;">
             <h6>Running Time</h6>
