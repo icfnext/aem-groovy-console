@@ -2,6 +2,7 @@ package com.citytechinc.aem.groovy.console.servlets
 
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
+import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.jackrabbit.api.security.user.UserManager
@@ -13,6 +14,7 @@ import javax.servlet.ServletException
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
+@Slf4j("LOG")
 class ScriptPostServlet extends AbstractJsonResponseServlet {
 
     @Reference
@@ -38,6 +40,8 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
 
         def memberOfGroupIds = user.memberOf()*.getID()
         def allowedGroupIds = configurationService.allowedGroups
+
+        LOG.debug "member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroupIds
 
         allowedGroupIds ? memberOfGroupIds.intersect(allowedGroupIds) : true
     }

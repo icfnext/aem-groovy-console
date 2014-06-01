@@ -56,7 +56,7 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     Set<String> getAllowedGroups() {
-        allowedGroups as Set
+        allowedGroups
     }
 
     @Override
@@ -66,7 +66,7 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     Set<String> getEmailRecipients() {
-        emailRecipients as Set
+        emailRecipients
     }
 
     @Override
@@ -88,10 +88,10 @@ class DefaultConfigurationService implements ConfigurationService {
     @Modified
     synchronized void modified(Map<String, Object> properties) {
         emailEnabled = properties.get(EMAIL_ENABLED) ?: false
-        emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: []
+        emailRecipients = (properties.get(EMAIL_RECIPIENTS) ?: []).findAll() as Set
         crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false
         crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
-        allowedGroups = properties.get(ALLOWED_GROUPS) ?: []
+        allowedGroups = (properties.get(ALLOWED_GROUPS) ?: []).findAll() as Set
         vanityPathEnabled = properties.get(VANITY_PATH_ENABLED) ?: false
     }
 }
