@@ -11,4 +11,6 @@ interface ConfigurationService {
     boolean isCrxOutputEnabled()
 
     boolean isEmailEnabled()
+
+    boolean isVanityPathEnabled()
 }

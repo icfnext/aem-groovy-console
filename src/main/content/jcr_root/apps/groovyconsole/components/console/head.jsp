@@ -1,11 +1,10 @@
-<%@include file="/libs/foundation/global.jsp" %><%
-%><%@page import="com.day.cq.wcm.api.WCMMode" %>
+<%@include file="/apps/groovyconsole/components/global.jsp" %>
 
 <head>
-    <title>CQ Groovy Console</title>
+    <title>Groovy Console</title>
 
     <c:choose>
-        <c:when test="<%= WCMMode.fromRequest(slingRequest) != WCMMode.DISABLED %>">
+        <c:when test="${isAuthor}">
             <cq:includeClientLib categories="cq.wcm.edit,groovyconsole" />
         </c:when>
         <c:otherwise>

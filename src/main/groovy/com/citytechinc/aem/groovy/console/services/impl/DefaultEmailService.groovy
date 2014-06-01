@@ -19,7 +19,7 @@ import javax.jcr.Session
 @Slf4j("LOG")
 class DefaultEmailService implements EmailService {
 
-    static final def SUBJECT = "AEM Groovy Console Script Execution Result"
+    static final def SUBJECT = "Groovy Console Script Execution Result"
 
     static final def TEMPLATE_PATH_SUCCESS = "/email-success.template"
 

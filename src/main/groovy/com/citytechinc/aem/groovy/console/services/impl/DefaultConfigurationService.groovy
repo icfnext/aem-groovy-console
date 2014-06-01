@@ -33,10 +33,14 @@ class DefaultConfigurationService implements ConfigurationService {
         value = "/tmp/groovyconsole")
     static final String CRX_OUTPUT_FOLDER = "crx.output.folder"
 
-	@Property(label = "Allowed Groups",
-		description = "List of group names that are authorized to use the console.  If empty, no authorization check is performed.",
+    @Property(label = "Allowed Groups",
+        description = "List of group names that are authorized to use the console.  If empty, no authorization check is performed.",
         cardinality = 20)
-	static final String ALLOWED_GROUPS = "groups.allowed"
+    static final String ALLOWED_GROUPS = "groups.allowed"
+
+    @Property(label = "Vanity Path Enabled?",
+        description = "Enables /groovyconsole vanity path.  Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist).", boolValue = false)
+    static final String VANITY_PATH_ENABLED = "vanity.path.enabled"
 
     def emailEnabled
 
@@ -46,7 +50,9 @@ class DefaultConfigurationService implements ConfigurationService {
 
     def crxOutputFolder
 
-	def allowedGroups
+    def allowedGroups
+
+    def vanityPathEnabled
 
     @Override
     Set<String> getAllowedGroups() {
@@ -73,13 +79,19 @@ class DefaultConfigurationService implements ConfigurationService {
         crxOutputFolder
     }
 
-	@Activate
+    @Override
+    boolean isVanityPathEnabled() {
+        vanityPathEnabled
+    }
+
+    @Activate
     @Modified
     synchronized void modified(Map<String, Object> properties) {
         emailEnabled = properties.get(EMAIL_ENABLED) ?: false
         emailRecipients = properties.get(EMAIL_RECIPIENTS) ?: []
         crxOutputEnabled = properties.get(CRX_OUTPUT_ENABLED) ?: false
         crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
-		allowedGroups = properties.get(ALLOWED_GROUPS) ?: []
+        allowedGroups = properties.get(ALLOWED_GROUPS) ?: []
+        vanityPathEnabled = properties.get(VANITY_PATH_ENABLED) ?: false
     }
 }
