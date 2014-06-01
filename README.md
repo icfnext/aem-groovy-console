@@ -4,7 +4,7 @@
 
 ## Overview
 
-The CQ Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the AEM (Adobe CQ) container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/groovyconsole) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+The CQ Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the AEM (Adobe CQ) container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
 ## Requirements
 
@@ -25,9 +25,11 @@ The CQ Groovy Console provides an interface for running [Groovy](http://groovy.c
 
     The optional `replicate` profile activates the deployed package to the local publish instance.
 
-2.  [Verify](http://localhost:4502/groovyconsole) the installation.
+2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
 Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost AEM servers.
+
+AEM 6.0 no longer allows vanity paths for pages in /etc by default.  To enable access to the Groovy Console from /groovyconsole as in previous versions, the Apache Sling Resource Resolver Factory OSGi configuration must be updated to allow vanity paths from /etc.  The Groovy Console Configuration Service can then be updated to enable the vanity path if so desired.
 
 ## Context Path Support
 
