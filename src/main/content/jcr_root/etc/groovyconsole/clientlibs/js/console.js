@@ -236,7 +236,7 @@ var GroovyConsole = function () {
                                     $('#result pre').text(result);
                                     $('#result').fadeIn('fast');
 
-                                    showTable(data);
+                                    // showTable(data);
                                 }
 
                                 if (output && output.length) {

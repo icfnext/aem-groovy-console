@@ -135,7 +135,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             errorWriter.close()
         }
 
-        [executionResult: result as String, executionResultJson: result, outputText: output, stacktraceText: error, runningTime: runningTime]
+        [executionResult: result as String, outputText: output, stacktraceText: error, runningTime: runningTime]
     }
 
     @Override
