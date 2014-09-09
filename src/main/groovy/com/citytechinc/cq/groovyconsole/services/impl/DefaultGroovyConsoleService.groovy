@@ -1,19 +1,11 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
-import com.citytechinc.aem.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovyconsole.services.ConfigurationService
-import com.citytechinc.cq.groovyconsole.services.EmailService
-import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
-import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.replication.ReplicationActionType
-import com.day.cq.replication.Replicator
-import com.day.cq.search.PredicateGroup
-import com.day.cq.search.QueryBuilder
-import com.day.cq.wcm.api.PageManager
+import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 import groovy.util.logging.Slf4j
+
+import javax.jcr.Session
+
 import org.apache.commons.lang3.CharEncoding
-import org.apache.felix.scr.ScrService
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -25,301 +17,189 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
-import javax.jcr.Session
+import com.citytechinc.cq.groovyconsole.services.ConfigurationService
+import com.citytechinc.cq.groovyconsole.services.EmailService
+import com.citytechinc.cq.groovyconsole.services.ExtensionsService
+import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
+import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.wcm.api.PageManager
 
-import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
-
-@Service(GroovyConsoleService)
+@Service
 @Component
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
-    static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
+	static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    static final String CONSOLE_ROOT = "/etc/groovyconsole"
+	static final String CONSOLE_ROOT = "/etc/groovyconsole"
 
-    static final String PARAMETER_FILE_NAME = "fileName"
+	static final String PARAMETER_FILE_NAME = "fileName"
 
-    static final String PARAMETER_SCRIPT = "script"
+	static final String PARAMETER_SCRIPT = "script"
 
-    static final String EXTENSION_GROOVY = ".groovy"
+	static final String EXTENSION_GROOVY = ".groovy"
 
-    static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
-        "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api"]
+	static final def RUNNING_TIME = { closure ->
+		def start = System.currentTimeMillis()
 
-    static final def RUNNING_TIME = { closure ->
-        def start = System.currentTimeMillis()
+		closure()
 
-        closure()
+		def date = new Date()
 
-        def date = new Date()
+		date.time = System.currentTimeMillis() - start
+		date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
+	}
 
-        date.time = System.currentTimeMillis() - start
-        date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
-    }
+	@Reference
+	ConfigurationService configurationService
 
-    @Reference
-    Replicator replicator
+	@Reference
+	EmailService emailService
 
-    @Reference
-    QueryBuilder queryBuilder
+	@Reference
+	ExtensionsService extensionsService
 
-    @Reference
-    ConfigurationService configurationService
+	BundleContext bundleContext
 
-    @Reference
-    EmailService emailService
+	@Override
+	Map<String, String> runScript(SlingHttpServletRequest request) {
+		def resourceResolver = request.resourceResolver
+		def session = resourceResolver.adaptTo(Session)
+		def pageManager = resourceResolver.adaptTo(PageManager)
 
-    @Reference
-    ScrService scrService
+		def stream = new ByteArrayOutputStream()
+		def binding = createBinding(request, stream)
+		def configuration = createConfiguration()
+		def shell = new GroovyShell(binding, configuration)
 
-    BundleContext bundleContext
+		def stackTrace = new StringWriter()
+		def errorWriter = new PrintWriter(stackTrace)
 
-    @Override
-    Map<String, String> runScript(SlingHttpServletRequest request) {
-        def resourceResolver = request.resourceResolver
-        def session = resourceResolver.adaptTo(Session)
-        def pageManager = resourceResolver.adaptTo(PageManager)
+		def result = ""
+		def runningTime = ""
+		def output = ""
+		def error = ""
 
-        def stream = new ByteArrayOutputStream()
-        def binding = createBinding(request, stream)
-        def configuration = createConfiguration()
-        def shell = new GroovyShell(binding, configuration)
+		def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
 
-        def stackTrace = new StringWriter()
-        def errorWriter = new PrintWriter(stackTrace)
+		try {
+			def script = shell.parse(scriptContent)
 
-        def result = ""
-        def runningTime = ""
-        def output = ""
-        def error = ""
+			runningTime = RUNNING_TIME {
+				result = script.run()
+			}
 
-        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+			LOG.debug "script execution completed, running time = $runningTime"
 
-        try {
-            def script = shell.parse(scriptContent)
+			output = stream.toString(CharEncoding.UTF_8)
 
-            addMetaClass(resourceResolver, session, pageManager, script)
+			saveOutput(session, output)
 
-            runningTime = RUNNING_TIME {
-                result = script.run()
-            }
+			emailService.sendEmail(session, scriptContent, output, runningTime, true)
+		} catch (MultipleCompilationErrorsException e) {
+			LOG.error("script compilation error", e)
 
-            LOG.debug "script execution completed, running time = $runningTime"
+			e.printStackTrace(errorWriter)
 
-            output = stream.toString(CharEncoding.UTF_8)
+			error = stackTrace.toString()
+		} catch (Throwable t) {
+			LOG.error("error running script", t)
 
-            saveOutput(session, output)
+			t.printStackTrace(errorWriter)
 
-            emailService.sendEmail(session, scriptContent, output, runningTime, true)
-        } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
+			error = stackTrace.toString()
 
-            e.printStackTrace(errorWriter)
+			emailService.sendEmail(session, scriptContent, error, null, false)
+		} finally {
+			stream.close()
+			errorWriter.close()
+		}
 
-            error = stackTrace.toString()
-        } catch (Throwable t) {
-            LOG.error("error running script", t)
+		[executionResult: result as String, outputText: output, stacktraceText: error, runningTime: runningTime]
+	}
 
-            t.printStackTrace(errorWriter)
+	@Override
+	Map<String, String> saveScript(SlingHttpServletRequest request) {
+		def name = request.getParameter(PARAMETER_FILE_NAME)
+		def script = request.getParameter(PARAMETER_SCRIPT)
 
-            error = stackTrace.toString()
+		def session = request.resourceResolver.adaptTo(Session)
 
-            emailService.sendEmail(session, scriptContent, error, null, false)
-        } finally {
-            stream.close()
-            errorWriter.close()
-        }
+		def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
 
-        [executionResult: result as String, outputText: output, stacktraceText: error, runningTime: runningTime]
-    }
+		def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
-    @Override
-    Map<String, String> saveScript(SlingHttpServletRequest request) {
-        def name = request.getParameter(PARAMETER_FILE_NAME)
-        def script = request.getParameter(PARAMETER_SCRIPT)
-
-        def session = request.resourceResolver.adaptTo(Session)
-
-        def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
-
-        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
-
-        folderNode.removeNode(fileName)
-
-        getScriptBinary(session, script).withBinary { binary ->
-            saveFile(session, folderNode, fileName, "application/octet-stream", binary)
-        }
-
-        [scriptName: fileName]
-    }
-
-    def createConfiguration() {
-        def configuration = new CompilerConfiguration()
-
-        withConfig(configuration) {
-            imports {
-                star STAR_IMPORTS.toArray(new String[STAR_IMPORTS.size()])
-            }
-        }
-    }
-
-    def createBinding(request, stream) {
-        def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
-
-        def resourceResolver = request.resourceResolver
-        def session = resourceResolver.adaptTo(Session)
-
-        new Binding([
-            out: printStream,
-            log: LoggerFactory.getLogger("groovyconsole"),
-            session: session,
-            slingRequest: request,
-            pageManager: resourceResolver.adaptTo(PageManager),
-            resourceResolver: resourceResolver,
-            queryBuilder: queryBuilder,
-            nodeBuilder: new NodeBuilder(session),
-            pageBuilder: new PageBuilder(session),
-            bundleContext: bundleContext
-        ])
-    }
-
-    def addMetaClass(resourceResolver, session, pageManager, script) {
-        script.metaClass {
-            delegate.getNode = { String path ->
-                session.getNode(path)
-            }
-
-            delegate.getResource = { String path ->
-                resourceResolver.getResource(path)
-            }
-
-            delegate.getPage = { String path ->
-                pageManager.getPage(path)
-            }
-
-            delegate.move = { String src ->
-                ["to": { String dst ->
-                    session.move(src, dst)
-                    session.save()
-                }]
-            }
-
-            delegate.copy = { String src ->
-                ["to": { dst ->
-                    session.workspace.copy(src, dst)
-                }]
-            }
+		folderNode.removeNode(fileName)
 
-            delegate.save = {
-                session.save()
-            }
-
-            delegate.getService = { Class serviceType ->
-                def serviceReference = bundleContext.getServiceReference(serviceType)
-
-                bundleContext.getService(serviceReference)
-            }
-
-            delegate.getService = { String className ->
-                def serviceReference = bundleContext.getServiceReference(className)
-
-                bundleContext.getService(serviceReference)
-            }
-
-            delegate.getServices = { Class serviceType, String filter ->
-                def serviceReferences = bundleContext.getServiceReferences(serviceType, filter)
-
-                serviceReferences.collect { bundleContext.getService(it) }
-            }
-
-            delegate.getServices = { String className, String filter ->
-                def serviceReferences = bundleContext.getServiceReferences(className, filter)
-
-                serviceReferences.collect { bundleContext.getService(it) }
-            }
-
-            delegate.activate = { String path ->
-                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
-            }
-
-            delegate.deactivate = { String path ->
-                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
-            }
-
-            delegate.doWhileDisabled = { String componentClassName, Closure closure ->
-                def component = scrService.components.find { it.className == componentClassName }
-                def result = null
-
-                if (component) {
-                    component.disable()
-
-                    try {
-                        result = closure()
-                    } finally {
-                        component.enable()
-                    }
-                } else {
-                    result = closure()
-                }
-
-                result
-            }
-
-            delegate.createQuery { Map predicates ->
-                queryBuilder.createQuery(PredicateGroup.create(predicates), session)
-            }
-        }
-    }
-
-    def saveOutput(session, output) {
-        if (configurationService.crxOutputEnabled) {
-            def date = new Date()
-
-            def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
-
-            def folderNode = session.rootNode
-
-            folderPath.tokenize("/").each { name ->
-                folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
-            }
-
-            def fileName = date.format("hhmmss")
-
-            new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-                session.valueFactory.createBinary(stream).withBinary { binary ->
-                    saveFile(session, folderNode, fileName, "text/plain", binary)
-                }
-            }
-        }
-    }
-
-    def getScriptBinary(session, script) {
-        def binary = null
-
-        new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-            binary = session.valueFactory.createBinary(stream)
-        }
-
-        binary
-    }
-
-    void saveFile(session, folderNode, fileName, mimeType, binary) {
-        def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
-
-        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
-
-        resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
-        resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
-        resourceNode.set(JcrConstants.JCR_DATA, binary)
-        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
-        resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
-
-        session.save()
-    }
-
-    @Activate
-    void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext
-    }
+		getScriptBinary(session, script).withBinary { binary ->
+			saveFile(session, folderNode, fileName, "application/octet-stream", binary)
+		}
+
+		[scriptName: fileName]
+	}
+
+	def createConfiguration() {
+		def configuration = new CompilerConfiguration()
+
+		withConfig(configuration) {
+			imports { star extensionsService.getStarImports() }
+		}
+	}
+
+	def createBinding(request, stream) {
+		def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
+
+		new Binding(extensionsService.getBindings(request)+[out: printStream])
+	}
+
+	def saveOutput(session, output) {
+		if (configurationService.crxOutputEnabled) {
+			def date = new Date()
+
+			def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
+
+			def folderNode = session.rootNode
+
+			folderPath.tokenize("/").each { name ->
+				folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
+			}
+
+			def fileName = date.format("hhmmss")
+
+			new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
+				session.valueFactory.createBinary(stream).withBinary { binary ->
+					saveFile(session, folderNode, fileName, "text/plain", binary)
+				}
+			}
+		}
+	}
+
+	def getScriptBinary(session, script) {
+		def binary = null
+
+		new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
+			binary = session.valueFactory.createBinary(stream)
+		}
+
+		binary
+	}
+
+	void saveFile(session, folderNode, fileName, mimeType, binary) {
+		def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
+
+		def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
+
+		resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
+		resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
+		resourceNode.set(JcrConstants.JCR_DATA, binary)
+		resourceNode.set(JcrConstants.JCR_LASTMODIFIED, new Date().time)
+		resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
+
+		session.save()
+	}
+
+	@Activate
+	void activate(BundleContext bundleContext) {
+		this.bundleContext = bundleContext
+	}
 }
