@@ -4,7 +4,10 @@ import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.commons.jcr.JcrConstants
-import spock.lang.Shared
+import com.day.cq.replication.Replicator
+import com.day.cq.search.QueryBuilder
+import org.apache.felix.scr.ScrService
+import org.osgi.framework.BundleContext
 
 import javax.jcr.RepositoryException
 
@@ -24,36 +27,12 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
-    @Shared consoleService
-
-    @Shared scriptAsString
-
-    @Shared parameterMap
-
-    def setupSpec() {
-        def extensionService = new DefaultExtensionService()
-
-        extensionService.bindBindingExtensions(null)
-
-        consoleService = new DefaultGroovyConsoleService()
-
-        with(consoleService) {
-            configurationService = Mock(ConfigurationService)
-            emailService = Mock(EmailService)
-        }
-
-        this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
-            scriptAsString = stream.text
-        }
-
-        parameterMap = [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
-    }
-
     def "run script"() {
         setup:
-        def script = scriptAsString
+        def consoleService = createConsoleService()
+
         def request = requestBuilder.build {
-            parameters = [(PARAMETER_SCRIPT): script]
+            parameters = this.parameterMap
         }
 
         when:
@@ -65,9 +44,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     def "save script"() {
         setup:
-        def map = parameterMap
+        def consoleService = createConsoleService()
+
         def request = requestBuilder.build {
-            parameters = map
+            parameters = this.parameterMap
         }
 
         and:
@@ -81,8 +61,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         then:
         assertNodeExists(PATH_FOLDER, JcrConstants.NT_FOLDER)
         assertNodeExists(PATH_FILE, JcrConstants.NT_FILE)
-        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE, [(JcrConstants.JCR_MIMETYPE):
-            "application/octet-stream"])
+        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE, [(JcrConstants.JCR_MIMETYPE): "application/octet-stream"])
 
         assert session.getNode(PATH_FILE_CONTENT).get(JcrConstants.JCR_DATA).stream.text == scriptAsString
 
@@ -92,9 +71,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     def "missing console root node"() {
         setup:
-        def map = parameterMap
+        def consoleService = createConsoleService()
+
         def request = requestBuilder.build {
-            parameters = map
+            parameters = this.parameterMap
         }
 
         when:
@@ -109,5 +89,54 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assert map.outputText == "BEER\n"
         assert !map.stacktraceText
         assert map.runningTime
+    }
+
+    private def createConsoleService() {
+        def extensionService = new DefaultExtensionService()
+
+        def bindingExtensionProvider = new DefaultBindingExtensionProvider()
+
+        bindingExtensionProvider.with {
+            queryBuilder = Mock(QueryBuilder)
+            bundleContext = Mock(BundleContext)
+        }
+
+        extensionService.bindBindingExtensionProvider(bindingExtensionProvider)
+
+        def scriptMetaClassExtensionProvider = new DefaultScriptMetaClassExtensionProvider()
+
+        scriptMetaClassExtensionProvider.with {
+            replicator = Mock(Replicator)
+            scrService = Mock(ScrService)
+            queryBuilder = Mock(QueryBuilder)
+            bundleContext = Mock(BundleContext)
+        }
+
+        extensionService.bindScriptMetaClassExtensionProvider(scriptMetaClassExtensionProvider)
+
+        def consoleService = new DefaultGroovyConsoleService()
+
+        with(consoleService) {
+            configurationService = Mock(ConfigurationService)
+            emailService = Mock(EmailService)
+        }
+
+        consoleService.extensionService = extensionService
+
+        consoleService
+    }
+
+    private def getScriptAsString() {
+        def scriptAsString = null
+
+        this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
+            scriptAsString = stream.text
+        }
+
+        scriptAsString
+    }
+
+    private def getParameterMap() {
+        [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
     }
 }

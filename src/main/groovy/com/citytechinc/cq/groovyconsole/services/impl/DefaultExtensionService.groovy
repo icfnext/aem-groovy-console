@@ -19,26 +19,26 @@ class DefaultExtensionService implements ExtensionService {
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<BindingExtensionProvider> bindingExtensions = []
+    List<BindingExtensionProvider> bindingExtensionProviders = []
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<StarImportExtensionProvider> starImportExtensions = []
+    List<StarImportExtensionProvider> starImportExtensionProviders = []
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
-    List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensions = []
+    List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = []
 
     @Override
     Set<String> getStarImports() {
-        starImportExtensions.collectMany { it.starImports } as Set
+        starImportExtensionProviders.collectMany { it.starImports } as Set
     }
 
     @Override
     Binding getBinding(SlingHttpServletRequest request) {
         def bindings = [:]
 
-        bindingExtensions.each { extension ->
+        bindingExtensionProviders.each { extension ->
             def binding = extension.getBinding(request)
 
             binding.variables.each { key, value ->
@@ -56,41 +56,41 @@ class DefaultExtensionService implements ExtensionService {
 
     @Override
     List<Closure> getScriptMetaClasses(SlingHttpServletRequest request) {
-        scriptMetaClassExtensions*.getScriptMetaClass(request)
+        scriptMetaClassExtensionProviders*.getScriptMetaClass(request)
     }
 
-    void bindBindingExtensions(BindingExtensionProvider extension) {
-        bindingExtensions.add(extension)
+    void bindBindingExtensionProvider(BindingExtensionProvider extension) {
+        bindingExtensionProviders.add(extension)
 
         LOG.info "added binding extension = {}", extension.class.name
     }
 
-    void unbindBindingExtensions(BindingExtensionProvider extension) {
-        bindingExtensions.remove(extension)
+    void unbindBindingExtensionProvider(BindingExtensionProvider extension) {
+        bindingExtensionProviders.remove(extension)
 
         LOG.info "removed binding extension = {}", extension.class.name
     }
 
-    void bindStarImportExtensions(StarImportExtensionProvider extension) {
-        starImportExtensions.add(extension)
+    void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
+        starImportExtensionProviders.add(extension)
 
         LOG.info "added star import extension = {}", extension.class.name
     }
 
-    void unbindStarImportExtensions(StarImportExtensionProvider extension) {
-        starImportExtensions.remove(extension)
+    void unbindStarImportExtensionProvider(StarImportExtensionProvider extension) {
+        starImportExtensionProviders.remove(extension)
 
         LOG.info "removed star import extension = {}", extension.class.name
     }
 
-    void bindScriptMetaClassExtensions(ScriptMetaClassExtensionProvider extension) {
-        scriptMetaClassExtensions.add(extension)
+    void bindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
+        scriptMetaClassExtensionProviders.add(extension)
 
         LOG.info "added script metaclass extension = {}", extension.class.name
     }
 
-    void unbindScriptMetaClassExtensions(ScriptMetaClassExtensionProvider extension) {
-        scriptMetaClassExtensions.remove(extension)
+    void unbindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
+        scriptMetaClassExtensionProviders.remove(extension)
 
         LOG.info "removed script metaclass extension = {}", extension.class.name
     }
