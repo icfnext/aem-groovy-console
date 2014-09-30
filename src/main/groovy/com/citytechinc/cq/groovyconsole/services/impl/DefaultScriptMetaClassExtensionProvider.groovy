@@ -1,6 +1,6 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.cq.groovyconsole.api.ScriptMetaClassExtensionService
+import com.citytechinc.cq.groovyconsole.api.ScriptMetaClassExtensionProvider
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
@@ -16,9 +16,9 @@ import org.osgi.framework.BundleContext
 
 import javax.jcr.Session
 
-@Service(ScriptMetaClassExtensionService)
+@Service(ScriptMetaClassExtensionProvider)
 @Component(immediate = true)
-class DefaultScriptMetaClassExtensionService implements ScriptMetaClassExtensionService {
+class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
     @Reference
     Replicator replicator

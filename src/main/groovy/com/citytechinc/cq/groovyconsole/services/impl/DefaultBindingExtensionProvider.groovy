@@ -2,7 +2,7 @@ package com.citytechinc.cq.groovyconsole.services.impl
 
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
-import com.citytechinc.cq.groovyconsole.api.BindingExtensionService
+import com.citytechinc.cq.groovyconsole.api.BindingExtensionProvider
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import org.apache.felix.scr.annotations.Activate
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory
 
 import javax.jcr.Session
 
-@Service(BindingExtensionService)
+@Service(BindingExtensionProvider)
 @Component(immediate = true)
-class DefaultBindingExtensionService implements BindingExtensionService {
+class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Reference
     QueryBuilder queryBuilder

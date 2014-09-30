@@ -199,7 +199,11 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Export-Package>!*.impl,com.citytechinc.cq.groovyconsole.services.*</Export-Package>
+                        <Export-Package>
+                            !*.impl,
+                            com.citytechinc.cq.groovyconsole.api,
+                            com.citytechinc.cq.groovyconsole.services
+                        </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
@@ -378,7 +382,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>0.9.0-SNAPSHOT</version>
+            <version>0.7.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -386,7 +390,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>1.0.0</version>
+            <version>0.9.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,8 +1,8 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.cq.groovyconsole.api.BindingExtensionService
-import com.citytechinc.cq.groovyconsole.api.ScriptMetaClassExtensionService
-import com.citytechinc.cq.groovyconsole.api.StarImportExtensionService
+import com.citytechinc.cq.groovyconsole.api.BindingExtensionProvider
+import com.citytechinc.cq.groovyconsole.api.ScriptMetaClassExtensionProvider
+import com.citytechinc.cq.groovyconsole.api.StarImportExtensionProvider
 import com.citytechinc.cq.groovyconsole.services.ExtensionService
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Component
@@ -17,17 +17,17 @@ import org.apache.sling.api.SlingHttpServletRequest
 @Slf4j("LOG")
 class DefaultExtensionService implements ExtensionService {
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionService,
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<BindingExtensionService> bindingExtensions = []
+    List<BindingExtensionProvider> bindingExtensions = []
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionService,
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<StarImportExtensionService> starImportExtensions = []
+    List<StarImportExtensionProvider> starImportExtensions = []
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = ScriptMetaClassExtensionService,
-        policy = ReferencePolicy.DYNAMIC)
-    List<ScriptMetaClassExtensionService> scriptMetaClassExtensions = []
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
+        referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
+    List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensions = []
 
     @Override
     Set<String> getStarImports() {
@@ -41,10 +41,10 @@ class DefaultExtensionService implements ExtensionService {
         bindingExtensions.each { extension ->
             def binding = extension.getBinding(request)
 
-            binding.each { key, value ->
+            binding.variables.each { key, value ->
                 if (bindings[key]) {
-                    LOG.warn("binding variable {} is already bound to value {}, cannot assign value = {}", key,
-                        bindings[key], value)
+                    LOG.warn "binding variable {} is already bound to value {}, cannot assign value = {}", key,
+                        bindings[key], value
                 } else {
                     bindings[key] = value
                 }
@@ -59,27 +59,39 @@ class DefaultExtensionService implements ExtensionService {
         scriptMetaClassExtensions*.getScriptMetaClass(request)
     }
 
-    void bindBindingExtensions(BindingExtensionService extension) {
+    void bindBindingExtensions(BindingExtensionProvider extension) {
         bindingExtensions.add(extension)
+
+        LOG.info "added binding extension = {}", extension.class.name
     }
 
-    void unbindBindingExtensions(BindingExtensionService extension) {
+    void unbindBindingExtensions(BindingExtensionProvider extension) {
         bindingExtensions.remove(extension)
+
+        LOG.info "removed binding extension = {}", extension.class.name
     }
 
-    void bindStarImportExtensions(StarImportExtensionService extension) {
+    void bindStarImportExtensions(StarImportExtensionProvider extension) {
         starImportExtensions.add(extension)
+
+        LOG.info "added star import extension = {}", extension.class.name
     }
 
-    void unbindStarImportExtensions(StarImportExtensionService extension) {
+    void unbindStarImportExtensions(StarImportExtensionProvider extension) {
         starImportExtensions.remove(extension)
+
+        LOG.info "removed star import extension = {}", extension.class.name
     }
 
-    void bindScriptMetaClassExtensions(ScriptMetaClassExtensionService extension) {
+    void bindScriptMetaClassExtensions(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensions.add(extension)
+
+        LOG.info "added script metaclass extension = {}", extension.class.name
     }
 
-    void unbindScriptMetaClassExtensions(ScriptMetaClassExtensionService extension) {
+    void unbindScriptMetaClassExtensions(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensions.remove(extension)
+
+        LOG.info "removed script metaclass extension = {}", extension.class.name
     }
 }

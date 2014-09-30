@@ -2,7 +2,7 @@ package com.citytechinc.cq.groovyconsole.api
 
 import org.apache.sling.api.SlingHttpServletRequest
 
-interface ScriptMetaClassExtensionService {
+interface ScriptMetaClassExtensionProvider {
 
     /**
      * Get a closure to register a metaclass for the script to be executed.
