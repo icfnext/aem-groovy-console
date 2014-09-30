@@ -3,6 +3,7 @@ package com.citytechinc.aem.groovy.console.services.impl
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
 import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
+import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.day.cq.commons.jcr.JcrConstants
@@ -31,6 +32,8 @@ import javax.jcr.Binary
 import javax.jcr.Node
 import javax.jcr.Session
 
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
 @Service(GroovyConsoleService)
@@ -40,13 +43,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    static final String CONSOLE_ROOT = "/etc/groovyconsole"
-
     static final String PARAMETER_FILE_NAME = "fileName"
 
     static final String PARAMETER_SCRIPT = "script"
-
-    static final String EXTENSION_GROOVY = ".groovy"
 
     static final def STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api", "org.apache.sling.api.resource",
         "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api", "com.day.cq.replication"]
@@ -73,6 +72,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Reference
     EmailService emailService
+
+    @Reference
+    AuditService auditService
 
     @Reference
     ScrService scrService
@@ -115,6 +117,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             saveOutput(session, output)
 
+            auditService.createAuditRecord(scriptContent, result, output)
             emailService.sendEmail(session, scriptContent, output, runningTime, true)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
@@ -129,6 +132,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             error = stackTrace.toString()
 
+            auditService.createAuditRecord(scriptContent, t)
             emailService.sendEmail(session, scriptContent, error, null, false)
         } finally {
             stream.close()
@@ -144,7 +148,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         def session = request.resourceResolver.adaptTo(Session)
-        def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
+        def folderNode = session.getNode(PATH_CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER, JcrConstants.NT_FOLDER)
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
         folderNode.removeNode(fileName)
