@@ -203,7 +203,6 @@
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Export-Package>!*.impl,com.citytechinc.aem.groovy.console.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
-                        <Bundle-Activator>com.citytechinc.aem.groovy.console.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -388,7 +387,7 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.9.6</version>
+            <version>1.9.8</version>
         </dependency>
 
         <!-- provided -->
@@ -401,7 +400,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>0.8.1</version>
+            <version>0.9.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -409,7 +408,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>0.12.0</version>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
