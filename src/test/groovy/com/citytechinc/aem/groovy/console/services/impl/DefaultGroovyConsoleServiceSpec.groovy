@@ -1,5 +1,6 @@
 package com.citytechinc.aem.groovy.console.services.impl
 
+import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
@@ -42,6 +43,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             configurationService = Mock(ConfigurationService)
             queryBuilder = Mock(QueryBuilder)
             emailService = Mock(EmailService)
+            auditService = Mock(AuditService)
         }
 
         this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
