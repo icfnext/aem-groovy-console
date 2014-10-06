@@ -1,12 +1,15 @@
 package com.citytechinc.aem.groovy.console.services.impl
 
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
-import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import com.citytechinc.aem.groovy.console.services.ExtensionService
+import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
@@ -36,6 +39,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     static final String EXTENSION_GROOVY = ".groovy"
 
+    static final String FORMAT_RUNNING_TIME = "HH:mm:ss.SSS"
+
+    static final String TIME_ZONE_RUNNING_TIME = "GMT"
+
+    static final String FORMAT_DATE_FOLDER = "yyyy/MM/dd"
+
+    static final String FORMAT_DATE_FILE = "hhmmss"
+
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
 
@@ -44,7 +55,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def date = new Date()
 
         date.time = System.currentTimeMillis() - start
-        date.format("HH:mm:ss.SSS", TimeZone.getTimeZone("GMT"))
+        date.format(FORMAT_RUNNING_TIME, TimeZone.getTimeZone(TIME_ZONE_RUNNING_TIME))
     }
 
     @Reference
@@ -57,7 +68,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     ExtensionService extensionService
 
     @Override
-    Map<String, String> runScript(SlingHttpServletRequest request) {
+    RunScriptResponse runScript(SlingHttpServletRequest request) {
         def session = request.resourceResolver.adaptTo(Session)
 
         def stream = new ByteArrayOutputStream()
@@ -65,13 +76,10 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def configuration = createConfiguration()
         def shell = new GroovyShell(binding, configuration)
 
-        def stackTrace = new StringWriter()
-        def errorWriter = new PrintWriter(stackTrace)
-
         def result = ""
         def runningTime = ""
         def output = ""
-        def error = ""
+        def stackTrace = ""
 
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
 
@@ -94,27 +102,22 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            e.printStackTrace(errorWriter)
-
-            error = stackTrace.toString()
+            stackTrace = ExceptionUtils.getStackTrace(e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            t.printStackTrace(errorWriter)
+            stackTrace = ExceptionUtils.getStackTrace(t)
 
-            error = stackTrace.toString()
-
-            emailService.sendEmail(session, scriptContent, error, null, false)
+            emailService.sendEmail(session, scriptContent, stackTrace, null, false)
         } finally {
             stream.close()
-            errorWriter.close()
         }
 
-        [executionResult: result as String, outputText: output, stacktraceText: error, runningTime: runningTime]
+        new RunScriptResponse(result as String, output, stackTrace, runningTime)
     }
 
     @Override
-    Map<String, String> saveScript(SlingHttpServletRequest request) {
+    SaveScriptResponse saveScript(SlingHttpServletRequest request) {
         def name = request.getParameter(PARAMETER_FILE_NAME)
         def script = request.getParameter(PARAMETER_SCRIPT)
 
@@ -131,7 +134,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             saveFile(session, folderNode, fileName, new Date(), "application/octet-stream", binary)
         }
 
-        [scriptName: fileName]
+        new SaveScriptResponse(fileName)
     }
 
     def createConfiguration() {
@@ -162,14 +165,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
 
-            def folderPath = "${configurationService.crxOutputFolder}/${date.format('yyyy/MM/dd')}"
+            def folderPath = "${configurationService.crxOutputFolder}/${date.format(FORMAT_DATE_FOLDER)}"
             def folderNode = session.rootNode
 
             folderPath.tokenize("/").each { name ->
                 folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
             }
 
-            def fileName = date.format("hhmmss")
+            def fileName = date.format(FORMAT_DATE_FILE)
 
             new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
                 session.valueFactory.createBinary(stream).withBinary { Binary binary ->

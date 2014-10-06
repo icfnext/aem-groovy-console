@@ -1,10 +1,12 @@
 package com.citytechinc.aem.groovy.console.services
 
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
 import org.apache.sling.api.SlingHttpServletRequest
 
 interface GroovyConsoleService {
 
-    Map<String, String> runScript(SlingHttpServletRequest request)
+    RunScriptResponse runScript(SlingHttpServletRequest request)
 
-    Map<String, String> saveScript(SlingHttpServletRequest request)
+    SaveScriptResponse saveScript(SlingHttpServletRequest request)
 }

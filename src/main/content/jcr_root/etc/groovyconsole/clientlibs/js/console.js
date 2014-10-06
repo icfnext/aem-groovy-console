@@ -181,11 +181,11 @@ var GroovyConsole = function () {
                     }).done(function (data) {
                         var result = data.executionResult;
                         var output = data.outputText;
-                        var stacktrace = data.stacktraceText;
+                        var stackTrace = data.stackTraceText;
                         var runtime = data.runningTime;
 
-                        if (stacktrace && stacktrace.length) {
-                            $('#stacktrace').text(stacktrace).fadeIn('fast');
+                        if (stackTrace && stackTrace.length) {
+                            $('#stacktrace').text(stackTrace).fadeIn('fast');
                         } else {
                             if (runtime && runtime.length) {
                                 $('#running-time pre').text(runtime);

@@ -36,9 +36,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
         if (hasPermission(request)) {
-            def result = consoleService.runScript(request)
-
-            writeJsonResponse(response, result)
+            writeJsonResponse(response, consoleService.runScript(request))
         } else {
             response.setStatus(SC_FORBIDDEN)
         }
