@@ -1,17 +1,5 @@
 var GroovyConsole = function () {
 
-    function setScriptName(scriptName) {
-        $('#script-name').text(scriptName).fadeIn('fast');
-
-        GroovyConsole.localStorage.saveScriptName(scriptName);
-    }
-
-    function clearScriptName() {
-        $('#script-name').text('').fadeOut('fast');
-
-        GroovyConsole.localStorage.clearScriptName();
-    }
-
     function showSuccess(message) {
         $('#message-success .message').text(message);
         $('#message-success').fadeIn('fast');
@@ -61,12 +49,6 @@ var GroovyConsole = function () {
             });
 
             editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
-
-            var scriptName = GroovyConsole.localStorage.loadScriptName();
-
-            if (scriptName.length) {
-                setScriptName(scriptName);
-            }
 
             editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
             editor.on('change', function () {
@@ -131,7 +113,6 @@ var GroovyConsole = function () {
                 }
 
                 reset();
-                clearScriptName();
 
                 editor.getSession().setValue('');
             });
@@ -156,7 +137,7 @@ var GroovyConsole = function () {
                     GroovyConsole.disableToolbar();
                     GroovyConsole.showSaveDialog();
                 } else {
-                    GroovyConsole.showError('Script is empty.');
+                    showError('Script is empty.');
                 }
             });
 
@@ -250,10 +231,6 @@ var GroovyConsole = function () {
                 showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
-
-                var scriptName = scriptPath.substring(scriptPath.lastIndexOf('/') + 1);
-
-                setScriptName(scriptName);
             }).fail(function () {
                 showError('Load failed, check error.log file.');
             }).always(function () {
@@ -269,7 +246,6 @@ var GroovyConsole = function () {
                 script: editor.getSession().getValue()
             }).done(function (data) {
                 showSuccess('Script saved successfully.');
-                setScriptName(data.scriptName);
             }).fail(function () {
                 showError('Save failed, check error.log file.');
             }).always(function () {

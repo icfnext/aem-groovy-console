@@ -2,7 +2,6 @@ GroovyConsole.localStorage = function () {
 
     var EDITOR_HEIGHT = 'groovyconsole.editor.height';
     var EDITOR_DATA = 'groovyconsole.editor.data';
-    var SCRIPT_NAME = 'groovyconsole.script.name';
     var THEME = 'groovyconsole.theme';
 
     function loadValue(name, defaultValue) {
@@ -16,12 +15,6 @@ GroovyConsole.localStorage = function () {
     function saveValue(name, value) {
         if (Modernizr.localstorage) {
             window.localStorage[name] = value;
-        }
-    }
-
-    function clearValue(name) {
-        if (Modernizr.localstorage) {
-            window.localStorage[name] = '';
         }
     }
 
@@ -40,18 +33,6 @@ GroovyConsole.localStorage = function () {
 
         loadEditorData: function () {
             return loadValue(EDITOR_DATA, '');
-        },
-
-        saveScriptName: function (scriptName) {
-            saveValue(SCRIPT_NAME, scriptName);
-        },
-
-        loadScriptName: function () {
-            return loadValue(SCRIPT_NAME, '');
-        },
-
-        clearScriptName: function () {
-            return clearValue(SCRIPT_NAME);
         },
 
         saveTheme: function (value) {

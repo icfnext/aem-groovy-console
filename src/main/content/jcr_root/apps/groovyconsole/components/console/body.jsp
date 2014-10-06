@@ -14,8 +14,6 @@
             <span class="message"></span>
         </div>
 
-        <span id="script-name" class="label label-info" style="display: none;"></span>
-
         <div id="editor" class="ace_editor_wrapper"></div>
 
         <pre id="stacktrace" class="prettyprint alert-error" style="display: none;"></pre>
