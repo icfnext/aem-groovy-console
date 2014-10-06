@@ -42,6 +42,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assertScriptResult(map)
     }
 
+    def "run script with additional star imports"() {
+
+    }
+
     def "save script"() {
         setup:
         def consoleService = createConsoleService()
