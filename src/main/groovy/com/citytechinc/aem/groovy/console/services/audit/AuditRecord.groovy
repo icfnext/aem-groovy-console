@@ -5,7 +5,7 @@ import groovy.transform.ToString
 
 import javax.jcr.Node
 
-@ToString(includes = ["path"])
+@ToString(includePackage = false, includes = ["path"])
 class AuditRecord {
 
     public static final String PROPERTY_SCRIPT = "script"
@@ -15,6 +15,8 @@ class AuditRecord {
     public static final String PROPERTY_OUTPUT = "output"
 
     public static final String PROPERTY_EXCEPTION_STACK_TRACE = "exceptionStackTrace"
+
+    public static final String PROPERTY_RUNNING_TIME = "runningTime"
 
     final String path
 
@@ -28,6 +30,8 @@ class AuditRecord {
 
     final String exceptionStackTrace
 
+    final String runningTime
+
     AuditRecord(Node node) {
         path = node.path
         date = node.get(JcrConstants.JCR_CREATED)
@@ -35,5 +39,6 @@ class AuditRecord {
         output = node.get(PROPERTY_OUTPUT) ?: ""
         result = node.get(PROPERTY_RESULT) ?: ""
         exceptionStackTrace = node.get(PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
+        runningTime = node.get(PROPERTY_RUNNING_TIME) ?: ""
     }
 }

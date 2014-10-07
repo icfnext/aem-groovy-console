@@ -3,7 +3,7 @@
 <div class="navbar navbar-fixed-top navbar-inverse">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="${groovyConsoleHref}">Groovy Console</a>
+            <a class="brand" href="${href}">Groovy Console</a>
             <div class="btn-group pull-right">
                 <button class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
                 <ul class="dropdown-menu" id="dropdown-themes">

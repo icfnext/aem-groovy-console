@@ -44,10 +44,11 @@ class DefaultAuditService implements AuditService {
     private Session session
 
     @Override
-    AuditRecord createAuditRecord(String script, String result, String output) {
+    AuditRecord createAuditRecord(String script, String result, String output, String runningTime) {
         createAuditRecordInternal(script, { auditRecordNode ->
             auditRecordNode.set(AuditRecord.PROPERTY_RESULT, result)
             auditRecordNode.set(AuditRecord.PROPERTY_OUTPUT, output)
+            auditRecordNode.set(AuditRecord.PROPERTY_RUNNING_TIME, runningTime)
         })
     }
 
@@ -77,6 +78,27 @@ class DefaultAuditService implements AuditService {
         }
 
         auditRecords
+    }
+
+    @Override
+    AuditRecord getAuditRecord(String relativePath) {
+        def auditRecord = null
+
+        try {
+            def auditNode = session.getNode(PATH_AUDIT)
+
+            if (auditNode.hasNode(relativePath)) {
+                def auditRecordNode = auditNode.getNode(relativePath)
+
+                auditRecord = new AuditRecord(auditRecordNode)
+
+                LOG.info "found audit record = {}", auditRecord
+            }
+        } catch (RepositoryException e) {
+            LOG.error "error getting audit record", e
+        }
+
+        auditRecord
     }
 
     @Override

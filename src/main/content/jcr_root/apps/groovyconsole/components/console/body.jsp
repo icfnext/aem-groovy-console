@@ -1,4 +1,4 @@
-<%@include file="/libs/foundation/global.jsp" %>
+<%@include file="/apps/groovyconsole/components/global.jsp" %>
 
 <body>
     <cq:include script="header.jsp" />
@@ -14,25 +14,29 @@
             <span class="message"></span>
         </div>
 
-        <div id="editor" class="ace_editor_wrapper"></div>
+        <div id="editor" class="ace_editor_wrapper">${script}</div>
 
-        <pre id="stacktrace" class="prettyprint alert-error" style="display: none;"></pre>
+        <pre id="stacktrace" class="prettyprint alert-error" style="display: none;">${stackTrace}</pre>
 
         <div id="table" style="display: none;"></div>
 
         <div id="result" class="alert alert-success" style="display: none;">
             <h6>Result</h6>
-            <pre></pre>
+            <pre>${result}</pre>
         </div>
 
         <div id="output" class="alert alert-success" style="display: none;">
             <h6>Output</h6>
-            <pre></pre>
+            <pre>${output}</pre>
         </div>
 
         <div id="running-time" class="alert alert-info" style="display: none;">
             <h6>Running Time</h6>
-            <pre></pre>
+            <pre>${runningTime}</pre>
+        </div>
+
+        <div class="accordion" id="history">
+
         </div>
 
         <div class="accordion" id="accordion">

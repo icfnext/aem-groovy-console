@@ -37,7 +37,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with result and output"() {
         when:
-        def auditRecord = auditService.createAuditRecord(script, result, output)
+        def auditRecord = auditService.createAuditRecord(script, result, output, runningTime)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -48,8 +48,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         auditRecord.output == output
 
         where:
-        script | result | output
-        ""     | ""     | ""
+        script | result | output | runningTime
+        ""     | ""     | ""     | ""
     }
 
     def "create audit record for script with exception"() {
@@ -71,7 +71,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
         when:
         (1..5).each {
-            auditRecords.add(auditService.createAuditRecord("", "", ""))
+            auditRecords.add(auditService.createAuditRecord("", "", "", ""))
         }
 
         then:
@@ -80,7 +80,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "get audit records for valid date range"() {
         setup:
-        auditService.createAuditRecord("", "", "")
+        auditService.createAuditRecord("", "", "", "")
 
         def date = new Date()
         def startDate = (date + startDateOffset).toCalendar()

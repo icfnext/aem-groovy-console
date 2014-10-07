@@ -93,7 +93,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             addMetaClass(request, script)
 
             runningTime = RUNNING_TIME {
-                result = script.run()
+                result = script.run() as String
             }
 
             LOG.debug "script execution completed, running time = $runningTime"
@@ -102,7 +102,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             saveOutput(session, output)
 
-            auditService.createAuditRecord(scriptContent, result, output)
+            auditService.createAuditRecord(scriptContent, result, output, runningTime)
             emailService.sendEmail(session, scriptContent, result, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
@@ -119,7 +119,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             stream.close()
         }
 
-        new RunScriptResponse(result as String, output, stackTrace, runningTime)
+        new RunScriptResponse(result, output, stackTrace, runningTime)
     }
 
     @Override

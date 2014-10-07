@@ -10,8 +10,9 @@ interface AuditService {
      * @param script
      * @param result
      * @param output
+     * @param runningTime
      */
-    AuditRecord createAuditRecord(String script, String result, String output)
+    AuditRecord createAuditRecord(String script, String result, String output, String runningTime)
 
     /**
      * Create an audit record for the given script and execution exception.
@@ -28,6 +29,14 @@ interface AuditService {
      * @throws RepositoryException if error occurs getting audit records
      */
     List<AuditRecord> getAllAuditRecords() throws RepositoryException
+
+    /**
+     * Get the audit record at the given relative path.
+     *
+     * @param relativePath relative path to audit record from parent audit node
+     * @return audit record or null if none exists
+     */
+    AuditRecord getAuditRecord(String relativePath)
 
     /**
      * Get a list of audit records for the given date range.

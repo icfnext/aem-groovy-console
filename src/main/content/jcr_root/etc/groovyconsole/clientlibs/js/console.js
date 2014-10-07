@@ -1,5 +1,23 @@
 var GroovyConsole = function () {
 
+    function showAlerts() {
+        if ($('#result pre').text().length) {
+            $('#result').fadeIn('fast');
+        }
+
+        if ($('#output pre').text().length) {
+            $('#output').fadeIn('fast');
+        }
+
+        if ($('#running-time pre').text().length) {
+            $('#running-time').fadeIn('fast');
+        }
+
+        if ($('#stacktrace').text().length) {
+            $('#stacktrace').fadeIn('fast');
+        }
+    }
+
     function showSuccess(message) {
         $('#message-success .message').text(message);
         $('#message-success').fadeIn('fast');
@@ -50,7 +68,15 @@ var GroovyConsole = function () {
 
             editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
 
-            editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
+            var script = editor.getSession().getValue();
+
+            if (script.length) {
+                // script loaded from audit
+                showAlerts();
+            } else {
+                editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
+            }
+
             editor.on('change', function () {
                 GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
             });
@@ -168,11 +194,6 @@ var GroovyConsole = function () {
                         if (stackTrace && stackTrace.length) {
                             $('#stacktrace').text(stackTrace).fadeIn('fast');
                         } else {
-                            if (runtime && runtime.length) {
-                                $('#running-time pre').text(runtime);
-                                $('#running-time').fadeIn('fast');
-                            }
-
                             if (result && result.length) {
                                 $('#result pre').text(result);
                                 $('#result').fadeIn('fast');
@@ -181,6 +202,11 @@ var GroovyConsole = function () {
                             if (output && output.length) {
                                 $('#output pre').text(output);
                                 $('#output').fadeIn('fast');
+                            }
+
+                            if (runtime && runtime.length) {
+                                $('#running-time pre').text(runtime);
+                                $('#running-time').fadeIn('fast');
                             }
                         }
                     }).fail(function (jqXHR) {
