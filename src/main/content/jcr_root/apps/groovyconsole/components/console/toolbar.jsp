@@ -26,7 +26,9 @@
         <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
     </div>
 
-    <div id="btn-group-services" class="btn-group navbar-right">
-        <input id="services-list" type="text" placeholder="Service or Adapter Name">
-    </div>
+    <form class="navbar-form navbar-right services-form">
+        <div id="btn-group-services" class="form-group">
+            <input id="services-list" class="form-control" type="text" placeholder="Service or Adapter Name">
+        </div>
+    </form>
 </div>

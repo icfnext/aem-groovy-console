@@ -3,7 +3,7 @@
 jquery-1.11.1.min.js
 jquery-ui.min.js
 bootstrap.min.js
-typeahead.bundle.min.js
+bootstrap3-typeahead.min.js
 ace-noconflict.js
 mode-groovy-noconflict.js
 themes-noconflict.js

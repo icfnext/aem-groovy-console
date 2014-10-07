@@ -14,12 +14,25 @@ body {
     visibility: hidden;
 }
 
-#message-success,#message-error {
+#message-success, #message-error {
     margin-top: 20px;
 }
 
 #btn-group-services {
     display: none;
+}
+
+.services-form {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#services-list {
+    width: 250px;
+}
+
+.typeahead {
+    z-index: 1051;
 }
 
 .ace_editor_wrapper {
