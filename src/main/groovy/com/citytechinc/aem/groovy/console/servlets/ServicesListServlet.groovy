@@ -21,13 +21,15 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
     @Override
     protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse
         response) throws ServletException, IOException {
-        def adapters = getAdaptersMap()
-        def services = getServicesMap()
-
-        writeJsonResponse(response, adapters + services)
+        writeJsonResponse(response, adaptersMap + servicesMap)
     }
 
-    def getAdaptersMap() {
+    @Activate
+    void activate(BundleContext bundleContext) {
+        this.bundleContext = bundleContext
+    }
+
+    private def getAdaptersMap() {
         def adapters = [:] as TreeMap
 
         def serviceReferences = bundleContext.getServiceReferences(AdapterFactory, null).findAll { serviceReference ->
@@ -43,7 +45,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         adapters
     }
 
-    def getServicesMap() {
+    private def getServicesMap() {
         def services = [:] as TreeMap
         def allServices = [:]
 
@@ -75,14 +77,14 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         services
     }
 
-    static def getAdapterDeclaration(className) {
+    private static def getAdapterDeclaration(className) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
 
         "def $variableName = resourceResolver.adaptTo($className)"
     }
 
-    static def getServiceDeclaration(className, implementationClassName) {
+    private static def getServiceDeclaration(className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration
@@ -96,10 +98,5 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         }
 
         declaration
-    }
-
-    @Activate
-    void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext
     }
 }
