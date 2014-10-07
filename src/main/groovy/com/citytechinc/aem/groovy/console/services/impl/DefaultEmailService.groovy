@@ -34,12 +34,21 @@ class DefaultEmailService implements EmailService {
     MailService mailService
 
     @Override
-    void sendEmail(Session session, String script, String output, String runningTime, boolean success) {
-        if (configurationService.emailEnabled  && mailService) {
+    void sendEmail(Session session, String script, String result, String output, String runningTime) {
+        sendEmailInternal(createBinding(session, script, result, output, runningTime), TEMPLATE_PATH_SUCCESS)
+    }
+
+    @Override
+    void sendEmail(Session session, String script, String stackTrace) {
+        sendEmailInternal(createBinding(session, script, stackTrace), TEMPLATE_PATH_FAIL)
+    }
+
+    private def sendEmailInternal(Map binding, String templatePath) {
+        if (configurationService.emailEnabled && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
-                def email = createEmail(recipients, session, script, output, runningTime, success)
+                def email = createEmail(recipients, binding, templatePath)
 
                 LOG.debug "sending email, recipients = {}", recipients
 
@@ -54,7 +63,7 @@ class DefaultEmailService implements EmailService {
         }
     }
 
-    def createEmail(Set<String> recipients, Session session, String script, String output, String runningTime, boolean success) {
+    private def createEmail(Set<String> recipients, Map binding, String templatePath) {
         def email = new HtmlEmail()
 
         email.charset = CharEncoding.UTF_8
@@ -65,19 +74,36 @@ class DefaultEmailService implements EmailService {
 
         email.subject = SUBJECT
 
-        def binding = [
-            username: session.userID,
-            timestamp: new Date().format(FORMAT_TIMESTAMP),
-            script: script,
-            output: output,
-            runningTime: runningTime
-        ]
-
-        def templatePath = success ? TEMPLATE_PATH_SUCCESS : TEMPLATE_PATH_FAIL
         def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
 
         email.htmlMsg = template.make(binding).toString()
 
         email
+    }
+
+    private static def createBinding(Session session, String script, String output, String result, String runningTime) {
+        def binding = createBinding(session, script)
+
+        binding.putAll([
+            result     : result,
+            output     : output,
+            runningTime: runningTime
+        ])
+
+        binding
+    }
+
+    private static def createBinding(Session session, String script, String stackTrace) {
+        def binding = createBinding(session, script)
+
+        binding.stackTrace = stackTrace
+
+        binding
+    }
+
+    private static def createBinding(Session session, String script) {
+        [username : session.userID,
+         timestamp: new Date().format(FORMAT_TIMESTAMP),
+         script   : script]
     }
 }

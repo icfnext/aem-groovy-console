@@ -6,6 +6,7 @@ import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
 import com.citytechinc.aem.groovy.console.services.ExtensionService
 import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
+import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import com.day.cq.commons.jcr.JcrConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
@@ -65,6 +66,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     EmailService emailService
 
     @Reference
+    AuditService auditService
+
+    @Reference
     ExtensionService extensionService
 
     @Override
@@ -98,7 +102,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             saveOutput(session, output)
 
-            emailService.sendEmail(session, scriptContent, output, runningTime, true)
+            auditService.createAuditRecord(scriptContent, result, output)
+            emailService.sendEmail(session, scriptContent, result, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
@@ -108,7 +113,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             stackTrace = ExceptionUtils.getStackTrace(t)
 
-            emailService.sendEmail(session, scriptContent, stackTrace, null, false)
+            auditService.createAuditRecord(scriptContent, t)
+            emailService.sendEmail(session, scriptContent, stackTrace)
         } finally {
             stream.close()
         }

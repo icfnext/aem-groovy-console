@@ -1,8 +1,8 @@
 package com.citytechinc.aem.groovy.console.services.impl
-
-import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.EmailService
+import com.citytechinc.aem.groovy.console.services.audit.AuditService
+import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
@@ -123,6 +123,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         with(consoleService) {
             configurationService = Mock(ConfigurationService)
             emailService = Mock(EmailService)
+            auditService = Mock(AuditService)
         }
 
         consoleService.extensionService = extensionService
