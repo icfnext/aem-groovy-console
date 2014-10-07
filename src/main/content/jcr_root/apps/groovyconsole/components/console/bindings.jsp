@@ -1,11 +1,13 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" href="#bindings" data-toggle="collapse" data-target="#bindings" data-parent="#accordion">Bindings</a>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#documentation" href="#bindings">Bindings</a>
+        </h4>
     </div>
-    <div id="bindings" class="accordion-body collapse">
-        <div class="accordion-inner">
+    <div id="bindings" class="panel-collapse collapse">
+        <div class="panel-body">
             <ul>
                 <li>session - <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html" target="_blank">javax.jcr.Session</a></li>
                 <li>pageManager - <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html" target="_blank">com.day.cq.wcm.api.PageManager</a></li>

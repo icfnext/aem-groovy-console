@@ -1,5 +1,6 @@
 body {
-    padding-top: 40px;
+    padding-top: 60px;
+    padding-bottom: 30px;
 }
 
 #editor {
@@ -11,6 +12,10 @@ body {
     display: inline-block;
     margin-left: 5px;
     visibility: hidden;
+}
+
+#message-success,#message-error {
+    margin-top: 20px;
 }
 
 #btn-group-services {

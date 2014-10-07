@@ -1,12 +1,17 @@
 <%@include file="/apps/groovyconsole/components/global.jsp" %>
 
 <div class="navbar navbar-fixed-top navbar-inverse">
-    <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="${href}">Groovy Console</a>
-            <div class="btn-group pull-right">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">Themes <span class="caret"></span></button>
-                <ul class="dropdown-menu" id="dropdown-themes">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="${href}">Groovy Console</a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <div class="btn-group navbar-right">
+                <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
+                    Themes <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="dropdown-themes" role="menu">
                     <li><a href="#" data-target="ace/theme/chrome">Chrome</a></li>
                     <li><a href="#" data-target="ace/theme/clouds">Clouds</a></li>
                     <li><a href="#" data-target="ace/theme/clouds_midnight">Clouds Midnight</a></li>

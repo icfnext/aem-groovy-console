@@ -111,6 +111,7 @@ var GroovyConsole = function () {
 
         initializeServicesList: function () {
             $.getJSON('/bin/groovyconsole/services', function (services) {
+                /*
                 $('#services-list').typeahead({
                     source: Object.keys(services),
                     updater: function (key) {
@@ -127,6 +128,7 @@ var GroovyConsole = function () {
                         return '';
                     }
                 });
+                */
 
                 $('#btn-group-services').fadeIn('fast');
             });

@@ -1,4 +1,4 @@
-<%@include file="/apps/groovyconsole/components/global.jsp" %>
+<%@include file="/libs/foundation/global.jsp" %>
 
 <body>
     <cq:include script="header.jsp" />
@@ -6,40 +6,40 @@
     <div class="container">
         <cq:include script="toolbar.jsp" />
 
-        <div class="alert alert-success" id="message-success" style="display: none;">
+        <div class="alert alert-success" id="message-success" role="alert" style="display: none;">
             <span class="message"></span>
         </div>
 
-        <div class="alert alert-error" id="message-error" style="display: none;">
+        <div class="alert alert-danger" id="message-error" role="alert" style="display: none;">
             <span class="message"></span>
         </div>
 
-        <div id="editor" class="ace_editor_wrapper">${script}</div>
+        <div id="editor" class="ace_editor_wrapper"></div>
 
-        <pre id="stacktrace" class="prettyprint alert-error" style="display: none;">${stackTrace}</pre>
+        <pre id="stacktrace" class="alert-danger" style="display: none;"></pre>
 
-        <div id="table" style="display: none;"></div>
-
-        <div id="result" class="alert alert-success" style="display: none;">
+        <div id="result" class="alert alert-success" role="alert" style="display: none;">
             <h6>Result</h6>
-            <pre>${result}</pre>
+            <pre></pre>
         </div>
 
-        <div id="output" class="alert alert-success" style="display: none;">
+        <div id="output" class="alert alert-success" role="alert" style="display: none;">
             <h6>Output</h6>
-            <pre>${output}</pre>
+            <pre></pre>
         </div>
 
-        <div id="running-time" class="alert alert-info" style="display: none;">
+        <div id="running-time" class="alert alert-info" role="alert" style="display: none;">
             <h6>Running Time</h6>
-            <pre>${runningTime}</pre>
+            <pre></pre>
         </div>
 
-        <div class="accordion" id="history">
-
+        <%--
+        <div class="panel-group" id="audit">
+            <cq:include script="audit.jsp" />
         </div>
+        --%>
 
-        <div class="accordion" id="accordion">
+        <div class="panel-group" id="documentation">
             <cq:include script="bindings.jsp" />
             <cq:include script="imports.jsp" />
             <cq:include script="methods.jsp" />

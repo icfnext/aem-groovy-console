@@ -34,11 +34,12 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
         auditRecords.each { record ->
             def map = [
-                date               : record.date.format(DATE_FORMAT_DISPLAY),
-                script             : record.script,
-                result             : record.result,
-                output             : record.output,
-                exceptionStackTrace: record.exceptionStackTrace
+                date       : record.date.format(DATE_FORMAT_DISPLAY),
+                script     : record.script,
+                result     : record.result,
+                output     : record.output,
+                stackTrace : record.exceptionStackTrace,
+                runningTime: record.runningTime
             ]
 
             data.add(map)

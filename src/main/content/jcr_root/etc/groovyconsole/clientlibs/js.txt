@@ -1,8 +1,9 @@
 #base=js
 
-jquery-1.7.2.min.js
+jquery-1.11.1.min.js
 jquery-ui.min.js
 bootstrap.min.js
+typeahead.bundle.min.js
 ace-noconflict.js
 mode-groovy-noconflict.js
 themes-noconflict.js

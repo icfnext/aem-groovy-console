@@ -1,11 +1,13 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" href="#imports" data-toggle="collapse" data-target="#imports" data-parent="#accordion">Imports</a>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#documentation" href="#imports">Imports</a>
+        </h4>
     </div>
-    <div id="imports" class="accordion-body collapse">
-        <div class="accordion-inner">
+    <div id="imports" class="panel-collapse collapse">
+        <div class="panel-body">
             <p>Additional packages imported by default.</p>
             <ul>
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/package-summary.html" target="_blank">com.day.cq.search</a></li>
