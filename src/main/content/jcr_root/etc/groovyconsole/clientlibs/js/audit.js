@@ -8,36 +8,37 @@ GroovyConsole.Audit = function () {
                 ajax: '/bin/groovyconsole/audit.json',
                 columns: [
                     {
+                        className: 'open-record',
                         orderable: false,
                         data: null,
-                        defaultContent: '<span class="glyphicon glyphicon-refresh"></span>'
+                        defaultContent: '<span class="glyphicon glyphicon-eye-open"></span>'
                     },
                     { data: 'date' },
                     { data: 'script' },
-                    { data: 'success' },
-                    { data: 'permalink' }
+                    { data: 'success' }
                 ],
                 order: [[1, 'desc']],
                 oLanguage: {
                     sSearch: 'Script Contains: '
                 },
                 rowCallback: function (row, data) {
-                    var success = data.success;
-
-                    var script = data.script;
-
-                    $('td:eq(2)', row).html('<code>' + script + '</code>');
-
-                    /*
-                    var fileName = data.fileName;
-
-                    if (fileName.length) {
-                        $('td:eq(2)', row).html('<a href="' + data.fileHref + '">' + fileName + '</a>');
-                    }
-                    */
-
-                    $('td:eq(3)', row).html(success ? 'Yes' : 'No');
+                    $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
+                    $('td:eq(2)', row).html('<code>' + data.script + '</code>');
+                    $('td:eq(3)', row).html(data.success ? 'Yes' : 'No');
                 }
+            });
+
+            $('.audit tbody').on('click', 'td.open-record', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row(tr);
+                var script = row.data().relativePath;
+
+                $.getJSON('/bin/groovyconsole/audit.json?script=' + script, function (response) {
+                    editor.getSession().setValue(response.script);
+
+                    GroovyConsole.reset();
+                    GroovyConsole.showAlerts(response);
+                });
             });
         },
 

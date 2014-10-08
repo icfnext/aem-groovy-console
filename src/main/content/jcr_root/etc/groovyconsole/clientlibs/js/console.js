@@ -1,23 +1,5 @@
 var GroovyConsole = function () {
 
-    function showAlerts() {
-        if ($('#result pre').text().length) {
-            $('#result').fadeIn('fast');
-        }
-
-        if ($('#output pre').text().length) {
-            $('#output').fadeIn('fast');
-        }
-
-        if ($('#running-time pre').text().length) {
-            $('#running-time').fadeIn('fast');
-        }
-
-        if ($('#stacktrace').text().length) {
-            $('#stacktrace').fadeIn('fast');
-        }
-    }
-
     function showSuccess(message) {
         $('#message-success .message').text(message);
         $('#message-success').fadeIn('fast');
@@ -34,17 +16,6 @@ var GroovyConsole = function () {
         setTimeout(function () {
             $('#message-error').fadeOut('slow');
         }, 3000);
-    }
-
-    function reset() {
-        // clear messages
-        $('#message-success .message,#message-error .message').text('');
-        $('#message-success,#message-error').fadeOut('fast');
-
-        // clear results
-        $('#stacktrace').text('').fadeOut('fast');
-        $('#result,#output,#running-time').fadeOut('fast');
-        $('#result pre,#output pre,#running-time pre').text('');
     }
 
     return {
@@ -68,11 +39,13 @@ var GroovyConsole = function () {
 
             editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
 
-            var script = editor.getSession().getValue();
+            var auditRecord = window.auditRecord;
 
-            if (script.length) {
+            if (auditRecord) {
                 // script loaded from audit
-                showAlerts();
+                editor.getSession().setValue(auditRecord.script);
+
+                GroovyConsole.showAlerts(auditRecord);
             } else {
                 editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
             }
@@ -115,7 +88,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                reset();
+                GroovyConsole.reset();
 
                 editor.getSession().setValue('');
             });
@@ -149,7 +122,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                reset();
+                GroovyConsole.reset();
 
                 var script = editor.getSession().getValue();
 
@@ -163,29 +136,7 @@ var GroovyConsole = function () {
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script
                     }).done(function (data) {
-                        var result = data.executionResult;
-                        var output = data.outputText;
-                        var stackTrace = data.stackTraceText;
-                        var runtime = data.runningTime;
-
-                        if (stackTrace && stackTrace.length) {
-                            $('#stacktrace').text(stackTrace).fadeIn('fast');
-                        } else {
-                            if (result && result.length) {
-                                $('#result pre').text(result);
-                                $('#result').fadeIn('fast');
-                            }
-
-                            if (output && output.length) {
-                                $('#output pre').text(output);
-                                $('#output').fadeIn('fast');
-                            }
-
-                            if (runtime && runtime.length) {
-                                $('#running-time pre').text(runtime);
-                                $('#running-time').fadeIn('fast');
-                            }
-                        }
+                        GroovyConsole.showAlerts(data);
                     }).fail(function (jqXHR) {
                         if (jqXHR.status == 403) {
                             showError('You do not have permission to run scripts in the Groovy Console.');
@@ -215,6 +166,43 @@ var GroovyConsole = function () {
             $('.btn-toolbar .btn').removeClass('disabled');
         },
 
+        reset: function () {
+            // clear messages
+            $('#message-success .message,#message-error .message').text('');
+            $('#message-success,#message-error').fadeOut('fast');
+
+            // clear results
+            $('#stacktrace').text('').fadeOut('fast');
+            $('#result,#output,#running-time').fadeOut('fast');
+            $('#result pre,#output pre,#running-time pre').text('');
+        },
+
+        showAlerts: function (response) {
+            var result = response.result;
+            var output = response.output;
+            var exceptionStackTrace = response.exceptionStackTrace;
+            var runningTime = response.runningTime;
+
+            if (exceptionStackTrace && exceptionStackTrace.length) {
+                $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
+            } else {
+                if (result && result.length) {
+                    $('#result pre').text(result);
+                    $('#result').fadeIn('fast');
+                }
+
+                if (output && output.length) {
+                    $('#output pre').text(output);
+                    $('#output').fadeIn('fast');
+                }
+
+                if (runningTime && runningTime.length) {
+                    $('#running-time pre').text(runningTime);
+                    $('#running-time').fadeIn('fast');
+                }
+            }
+        },
+
         showOpenDialog: function () {
             var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
 
@@ -228,7 +216,7 @@ var GroovyConsole = function () {
         },
 
         loadScript: function (scriptPath) {
-            reset();
+            GroovyConsole.reset();
 
             $.get(CQ.shared.HTTP.getContextPath() + '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
                 showSuccess('Script loaded successfully.');
@@ -242,7 +230,7 @@ var GroovyConsole = function () {
         },
 
         saveScript: function (fileName) {
-            reset();
+            GroovyConsole.reset();
 
             $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/save', {
                 fileName: fileName,
