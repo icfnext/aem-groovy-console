@@ -23,6 +23,8 @@ import javax.jcr.Binary
 import javax.jcr.Node
 import javax.jcr.Session
 
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
 @Service(GroovyConsoleService)
@@ -32,13 +34,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
-    static final String CONSOLE_ROOT = "/etc/groovyconsole"
-
     static final String PARAMETER_FILE_NAME = "fileName"
 
     static final String PARAMETER_SCRIPT = "script"
-
-    static final String EXTENSION_GROOVY = ".groovy"
 
     static final String FORMAT_RUNNING_TIME = "HH:mm:ss.SSS"
 
@@ -81,9 +79,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def shell = new GroovyShell(binding, configuration)
 
         def result = ""
-        def runningTime = ""
         def output = ""
-        def stackTrace = ""
+        def exceptionStackTrace = ""
+        def runningTime = ""
 
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
 
@@ -107,19 +105,19 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            stackTrace = ExceptionUtils.getStackTrace(e)
+            exceptionStackTrace = ExceptionUtils.getStackTrace(e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            stackTrace = ExceptionUtils.getStackTrace(t)
+            exceptionStackTrace = ExceptionUtils.getStackTrace(t)
 
             auditService.createAuditRecord(scriptContent, t)
-            emailService.sendEmail(session, scriptContent, stackTrace)
+            emailService.sendEmail(session, scriptContent, exceptionStackTrace)
         } finally {
             stream.close()
         }
 
-        new RunScriptResponse(result, output, stackTrace, runningTime)
+        new RunScriptResponse(result, output, exceptionStackTrace, runningTime)
     }
 
     @Override
@@ -129,7 +127,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         def session = request.resourceResolver.adaptTo(Session)
 
-        def folderNode = session.getNode(CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER,
+        def folderNode = session.getNode(PATH_CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER,
             JcrConstants.NT_FOLDER) as Node
 
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"

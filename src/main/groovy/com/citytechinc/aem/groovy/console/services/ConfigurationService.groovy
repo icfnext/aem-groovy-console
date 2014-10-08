@@ -4,6 +4,8 @@ interface ConfigurationService {
 
     Set<String> getAllowedGroups()
 
+    String getConsoleHref()
+
     String getCrxOutputFolder()
 
     Set<String> getEmailRecipients()
@@ -11,6 +13,4 @@ interface ConfigurationService {
     boolean isCrxOutputEnabled()
 
     boolean isEmailEnabled()
-
-    boolean isVanityPathEnabled()
 }

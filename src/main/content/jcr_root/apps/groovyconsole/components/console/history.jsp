@@ -20,7 +20,6 @@
                 <th>Date</th>
                 <th>Script</th>
                 <th>Success</th>
-                <th>Permalink</th>
             </tr>
             </thead>
             <tbody>

@@ -1,5 +1,6 @@
 package com.citytechinc.aem.groovy.console.servlets
 
+import com.citytechinc.aem.groovy.console.services.ConfigurationService
 import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
 import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import groovy.util.logging.Slf4j
@@ -9,6 +10,8 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 
 import javax.servlet.ServletException
+
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 
 @SlingServlet(paths = "/bin/groovyconsole/audit")
 @Slf4j("LOG")
@@ -25,27 +28,38 @@ class AuditServlet extends AbstractJsonResponseServlet {
     @Reference
     AuditService auditService
 
+    @Reference
+    ConfigurationService configurationService
+
     @Override
     protected void doGet(SlingHttpServletRequest request,
         SlingHttpServletResponse response) throws ServletException, IOException {
-        def auditRecords = getAuditRecords(request)
+        def script = request.getParameter(PARAMETER_SCRIPT)
 
-        def data = []
+        if (script) {
+            writeJsonResponse(response, auditService.getAuditRecord(script) ?: [:])
+        } else {
+            def auditRecords = getAuditRecords(request)
+            def consoleHref = configurationService.consoleHref
 
-        auditRecords.each { record ->
-            def lines = record.script.readLines()
+            def data = []
 
-            def map = [
-                date     : record.date.format(DATE_FORMAT_DISPLAY),
-                script   : lines.first() + (lines.size() > 1 ? "[...]" : ""),
-                success  : !record.exceptionStackTrace,
-                permalink: "/"
-            ]
+            auditRecords.each { record ->
+                def lines = record.script.readLines()
 
-            data.add(map)
+                def map = [
+                    date   : record.date.format(DATE_FORMAT_DISPLAY),
+                    script : lines.first() + (lines.size() > 1 ? "[...]" : ""),
+                    success: !record.exceptionStackTrace,
+                    link   : "$consoleHref?script=${record.relativePath}",
+                    relativePath: record.relativePath
+                ]
+
+                data.add(map)
+            }
+
+            writeJsonResponse(response, [data: data])
         }
-
-        writeJsonResponse(response, [data: data])
     }
 
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {

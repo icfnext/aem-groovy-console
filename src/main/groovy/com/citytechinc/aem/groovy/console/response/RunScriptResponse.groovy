@@ -5,11 +5,11 @@ import groovy.transform.Immutable
 @Immutable
 class RunScriptResponse {
 
-    String executionResult
+    String result
 
-    String outputText
+    String output
 
-    String stackTraceText
+    String exceptionStackTrace
 
     String runningTime
 }

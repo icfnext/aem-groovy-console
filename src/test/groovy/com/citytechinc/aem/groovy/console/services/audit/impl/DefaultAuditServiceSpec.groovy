@@ -52,6 +52,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         ""     | ""     | ""     | ""
     }
 
+
+
     def "create audit record for script with exception"() {
         when:
         def exception = new RuntimeException("")

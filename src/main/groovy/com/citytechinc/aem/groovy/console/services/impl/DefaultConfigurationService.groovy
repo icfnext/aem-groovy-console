@@ -15,6 +15,10 @@ class DefaultConfigurationService implements ConfigurationService {
 
     static final String DEFAULT_CRX_OUTPUT_FOLDER = "/tmp/groovyconsole"
 
+    static final String DEFAULT_PATH = "/etc/groovyconsole.html"
+
+    static final String VANITY_PATH = "/groovyconsole"
+
     @Property(label = "Email Enabled?",
         description = "Check to enable email notification on completion of script execution.",
         boolValue = false)
@@ -60,6 +64,11 @@ class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
+    String getConsoleHref() {
+        vanityPathEnabled ? VANITY_PATH : DEFAULT_PATH
+    }
+
+    @Override
     boolean isEmailEnabled() {
         emailEnabled
     }
@@ -77,11 +86,6 @@ class DefaultConfigurationService implements ConfigurationService {
     @Override
     String getCrxOutputFolder() {
         crxOutputFolder
-    }
-
-    @Override
-    boolean isVanityPathEnabled() {
-        vanityPathEnabled
     }
 
     @Activate

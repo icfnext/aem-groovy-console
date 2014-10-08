@@ -15,6 +15,9 @@ import javax.jcr.Node
 import javax.jcr.RepositoryException
 import javax.jcr.Session
 
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_NODE_NAME
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_PATH
+import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_RECORD_NODE_PREFIX
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT
 import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
@@ -25,12 +28,6 @@ import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
 class DefaultAuditService implements AuditService {
 
     private static final String DATE_FORMAT = "yyyy/MM/dd"
-
-    private static final String NODE_NAME_AUDIT = "audit"
-
-    private static final String NODE_NAME_PREFIX_RECORD = "record"
-
-    private static final String PATH_AUDIT = "$PATH_CONSOLE_ROOT/$JCR_CONTENT/$NODE_NAME_AUDIT"
 
     private static final String DATE_FORMAT_YEAR = "yyyy"
 
@@ -64,10 +61,10 @@ class DefaultAuditService implements AuditService {
         def auditRecords = []
 
         try {
-            def auditNode = session.getNode(PATH_AUDIT)
+            def auditNode = session.getNode(AUDIT_PATH)
 
             auditNode.recurse { Node node ->
-                if (node.name.startsWith(NODE_NAME_PREFIX_RECORD)) {
+                if (node.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
                     auditRecords.add(new AuditRecord(node))
                 }
             }
@@ -85,7 +82,7 @@ class DefaultAuditService implements AuditService {
         def auditRecord = null
 
         try {
-            def auditNode = session.getNode(PATH_AUDIT)
+            def auditNode = session.getNode(AUDIT_PATH)
 
             if (auditNode.hasNode(relativePath)) {
                 def auditRecordNode = auditNode.getNode(relativePath)
@@ -106,7 +103,7 @@ class DefaultAuditService implements AuditService {
         def auditRecords = []
 
         try {
-            def auditNode = session.getNode(PATH_AUDIT)
+            def auditNode = session.getNode(AUDIT_PATH)
 
             def currentDate = startDate
 
@@ -170,7 +167,7 @@ class DefaultAuditService implements AuditService {
     }
 
     private Node addAuditRecordNode() {
-        def auditNode = session.getNode(PATH_AUDIT)
+        def auditNode = session.getNode(AUDIT_PATH)
 
         def date = Calendar.instance
 
@@ -180,7 +177,7 @@ class DefaultAuditService implements AuditService {
 
         def index = dayNode.nodes.size() as String
 
-        def auditRecordNode = dayNode.addNode(NODE_NAME_PREFIX_RECORD + index)
+        def auditRecordNode = dayNode.addNode(AUDIT_RECORD_NODE_PREFIX + index)
 
         auditRecordNode.addMixin(MIX_CREATED)
 
@@ -190,10 +187,10 @@ class DefaultAuditService implements AuditService {
     private void checkAuditNode() {
         def contentNode = session.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
 
-        if (!contentNode.hasNode(NODE_NAME_AUDIT)) {
+        if (!contentNode.hasNode(AUDIT_NODE_NAME)) {
             LOG.info "audit node does not exist, adding"
 
-            contentNode.addNode(NODE_NAME_AUDIT)
+            contentNode.addNode(AUDIT_NODE_NAME)
 
             session.save()
         }

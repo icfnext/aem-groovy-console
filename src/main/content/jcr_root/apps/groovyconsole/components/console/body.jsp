@@ -1,4 +1,4 @@
-<%@include file="/libs/foundation/global.jsp" %>
+<%@include file="/apps/groovyconsole/components/global.jsp" %>
 
 <body>
     <cq:include script="header.jsp" />
@@ -43,4 +43,10 @@
             <cq:include script="about.jsp" />
         </div>
     </div>
+
+    <c:if test="${not empty auditRecord}">
+        <script type="text/javascript">
+            var auditRecord = ${auditRecord};
+        </script>
+    </c:if>
 </body>

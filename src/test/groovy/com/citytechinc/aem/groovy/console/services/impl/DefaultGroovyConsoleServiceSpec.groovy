@@ -89,9 +89,9 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     void assertScriptResult(map) {
-        assert !map.executionResult
-        assert map.outputText == "BEER\n"
-        assert !map.stackTraceText
+        assert !map.result
+        assert map.output == "BEER\n"
+        assert !map.exceptionStackTrace
         assert map.runningTime
     }
 
