@@ -2,6 +2,7 @@
 
 jquery-1.11.1.min.js
 jquery-ui.min.js
+moment.min.js
 bootstrap.min.js
 bootstrap3-typeahead.min.js
 ace-noconflict.js
@@ -9,5 +10,10 @@ mode-groovy-noconflict.js
 themes-noconflict.js
 theme-textmate-uncompressed.js
 modernizr.custom.2.6.2.js
+daterangepicker.js
+jquery.datatables.min.js
+datatables.js
 console.js
+services.js
+audit.js
 local-storage.js

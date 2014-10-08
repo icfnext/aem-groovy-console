@@ -3,7 +3,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#documentation" href="#enhancements">Enhancements</a>
+            <a data-toggle="collapse" data-parent="#info" href="#enhancements">Enhancements</a>
         </h4>
     </div>
     <div id="enhancements" class="panel-collapse collapse">

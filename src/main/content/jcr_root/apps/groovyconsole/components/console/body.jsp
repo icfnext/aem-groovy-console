@@ -33,13 +33,8 @@
             <pre></pre>
         </div>
 
-        <%--
-        <div class="panel-group" id="audit">
-            <cq:include script="audit.jsp" />
-        </div>
-        --%>
-
-        <div class="panel-group" id="documentation">
+        <div class="panel-group" id="info">
+            <cq:include script="history.jsp"/>
             <cq:include script="bindings.jsp" />
             <cq:include script="imports.jsp" />
             <cq:include script="methods.jsp" />
