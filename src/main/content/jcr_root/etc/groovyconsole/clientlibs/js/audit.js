@@ -38,6 +38,8 @@ GroovyConsole.Audit = function () {
 
                     GroovyConsole.reset();
                     GroovyConsole.showAlerts(response);
+
+                    $('html, body').animate({ scrollTop: 0 });
                 });
             });
         },
