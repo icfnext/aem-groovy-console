@@ -147,6 +147,7 @@ var GroovyConsole = function () {
                         editor.setReadOnly(false);
 
                         GroovyConsole.enableToolbar();
+                        GroovyConsole.Audit.refreshAuditRecords();
 
                         $('#run-script-text').text('Run Script');
                     });

@@ -1,5 +1,9 @@
 package com.citytechinc.aem.groovy.console.api
 
+/**
+ * Services may implement this interface to supply additional star imports to the compiler configuration for Groovy
+ * script execution.
+ */
 interface StarImportExtensionProvider {
 
     /**

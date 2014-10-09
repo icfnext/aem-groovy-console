@@ -19,7 +19,7 @@
                 <th></th>
                 <th>Date</th>
                 <th>Script</th>
-                <th>Success</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>

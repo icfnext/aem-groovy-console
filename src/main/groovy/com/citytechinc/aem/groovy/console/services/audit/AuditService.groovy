@@ -1,26 +1,18 @@
 package com.citytechinc.aem.groovy.console.services.audit
 
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+
 import javax.jcr.RepositoryException
 
 interface AuditService {
 
     /**
-     * Create an audit record for the given script, result, and output.
+     * Create an audit record for the given script and response.
      *
      * @param script
-     * @param result
-     * @param output
-     * @param runningTime
+     * @param response response containing execution result or exception
      */
-    AuditRecord createAuditRecord(String script, String result, String output, String runningTime)
-
-    /**
-     * Create an audit record for the given script and execution exception.
-     *
-     * @param script
-     * @param throwable
-     */
-    AuditRecord createAuditRecord(String script, Throwable throwable)
+    AuditRecord createAuditRecord(String script, RunScriptResponse response)
 
     /**
      * Get all audit records.

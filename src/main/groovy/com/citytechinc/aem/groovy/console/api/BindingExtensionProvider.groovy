@@ -2,6 +2,9 @@ package com.citytechinc.aem.groovy.console.api
 
 import org.apache.sling.api.SlingHttpServletRequest
 
+/**
+ * Services may implement this interface to supply additional binding values for Groovy script executions.
+ */
 interface BindingExtensionProvider {
 
     /**

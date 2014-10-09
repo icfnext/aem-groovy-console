@@ -1,12 +1,12 @@
 package com.citytechinc.aem.groovy.console.services.audit
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
-import com.day.cq.commons.jcr.JcrConstants
 import groovy.transform.ToString
 
 import javax.jcr.Node
 
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_PATH
+import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED
 
 @ToString(includePackage = false, includes = ["path"])
 class AuditRecord {
@@ -32,15 +32,9 @@ class AuditRecord {
 
     AuditRecord(Node node) {
         path = node.path
-        date = node.get(JcrConstants.JCR_CREATED)
+        date = node.get(JCR_CREATED)
         script = node.get(PROPERTY_SCRIPT)
-
-        def result = node.get(PROPERTY_RESULT) ?: ""
-        def output = node.get(PROPERTY_OUTPUT) ?: ""
-        def exceptionStackTrace = node.get(PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
-        def runningTime = node.get(PROPERTY_RUNNING_TIME) ?: ""
-
-        response = new RunScriptResponse(result, output, exceptionStackTrace, runningTime)
+        response = RunScriptResponse.forAuditRecordNode(node)
     }
 
     String getRelativePath() {

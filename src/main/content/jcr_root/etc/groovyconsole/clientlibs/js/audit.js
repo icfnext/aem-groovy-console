@@ -14,8 +14,14 @@ GroovyConsole.Audit = function () {
                         defaultContent: '<span class="glyphicon glyphicon-eye-open"></span>'
                     },
                     { data: 'date' },
-                    { data: 'script' },
-                    { data: 'success' }
+                    {
+                        data: 'script',
+                        orderable: false
+                    },
+                    {
+                        data: 'exception',
+                        orderable: false
+                    }
                 ],
                 order: [[1, 'desc']],
                 oLanguage: {
@@ -24,7 +30,10 @@ GroovyConsole.Audit = function () {
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
                     $('td:eq(2)', row).html('<code>' + data.script + '</code>');
-                    $('td:eq(3)', row).html(data.success ? 'Yes' : 'No');
+
+                    if (data.exception.length) {
+                        $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
+                    }
                 }
             });
 
@@ -42,6 +51,10 @@ GroovyConsole.Audit = function () {
                     $('html, body').animate({ scrollTop: 0 });
                 });
             });
+        },
+
+        refreshAuditRecords: function () {
+            table.ajax.url('/bin/groovyconsole/audit.json').load();
         },
 
         loadAuditRecords: function (startDate, endDate) {

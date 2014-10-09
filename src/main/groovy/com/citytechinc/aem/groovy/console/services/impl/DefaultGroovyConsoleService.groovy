@@ -1,5 +1,4 @@
 package com.citytechinc.aem.groovy.console.services.impl
-
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
 import com.citytechinc.aem.groovy.console.services.ConfigurationService
@@ -10,7 +9,6 @@ import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import com.day.cq.commons.jcr.JcrConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
@@ -77,47 +75,53 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def binding = createBinding(request, stream)
         def configuration = createConfiguration()
         def shell = new GroovyShell(binding, configuration)
-
-        def result = ""
-        def output = ""
-        def exceptionStackTrace = ""
-        def runningTime = ""
-
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+
+        def response = null
 
         try {
             def script = shell.parse(scriptContent)
 
             addMetaClass(request, script)
 
-            runningTime = RUNNING_TIME {
+            def result = null
+
+            def runningTime = RUNNING_TIME {
                 result = script.run() as String
             }
 
             LOG.debug "script execution completed, running time = $runningTime"
 
-            output = stream.toString(CharEncoding.UTF_8)
+            def output = stream.toString(CharEncoding.UTF_8)
 
             saveOutput(session, output)
 
-            auditService.createAuditRecord(scriptContent, result, output, runningTime)
+            response = RunScriptResponse.forResult(result, output, runningTime)
+
+            if (configurationService.auditEnabled) {
+                auditService.createAuditRecord(scriptContent, response)
+            }
+
             emailService.sendEmail(session, scriptContent, result, output, runningTime)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            exceptionStackTrace = ExceptionUtils.getStackTrace(e)
+            response = RunScriptResponse.forException(e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            exceptionStackTrace = ExceptionUtils.getStackTrace(t)
+            response = RunScriptResponse.forException(t)
 
-            auditService.createAuditRecord(scriptContent, t)
-            emailService.sendEmail(session, scriptContent, exceptionStackTrace)
+            if (configurationService.auditEnabled) {
+                auditService.createAuditRecord(scriptContent, response)
+            }
+
+            emailService.sendEmail(session, scriptContent, response.exceptionStackTrace)
         } finally {
             stream.close()
         }
 
-        new RunScriptResponse(result, output, exceptionStackTrace, runningTime)
+        response
     }
 
     @Override

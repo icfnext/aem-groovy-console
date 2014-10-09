@@ -46,6 +46,10 @@ class DefaultConfigurationService implements ConfigurationService {
         description = "Enables /groovyconsole vanity path.  Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist).", boolValue = false)
     static final String VANITY_PATH_ENABLED = "vanity.path.enabled"
 
+    @Property(label = "Audit Enabled?", description = "Enables auditing to maintain history of script executions.",
+        boolValue = true)
+    static final String AUDIT_ENABLED = "audit.enabled"
+
     def emailEnabled
 
     def emailRecipients
@@ -57,6 +61,8 @@ class DefaultConfigurationService implements ConfigurationService {
     def allowedGroups
 
     def vanityPathEnabled
+
+    def auditEnabled
 
     @Override
     Set<String> getAllowedGroups() {
@@ -79,6 +85,11 @@ class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Override
+    boolean isAuditEnabled() {
+        auditEnabled
+    }
+
+    @Override
     boolean isCrxOutputEnabled() {
         crxOutputEnabled
     }
@@ -97,5 +108,6 @@ class DefaultConfigurationService implements ConfigurationService {
         crxOutputFolder = properties.get(CRX_OUTPUT_FOLDER) ?: DEFAULT_CRX_OUTPUT_FOLDER
         allowedGroups = (properties.get(ALLOWED_GROUPS) ?: []).findAll() as Set
         vanityPathEnabled = properties.get(VANITY_PATH_ENABLED) ?: false
+        auditEnabled = properties.get(AUDIT_ENABLED) ?: false
     }
 }

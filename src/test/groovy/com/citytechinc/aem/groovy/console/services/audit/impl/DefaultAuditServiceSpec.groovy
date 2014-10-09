@@ -1,5 +1,6 @@
 package com.citytechinc.aem.groovy.console.services.audit.impl
 
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -37,7 +38,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with result and output"() {
         when:
-        def auditRecord = auditService.createAuditRecord(script, result, output, runningTime)
+        def response = RunScriptResponse.forResult(result, output, runningTime)
+        def auditRecord = auditService.createAuditRecord(script, response)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -48,32 +50,33 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         auditRecord.output == output
 
         where:
-        script | result | output | runningTime
-        ""     | ""     | ""     | ""
+        script           | result   | output   | runningTime
+        "script content" | "result" | "output" | "running time"
     }
-
 
 
     def "create audit record for script with exception"() {
         when:
         def exception = new RuntimeException("")
-        def auditRecord = auditService.createAuditRecord("", exception)
+        def response = RunScriptResponse.forException(exception)
+        def auditRecord = auditService.createAuditRecord("script content", response)
 
         then:
         assertNodeExists(auditRecord.path)
 
         and:
-        auditRecord.script == ""
+        auditRecord.script == "script content"
         auditRecord.exceptionStackTrace == ExceptionUtils.getStackTrace(exception)
     }
 
     def "create multiple audit records"() {
         setup:
+        def response = RunScriptResponse.forResult("result", "output", "running time")
         def auditRecords = []
 
         when:
         (1..5).each {
-            auditRecords.add(auditService.createAuditRecord("", "", "", ""))
+            auditRecords.add(auditService.createAuditRecord("script content", response))
         }
 
         then:
@@ -82,7 +85,9 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "get audit records for valid date range"() {
         setup:
-        auditService.createAuditRecord("", "", "", "")
+        def response = RunScriptResponse.forResult("result", "output", "running time")
+
+        auditService.createAuditRecord("script content", response)
 
         def date = new Date()
         def startDate = (date + startDateOffset).toCalendar()

@@ -10,6 +10,8 @@ interface ConfigurationService {
 
     Set<String> getEmailRecipients()
 
+    boolean isAuditEnabled()
+
     boolean isCrxOutputEnabled()
 
     boolean isEmailEnabled()

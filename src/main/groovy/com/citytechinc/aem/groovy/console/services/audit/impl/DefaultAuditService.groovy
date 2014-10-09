@@ -1,9 +1,9 @@
 package com.citytechinc.aem.groovy.console.services.audit.impl
 
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
 import com.citytechinc.aem.groovy.console.services.audit.AuditService
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Deactivate
@@ -41,19 +41,32 @@ class DefaultAuditService implements AuditService {
     private Session session
 
     @Override
-    AuditRecord createAuditRecord(String script, String result, String output, String runningTime) {
-        createAuditRecordInternal(script, { auditRecordNode ->
-            auditRecordNode.set(AuditRecord.PROPERTY_RESULT, result)
-            auditRecordNode.set(AuditRecord.PROPERTY_OUTPUT, output)
-            auditRecordNode.set(AuditRecord.PROPERTY_RUNNING_TIME, runningTime)
-        })
-    }
+    AuditRecord createAuditRecord(String script, RunScriptResponse response) {
+        def auditRecord = null
 
-    @Override
-    AuditRecord createAuditRecord(String script, Throwable throwable) {
-        createAuditRecordInternal(script, { auditRecordNode ->
-            auditRecordNode.set(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, ExceptionUtils.getStackTrace(throwable))
-        })
+        try {
+            def auditRecordNode = addAuditRecordNode()
+
+            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, script)
+
+            if (response.exceptionStackTrace) {
+                auditRecordNode.set(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+            } else {
+                auditRecordNode.set(AuditRecord.PROPERTY_RESULT, response.result)
+                auditRecordNode.set(AuditRecord.PROPERTY_OUTPUT, response.output)
+                auditRecordNode.set(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
+            }
+
+            session.save()
+
+            auditRecord = new AuditRecord(auditRecordNode)
+
+            LOG.info "created audit record = {}", auditRecord
+        } catch (RepositoryException e) {
+            LOG.error "error creating audit record", e
+        }
+
+        auditRecord
     }
 
     @Override
@@ -142,28 +155,6 @@ class DefaultAuditService implements AuditService {
     @Deactivate
     void deactivate() {
         session?.logout()
-    }
-
-    private AuditRecord createAuditRecordInternal(String script, Closure closure) {
-        def auditRecord = null
-
-        try {
-            def auditRecordNode = addAuditRecordNode()
-
-            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, script)
-
-            closure(auditRecordNode)
-
-            session.save()
-
-            auditRecord = new AuditRecord(auditRecordNode)
-
-            LOG.info "created audit record = {}", auditRecord
-        } catch (RepositoryException e) {
-            LOG.error "error creating audit record", e
-        }
-
-        auditRecord
     }
 
     private Node addAuditRecordNode() {
