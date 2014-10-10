@@ -19,7 +19,7 @@
             </form>
 
             <div class="delete-all pull-right">
-                <button type="button" class="btn btn-warning">
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#delete-all-modal">
                     <span class="glyphicon glyphicon-trash" title="Delete All"></span> Delete All
                 </button>
             </div>
@@ -38,5 +38,19 @@
 
             </tbody>
         </table>
+
+        <div id="delete-all-modal" class="modal fade" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete all audit records?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-warning">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -49,8 +49,6 @@ GroovyConsole.Audit = function () {
 
                     if (data.exception.length) {
                         $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
-                    } else {
-                        $('td:eq(3)', row).html('<span class="label label-success">OK</span>');
                     }
                 }
             });
@@ -84,6 +82,21 @@ GroovyConsole.Audit = function () {
                     GroovyConsole.Audit.refreshAuditRecords();
                 }).fail(function () {
                     showAlert('.alert-danger', 'Error deleting audit record.');
+                });
+            });
+
+            $('#delete-all-modal .btn-warning').click(function () {
+                $.ajax({
+                    url: '/bin/groovyconsole/audit.json',
+                    type: 'DELETE'
+                }).done(function () {
+                    showAlert('.alert-success', 'Audit records deleted successfully.');
+
+                    GroovyConsole.Audit.refreshAuditRecords();
+                }).fail(function () {
+                    showAlert('.alert-danger', 'Error deleting audit records.');
+                }).always(function () {
+                    $('#delete-all-modal').modal('hide');
                 });
             });
         },
