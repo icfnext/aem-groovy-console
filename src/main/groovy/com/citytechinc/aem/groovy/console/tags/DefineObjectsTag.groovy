@@ -1,7 +1,7 @@
 package com.citytechinc.aem.groovy.console.tags
 
-import com.citytechinc.aem.groovy.console.services.ConfigurationService
-import com.citytechinc.aem.groovy.console.services.audit.AuditService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import com.citytechinc.aem.groovy.console.audit.AuditService
 import com.day.cq.wcm.api.WCMMode
 import groovy.json.JsonBuilder
 import org.apache.sling.api.SlingHttpServletRequest

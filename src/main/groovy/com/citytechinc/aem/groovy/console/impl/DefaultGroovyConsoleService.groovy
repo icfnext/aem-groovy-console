@@ -1,16 +1,19 @@
-package com.citytechinc.aem.groovy.console.services.impl
+package com.citytechinc.aem.groovy.console.impl
+
+import com.citytechinc.aem.groovy.console.audit.AuditService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import com.citytechinc.aem.groovy.console.notification.NotificationService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
-import com.citytechinc.aem.groovy.console.services.ConfigurationService
-import com.citytechinc.aem.groovy.console.services.EmailService
-import com.citytechinc.aem.groovy.console.services.ExtensionService
-import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
-import com.citytechinc.aem.groovy.console.services.audit.AuditService
+import com.citytechinc.aem.groovy.console.extension.ExtensionService
+import com.citytechinc.aem.groovy.console.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
+import org.apache.felix.scr.annotations.ReferenceCardinality
+import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
@@ -59,7 +62,11 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     ConfigurationService configurationService
 
     @Reference
-    EmailService emailService
+    NotificationService emailService
+
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
+        referenceInterface = NotificationService, policy = ReferencePolicy.DYNAMIC)
+    List<NotificationService> notificationServices = []
 
     @Reference
     AuditService auditService
@@ -98,11 +105,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             response = RunScriptResponse.forResult(result, output, runningTime)
 
-            if (configurationService.auditEnabled) {
-                auditService.createAuditRecord(scriptContent, response)
-            }
-
-            emailService.sendEmail(session, scriptContent, result, output, runningTime)
+            auditAndNotify(session, scriptContent, response)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
@@ -112,11 +115,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             response = RunScriptResponse.forException(t)
 
-            if (configurationService.auditEnabled) {
-                auditService.createAuditRecord(scriptContent, response)
-            }
-
-            emailService.sendEmail(session, scriptContent, response.exceptionStackTrace)
+            auditAndNotify(session, scriptContent, response)
         } finally {
             stream.close()
         }
@@ -145,7 +144,31 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         new SaveScriptResponse(fileName)
     }
 
-    def createConfiguration() {
+    void bindNotificationService(NotificationService notificationService) {
+        notificationServices.add(notificationService)
+
+        LOG.info "added notification service = {}", notificationService.class.name
+    }
+
+    void unbindNotificationServices(NotificationService notificationService) {
+        notificationServices.remove(notificationService)
+
+        LOG.info "removed notification service = {}", notificationService.class.name
+    }
+
+    // internals
+
+    private void auditAndNotify(Session session, String script, RunScriptResponse response) {
+        if (configurationService.auditEnabled) {
+            auditService.createAuditRecord(script, response)
+        }
+
+        notificationServices.each { notificationService ->
+            notificationService.notify(session, script, response)
+        }
+    }
+
+    private def createConfiguration() {
         def configuration = new CompilerConfiguration()
 
         withConfig(configuration) {
@@ -155,7 +178,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    def createBinding(SlingHttpServletRequest request, OutputStream stream) {
+    private def createBinding(SlingHttpServletRequest request, OutputStream stream) {
         def binding = extensionService.getBinding(request)
 
         binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
@@ -163,13 +186,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         binding
     }
 
-    void addMetaClass(SlingHttpServletRequest request, Script script) {
+    private void addMetaClass(SlingHttpServletRequest request, Script script) {
         extensionService.getScriptMetaClasses(request).each {
             script.metaClass(it)
         }
     }
 
-    def saveOutput(Session session, String output) {
+    private def saveOutput(Session session, String output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
 

@@ -53,3 +53,17 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
+
+code {
+    color: #333;
+    background-color: #e8e8e8;
+    border-color: #ddd;
+}
+
+td.open-record, td.delete-record {
+    cursor: pointer;
+}
+
+.delete-all {
+    padding-right: 15px;
+}

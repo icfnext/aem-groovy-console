@@ -36,6 +36,10 @@ AEM 6.0 no longer allows vanity paths for pages in /etc by default.  To enable a
 If you are running AEM with a context path, set the Maven property `aem.context.path` during installation.
 
     mvn install -P local -Daem.context.path=/context
+    
+## Extensions
+
+
 
 ## Notes
 

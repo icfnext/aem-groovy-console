@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services.impl
+package com.citytechinc.aem.groovy.console.extension.impl
 
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder

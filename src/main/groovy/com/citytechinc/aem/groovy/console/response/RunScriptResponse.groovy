@@ -1,6 +1,6 @@
 package com.citytechinc.aem.groovy.console.response
 
-import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
+import com.citytechinc.aem.groovy.console.audit.AuditRecord
 import groovy.transform.Immutable
 import org.apache.commons.lang3.exception.ExceptionUtils
 

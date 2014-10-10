@@ -1,8 +1,8 @@
-package com.citytechinc.aem.groovy.console.services.audit.impl
+package com.citytechinc.aem.groovy.console.audit.impl
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
-import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
-import com.citytechinc.aem.groovy.console.services.audit.AuditService
+import com.citytechinc.aem.groovy.console.audit.AuditRecord
+import com.citytechinc.aem.groovy.console.audit.AuditService
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
@@ -67,6 +67,38 @@ class DefaultAuditService implements AuditService {
         }
 
         auditRecord
+    }
+
+    @Override
+    void deleteAllAuditRecords() throws RepositoryException {
+        try {
+            def auditNode = session.getNode(AUDIT_PATH)
+
+            auditNode.nodes*.remove()
+
+            LOG.info "deleted all audit record nodes"
+
+            session.save()
+        } catch (RepositoryException e) {
+            LOG.error "error deleting audit records", e
+
+            throw e
+        }
+    }
+
+    @Override
+    void deleteAuditRecord(String relativePath) {
+        try {
+            session.getNode(AUDIT_PATH).getNode(relativePath).remove()
+
+            LOG.info "deleted audit record at relative path = {}", relativePath
+
+            session.save()
+        } catch (RepositoryException e) {
+            LOG.error "error deleting audit record", e
+
+            throw e
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.citytechinc.aem.groovy.console.servlets
 
-import com.citytechinc.aem.groovy.console.services.ConfigurationService
-import com.citytechinc.aem.groovy.console.services.GroovyConsoleService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import com.citytechinc.aem.groovy.console.GroovyConsoleService
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Deactivate

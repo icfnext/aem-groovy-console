@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services
+package com.citytechinc.aem.groovy.console.extension
 
 import com.citytechinc.aem.groovy.console.api.BindingExtensionProvider
 import com.citytechinc.aem.groovy.console.api.StarImportExtensionProvider

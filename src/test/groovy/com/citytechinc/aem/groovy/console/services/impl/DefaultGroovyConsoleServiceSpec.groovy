@@ -1,7 +1,11 @@
 package com.citytechinc.aem.groovy.console.services.impl
-import com.citytechinc.aem.groovy.console.services.ConfigurationService
-import com.citytechinc.aem.groovy.console.services.EmailService
-import com.citytechinc.aem.groovy.console.services.audit.AuditService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+
+import com.citytechinc.aem.groovy.console.audit.AuditService
+import com.citytechinc.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
+import com.citytechinc.aem.groovy.console.extension.impl.DefaultExtensionService
+import com.citytechinc.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
+import com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
@@ -11,9 +15,9 @@ import org.osgi.framework.BundleContext
 
 import javax.jcr.RepositoryException
 
-import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
-import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
-import static com.citytechinc.aem.groovy.console.services.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
+import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
+import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
+import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 

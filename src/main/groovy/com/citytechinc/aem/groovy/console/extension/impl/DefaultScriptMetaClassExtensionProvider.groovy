@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services.impl
+package com.citytechinc.aem.groovy.console.extension.impl
 
 import com.citytechinc.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.day.cq.replication.ReplicationActionType

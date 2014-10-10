@@ -2,6 +2,16 @@ GroovyConsole.Audit = function () {
 
     var table;
 
+    function showAlert(selector, text) {
+        var alert = $('#history ' + selector);
+
+        alert.text(text).fadeIn('fast');
+
+        setTimeout(function () {
+            alert.fadeOut('slow');
+        }, 3000);
+    }
+
     return {
         initialize: function () {
             table = $('.audit').DataTable({
@@ -11,16 +21,22 @@ GroovyConsole.Audit = function () {
                         className: 'open-record',
                         orderable: false,
                         data: null,
-                        defaultContent: '<span class="glyphicon glyphicon-eye-open"></span>'
+                        defaultContent: '<span class="glyphicon glyphicon-upload" title="Load Script"></span>'
                     },
                     { data: 'date' },
                     {
-                        data: 'script',
+                        data: 'scriptPreview',
                         orderable: false
                     },
                     {
                         data: 'exception',
                         orderable: false
+                    },
+                    {
+                        className: 'delete-record',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '<span class="glyphicon glyphicon-trash" title="Delete Record"></span>'
                     }
                 ],
                 order: [[1, 'desc']],
@@ -29,18 +45,21 @@ GroovyConsole.Audit = function () {
                 },
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
-                    $('td:eq(2)', row).html('<code>' + data.script + '</code>');
+                    $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code>');
 
                     if (data.exception.length) {
                         $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
+                    } else {
+                        $('td:eq(3)', row).html('<span class="label label-success">OK</span>');
                     }
                 }
             });
 
-            $('.audit tbody').on('click', 'td.open-record', function () {
+            var tableBody = $('.audit tbody');
+
+            tableBody.on('click', 'td.open-record', function () {
                 var tr = $(this).closest('tr');
-                var row = table.row(tr);
-                var script = row.data().relativePath;
+                var script = table.row(tr).data().relativePath;
 
                 $.getJSON('/bin/groovyconsole/audit.json?script=' + script, function (response) {
                     editor.getSession().setValue(response.script);
@@ -51,10 +70,26 @@ GroovyConsole.Audit = function () {
                     $('html, body').animate({ scrollTop: 0 });
                 });
             });
+
+            tableBody.on('click', 'td.delete-record', function () {
+                var tr = $(this).closest('tr');
+                var script = table.row(tr).data().relativePath;
+
+                $.ajax({
+                    url: '/bin/groovyconsole/audit.json?script=' + script,
+                    type: 'DELETE'
+                }).done(function () {
+                    showAlert('.alert-success', 'Audit record deleted successfully.');
+
+                    GroovyConsole.Audit.refreshAuditRecords();
+                }).fail(function () {
+                    showAlert('.alert-danger', 'Error deleting audit record.');
+                });
+            });
         },
 
         refreshAuditRecords: function () {
-            table.ajax.url('/bin/groovyconsole/audit.json').load();
+            table.ajax.reload();
         },
 
         loadAuditRecords: function (startDate, endDate) {

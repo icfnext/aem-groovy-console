@@ -1,7 +1,7 @@
-package com.citytechinc.aem.groovy.console.services.audit.impl
+package com.citytechinc.aem.groovy.console.audit.impl
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
-import com.citytechinc.aem.groovy.console.services.audit.AuditRecord
+import com.citytechinc.aem.groovy.console.audit.AuditRecord
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.sling.jcr.api.SlingRepository

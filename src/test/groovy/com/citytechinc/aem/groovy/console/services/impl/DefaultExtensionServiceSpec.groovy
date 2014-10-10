@@ -3,6 +3,7 @@ package com.citytechinc.aem.groovy.console.services.impl
 import com.citytechinc.aem.groovy.console.api.BindingExtensionProvider
 import com.citytechinc.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.citytechinc.aem.groovy.console.api.StarImportExtensionProvider
+import com.citytechinc.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
 

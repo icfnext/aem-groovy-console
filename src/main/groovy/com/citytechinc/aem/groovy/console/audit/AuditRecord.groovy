@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services.audit
+package com.citytechinc.aem.groovy.console.audit
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.ToString

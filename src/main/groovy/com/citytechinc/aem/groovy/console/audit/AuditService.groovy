@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services.audit
+package com.citytechinc.aem.groovy.console.audit
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 
@@ -13,6 +13,21 @@ interface AuditService {
      * @param response response containing execution result or exception
      */
     AuditRecord createAuditRecord(String script, RunScriptResponse response)
+
+    /**
+     * Delete all audit records.
+     *
+     * @throws RepositoryException if an error occurs while deleting audit nodes
+     */
+    void deleteAllAuditRecords() throws RepositoryException
+
+    /**
+     * Delete an audit record.
+     *
+     * @param relativePath relative path to audit record from parent audit node
+     * @throws RepositoryException if an error occurs while deleting the audit record node
+     */
+    void deleteAuditRecord(String relativePath) throws RepositoryException
 
     /**
      * Get all audit records.

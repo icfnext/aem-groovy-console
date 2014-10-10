@@ -1,7 +1,9 @@
-package com.citytechinc.aem.groovy.console.services.impl
+package com.citytechinc.aem.groovy.console.notification.impl
 
-import com.citytechinc.aem.groovy.console.services.ConfigurationService
-import com.citytechinc.aem.groovy.console.services.EmailService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import com.citytechinc.aem.groovy.console.notification.NotificationService
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+
 import com.day.cq.mailer.MailService
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
@@ -14,10 +16,10 @@ import org.apache.felix.scr.annotations.Service
 
 import javax.jcr.Session
 
-@Service(EmailService)
+@Service(NotificationService)
 @Component
 @Slf4j("LOG")
-class DefaultEmailService implements EmailService {
+class EmailNotificationService implements NotificationService {
 
     static final def SUBJECT = "Groovy Console Script Execution Result"
 
@@ -34,20 +36,14 @@ class DefaultEmailService implements EmailService {
     MailService mailService
 
     @Override
-    void sendEmail(Session session, String script, String result, String output, String runningTime) {
-        sendEmailInternal(createBinding(session, script, result, output, runningTime), TEMPLATE_PATH_SUCCESS)
-    }
-
-    @Override
-    void sendEmail(Session session, String script, String stackTrace) {
-        sendEmailInternal(createBinding(session, script, stackTrace), TEMPLATE_PATH_FAIL)
-    }
-
-    private def sendEmailInternal(Map binding, String templatePath) {
+    void notify(Session session, String script, RunScriptResponse response) {
         if (configurationService.emailEnabled && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
+                def binding = createBinding(session, script, response)
+                def templatePath = response.exceptionStackTrace ? TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS
+
                 def email = createEmail(recipients, binding, templatePath)
 
                 LOG.debug "sending email, recipients = {}", recipients
@@ -81,29 +77,23 @@ class DefaultEmailService implements EmailService {
         email
     }
 
-    private static def createBinding(Session session, String script, String output, String result, String runningTime) {
-        def binding = createBinding(session, script)
+    private static def createBinding(Session session, String script, RunScriptResponse response) {
+        def binding = [
+            username : session.userID,
+            timestamp: new Date().format(FORMAT_TIMESTAMP),
+            script   : script
+        ]
 
-        binding.putAll([
-            result     : result,
-            output     : output,
-            runningTime: runningTime
-        ])
+        if (response.exceptionStackTrace) {
+            binding.stackTrace = response.exceptionStackTrace
+        } else {
+            binding.putAll([
+                result     : response.result,
+                output     : response.output,
+                runningTime: response.runningTime
+            ])
+        }
 
         binding
-    }
-
-    private static def createBinding(Session session, String script, String stackTrace) {
-        def binding = createBinding(session, script)
-
-        binding.stackTrace = stackTrace
-
-        binding
-    }
-
-    private static def createBinding(Session session, String script) {
-        [username : session.userID,
-         timestamp: new Date().format(FORMAT_TIMESTAMP),
-         script   : script]
     }
 }

@@ -1,4 +1,4 @@
-package com.citytechinc.aem.groovy.console.services
+package com.citytechinc.aem.groovy.console
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
