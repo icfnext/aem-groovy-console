@@ -1,6 +1,7 @@
 package com.citytechinc.aem.groovy.console.extension.impl
 
 import com.citytechinc.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.citytechinc.aem.groovy.console.table.Table
 import com.day.cq.replication.ReplicationActionType
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
@@ -139,6 +140,16 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
             delegate.createQuery { Map predicates ->
                 queryBuilder.createQuery(PredicateGroup.create(predicates), session)
+            }
+
+            delegate.table = { Closure closure ->
+                def table = new Table()
+
+                closure.delegate = table
+                closure.resolveStrategy = DELEGATE_FIRST
+                closure()
+
+                table
             }
         }
 

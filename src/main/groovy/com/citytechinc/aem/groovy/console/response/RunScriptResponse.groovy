@@ -1,6 +1,8 @@
 package com.citytechinc.aem.groovy.console.response
 
 import com.citytechinc.aem.groovy.console.audit.AuditRecord
+import com.citytechinc.aem.groovy.console.table.Table
+import groovy.json.JsonBuilder
 import groovy.transform.Immutable
 import org.apache.commons.lang3.exception.ExceptionUtils
 
@@ -9,8 +11,16 @@ import javax.jcr.Node
 @Immutable
 class RunScriptResponse {
 
-    static RunScriptResponse forResult(String result, String output, String runningTime) {
-        new RunScriptResponse(result, output, "", runningTime)
+    static RunScriptResponse forResult(Object result, String output, String runningTime) {
+        def resultString
+
+        if (result instanceof Table) {
+            resultString = new JsonBuilder([table: result]).toString()
+        } else {
+            resultString = result as String
+        }
+
+        new RunScriptResponse(resultString, output, "", runningTime)
     }
 
     static RunScriptResponse forException(Throwable throwable) {

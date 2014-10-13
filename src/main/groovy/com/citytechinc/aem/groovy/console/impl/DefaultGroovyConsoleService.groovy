@@ -1,12 +1,12 @@
 package com.citytechinc.aem.groovy.console.impl
 
+import com.citytechinc.aem.groovy.console.GroovyConsoleService
 import com.citytechinc.aem.groovy.console.audit.AuditService
 import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import com.citytechinc.aem.groovy.console.extension.ExtensionService
 import com.citytechinc.aem.groovy.console.notification.NotificationService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
-import com.citytechinc.aem.groovy.console.extension.ExtensionService
-import com.citytechinc.aem.groovy.console.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
@@ -92,7 +92,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             def result = null
 
             def runningTime = RUNNING_TIME {
-                result = script.run() as String
+                result = script.run()
             }
 
             LOG.debug "script execution completed, running time = $runningTime"

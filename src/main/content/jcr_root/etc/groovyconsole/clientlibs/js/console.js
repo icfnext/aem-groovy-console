@@ -120,6 +120,8 @@ var GroovyConsole = function () {
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script
                     }).done(function (data) {
+                        // check for table result
+
                         GroovyConsole.showAlerts(data);
                     }).fail(function (jqXHR) {
                         if (jqXHR.status == 403) {
