@@ -40,8 +40,18 @@ GroovyConsole.Audit = function () {
                     }
                 ],
                 order: [[1, 'desc']],
+                /*
                 oLanguage: {
                     sSearch: 'Script Contains: '
+                },
+                */
+                language: {
+                    emptyTable: 'No audit records found.',
+                    search: 'Script Contains: ',
+                    zeroRecords: 'No matching audit records found.',
+                    info: 'Showing _START_ to _END_ of _TOTAL_ records',
+                    infoEmpty: '',
+                    infoFiltered: '(filtered from _MAX_ total records)'
                 },
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
@@ -102,7 +112,7 @@ GroovyConsole.Audit = function () {
         },
 
         refreshAuditRecords: function () {
-            table.ajax.reload();
+            table.ajax.url('/bin/groovyconsole/audit.json').load();
         },
 
         loadAuditRecords: function (startDate, endDate) {
@@ -112,13 +122,21 @@ GroovyConsole.Audit = function () {
 }();
 
 $(function () {
-    $('#date-range').daterangepicker({
+    var dateRange = $('#date-range');
+
+    dateRange.daterangepicker({
         maxDate: moment()
     }).on('apply.daterangepicker', function(e, picker) {
         var startDate = picker.startDate.format('YYYY-MM-DD');
         var endDate = picker.endDate.format('YYYY-MM-DD');
 
         GroovyConsole.Audit.loadAuditRecords(startDate, endDate);
+    });
+
+    $('#date-range-clear').click(function () {
+        dateRange.val('');
+
+        GroovyConsole.Audit.refreshAuditRecords();
     });
 
     GroovyConsole.Audit.initialize();

@@ -1,4 +1,5 @@
 package com.citytechinc.aem.groovy.console.services.impl
+
 import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
 
 import com.citytechinc.aem.groovy.console.audit.AuditService
@@ -126,7 +127,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
         with(consoleService) {
             configurationService = Mock(ConfigurationService)
-            emailService = Mock(EmailService)
             auditService = Mock(AuditService)
         }
 

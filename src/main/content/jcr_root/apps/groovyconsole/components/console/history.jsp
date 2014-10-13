@@ -13,16 +13,27 @@
                 <div class="alert alert-danger" role="alert" style="display: none;"></div>
             </div>
 
-            <form class="col-xs-3" role="form">
-                <label for="date-range">Date Range</label>
-                <input type="text" id="date-range" name="date-range" class="form-control">
-            </form>
+            <form role="form">
+                <div class="form-group">
+                    <label class="sr-only" for="date-range">Date Range</label>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="date-range" name="date-range" placeholder="Date Range">
+                            <span class="input-group-btn">
+                                <button id="date-range-clear" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="delete-all pull-right">
-                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#delete-all-modal">
-                    <span class="glyphicon glyphicon-trash" title="Delete All"></span> Delete All
-                </button>
-            </div>
+                <div class="pull-right delete-all">
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#delete-all-modal">
+                        <span class="glyphicon glyphicon-trash" title="Delete All"></span> Delete All
+                    </button>
+                </div>
+            </form>
         </div>
         <table class="table table-striped audit">
             <thead>

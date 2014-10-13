@@ -61,9 +61,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     ConfigurationService configurationService
 
-    @Reference
-    NotificationService emailService
-
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         referenceInterface = NotificationService, policy = ReferencePolicy.DYNAMIC)
     List<NotificationService> notificationServices = []
