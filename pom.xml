@@ -330,6 +330,10 @@
             <artifactId>cq-commons</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.day.commons</groupId>
+            <artifactId>day-commons-text</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.day.cq</groupId>
             <artifactId>cq-search</artifactId>
         </dependency>

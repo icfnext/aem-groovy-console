@@ -1,8 +1,9 @@
 package com.citytechinc.aem.groovy.console.audit.impl
 
-import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.audit.AuditRecord
 import com.citytechinc.aem.groovy.console.audit.AuditService
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+import com.day.cq.commons.jcr.JcrUtil
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
@@ -21,6 +22,7 @@ import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstant
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT
 import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
+import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED
 
 @Component(immediate = true)
 @Service(AuditService)
@@ -198,9 +200,7 @@ class DefaultAuditService implements AuditService {
         def monthNode = yearNode.getOrAddNode(date.format(DATE_FORMAT_MONTH)) as Node
         def dayNode = monthNode.getOrAddNode(date.format(DATE_FORMAT_DAY)) as Node
 
-        def index = dayNode.nodes.size() as String
-
-        def auditRecordNode = dayNode.addNode(AUDIT_RECORD_NODE_PREFIX + (index + 1))
+        def auditRecordNode = JcrUtil.createUniqueNode(dayNode, AUDIT_RECORD_NODE_PREFIX, NT_UNSTRUCTURED, session)
 
         auditRecordNode.addMixin(MIX_CREATED)
 
