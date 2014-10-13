@@ -2,16 +2,6 @@ GroovyConsole.Audit = function () {
 
     var table;
 
-    function showAlert(selector, text) {
-        var alert = $('#history ' + selector);
-
-        alert.text(text).fadeIn('fast');
-
-        setTimeout(function () {
-            alert.fadeOut('slow');
-        }, 3000);
-    }
-
     return {
         initialize: function () {
             table = $('.audit').DataTable({
@@ -40,11 +30,6 @@ GroovyConsole.Audit = function () {
                     }
                 ],
                 order: [[1, 'desc']],
-                /*
-                oLanguage: {
-                    sSearch: 'Script Contains: '
-                },
-                */
                 language: {
                     emptyTable: 'No audit records found.',
                     search: 'Script Contains: ',
@@ -87,11 +72,10 @@ GroovyConsole.Audit = function () {
                     url: '/bin/groovyconsole/audit.json?script=' + script,
                     type: 'DELETE'
                 }).done(function () {
-                    showAlert('.alert-success', 'Audit record deleted successfully.');
-
+                    GroovyConsole.Audit.showAlert('.alert-success', 'Audit record deleted successfully.');
                     GroovyConsole.Audit.refreshAuditRecords();
                 }).fail(function () {
-                    showAlert('.alert-danger', 'Error deleting audit record.');
+                    GroovyConsole.Audit.showAlert('.alert-danger', 'Error deleting audit record.');
                 });
             });
 
@@ -100,14 +84,32 @@ GroovyConsole.Audit = function () {
                     url: '/bin/groovyconsole/audit.json',
                     type: 'DELETE'
                 }).done(function () {
-                    showAlert('.alert-success', 'Audit records deleted successfully.');
-
+                    GroovyConsole.Audit.showAlert('.alert-success', 'Audit records deleted successfully.');
                     GroovyConsole.Audit.refreshAuditRecords();
                 }).fail(function () {
-                    showAlert('.alert-danger', 'Error deleting audit records.');
+                    GroovyConsole.Audit.showAlert('.alert-danger', 'Error deleting audit records.');
                 }).always(function () {
                     $('#delete-all-modal').modal('hide');
                 });
+            });
+        },
+
+        initializeDatePicker: function () {
+            var dateRange = $('#date-range');
+
+            dateRange.daterangepicker({
+                maxDate: moment()
+            }).on('apply.daterangepicker', function(e, picker) {
+                var startDate = picker.startDate.format('YYYY-MM-DD');
+                var endDate = picker.endDate.format('YYYY-MM-DD');
+
+                GroovyConsole.Audit.loadAuditRecords(startDate, endDate);
+            });
+
+            $('#date-range-clear').click(function () {
+                dateRange.val('');
+
+                GroovyConsole.Audit.refreshAuditRecords();
             });
         },
 
@@ -117,27 +119,21 @@ GroovyConsole.Audit = function () {
 
         loadAuditRecords: function (startDate, endDate) {
             table.ajax.url('/bin/groovyconsole/audit.json?startDate=' + startDate + '&endDate=' + endDate).load();
+        },
+
+        showAlert: function (selector, text) {
+            var alert = $('#history ' + selector);
+
+            alert.text(text).fadeIn('fast');
+
+            setTimeout(function () {
+                alert.fadeOut('slow');
+            }, 3000);
         }
     };
 }();
 
 $(function () {
-    var dateRange = $('#date-range');
-
-    dateRange.daterangepicker({
-        maxDate: moment()
-    }).on('apply.daterangepicker', function(e, picker) {
-        var startDate = picker.startDate.format('YYYY-MM-DD');
-        var endDate = picker.endDate.format('YYYY-MM-DD');
-
-        GroovyConsole.Audit.loadAuditRecords(startDate, endDate);
-    });
-
-    $('#date-range-clear').click(function () {
-        dateRange.val('');
-
-        GroovyConsole.Audit.refreshAuditRecords();
-    });
-
     GroovyConsole.Audit.initialize();
+    GroovyConsole.Audit.initializeDatePicker();
 });

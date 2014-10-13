@@ -11,7 +11,7 @@
                 <button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
                     Themes <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" id="dropdown-themes" role="menu">
+                <ul class="dropdown-menu scrollable-menu" id="dropdown-themes" role="menu">
                     <li><a href="#" data-target="ace/theme/ambiance">Ambiance</a></li>
                     <li><a href="#" data-target="ace/theme/chaos">Chaos</a></li>
                     <li><a href="#" data-target="ace/theme/chrome">Chrome</a></li>

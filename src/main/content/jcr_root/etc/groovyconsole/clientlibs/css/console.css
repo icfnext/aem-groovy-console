@@ -68,3 +68,8 @@ td.open-record, td.delete-record {
     padding-right: 15px;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 500px;
+    overflow-x: hidden;
+}

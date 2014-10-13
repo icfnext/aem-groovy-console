@@ -43,10 +43,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     static final String TIME_ZONE_RUNNING_TIME = "GMT"
 
-    static final String FORMAT_DATE_FOLDER = "yyyy/MM/dd"
-
-    static final String FORMAT_DATE_FILE = "hhmmss"
-
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
 
@@ -73,10 +69,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request) {
-        def session = request.resourceResolver.adaptTo(Session)
-
         def stream = new ByteArrayOutputStream()
-        def binding = createBinding(request, stream)
+
+        def binding = extensionService.getBinding(request)
+
+        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+
+        def session = request.resourceResolver.adaptTo(Session)
         def configuration = createConfiguration()
         def shell = new GroovyShell(binding, configuration)
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
@@ -86,7 +85,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         try {
             def script = shell.parse(scriptContent)
 
-            addMetaClass(request, script)
+            extensionService.getScriptMetaClasses(request).each {
+                script.metaClass(it)
+            }
 
             def result = null
 
@@ -96,19 +97,15 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug "script execution completed, running time = $runningTime"
 
-            def output = stream.toString(CharEncoding.UTF_8)
-
-            saveOutput(session, output)
-
-            response = RunScriptResponse.forResult(result, output, runningTime)
+            response = RunScriptResponse.forResult(result, stream.toString(CharEncoding.UTF_8), runningTime)
 
             auditAndNotify(session, scriptContent, response)
         } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
+            LOG.error "script compilation error", e
 
             response = RunScriptResponse.forException(e)
         } catch (Throwable t) {
-            LOG.error("error running script", t)
+            LOG.error "error running script", t
 
             response = RunScriptResponse.forException(t)
 
@@ -156,7 +153,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     // internals
 
     private void auditAndNotify(Session session, String script, RunScriptResponse response) {
-        if (configurationService.auditEnabled) {
+        if (!configurationService.auditDisabled) {
             auditService.createAuditRecord(script, response)
         }
 
@@ -171,41 +168,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         withConfig(configuration) {
             imports {
                 star extensionService.starImports as String[]
-            }
-        }
-    }
-
-    private def createBinding(SlingHttpServletRequest request, OutputStream stream) {
-        def binding = extensionService.getBinding(request)
-
-        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
-
-        binding
-    }
-
-    private void addMetaClass(SlingHttpServletRequest request, Script script) {
-        extensionService.getScriptMetaClasses(request).each {
-            script.metaClass(it)
-        }
-    }
-
-    private def saveOutput(Session session, String output) {
-        if (configurationService.crxOutputEnabled) {
-            def date = new Date()
-
-            def folderPath = "${configurationService.crxOutputFolder}/${date.format(FORMAT_DATE_FOLDER)}"
-            def folderNode = session.rootNode
-
-            folderPath.tokenize("/").each { name ->
-                folderNode = folderNode.getOrAddNode(name, JcrConstants.NT_FOLDER)
-            }
-
-            def fileName = date.format(FORMAT_DATE_FILE)
-
-            new ByteArrayInputStream(output.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-                session.valueFactory.createBinary(stream).withBinary { Binary binary ->
-                    saveFile(session, folderNode, fileName, date, "text/plain", binary)
-                }
             }
         }
     }

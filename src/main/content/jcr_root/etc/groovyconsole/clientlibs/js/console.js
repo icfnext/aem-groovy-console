@@ -1,23 +1,5 @@
 var GroovyConsole = function () {
 
-    function showSuccess(message) {
-        $('#message-success .message').text(message);
-        $('#message-success').fadeIn('fast');
-
-        setTimeout(function () {
-            $('#message-success').fadeOut('slow');
-        }, 3000);
-    }
-
-    function showError(message) {
-        $('#message-error .message').text(message);
-        $('#message-error').fadeIn('fast');
-
-        setTimeout(function () {
-            $('#message-error').fadeOut('slow');
-        }, 3000);
-    }
-
     return {
         initializeEditor: function () {
             window.editor = ace.edit('editor');
@@ -32,6 +14,7 @@ var GroovyConsole = function () {
             editorDiv.resizable({
                 resize: function () {
                     editor.resize(true);
+
                     GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
                 },
                 handles: 's'
@@ -98,7 +81,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                GroovyConsole.disableToolbar();
+                GroovyConsole.disableButtons();
                 GroovyConsole.showOpenDialog();
             });
 
@@ -110,10 +93,10 @@ var GroovyConsole = function () {
                 var script = editor.getSession().getValue();
 
                 if (script.length) {
-                    GroovyConsole.disableToolbar();
+                    GroovyConsole.disableButtons();
                     GroovyConsole.showSaveDialog();
                 } else {
-                    showError('Script is empty.');
+                    GroovyConsole.showError('Script is empty.');
                 }
             });
 
@@ -129,7 +112,8 @@ var GroovyConsole = function () {
                 if (script.length) {
                     editor.setReadOnly(true);
 
-                    GroovyConsole.disableToolbar();
+                    GroovyConsole.showLoader();
+                    GroovyConsole.disableButtons();
 
                     $('#run-script-text').text('Running...');
 
@@ -139,32 +123,23 @@ var GroovyConsole = function () {
                         GroovyConsole.showAlerts(data);
                     }).fail(function (jqXHR) {
                         if (jqXHR.status == 403) {
-                            showError('You do not have permission to run scripts in the Groovy Console.');
+                            GroovyConsole.showError('You do not have permission to run scripts in the Groovy Console.');
                         } else {
-                            showError('Script execution failed.  Check error.log file.');
+                            GroovyConsole.showError('Script execution failed.  Check error.log file.');
                         }
                     }).always(function () {
                         editor.setReadOnly(false);
 
-                        GroovyConsole.enableToolbar();
+                        GroovyConsole.hideLoader();
+                        GroovyConsole.enableButtons();
                         GroovyConsole.Audit.refreshAuditRecords();
 
                         $('#run-script-text').text('Run Script');
                     });
                 } else {
-                    showError('Script is empty.');
+                    GroovyConsole.showError('Script is empty.');
                 }
             });
-        },
-
-        disableToolbar: function () {
-            $('.btn-toolbar .btn').addClass('disabled');
-            $('#loader').css('visibility', 'visible');
-        },
-
-        enableToolbar: function () {
-            $('#loader').css('visibility', 'hidden');
-            $('.btn-toolbar .btn').removeClass('disabled');
         },
 
         reset: function () {
@@ -204,6 +179,40 @@ var GroovyConsole = function () {
             }
         },
 
+        disableButtons: function () {
+            $('.btn').addClass('disabled');
+        },
+
+        enableButtons: function () {
+            $('.btn').removeClass('disabled');
+        },
+
+        showLoader: function () {
+            $('#loader').css('visibility', 'visible');
+        },
+
+        hideLoader: function () {
+            $('#loader').css('visibility', 'hidden');
+        },
+
+        showSuccess: function (message) {
+            $('#message-success .message').text(message);
+            $('#message-success').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-success').fadeOut('slow');
+            }, 3000);
+        },
+
+        showError: function (message) {
+            $('#message-error .message').text(message);
+            $('#message-error').fadeIn('fast');
+
+            setTimeout(function () {
+                $('#message-error').fadeOut('slow');
+            }, 3000);
+        },
+
         showOpenDialog: function () {
             var dialog = CQ.WCM.getDialog('/apps/groovyconsole/components/console/opendialog');
 
@@ -220,13 +229,13 @@ var GroovyConsole = function () {
             GroovyConsole.reset();
 
             $.get(CQ.shared.HTTP.getContextPath() + '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
-                showSuccess('Script loaded successfully.');
+                GroovyConsole.showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
             }).fail(function () {
-                showError('Load failed, check error.log file.');
+                GroovyConsole.showError('Load failed, check error.log file.');
             }).always(function () {
-                GroovyConsole.enableToolbar();
+                GroovyConsole.enableButtons();
             });
         },
 
@@ -236,12 +245,12 @@ var GroovyConsole = function () {
             $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/save', {
                 fileName: fileName,
                 script: editor.getSession().getValue()
-            }).done(function (data) {
-                showSuccess('Script saved successfully.');
+            }).done(function () {
+                GroovyConsole.showSuccess('Script saved successfully.');
             }).fail(function () {
-                showError('Save failed, check error.log file.');
+                GroovyConsole.showError('Save failed, check error.log file.');
             }).always(function () {
-                GroovyConsole.enableToolbar();
+                GroovyConsole.enableButtons();
             });
         },
 

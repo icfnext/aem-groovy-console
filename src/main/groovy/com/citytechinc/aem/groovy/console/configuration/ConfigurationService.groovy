@@ -6,13 +6,9 @@ interface ConfigurationService {
 
     String getConsoleHref()
 
-    String getCrxOutputFolder()
-
     Set<String> getEmailRecipients()
 
-    boolean isAuditEnabled()
-
-    boolean isCrxOutputEnabled()
+    boolean isAuditDisabled()
 
     boolean isEmailEnabled()
 }
