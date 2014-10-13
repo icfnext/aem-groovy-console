@@ -200,7 +200,7 @@ class DefaultAuditService implements AuditService {
 
         def index = dayNode.nodes.size() as String
 
-        def auditRecordNode = dayNode.addNode(AUDIT_RECORD_NODE_PREFIX + index)
+        def auditRecordNode = dayNode.addNode(AUDIT_RECORD_NODE_PREFIX + (index + 1))
 
         auditRecordNode.addMixin(MIX_CREATED)
 

@@ -22,13 +22,13 @@ import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 class ScriptPostServlet extends AbstractJsonResponseServlet {
 
     @Reference
-    protected ConfigurationService configurationService
+    ConfigurationService configurationService
 
     @Reference
-    protected GroovyConsoleService consoleService
+    GroovyConsoleService consoleService
 
     @Reference
-    protected ResourceResolverFactory resourceResolverFactory
+    ResourceResolverFactory resourceResolverFactory
 
     private ResourceResolver resourceResolver
 

@@ -42,12 +42,6 @@ class AuditServlet extends AbstractJsonResponseServlet {
     }
 
     @Override
-    protected void doPost(SlingHttpServletRequest request,
-        SlingHttpServletResponse response) throws ServletException, IOException {
-        LOG.info "parameters = {}", request.requestParameterMap
-    }
-
-    @Override
     protected void doDelete(SlingHttpServletRequest request,
         SlingHttpServletResponse response) throws ServletException, IOException {
         def script = request.getParameter(PARAMETER_SCRIPT)

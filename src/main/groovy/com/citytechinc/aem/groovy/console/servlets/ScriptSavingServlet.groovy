@@ -12,7 +12,7 @@ import javax.servlet.ServletException
 class ScriptSavingServlet extends AbstractJsonResponseServlet {
 
     @Reference
-    protected GroovyConsoleService consoleService
+    GroovyConsoleService consoleService
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws

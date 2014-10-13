@@ -37,7 +37,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         }
 
         serviceReferences.each { serviceReference ->
-            serviceReference.getProperty(AdapterFactory.ADAPTER_CLASSES).each { adapterClassName ->
+            serviceReference.getProperty(AdapterFactory.ADAPTER_CLASSES).each { String adapterClassName ->
                 adapters[adapterClassName] = getAdapterDeclaration(adapterClassName)
             }
         }
@@ -64,11 +64,11 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
             }
         }
 
-        allServices.each { className, implementationClassNames ->
+        allServices.each { String className, implementationClassNames ->
             services[className] = getServiceDeclaration(className, null)
 
             if (implementationClassNames.size() > 1) {
-                implementationClassNames.each { implementationClassName ->
+                implementationClassNames.each { String implementationClassName ->
                     services[implementationClassName] = getServiceDeclaration(className, implementationClassName)
                 }
             }
@@ -77,14 +77,14 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         services
     }
 
-    private static def getAdapterDeclaration(className) {
+    private static def getAdapterDeclaration(String className) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
 
         "def $variableName = resourceResolver.adaptTo($className)"
     }
 
-    private static def getServiceDeclaration(className, implementationClassName) {
+    private static def getServiceDeclaration(String className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration
