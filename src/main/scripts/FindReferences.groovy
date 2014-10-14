@@ -5,11 +5,15 @@ def referenceSearch = new ReferenceSearch()
 referenceSearch.setSearchRoot("content/geometrixx")
 
 def map = referenceSearch.search(resourceResolver, "Geometrixx")
+def data = []
 
-map.each { k, v ->
-    println "page : $k"
-
-    v.properties.each {
-        println "reference : ${it}"
+map.each { path, info ->
+    info.properties.each { ref ->
+        data.add([path, ref])
     }
+}
+
+table {
+    columns("Page", "Reference")
+    rows(data)
 }
