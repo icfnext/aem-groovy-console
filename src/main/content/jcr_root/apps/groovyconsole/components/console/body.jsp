@@ -23,6 +23,15 @@
             <pre></pre>
         </div>
 
+        <div id="result-table" class="alert alert-success" role="alert" style="display: none;">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
         <div id="output" class="alert alert-success" role="alert" style="display: none;">
             <h6>Output</h6>
             <pre></pre>

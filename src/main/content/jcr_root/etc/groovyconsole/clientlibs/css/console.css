@@ -73,3 +73,11 @@ td.open-record, td.delete-record {
     max-height: 500px;
     overflow-x: hidden;
 }
+
+.form-group {
+    margin-bottom: 0;
+}
+
+#result-table table {
+    background-color: #f5f5f5;
+}

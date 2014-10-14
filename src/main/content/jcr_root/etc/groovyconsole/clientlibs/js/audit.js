@@ -58,7 +58,7 @@ GroovyConsole.Audit = function () {
                     editor.getSession().setValue(response.script);
 
                     GroovyConsole.reset();
-                    GroovyConsole.showAlerts(response);
+                    GroovyConsole.showResult(response);
 
                     $('html, body').animate({ scrollTop: 0 });
                 });

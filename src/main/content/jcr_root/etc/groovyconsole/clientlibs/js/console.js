@@ -1,5 +1,7 @@
 var GroovyConsole = function () {
 
+    var resultDataTable;
+
     return {
         initializeEditor: function () {
             window.editor = ace.edit('editor');
@@ -28,7 +30,7 @@ var GroovyConsole = function () {
                 // script loaded from audit
                 editor.getSession().setValue(auditRecord.script);
 
-                GroovyConsole.showAlerts(auditRecord);
+                GroovyConsole.showResult(auditRecord);
             } else {
                 editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
             }
@@ -119,10 +121,8 @@ var GroovyConsole = function () {
 
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script
-                    }).done(function (data) {
-                        // check for table result
-
-                        GroovyConsole.showAlerts(data);
+                    }).done(function (response) {
+                        GroovyConsole.showResult(response);
                     }).fail(function (jqXHR) {
                         if (jqXHR.status == 403) {
                             GroovyConsole.showError('You do not have permission to run scripts in the Groovy Console.');
@@ -151,11 +151,19 @@ var GroovyConsole = function () {
 
             // clear results
             $('#stacktrace').text('').fadeOut('fast');
-            $('#result,#output,#running-time').fadeOut('fast');
+            $('#result,#result-table,#output,#running-time').fadeOut('fast');
             $('#result pre,#output pre,#running-time pre').text('');
+
+            var resultTableData = $('#result-table').find('th');
+
+            // destroy datatable and remove columns if it exists
+            if (resultDataTable && resultTableData.length) {
+                resultTableData.remove();
+                resultDataTable.destroy();
+            }
         },
 
-        showAlerts: function (response) {
+        showResult: function (response) {
             var result = response.result;
             var output = response.output;
             var exceptionStackTrace = response.exceptionStackTrace;
@@ -164,7 +172,7 @@ var GroovyConsole = function () {
             if (exceptionStackTrace && exceptionStackTrace.length) {
                 $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
             } else {
-                if (result && result.length) {
+                if (!GroovyConsole.showTable(response) && result && result.length) {
                     $('#result pre').text(result);
                     $('#result').fadeIn('fast');
                 }
@@ -178,6 +186,47 @@ var GroovyConsole = function () {
                     $('#running-time pre').text(runningTime);
                     $('#running-time').fadeIn('fast');
                 }
+            }
+        },
+
+        showTable: function (data) {
+            var hasTable = false;
+
+            try {
+                var json = JSON.parse(data.result).table;
+
+                var resultTableContainer = $('#result-table');
+
+                var resultTable = resultTableContainer.find('table');
+                var headerRow = resultTable.find('thead > tr');
+                var columns = [];
+
+                $.each(json.columns, function (i, columnName) {
+                    headerRow.append('<th>' + columnName + '</th>');
+                    columns.push({ title: columnName });
+                });
+
+                resultDataTable = resultTable.DataTable({
+                    columns: columns,
+                    data: json.rows,
+                    language: {
+                        search: 'Search: '
+                    }
+                });
+
+                resultTableContainer.fadeIn('fast');
+
+                hasTable = true;
+            } catch (e) {
+                console.log('unable to parse JSON for table = ' + e.message);
+            }
+
+            return hasTable;
+        },
+
+        destroyTable: function () {
+            if (resultDataTable) {
+                resultDataTable.destroy();
             }
         },
 
