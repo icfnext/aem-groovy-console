@@ -1,11 +1,15 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
 import com.citytechinc.aem.prosper.specs.ProsperSpec
+import com.citytechinc.cq.groovyconsole.extension.impl.DefaultBindingExtensionProvider
+import com.citytechinc.cq.groovyconsole.extension.impl.DefaultExtensionService
+import com.citytechinc.cq.groovyconsole.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
+import org.apache.felix.scr.ScrService
 import org.osgi.framework.BundleContext
 import spock.lang.Shared
 
@@ -34,15 +38,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     @Shared parameterMap
 
     def setupSpec() {
-        consoleService = new DefaultGroovyConsoleService()
-
-        with(consoleService) {
-            replicator = Mock(Replicator)
-            bundleContext = Mock(BundleContext)
-            configurationService = Mock(ConfigurationService)
-            queryBuilder = Mock(QueryBuilder)
-            emailService = Mock(EmailService)
-        }
+        consoleService = createConsoleService()
 
         this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
             scriptAsString = stream.text
@@ -112,4 +108,40 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assert !map.stacktraceText
         assert map.runningTime
     }
+
+    private def createConsoleService() {
+        def extensionService = new DefaultExtensionService()
+
+        def bindingExtensionProvider = new DefaultBindingExtensionProvider()
+
+        bindingExtensionProvider.with {
+            queryBuilder = Mock(QueryBuilder)
+            bundleContext = Mock(BundleContext)
+        }
+
+        extensionService.bindBindingExtensionProvider(bindingExtensionProvider)
+
+        def scriptMetaClassExtensionProvider = new DefaultScriptMetaClassExtensionProvider()
+
+        scriptMetaClassExtensionProvider.with {
+            replicator = Mock(Replicator)
+            scrService = Mock(ScrService)
+            queryBuilder = Mock(QueryBuilder)
+            bundleContext = Mock(BundleContext)
+        }
+
+        extensionService.bindScriptMetaClassExtensionProvider(scriptMetaClassExtensionProvider)
+
+        def consoleService = new DefaultGroovyConsoleService()
+
+        with(consoleService) {
+            configurationService = Mock(ConfigurationService)
+            emailService = Mock(EmailService)
+        }
+
+        consoleService.extensionService = extensionService
+
+        consoleService
+    }
+
 }

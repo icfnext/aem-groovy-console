@@ -1,20 +1,12 @@
 package com.citytechinc.cq.groovyconsole.services.impl
 
-import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
-import com.citytechinc.aem.groovy.extension.builders.PageBuilder
+import com.citytechinc.cq.groovyconsole.extension.ExtensionService
 import com.citytechinc.cq.groovyconsole.services.ConfigurationService
 import com.citytechinc.cq.groovyconsole.services.EmailService
 import com.citytechinc.cq.groovyconsole.services.GroovyConsoleService
 import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.replication.ReplicationActionType
-import com.day.cq.replication.Replicator
-import com.day.cq.search.PredicateGroup
-import com.day.cq.search.QueryBuilder
-import com.day.cq.wcm.api.PageManager
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
-import org.apache.felix.scr.ScrService
-import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
@@ -22,8 +14,6 @@ import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
-import org.osgi.framework.BundleContext
-import org.slf4j.LoggerFactory
 
 import javax.jcr.Session
 
@@ -59,30 +49,24 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     @Reference
-    Replicator replicator
-
-    @Reference
-    QueryBuilder queryBuilder
-
-    @Reference
     ConfigurationService configurationService
 
     @Reference
     EmailService emailService
 
     @Reference
-    ScrService scrService
-
-    BundleContext bundleContext
+    ExtensionService extensionService
 
     @Override
     Map<String, String> runScript(SlingHttpServletRequest request) {
-        def resourceResolver = request.resourceResolver
-        def session = resourceResolver.adaptTo(Session)
-        def pageManager = resourceResolver.adaptTo(PageManager)
+        def session = request.resourceResolver.adaptTo(Session)
 
         def stream = new ByteArrayOutputStream()
-        def binding = createBinding(request, stream)
+
+        def binding = extensionService.getBinding(request)
+
+        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+
         def configuration = createConfiguration()
         def shell = new GroovyShell(binding, configuration)
 
@@ -99,7 +83,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         try {
             def script = shell.parse(scriptContent)
 
-            addMetaClass(resourceResolver, session, pageManager, script)
+            extensionService.getScriptMetaClasses(request).each {
+                script.metaClass(it)
+            }
 
             runningTime = RUNNING_TIME {
                 result = script.run()
@@ -164,114 +150,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    def createBinding(request, stream) {
-        def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
-
-        def resourceResolver = request.resourceResolver
-        def session = resourceResolver.adaptTo(Session)
-
-        new Binding([
-            out: printStream,
-            log: LoggerFactory.getLogger("groovyconsole"),
-            session: session,
-            slingRequest: request,
-            pageManager: resourceResolver.adaptTo(PageManager),
-            resourceResolver: resourceResolver,
-            queryBuilder: queryBuilder,
-            nodeBuilder: new NodeBuilder(session),
-            pageBuilder: new PageBuilder(session),
-            bundleContext: bundleContext
-        ])
-    }
-
-    def addMetaClass(resourceResolver, session, pageManager, script) {
-        script.metaClass {
-            delegate.getNode = { String path ->
-                session.getNode(path)
-            }
-
-            delegate.getResource = { String path ->
-                resourceResolver.getResource(path)
-            }
-
-            delegate.getPage = { String path ->
-                pageManager.getPage(path)
-            }
-
-            delegate.move = { String src ->
-                ["to": { String dst ->
-                    session.move(src, dst)
-                    session.save()
-                }]
-            }
-
-            delegate.copy = { String src ->
-                ["to": { dst ->
-                    session.workspace.copy(src, dst)
-                }]
-            }
-
-            delegate.save = {
-                session.save()
-            }
-
-            delegate.getService = { Class serviceType ->
-                def serviceReference = bundleContext.getServiceReference(serviceType)
-
-                bundleContext.getService(serviceReference)
-            }
-
-            delegate.getService = { String className ->
-                def serviceReference = bundleContext.getServiceReference(className)
-
-                bundleContext.getService(serviceReference)
-            }
-
-            delegate.getServices = { Class serviceType, String filter ->
-                def serviceReferences = bundleContext.getServiceReferences(serviceType, filter)
-
-                serviceReferences.collect { bundleContext.getService(it) }
-            }
-
-            delegate.getServices = { String className, String filter ->
-                def serviceReferences = bundleContext.getServiceReferences(className, filter)
-
-                serviceReferences.collect { bundleContext.getService(it) }
-            }
-
-            delegate.activate = { String path ->
-                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
-            }
-
-            delegate.deactivate = { String path ->
-                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
-            }
-
-            delegate.doWhileDisabled = { String componentClassName, Closure closure ->
-                def component = scrService.components.find { it.className == componentClassName }
-                def result = null
-
-                if (component) {
-                    component.disable()
-
-                    try {
-                        result = closure()
-                    } finally {
-                        component.enable()
-                    }
-                } else {
-                    result = closure()
-                }
-
-                result
-            }
-
-            delegate.createQuery { Map predicates ->
-                queryBuilder.createQuery(PredicateGroup.create(predicates), session)
-            }
-        }
-    }
-
     def saveOutput(session, output) {
         if (configurationService.crxOutputEnabled) {
             def date = new Date()
@@ -316,10 +194,5 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
         session.save()
-    }
-
-    @Activate
-    void activate(BundleContext bundleContext) {
-        this.bundleContext = bundleContext
     }
 }
