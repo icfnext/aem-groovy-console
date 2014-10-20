@@ -199,7 +199,12 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Export-Package>!*.impl,com.citytechinc.cq.groovyconsole.services.*</Export-Package>
+                        <Export-Package>
+                            !*.impl,
+                            com.citytechinc.cq.groovyconsole.api,
+                            com.citytechinc.cq.groovyconsole.extension,
+                            com.citytechinc.cq.groovyconsole.services
+                        </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Bundle-Activator>com.citytechinc.cq.groovyconsole.Activator</Bundle-Activator>
                     </instructions>
