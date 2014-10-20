@@ -74,9 +74,7 @@ class DefaultAuditService implements AuditService {
     @Override
     void deleteAllAuditRecords() throws RepositoryException {
         try {
-            def auditNode = session.getNode(AUDIT_PATH)
-
-            auditNode.nodes*.remove()
+            session.getNode(AUDIT_PATH).nodes*.remove()
 
             LOG.info "deleted all audit record nodes"
 
@@ -108,9 +106,7 @@ class DefaultAuditService implements AuditService {
         def auditRecords = []
 
         try {
-            def auditNode = session.getNode(AUDIT_PATH)
-
-            auditNode.recurse { Node node ->
+            session.getNode(AUDIT_PATH).recurse { Node node ->
                 if (node.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
                     auditRecords.add(new AuditRecord(node))
                 }

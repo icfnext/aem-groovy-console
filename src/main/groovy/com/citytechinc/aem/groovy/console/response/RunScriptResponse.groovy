@@ -11,7 +11,7 @@ import javax.jcr.Node
 @Immutable
 class RunScriptResponse {
 
-    static RunScriptResponse forResult(Object result, String output, String runningTime) {
+    static RunScriptResponse fromResult(Object result, String output, String runningTime) {
         def resultString
 
         if (result instanceof Table) {
@@ -23,13 +23,13 @@ class RunScriptResponse {
         new RunScriptResponse(resultString, output, "", runningTime)
     }
 
-    static RunScriptResponse forException(Throwable throwable) {
+    static RunScriptResponse fromException(Throwable throwable) {
         def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
 
         new RunScriptResponse("", "", exceptionStackTrace, "")
     }
 
-    static RunScriptResponse forAuditRecordNode(Node node) {
+    static RunScriptResponse fromAuditRecordNode(Node node) {
         def exceptionStackTrace = node.get(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
 
         def response

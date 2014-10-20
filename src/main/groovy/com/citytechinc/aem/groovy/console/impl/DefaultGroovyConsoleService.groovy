@@ -97,17 +97,17 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug "script execution completed, running time = $runningTime"
 
-            response = RunScriptResponse.forResult(result, stream.toString(CharEncoding.UTF_8), runningTime)
+            response = RunScriptResponse.fromResult(result, stream.toString(CharEncoding.UTF_8), runningTime)
 
             auditAndNotify(session, scriptContent, response)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error "script compilation error", e
 
-            response = RunScriptResponse.forException(e)
+            response = RunScriptResponse.fromException(e)
         } catch (Throwable t) {
             LOG.error "error running script", t
 
-            response = RunScriptResponse.forException(t)
+            response = RunScriptResponse.fromException(t)
 
             auditAndNotify(session, scriptContent, response)
         } finally {

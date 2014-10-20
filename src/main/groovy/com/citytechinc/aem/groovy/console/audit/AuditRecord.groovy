@@ -34,7 +34,7 @@ class AuditRecord {
         path = node.path
         date = node.get(JCR_CREATED)
         script = node.get(PROPERTY_SCRIPT)
-        response = RunScriptResponse.forAuditRecordNode(node)
+        response = RunScriptResponse.fromAuditRecordNode(node)
     }
 
     String getRelativePath() {
