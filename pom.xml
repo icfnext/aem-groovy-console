@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cq-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>6.1.0</version>
     <name>CQ Groovy Console</name>
     <description>
         The CQ Groovy Console provides an interface for running Groovy scripts in the Adobe CQ container. Scripts
