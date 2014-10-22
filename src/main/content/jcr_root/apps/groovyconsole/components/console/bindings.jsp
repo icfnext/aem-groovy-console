@@ -8,6 +8,7 @@
     </div>
     <div id="bindings" class="panel-collapse collapse">
         <div class="panel-body">
+            <p>The binding variables listed below are available for use in all scripts.</p>
             <ul>
                 <li>session - <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Session.html" target="_blank">javax.jcr.Session</a></li>
                 <li>pageManager - <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/PageManager.html" target="_blank">com.day.cq.wcm.api.PageManager</a></li>

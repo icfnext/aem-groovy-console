@@ -8,7 +8,7 @@
     </div>
     <div id="imports" class="panel-collapse collapse">
         <div class="panel-body">
-            <p>Additional packages imported by default.</p>
+            <p>Additional packages imported into all scripts.</p>
             <ul>
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/search/package-summary.html" target="_blank">com.day.cq.search</a></li>
                 <li><a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/tagging/package-summary.html" target="_blank">com.day.cq.tagging</a></li>

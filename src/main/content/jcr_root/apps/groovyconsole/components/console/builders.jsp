@@ -8,7 +8,7 @@
     </div>
     <div id="builders" class="panel-collapse collapse">
         <div class="panel-body">
-            <p>Additional bindings are provided for the following builders.  <a href="http://groovy.codehaus.org/Builders" target="_blank">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
+            <p>Additional binding variables are provided for the following builders.  The instances named below are available for use in all scripts.  <a href="http://groovy.codehaus.org/Builders" target="_blank">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
             <ul>
                 <li>nodeBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a Node in the repository.  A new Node is created only if there is no existing node for the current name.</span>
         <pre>
