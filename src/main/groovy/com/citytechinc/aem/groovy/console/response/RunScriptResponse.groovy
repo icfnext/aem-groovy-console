@@ -8,10 +8,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import javax.jcr.Node
 
+import static com.citytechinc.aem.groovy.console.audit.AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE
+import static com.citytechinc.aem.groovy.console.audit.AuditRecord.PROPERTY_SCRIPT
+
 @Immutable
 class RunScriptResponse {
 
-    static RunScriptResponse fromResult(Object result, String output, String runningTime) {
+    static RunScriptResponse fromResult(String script, Object result, String output, String runningTime) {
         def resultString
 
         if (result instanceof Table) {
@@ -20,32 +23,35 @@ class RunScriptResponse {
             resultString = result as String
         }
 
-        new RunScriptResponse(resultString, output, "", runningTime)
+        new RunScriptResponse(script, resultString, output, "", runningTime)
     }
 
-    static RunScriptResponse fromException(Throwable throwable) {
+    static RunScriptResponse fromException(String script, Throwable throwable) {
         def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
 
-        new RunScriptResponse("", "", exceptionStackTrace, "")
+        new RunScriptResponse(script, "", "", exceptionStackTrace, "")
     }
 
     static RunScriptResponse fromAuditRecordNode(Node node) {
-        def exceptionStackTrace = node.get(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
+        def script = node.get(PROPERTY_SCRIPT) as String
+        def exceptionStackTrace = node.get(PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
 
         def response
 
         if (exceptionStackTrace) {
-            response = new RunScriptResponse("", "", exceptionStackTrace, "")
+            response = new RunScriptResponse(script, "", "", exceptionStackTrace, "")
         } else {
             def result = node.get(AuditRecord.PROPERTY_RESULT) ?: ""
             def output = node.get(AuditRecord.PROPERTY_OUTPUT) ?: ""
             def runningTime = node.get(AuditRecord.PROPERTY_RUNNING_TIME) ?: ""
 
-            response = new RunScriptResponse(result, output, "", runningTime)
+            response = new RunScriptResponse(script, result, output, "", runningTime)
         }
 
         response
     }
+
+    String script
 
     String result
 

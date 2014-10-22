@@ -97,19 +97,19 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug "script execution completed, running time = $runningTime"
 
-            response = RunScriptResponse.fromResult(result, stream.toString(CharEncoding.UTF_8), runningTime)
+            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8), runningTime)
 
-            auditAndNotify(session, scriptContent, response)
+            auditAndNotify(session, response)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error "script compilation error", e
 
-            response = RunScriptResponse.fromException(e)
+            response = RunScriptResponse.fromException(scriptContent, e)
         } catch (Throwable t) {
             LOG.error "error running script", t
 
-            response = RunScriptResponse.fromException(t)
+            response = RunScriptResponse.fromException(scriptContent, t)
 
-            auditAndNotify(session, scriptContent, response)
+            auditAndNotify(session, response)
         } finally {
             stream.close()
         }
@@ -152,13 +152,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     // internals
 
-    private void auditAndNotify(Session session, String script, RunScriptResponse response) {
+    private void auditAndNotify(Session session, RunScriptResponse response) {
         if (!configurationService.auditDisabled) {
-            auditService.createAuditRecord(script, response)
+            auditService.createAuditRecord(response)
         }
 
         notificationServices.each { notificationService ->
-            notificationService.notify(session, script, response)
+            notificationService.notify(session, response)
         }
     }
 

@@ -36,12 +36,12 @@ class EmailNotificationService implements NotificationService {
     MailService mailService
 
     @Override
-    void notify(Session session, String script, RunScriptResponse response) {
+    void notify(Session session, RunScriptResponse response) {
         if (configurationService.emailEnabled && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
-                def binding = createBinding(session, script, response)
+                def binding = createBinding(session, response)
                 def templatePath = response.exceptionStackTrace ? TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS
 
                 def email = createEmail(recipients, binding, templatePath)
@@ -77,11 +77,11 @@ class EmailNotificationService implements NotificationService {
         email
     }
 
-    private static def createBinding(Session session, String script, RunScriptResponse response) {
+    private static def createBinding(Session session, RunScriptResponse response) {
         def binding = [
             username : session.userID,
             timestamp: new Date().format(FORMAT_TIMESTAMP),
-            script   : script
+            script   : response.script
         ]
 
         if (response.exceptionStackTrace) {

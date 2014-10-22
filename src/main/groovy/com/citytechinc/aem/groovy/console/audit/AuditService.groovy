@@ -7,12 +7,11 @@ import javax.jcr.RepositoryException
 interface AuditService {
 
     /**
-     * Create an audit record for the given script and response.
+     * Create an audit record for the given script execution response.
      *
-     * @param script
      * @param response response containing execution result or exception
      */
-    AuditRecord createAuditRecord(String script, RunScriptResponse response)
+    AuditRecord createAuditRecord(RunScriptResponse response)
 
     /**
      * Delete all audit records.

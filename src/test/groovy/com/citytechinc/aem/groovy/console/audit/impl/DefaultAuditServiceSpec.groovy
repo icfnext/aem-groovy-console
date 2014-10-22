@@ -38,8 +38,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with result and output"() {
         when:
-        def response = RunScriptResponse.fromResult(result, output, runningTime)
-        def auditRecord = auditService.createAuditRecord(script, response)
+        def response = RunScriptResponse.fromResult(script, result, output, runningTime)
+        def auditRecord = auditService.createAuditRecord(response)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -58,8 +58,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
     def "create audit record for script with exception"() {
         when:
         def exception = new RuntimeException("")
-        def response = RunScriptResponse.fromException(exception)
-        def auditRecord = auditService.createAuditRecord("script content", response)
+        def response = RunScriptResponse.fromException("script content", exception)
+        def auditRecord = auditService.createAuditRecord(response)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -71,12 +71,12 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create multiple audit records"() {
         setup:
-        def response = RunScriptResponse.fromResult("result", "output", "running time")
+        def response = RunScriptResponse.fromResult("script content", "result", "output", "running time")
         def auditRecords = []
 
         when:
         (1..5).each {
-            auditRecords.add(auditService.createAuditRecord("script content", response))
+            auditRecords.add(auditService.createAuditRecord(response))
         }
 
         then:
@@ -85,9 +85,9 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "get audit records for valid date range"() {
         setup:
-        def response = RunScriptResponse.fromResult("result", "output", "running time")
+        def response = RunScriptResponse.fromResult("script content", "result", "output", "running time")
 
-        auditService.createAuditRecord("script content", response)
+        auditService.createAuditRecord(response)
 
         def date = new Date()
         def startDate = (date + startDateOffset).toCalendar()

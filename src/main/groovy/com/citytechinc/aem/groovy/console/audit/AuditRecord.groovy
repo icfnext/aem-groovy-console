@@ -28,12 +28,9 @@ class AuditRecord {
 
     final Calendar date
 
-    final String script
-
     AuditRecord(Node node) {
         path = node.path
         date = node.get(JCR_CREATED)
-        script = node.get(PROPERTY_SCRIPT)
         response = RunScriptResponse.fromAuditRecordNode(node)
     }
 

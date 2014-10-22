@@ -43,13 +43,13 @@ class DefaultAuditService implements AuditService {
     private Session session
 
     @Override
-    AuditRecord createAuditRecord(String script, RunScriptResponse response) {
+    AuditRecord createAuditRecord(RunScriptResponse response) {
         def auditRecord = null
 
         try {
             def auditRecordNode = addAuditRecordNode()
 
-            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, script)
+            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, response.script)
 
             if (response.exceptionStackTrace) {
                 auditRecordNode.set(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
