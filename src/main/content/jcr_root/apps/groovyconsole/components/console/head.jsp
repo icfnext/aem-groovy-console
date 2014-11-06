@@ -8,5 +8,6 @@
         <cq:includeClientLib categories="cq.wcm.edit" />
     </c:if>
 
+	<cq:includeClientLib categories="cq.shared" />
 	<cq:includeClientLib categories="groovyconsole" />
 </head>
