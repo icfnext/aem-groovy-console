@@ -1,5 +1,6 @@
 body {
-    padding-top: 40px;
+    padding-top: 60px;
+    padding-bottom: 30px;
 }
 
 #editor {
@@ -13,8 +14,25 @@ body {
     visibility: hidden;
 }
 
+#message-success, #message-error {
+    margin-top: 20px;
+}
+
+.services-form {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 #btn-group-services {
     display: none;
+}
+
+#services-list {
+    width: 250px;
+}
+
+.typeahead {
+    z-index: 1051;
 }
 
 .ace_editor_wrapper {
@@ -26,4 +44,39 @@ body {
 .ace_scroller {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+}
+
+.panel-row {
+    margin-right: 0;
+    margin-left: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+code {
+    color: #333;
+    background-color: #e8e8e8;
+    border-color: #ddd;
+}
+
+td.open-record, td.delete-record {
+    cursor: pointer;
+}
+
+.delete-all {
+    padding-right: 15px;
+}
+
+.scrollable-menu {
+    height: auto;
+    max-height: 500px;
+    overflow-x: hidden;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+#result-table table {
+    background-color: #f5f5f5;
 }

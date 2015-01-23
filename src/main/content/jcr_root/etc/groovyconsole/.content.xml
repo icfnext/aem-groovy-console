@@ -9,5 +9,5 @@
         jcr:primaryType="cq:PageContent"
         jcr:title="Groovy Console"
         sling:resourceType="groovyconsole/components/console"
-        sling:vanityPath="[/groovyconsole]" />
+        sling:vanityPath="/groovyconsole" />
 </jcr:root>

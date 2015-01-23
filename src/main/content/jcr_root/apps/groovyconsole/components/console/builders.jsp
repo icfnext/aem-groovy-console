@@ -1,12 +1,14 @@
 <%@include file="/libs/foundation/global.jsp" %>
 
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" href="#builders" data-toggle="collapse" data-target="#builders" data-parent="#accordion">Builders</a>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#info" href="#builders">Builders</a>
+        </h4>
     </div>
-    <div id="builders" class="accordion-body collapse">
-        <div class="accordion-inner">
-            <p>Additional bindings are provided for the following builders.  <a href="http://groovy.codehaus.org/Builders" target="_blank">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
+    <div id="builders" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>Additional binding variables are provided for the following builders.  The instances named below are available for use in all scripts.  <a href="http://groovy.codehaus.org/Builders" target="_blank">Builders</a> use a special syntax to create a structured tree of data (in this case, content in the JCR).</p>
             <ul>
                 <li>nodeBuilder - <span class="muted">Each "node" in the syntax tree corresponds to a Node in the repository.  A new Node is created only if there is no existing node for the current name.</span>
         <pre>

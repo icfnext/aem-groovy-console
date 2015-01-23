@@ -20,7 +20,7 @@
             GroovyConsole.refreshOpenDialog(this);
         }"
         hide="function() {
-            GroovyConsole.enableToolbar();
+            GroovyConsole.enableButtons();
         }"
         />
 </jcr:root>

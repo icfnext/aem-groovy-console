@@ -1,19 +1,24 @@
-<%@include file="/libs/foundation/global.jsp" %><%
-%><%@page import="com.day.cq.wcm.api.WCMMode" %>
+<%@include file="/apps/groovyconsole/components/global.jsp" %>
 
-<div class="btn-toolbar">
+<div class="btn-toolbar" role="toolbar">
     <div class="btn-group">
-        <a class="btn btn-success" href="#" id="run-script">
-            <i class="icon-play icon-white"></i> <span id="run-script-text">Run Script</span>
-        </a>
+        <button type="button" class="btn btn-success" id="run-script">
+            <span class="glyphicon glyphicon-play"></span> <span id="run-script-text">Run Script</span>
+        </button>
     </div>
 
     <div class="btn-group">
-        <a class="btn" href="#" id="new-script"><i class="icon-pencil"></i> New</a>
+        <button type="button" class="btn btn-default" id="new-script">
+            <span class="glyphicon glyphicon-pencil"></span> New</span>
+        </button>
 
-        <c:if test="<%= WCMMode.fromRequest(slingRequest) != WCMMode.DISABLED %>">
-        	<a class="btn" href="#" id="open-script"><i class="icon-folder-open"></i> Open</a>
-        	<a class="btn" href="#" id="save-script"><i class="icon-hdd"></i> Save</a>
+        <c:if test="${isAuthor}">
+            <button type="button" class="btn btn-default" id="open-script">
+                <span class="glyphicon glyphicon-folder-open"></span> Open</span>
+            </button>
+            <button type="button" class="btn btn-default" id="save-script">
+                <span class="glyphicon glyphicon-hdd"></span> Save</span>
+            </button>
         </c:if>
     </div>
 
@@ -21,7 +26,9 @@
         <img src="/etc/groovyconsole/clientlibs/img/ajax-loader.gif">
     </div>
 
-    <div id="btn-group-services" class="btn-group pull-right">
-        <input id="services-list" type="text" placeholder="Service or Adapter Name">
-    </div>
+    <form class="navbar-form navbar-right services-form">
+        <div id="btn-group-services" class="form-group">
+            <input id="services-list" class="form-control" type="text" placeholder="Service or Adapter Name">
+        </div>
+    </form>
 </div>
