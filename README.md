@@ -1,10 +1,10 @@
-# CQ Groovy Console
+# AEM Groovy Console
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
 ## Overview
 
-The CQ Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the AEM (Adobe CQ) container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+The AEM Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the AEM (Adobe CQ) container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
 ## Requirements
 
@@ -36,7 +36,7 @@ AEM 6.0 no longer allows vanity paths for pages in /etc by default.  To enable a
 If you are running AEM with a context path, set the Maven property `aem.context.path` during installation.
 
     mvn install -P local -Daem.context.path=/context
-    
+
 ## Extensions
 
 Starting in version 7.0.0, the Groovy Console provides extension hooks to further customize script execution.  The console exposes an API containing three extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.citytechinc.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, metaclasses, and star imports.
