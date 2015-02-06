@@ -3,6 +3,7 @@ package com.citytechinc.aem.groovy.console.extension.impl
 import com.citytechinc.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.citytechinc.aem.groovy.console.table.Table
 import com.day.cq.replication.ReplicationActionType
+import com.day.cq.replication.ReplicationOptions
 import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
@@ -111,12 +112,12 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
                 serviceReferences.collect { bundleContext.getService(it) }
             }
 
-            delegate.activate = { String path ->
-                replicator.replicate(session, ReplicationActionType.ACTIVATE, path)
+            delegate.activate = { String path, ReplicationOptions options = null ->
+                replicator.replicate(session, ReplicationActionType.ACTIVATE, path, options)
             }
 
-            delegate.deactivate = { String path ->
-                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path)
+            delegate.deactivate = { String path, ReplicationOptions options = null ->
+                replicator.replicate(session, ReplicationActionType.DEACTIVATE, path, options)
             }
 
             delegate.doWhileDisabled = { String componentClassName, Closure closure ->

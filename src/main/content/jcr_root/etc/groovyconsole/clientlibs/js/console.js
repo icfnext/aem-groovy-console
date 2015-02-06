@@ -22,7 +22,7 @@ var GroovyConsole = function () {
                 handles: 's'
             });
 
-            editorDiv.css('height', GroovyConsole.localStorage.loadEditorHeight());
+            editorDiv.css('height', GroovyConsole.localStorage.getEditorHeight());
 
             var auditRecord = window.auditRecord;
 
@@ -32,7 +32,7 @@ var GroovyConsole = function () {
 
                 GroovyConsole.showResult(auditRecord);
             } else {
-                editor.getSession().setValue(GroovyConsole.localStorage.loadEditorData());
+                editor.getSession().setValue(GroovyConsole.localStorage.getEditorData());
             }
 
             editor.on('change', function () {
@@ -41,7 +41,7 @@ var GroovyConsole = function () {
         },
 
         initializeThemeMenu: function () {
-            var theme = GroovyConsole.localStorage.loadTheme();
+            var theme = GroovyConsole.localStorage.getTheme();
 
             editor.setTheme(theme);
 
@@ -73,6 +73,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
+                GroovyConsole.localStorage.clearScriptName();
                 GroovyConsole.reset();
 
                 editor.getSession().setValue('');
@@ -280,6 +281,7 @@ var GroovyConsole = function () {
             GroovyConsole.reset();
 
             $.get(CQ.shared.HTTP.getContextPath() + '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
+                GroovyConsole.localStorage.saveScriptName(scriptPath);
                 GroovyConsole.showSuccess('Script loaded successfully.');
 
                 editor.getSession().setValue(script);
@@ -292,6 +294,7 @@ var GroovyConsole = function () {
 
         saveScript: function (fileName) {
             GroovyConsole.reset();
+            GroovyConsole.localStorage.saveScriptName(fileName);
 
             $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/save', {
                 fileName: fileName,

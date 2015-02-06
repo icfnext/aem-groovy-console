@@ -11,11 +11,11 @@
     <groupId>com.citytechinc.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>7.0.0</version>
-    <name>CQ Groovy Console</name>
+    <version>7.0.1</version>
+    <name>AEM Groovy Console</name>
     <description>
-        The CQ Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
-        can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the CQ,
+        The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
+        can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM,
         Sling, or JCR APIs.
     </description>
 
