@@ -16,11 +16,6 @@
         expanded="{Boolean}true" />
     <listeners
         jcr:primaryType="nt:unstructured"
-        beforeshow="function() {
-            GroovyConsole.refreshOpenDialog(this);
-        }"
-        hide="function() {
-            GroovyConsole.enableButtons();
-        }"
-        />
+        beforeshow="function() { GroovyConsole.refreshOpenDialog(this); }"
+        hide="function() { GroovyConsole.enableButtons(); }" />
 </jcr:root>

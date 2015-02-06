@@ -24,13 +24,6 @@
     </items>
     <listeners
         jcr:primaryType="nt:unstructured"
-        beforesubmit="function(dialog) {
-            GroovyConsole.saveScript(dialog.find('name', './fileName')[0].getValue());
-            this.hide();
-            return false;
-        }"
-        hide="function() {
-            GroovyConsole.enableToolbar();
-        }"
-        />
+        beforesubmit="function(dialog) { GroovyConsole.saveScript(dialog.find('name', './fileName')[0].getValue()); this.hide(); return false; }"
+        hide="function() { GroovyConsole.enableButtons(); }" />
 </jcr:root>
