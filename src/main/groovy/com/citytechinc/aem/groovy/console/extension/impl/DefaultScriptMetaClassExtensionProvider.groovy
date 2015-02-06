@@ -112,11 +112,11 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
                 serviceReferences.collect { bundleContext.getService(it) }
             }
 
-            delegate.activate = { String path, ReplicationOptions options = null  ->
+            delegate.activate = { String path, ReplicationOptions options = null ->
                 replicator.replicate(session, ReplicationActionType.ACTIVATE, path, options)
             }
 
-            delegate.deactivate = { String path, ReplicationOptions options = null  ->
+            delegate.deactivate = { String path, ReplicationOptions options = null ->
                 replicator.replicate(session, ReplicationActionType.DEACTIVATE, path, options)
             }
 
