@@ -2,6 +2,8 @@
 
 [CITYTECH, Inc.](http://www.citytechinc.com)
 
+![Screenshot](src/site/screenshot.png)
+
 ## Overview
 
 The AEM Groovy Console provides an interface for running [Groovy](http://groovy.codehaus.org/) scripts in the AEM (Adobe CQ) container.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
