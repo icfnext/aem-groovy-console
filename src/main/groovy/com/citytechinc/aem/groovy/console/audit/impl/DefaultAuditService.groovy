@@ -4,6 +4,7 @@ import com.citytechinc.aem.groovy.console.audit.AuditRecord
 import com.citytechinc.aem.groovy.console.audit.AuditService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.day.cq.commons.jcr.JcrUtil
+import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
@@ -187,6 +188,7 @@ class DefaultAuditService implements AuditService {
         session?.logout()
     }
 
+    @Synchronized
     private Node addAuditRecordNode() {
         def auditNode = session.getNode(AUDIT_PATH)
 

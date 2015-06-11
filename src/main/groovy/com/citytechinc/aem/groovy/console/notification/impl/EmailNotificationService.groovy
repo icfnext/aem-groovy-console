@@ -62,17 +62,17 @@ class EmailNotificationService implements NotificationService {
     private def createEmail(Set<String> recipients, Map binding, String templatePath) {
         def email = new HtmlEmail()
 
-        email.charset = CharEncoding.UTF_8
-
         recipients.each { name ->
             email.addTo(name)
         }
 
-        email.subject = SUBJECT
-
         def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
 
-        email.htmlMsg = template.make(binding).toString()
+        email.with {
+            charset = CharEncoding.UTF_8
+            subject = SUBJECT
+            htmlMsg = template.make(binding).toString()
+        }
 
         email
     }

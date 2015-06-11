@@ -1,6 +1,7 @@
 package com.citytechinc.aem.groovy.console.configuration.impl
 
 import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
@@ -56,7 +57,8 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Activate
     @Modified
-    synchronized void modified(Map<String, Object> properties) {
+    @Synchronized
+    void modified(Map<String, Object> properties) {
         emailEnabled = properties.get(EMAIL_ENABLED) ?: false
         emailRecipients = (properties.get(EMAIL_RECIPIENTS) ?: []).findAll() as Set
         allowedGroups = (properties.get(ALLOWED_GROUPS) ?: []).findAll() as Set
