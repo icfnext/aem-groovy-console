@@ -46,16 +46,16 @@ class EmailNotificationService implements NotificationService {
 
                 def email = createEmail(recipients, binding, templatePath)
 
-                LOG.debug "sending email, recipients = {}", recipients
+                LOG.debug("sending email, recipients = {}", recipients)
 
                 Thread.start {
                     mailService.send(email)
                 }
             } else {
-                LOG.error "email enabled but no recipients configured"
+                LOG.error("email enabled but no recipients configured")
             }
         } else {
-            LOG.info "email disabled or mail service unavailable"
+            LOG.debug("email disabled or mail service unavailable")
         }
     }
 

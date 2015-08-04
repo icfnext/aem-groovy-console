@@ -46,8 +46,8 @@ class DefaultExtensionService implements ExtensionService {
 
             binding.variables.each { key, value ->
                 if (bindings[key]) {
-                    LOG.warn "binding variable {} is already bound to value {}, cannot assign value = {}", key,
-                        bindings[key], value
+                    LOG.warn("binding variable {} is already bound to value {}, cannot assign value = {}", key,
+                        bindings[key], value)
                 } else {
                     bindings[key] = value
                 }
@@ -66,41 +66,41 @@ class DefaultExtensionService implements ExtensionService {
     void bindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.add(extension)
 
-        LOG.info "added binding extension = {}", extension.class.name
+        LOG.info("added binding extension = {}", extension.class.name)
     }
 
     @Synchronized
     void unbindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.remove(extension)
 
-        LOG.info "removed binding extension = {}", extension.class.name
+        LOG.info("removed binding extension = {}", extension.class.name)
     }
 
     @Synchronized
     void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.add(extension)
 
-        LOG.info "added star import extension = {}", extension.class.name
+        LOG.info("added star import extension = {}", extension.class.name)
     }
 
     @Synchronized
     void unbindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.remove(extension)
 
-        LOG.info "removed star import extension = {}", extension.class.name
+        LOG.info("removed star import extension = {}", extension.class.name)
     }
 
     @Synchronized
     void bindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.add(extension)
 
-        LOG.info "added script metaclass extension = {}", extension.class.name
+        LOG.info("added script metaclass extension = {}", extension.class.name)
     }
 
     @Synchronized
     void unbindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.remove(extension)
 
-        LOG.info "removed script metaclass extension = {}", extension.class.name
+        LOG.info("removed script metaclass extension = {}", extension.class.name)
     }
 }

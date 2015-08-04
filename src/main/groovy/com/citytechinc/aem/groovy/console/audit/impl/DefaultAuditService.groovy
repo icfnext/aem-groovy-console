@@ -64,9 +64,9 @@ class DefaultAuditService implements AuditService {
 
             auditRecord = new AuditRecord(auditRecordNode)
 
-            LOG.info "created audit record = {}", auditRecord
+            LOG.debug("created audit record = {}", auditRecord)
         } catch (RepositoryException e) {
-            LOG.error "error creating audit record", e
+            LOG.error("error creating audit record", e)
         }
 
         auditRecord
@@ -77,11 +77,11 @@ class DefaultAuditService implements AuditService {
         try {
             session.getNode(AUDIT_PATH).nodes*.remove()
 
-            LOG.info "deleted all audit record nodes"
+            LOG.debug("deleted all audit record nodes")
 
             session.save()
         } catch (RepositoryException e) {
-            LOG.error "error deleting audit records", e
+            LOG.error("error deleting audit records", e)
 
             throw e
         }
@@ -92,11 +92,11 @@ class DefaultAuditService implements AuditService {
         try {
             session.getNode(AUDIT_PATH).getNode(relativePath).remove()
 
-            LOG.info "deleted audit record at relative path = {}", relativePath
+            LOG.debug("deleted audit record at relative path = {}", relativePath)
 
             session.save()
         } catch (RepositoryException e) {
-            LOG.error "error deleting audit record", e
+            LOG.error("error deleting audit record", e)
 
             throw e
         }
@@ -113,7 +113,7 @@ class DefaultAuditService implements AuditService {
                 }
             }
         } catch (RepositoryException e) {
-            LOG.error "error getting audit records", e
+            LOG.error("error getting audit records", e)
 
             throw e
         }
@@ -133,10 +133,10 @@ class DefaultAuditService implements AuditService {
 
                 auditRecord = new AuditRecord(auditRecordNode)
 
-                LOG.info "found audit record = {}", auditRecord
+                LOG.debug("found audit record = {}", auditRecord)
             }
         } catch (RepositoryException e) {
-            LOG.error "error getting audit record", e
+            LOG.error("error getting audit record", e)
         }
 
         auditRecord
@@ -158,7 +158,7 @@ class DefaultAuditService implements AuditService {
                     def currentDateNode = auditNode.getNode(currentDateRelativePath)
 
                     currentDateNode.each { Node node ->
-                        LOG.debug "found audit record for node = {}", node.path
+                        LOG.debug("found audit record for node = {}", node.path)
 
                         auditRecords.add(new AuditRecord(node))
                     }
@@ -167,7 +167,7 @@ class DefaultAuditService implements AuditService {
                 currentDate.add(Calendar.DAY_OF_MONTH, 1)
             }
         } catch (RepositoryException e) {
-            LOG.error "error getting audit records for date range", e
+            LOG.error("error getting audit records for date range", e)
 
             throw e
         }
@@ -209,7 +209,7 @@ class DefaultAuditService implements AuditService {
         def contentNode = session.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
 
         if (!contentNode.hasNode(AUDIT_NODE_NAME)) {
-            LOG.info "audit node does not exist, adding"
+            LOG.info("audit node does not exist, adding")
 
             contentNode.addNode(AUDIT_NODE_NAME)
 

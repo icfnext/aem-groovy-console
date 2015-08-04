@@ -97,18 +97,18 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug "script execution completed, running time = $runningTime"
+            LOG.debug("script execution completed, running time = $runningTime")
 
             response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
                 runningTime)
 
             auditAndNotify(session, response)
         } catch (MultipleCompilationErrorsException e) {
-            LOG.error "script compilation error", e
+            LOG.error("script compilation error", e)
 
             response = RunScriptResponse.fromException(scriptContent, e)
         } catch (Throwable t) {
-            LOG.error "error running script", t
+            LOG.error("error running script", t)
 
             response = RunScriptResponse.fromException(scriptContent, t)
 
@@ -146,14 +146,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)
 
-        LOG.info "added notification service = {}", notificationService.class.name
+        LOG.info("added notification service = {}", notificationService.class.name)
     }
 
     @Synchronized
     void unbindNotificationServices(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
-        LOG.info "removed notification service = {}", notificationService.class.name
+        LOG.info("removed notification service = {}", notificationService.class.name)
     }
 
     // internals
