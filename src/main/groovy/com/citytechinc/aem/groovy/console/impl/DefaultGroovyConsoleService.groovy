@@ -97,7 +97,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug("script execution completed, running time = $runningTime")
+            LOG.debug("script execution completed, running time = {}", runningTime)
 
             response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
                 runningTime)

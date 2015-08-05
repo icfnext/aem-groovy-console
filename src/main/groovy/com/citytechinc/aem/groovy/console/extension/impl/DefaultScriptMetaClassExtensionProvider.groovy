@@ -89,7 +89,7 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
             }
 
             delegate.getService = { Class serviceType ->
-                def serviceReference = bundleContext.getServiceReference(serviceType)
+                def serviceReference = bundleContext.getServiceReference(serviceType.name)
 
                 bundleContext.getService(serviceReference)
             }
@@ -101,7 +101,7 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
             }
 
             delegate.getServices = { Class serviceType, String filter ->
-                def serviceReferences = bundleContext.getServiceReferences(serviceType, filter)
+                def serviceReferences = bundleContext.getServiceReferences(serviceType.name, filter)
 
                 serviceReferences.collect { bundleContext.getService(it) }
             }
