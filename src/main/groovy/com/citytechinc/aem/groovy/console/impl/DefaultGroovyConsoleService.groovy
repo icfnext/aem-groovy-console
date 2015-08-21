@@ -8,6 +8,7 @@ import com.citytechinc.aem.groovy.console.notification.NotificationService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
 import com.day.cq.commons.jcr.JcrConstants
+import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
 import org.apache.felix.scr.annotations.Component
@@ -23,6 +24,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import javax.jcr.Binary
 import javax.jcr.Node
 import javax.jcr.Session
+import java.util.concurrent.CopyOnWriteArrayList
 
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
@@ -59,7 +61,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         referenceInterface = NotificationService, policy = ReferencePolicy.DYNAMIC)
-    List<NotificationService> notificationServices = []
+    List<NotificationService> notificationServices = new CopyOnWriteArrayList<>()
 
     @Reference
     AuditService auditService
@@ -95,17 +97,18 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug "script execution completed, running time = $runningTime"
+            LOG.debug("script execution completed, running time = {}", runningTime)
 
-            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8), runningTime)
+            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
+                runningTime)
 
             auditAndNotify(session, response)
         } catch (MultipleCompilationErrorsException e) {
-            LOG.error "script compilation error", e
+            LOG.error("script compilation error", e)
 
             response = RunScriptResponse.fromException(scriptContent, e)
         } catch (Throwable t) {
-            LOG.error "error running script", t
+            LOG.error("error running script", t)
 
             response = RunScriptResponse.fromException(scriptContent, t)
 
@@ -118,6 +121,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     @Override
+    @Synchronized
     SaveScriptResponse saveScript(SlingHttpServletRequest request) {
         def name = request.getParameter(PARAMETER_FILE_NAME)
         def script = request.getParameter(PARAMETER_SCRIPT)
@@ -138,16 +142,18 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         new SaveScriptResponse(fileName)
     }
 
+    @Synchronized
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)
 
-        LOG.info "added notification service = {}", notificationService.class.name
+        LOG.info("added notification service = {}", notificationService.class.name)
     }
 
+    @Synchronized
     void unbindNotificationServices(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
-        LOG.info "removed notification service = {}", notificationService.class.name
+        LOG.info("removed notification service = {}", notificationService.class.name)
     }
 
     // internals

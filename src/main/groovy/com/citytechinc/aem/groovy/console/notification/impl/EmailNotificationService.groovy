@@ -46,33 +46,33 @@ class EmailNotificationService implements NotificationService {
 
                 def email = createEmail(recipients, binding, templatePath)
 
-                LOG.debug "sending email, recipients = {}", recipients
+                LOG.debug("sending email, recipients = {}", recipients)
 
                 Thread.start {
                     mailService.send(email)
                 }
             } else {
-                LOG.error "email enabled but no recipients configured"
+                LOG.error("email enabled but no recipients configured")
             }
         } else {
-            LOG.info "email disabled or mail service unavailable"
+            LOG.debug("email disabled or mail service unavailable")
         }
     }
 
     private def createEmail(Set<String> recipients, Map binding, String templatePath) {
         def email = new HtmlEmail()
 
-        email.charset = CharEncoding.UTF_8
-
         recipients.each { name ->
             email.addTo(name)
         }
 
-        email.subject = SUBJECT
-
         def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
 
-        email.htmlMsg = template.make(binding).toString()
+        email.with {
+            charset = CharEncoding.UTF_8
+            subject = SUBJECT
+            htmlMsg = template.make(binding).toString()
+        }
 
         email
     }

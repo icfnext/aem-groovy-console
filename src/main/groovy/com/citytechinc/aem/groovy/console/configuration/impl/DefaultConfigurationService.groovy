@@ -1,6 +1,7 @@
 package com.citytechinc.aem.groovy.console.configuration.impl
 
 import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
+import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
@@ -13,31 +14,31 @@ import org.apache.felix.scr.annotations.Service
 @Slf4j("LOG")
 class DefaultConfigurationService implements ConfigurationService {
 
-    static final String DEFAULT_PATH = "/etc/groovyconsole.html"
+    private static final String DEFAULT_PATH = "/etc/groovyconsole.html"
 
-    static final String VANITY_PATH = "/groovyconsole"
+    private static final String VANITY_PATH = "/groovyconsole"
 
     @Property(label = "Email Enabled?",
         description = "Check to enable email notification on completion of script execution.",
         boolValue = false)
-    static final String EMAIL_ENABLED = "email.enabled"
+    private static final String EMAIL_ENABLED = "email.enabled"
 
     @Property(label = "Email Recipients",
         description = "Email addresses to receive notification.", cardinality = 20)
-    static final String EMAIL_RECIPIENTS = "email.recipients"
+    private static final String EMAIL_RECIPIENTS = "email.recipients"
 
     @Property(label = "Allowed Groups",
         description = "List of group names that are authorized to use the console.  If empty, no authorization check is performed.",
         cardinality = 20)
-    static final String ALLOWED_GROUPS = "groups.allowed"
+    private static final String ALLOWED_GROUPS = "groups.allowed"
 
     @Property(label = "Vanity Path Enabled?",
         description = "Enables /groovyconsole vanity path.  Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist).", boolValue = false)
-    static final String VANITY_PATH_ENABLED = "vanity.path.enabled"
+    private static final String VANITY_PATH_ENABLED = "vanity.path.enabled"
 
     @Property(label = "Audit Disabled?", description = "Disables auditing of script execution history.",
         boolValue = false)
-    static final String AUDIT_DISABLED = "audit.disabled"
+    private static final String AUDIT_DISABLED = "audit.disabled"
 
     boolean emailEnabled
 
@@ -56,7 +57,8 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Activate
     @Modified
-    synchronized void modified(Map<String, Object> properties) {
+    @Synchronized
+    void modified(Map<String, Object> properties) {
         emailEnabled = properties.get(EMAIL_ENABLED) ?: false
         emailRecipients = (properties.get(EMAIL_RECIPIENTS) ?: []).findAll() as Set
         allowedGroups = (properties.get(ALLOWED_GROUPS) ?: []).findAll() as Set

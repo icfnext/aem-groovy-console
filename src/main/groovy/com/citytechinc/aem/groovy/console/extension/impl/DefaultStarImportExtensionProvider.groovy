@@ -8,7 +8,7 @@ import org.apache.felix.scr.annotations.Service
 @Component(immediate = true)
 class DefaultStarImportExtensionProvider implements StarImportExtensionProvider {
 
-    private static final Set<String> DEFAULT_STAR_IMPORTS = ["javax.jcr",  "org.apache.sling.api",
+    private static final Set<String> DEFAULT_STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api",
         "org.apache.sling.api.resource", "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api",
         "com.day.cq.replication"] as Set
 

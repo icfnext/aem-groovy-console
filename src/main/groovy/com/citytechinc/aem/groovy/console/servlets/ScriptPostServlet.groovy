@@ -48,7 +48,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
         def memberOfGroupIds = user.memberOf()*.getID()
         def allowedGroupIds = configurationService.allowedGroups
 
-        LOG.debug "member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroupIds
+        LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroupIds)
 
         allowedGroupIds ? memberOfGroupIds.intersect(allowedGroupIds) : true
     }
