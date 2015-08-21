@@ -55,7 +55,3 @@ Sample scripts can be found in the src/main/scripts directory.
 ## Versioning
 
 Follows [Semantic Versioning](http://semver.org/) guidelines.
-
-## Issues
-
-Please contact [Mark Daugherty](mailto:mdaugherty@citytechinc.com) with any questions or create an issue [here](https://github.com/Citytechinc/cq-groovy-console/issues).
