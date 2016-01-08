@@ -8,6 +8,7 @@ import com.citytechinc.aem.groovy.console.notification.NotificationService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.response.SaveScriptResponse
 import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.commons.jcr.JcrUtil
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
@@ -87,8 +88,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         try {
             def script = shell.parse(scriptContent)
 
-            extensionService.getScriptMetaClasses(request).each {
-                script.metaClass(it)
+            extensionService.getScriptMetaClasses(request).each { meta ->
+                script.metaClass(meta)
             }
 
             def result = null
@@ -123,21 +124,20 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Override
     @Synchronized
     SaveScriptResponse saveScript(SlingHttpServletRequest request) {
-        def name = request.getParameter(PARAMETER_FILE_NAME)
-        def script = request.getParameter(PARAMETER_SCRIPT)
-
         def session = request.resourceResolver.adaptTo(Session)
+        def folderNode = JcrUtil.createPath("$PATH_CONSOLE_ROOT/$RELATIVE_PATH_SCRIPT_FOLDER", JcrConstants.NT_FOLDER,
+            session)
 
-        def folderNode = session.getNode(PATH_CONSOLE_ROOT).getOrAddNode(RELATIVE_PATH_SCRIPT_FOLDER,
-            JcrConstants.NT_FOLDER) as Node
-
+        def name = request.getParameter(PARAMETER_FILE_NAME)
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
 
-        folderNode.removeNode(fileName)
-
-        getScriptBinary(session, script).withBinary { Binary binary ->
-            saveFile(session, folderNode, fileName, new Date(), "application/octet-stream", binary)
+        if (folderNode.hasNode(fileName)) {
+            folderNode.getNode(fileName).remove()
         }
+
+        def script = request.getParameter(PARAMETER_SCRIPT)
+
+        saveFile(session, folderNode, script, fileName, new Date(), "application/octet-stream")
 
         new SaveScriptResponse(fileName)
     }
@@ -160,7 +160,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     private void auditAndNotify(Session session, RunScriptResponse response) {
         if (!configurationService.auditDisabled) {
-            auditService.createAuditRecord(response)
+            auditService.createAuditRecord(session, response)
         }
 
         notificationServices.each { notificationService ->
@@ -168,7 +168,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private def createConfiguration() {
+    private CompilerConfiguration createConfiguration() {
         def configuration = new CompilerConfiguration()
 
         withConfig(configuration) {
@@ -178,28 +178,25 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private static def getScriptBinary(Session session, String script) {
-        def binary = null
+    private void saveFile(Session session, Node folderNode, String script, String fileName, Date date,
+        String mimeType) {
+        def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
+        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
+
+        resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
+        resourceNode.setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
+
+        Binary binary = null
 
         new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
             binary = session.valueFactory.createBinary(stream)
         }
 
-        binary
-    }
-
-    private static void saveFile(Session session, Node folderNode, String fileName, Date date, String mimeType,
-        Binary binary) {
-        def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
-
-        def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
-
-        resourceNode.set(JcrConstants.JCR_MIMETYPE, mimeType)
-        resourceNode.set(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
-        resourceNode.set(JcrConstants.JCR_DATA, binary)
-        resourceNode.set(JcrConstants.JCR_LASTMODIFIED, date.time)
-        resourceNode.set(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
+        resourceNode.setProperty(JcrConstants.JCR_DATA, binary)
+        resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
+        resourceNode.setProperty(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
         session.save()
+        binary.dispose()
     }
 }

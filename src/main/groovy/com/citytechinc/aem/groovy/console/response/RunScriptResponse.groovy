@@ -5,6 +5,7 @@ import com.citytechinc.aem.groovy.console.table.Table
 import groovy.json.JsonBuilder
 import groovy.transform.Immutable
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.sling.jcr.resource.JcrPropertyMap
 
 import javax.jcr.Node
 
@@ -33,17 +34,19 @@ class RunScriptResponse {
     }
 
     static RunScriptResponse fromAuditRecordNode(Node node) {
-        def script = node.get(PROPERTY_SCRIPT) as String
-        def exceptionStackTrace = node.get(PROPERTY_EXCEPTION_STACK_TRACE) ?: ""
+        def properties = new JcrPropertyMap(node)
+
+        def script = properties.get(PROPERTY_SCRIPT, "")
+        def exceptionStackTrace = properties.get(PROPERTY_EXCEPTION_STACK_TRACE, "")
 
         def response
 
         if (exceptionStackTrace) {
             response = new RunScriptResponse(script, "", "", exceptionStackTrace, "")
         } else {
-            def result = node.get(AuditRecord.PROPERTY_RESULT) ?: ""
-            def output = node.get(AuditRecord.PROPERTY_OUTPUT) ?: ""
-            def runningTime = node.get(AuditRecord.PROPERTY_RUNNING_TIME) ?: ""
+            def result = properties.get(AuditRecord.PROPERTY_RESULT, "")
+            def output = properties.get(AuditRecord.PROPERTY_OUTPUT, "")
+            def runningTime = properties.get(AuditRecord.PROPERTY_RUNNING_TIME, "")
 
             response = new RunScriptResponse(script, result, output, "", runningTime)
         }

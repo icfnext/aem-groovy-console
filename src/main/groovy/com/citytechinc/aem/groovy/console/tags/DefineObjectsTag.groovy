@@ -1,12 +1,13 @@
 package com.citytechinc.aem.groovy.console.tags
 
-import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
 import com.citytechinc.aem.groovy.console.audit.AuditService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
 import com.day.cq.wcm.api.WCMMode
 import groovy.json.JsonBuilder
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.scripting.SlingScriptHelper
 
+import javax.jcr.Session
 import javax.servlet.jsp.JspException
 import javax.servlet.jsp.tagext.TagSupport
 
@@ -43,7 +44,8 @@ class DefineObjectsTag extends TagSupport {
             def script = request.getParameter(PARAMETER_SCRIPT)
 
             if (script) {
-                def auditRecord = sling.getService(AuditService).getAuditRecord(script)
+                def auditRecord = sling.getService(AuditService).getAuditRecord(
+                    request.resourceResolver.adaptTo(Session), script)
 
                 if (auditRecord) {
                     pageContext.setAttribute(AUDIT_RECORD, new JsonBuilder(auditRecord).toString(), REQUEST_SCOPE)

@@ -1,8 +1,8 @@
 package com.citytechinc.aem.groovy.console.extension.impl
 
+import com.citytechinc.aem.groovy.console.api.BindingExtensionProvider
 import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
 import com.citytechinc.aem.groovy.extension.builders.PageBuilder
-import com.citytechinc.aem.groovy.console.api.BindingExtensionProvider
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import org.apache.felix.scr.annotations.Activate
@@ -30,15 +30,15 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
         def session = resourceResolver.adaptTo(Session)
 
         def map = [
-            log             : LoggerFactory.getLogger("groovyconsole"),
-            session         : session,
-            slingRequest    : request,
-            pageManager     : resourceResolver.adaptTo(PageManager),
+            log: LoggerFactory.getLogger("groovyconsole"),
+            session: session,
+            slingRequest: request,
+            pageManager: resourceResolver.adaptTo(PageManager),
             resourceResolver: resourceResolver,
-            queryBuilder    : queryBuilder,
-            nodeBuilder     : new NodeBuilder(session),
-            pageBuilder     : new PageBuilder(session),
-            bundleContext   : bundleContext
+            queryBuilder: queryBuilder,
+            nodeBuilder: new NodeBuilder(session),
+            pageBuilder: new PageBuilder(session),
+            bundleContext: bundleContext
         ]
 
         new Binding(map)

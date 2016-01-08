@@ -8,7 +8,7 @@ import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 
-import javax.servlet.ServletException
+import javax.jcr.Session
 
 import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 
@@ -30,26 +30,26 @@ class AuditServlet extends AbstractJsonResponseServlet {
     ConfigurationService configurationService
 
     @Override
-    protected void doGet(SlingHttpServletRequest request,
-        SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
+        def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         if (script) {
-            writeJsonResponse(response, auditService.getAuditRecord(script) ?: [:])
+            writeJsonResponse(response, auditService.getAuditRecord(session, script) ?: [:])
         } else {
             writeJsonResponse(response, loadAuditRecords(request))
         }
     }
 
     @Override
-    protected void doDelete(SlingHttpServletRequest request,
-        SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) {
+        def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         if (script) {
-            auditService.deleteAuditRecord(script)
+            auditService.deleteAuditRecord(session, script)
         } else {
-            auditService.deleteAllAuditRecords()
+            auditService.deleteAllAuditRecords(session)
         }
     }
 
@@ -63,12 +63,12 @@ class AuditServlet extends AbstractJsonResponseServlet {
             def lines = auditRecord.script.readLines()
 
             def map = [
-                date         : auditRecord.date.format(DATE_FORMAT_DISPLAY),
+                date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
                 scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
-                script       : auditRecord.script,
-                exception    : getException(auditRecord),
-                link         : "$consoleHref?script=${auditRecord.relativePath}",
-                relativePath : auditRecord.relativePath
+                script: auditRecord.script,
+                exception: getException(auditRecord),
+                link: "$consoleHref?script=${auditRecord.relativePath}",
+                relativePath: auditRecord.relativePath
             ]
 
             data.add(map)
@@ -78,18 +78,20 @@ class AuditServlet extends AbstractJsonResponseServlet {
     }
 
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {
+        def session = request.resourceResolver.adaptTo(Session)
+
         def startDateParameter = request.getParameter(PARAMETER_START_DATE)
         def endDateParameter = request.getParameter(PARAMETER_END_DATE)
 
         def auditRecords
 
         if (!startDateParameter || !endDateParameter) {
-            auditRecords = auditService.allAuditRecords
+            auditRecords = auditService.getAllAuditRecords(session)
         } else {
             def startDate = Date.parse(DATE_FORMAT, startDateParameter)
             def endDate = Date.parse(DATE_FORMAT, endDateParameter)
 
-            auditRecords = auditService.getAuditRecords(startDate.toCalendar(), endDate.toCalendar())
+            auditRecords = auditService.getAuditRecords(session, startDate.toCalendar(), endDate.toCalendar())
         }
 
         auditRecords.sort { a, b -> b.date.timeInMillis <=> a.date.timeInMillis }

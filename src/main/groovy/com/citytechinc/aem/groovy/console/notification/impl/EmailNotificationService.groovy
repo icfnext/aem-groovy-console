@@ -3,7 +3,6 @@ package com.citytechinc.aem.groovy.console.notification.impl
 import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
 import com.citytechinc.aem.groovy.console.notification.NotificationService
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
-
 import com.day.cq.mailer.MailService
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
@@ -79,17 +78,17 @@ class EmailNotificationService implements NotificationService {
 
     private static def createBinding(Session session, RunScriptResponse response) {
         def binding = [
-            username : session.userID,
+            username: session.userID,
             timestamp: new Date().format(FORMAT_TIMESTAMP),
-            script   : response.script
+            script: response.script
         ]
 
         if (response.exceptionStackTrace) {
             binding.stackTrace = response.exceptionStackTrace
         } else {
             binding.putAll([
-                result     : response.result,
-                output     : response.output,
+                result: response.result,
+                output: response.output,
                 runningTime: response.runningTime
             ])
         }

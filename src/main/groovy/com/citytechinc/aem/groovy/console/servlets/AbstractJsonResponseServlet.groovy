@@ -6,7 +6,7 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet
 
 abstract class AbstractJsonResponseServlet extends SlingAllMethodsServlet {
 
-    static void writeJsonResponse(SlingHttpServletResponse response, json) {
+    void writeJsonResponse(SlingHttpServletResponse response, json) {
         response.contentType = "application/json"
         response.characterEncoding = "UTF-8"
 
