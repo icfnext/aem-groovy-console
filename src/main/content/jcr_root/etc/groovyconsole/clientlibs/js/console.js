@@ -219,7 +219,7 @@ var GroovyConsole = function () {
 
                 hasTable = true;
             } catch (e) {
-                console.log('unable to parse JSON for table = ' + e.message);
+
             }
 
             return hasTable;

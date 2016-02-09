@@ -1,11 +1,11 @@
 package com.citytechinc.aem.groovy.console.audit
 
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
+import com.day.text.Text
 import groovy.transform.ToString
 
 import javax.jcr.Node
 
-import static com.citytechinc.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_PATH
 import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED
 
 @ToString(includePackage = false, includes = ["path"])
@@ -35,7 +35,7 @@ class AuditRecord {
     }
 
     String getRelativePath() {
-        (path - AUDIT_PATH).substring(1)
+        (path - Text.getAbsoluteParent(path, 4)).substring(1)
     }
 
     String getException() {
