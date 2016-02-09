@@ -1,8 +1,8 @@
 package com.citytechinc.aem.groovy.console.services.impl
 
-import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
-
+import com.citytechinc.aem.groovy.console.GroovyConsoleService
 import com.citytechinc.aem.groovy.console.audit.AuditService
+import com.citytechinc.aem.groovy.console.configuration.ConfigurationService
 import com.citytechinc.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
 import com.citytechinc.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.citytechinc.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
@@ -13,8 +13,6 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import org.apache.felix.scr.ScrService
 import org.osgi.framework.BundleContext
-
-import javax.jcr.RepositoryException
 
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
@@ -47,10 +45,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assertScriptResult(map)
     }
 
-    def "run script with additional star imports"() {
-
-    }
-
     def "save script"() {
         setup:
         def consoleService = createConsoleService()
@@ -70,27 +64,11 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         then:
         assertNodeExists(PATH_FOLDER, JcrConstants.NT_FOLDER)
         assertNodeExists(PATH_FILE, JcrConstants.NT_FILE)
-        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE, [(JcrConstants.JCR_MIMETYPE): "application/octet-stream"])
+        assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE,
+            [(JcrConstants.JCR_MIMETYPE): "application/octet-stream"])
 
+        and:
         assert session.getNode(PATH_FILE_CONTENT).get(JcrConstants.JCR_DATA).stream.text == scriptAsString
-
-        cleanup:
-        removeAllNodes()
-    }
-
-    def "missing console root node"() {
-        setup:
-        def consoleService = createConsoleService()
-
-        def request = requestBuilder.build {
-            parameters = this.parameterMap
-        }
-
-        when:
-        consoleService.saveScript(request)
-
-        then:
-        thrown(RepositoryException)
     }
 
     void assertScriptResult(map) {
@@ -100,7 +78,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assert map.runningTime
     }
 
-    private def createConsoleService() {
+    private GroovyConsoleService createConsoleService() {
         def extensionService = new DefaultExtensionService()
 
         def bindingExtensionProvider = new DefaultBindingExtensionProvider()
@@ -135,7 +113,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         consoleService
     }
 
-    private def getScriptAsString() {
+    private String getScriptAsString() {
         def scriptAsString = null
 
         this.class.getResourceAsStream("/$SCRIPT_FILE_NAME").withStream { stream ->
@@ -145,7 +123,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         scriptAsString
     }
 
-    private def getParameterMap() {
+    private Map<String, Object> getParameterMap() {
         [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
     }
 }

@@ -30,11 +30,27 @@ class AuditRecord {
 
     AuditRecord(Node node) {
         path = node.path
-        date = node.get(JCR_CREATED)
+        date = node.getProperty(JCR_CREATED).date
         response = RunScriptResponse.fromAuditRecordNode(node)
     }
 
     String getRelativePath() {
         (path - AUDIT_PATH).substring(1)
+    }
+
+    String getException() {
+        def exception = ""
+
+        if (exceptionStackTrace) {
+            def firstLine = exceptionStackTrace.readLines().first()
+
+            if (firstLine.contains(":")) {
+                exception = firstLine.substring(0, firstLine.indexOf(":"))
+            } else {
+                exception = firstLine
+            }
+        }
+
+        exception
     }
 }

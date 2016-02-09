@@ -1,7 +1,7 @@
 package com.citytechinc.aem.groovy.console.audit.impl
 
-import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.groovy.console.audit.AuditRecord
+import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.sling.jcr.api.SlingRepository
@@ -12,14 +12,12 @@ import spock.lang.Unroll
 class DefaultAuditServiceSpec extends ProsperSpec {
 
     @Shared
-    DefaultAuditService auditService
+    DefaultAuditService auditService = new DefaultAuditService()
 
     def setupSpec() {
         pageBuilder.etc {
             groovyconsole()
         }
-
-        auditService = new DefaultAuditService()
 
         auditService.with {
             repository = [loginAdministrative: { this.session }] as SlingRepository
@@ -29,7 +27,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def cleanup() {
         // remove all audit nodes
-        auditService.allAuditRecords*.path.each {
+        auditService.getAllAuditRecords(session)*.path.each {
             session.getNode(it).remove()
         }
 
@@ -39,7 +37,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
     def "create audit record for script with result and output"() {
         when:
         def response = RunScriptResponse.fromResult(script, result, output, runningTime)
-        def auditRecord = auditService.createAuditRecord(response)
+        def auditRecord = auditService.createAuditRecord(session, response)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -54,12 +52,11 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         "script content" | "result" | "output" | "running time"
     }
 
-
     def "create audit record for script with exception"() {
         when:
         def exception = new RuntimeException("")
         def response = RunScriptResponse.fromException("script content", exception)
-        def auditRecord = auditService.createAuditRecord(response)
+        def auditRecord = auditService.createAuditRecord(session, response)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -76,7 +73,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
         when:
         (1..5).each {
-            auditRecords.add(auditService.createAuditRecord(response))
+            auditRecords.add(auditService.createAuditRecord(session, response))
         }
 
         then:
@@ -87,14 +84,14 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         setup:
         def response = RunScriptResponse.fromResult("script content", "result", "output", "running time")
 
-        auditService.createAuditRecord(response)
+        auditService.createAuditRecord(session, response)
 
         def date = new Date()
         def startDate = (date + startDateOffset).toCalendar()
         def endDate = (date + endDateOffset).toCalendar()
 
         expect:
-        auditService.getAuditRecords(startDate, endDate).size() == size
+        auditService.getAuditRecords(session, startDate, endDate).size() == size
 
         where:
         startDateOffset | endDateOffset | size

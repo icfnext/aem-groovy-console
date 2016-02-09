@@ -35,10 +35,10 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         @Override
         Binding getBinding(SlingHttpServletRequest request) {
-            def map = [parameterNames: request.parameterMap.keySet(),
-                       selectors     : request.requestPathInfo.selectors as List]
-
-            new Binding(map)
+            new Binding([
+                parameterNames: request.parameterMap.keySet(),
+                selectors: []
+            ])
         }
     }
 
@@ -46,10 +46,10 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         @Override
         Binding getBinding(SlingHttpServletRequest request) {
-            def map = [path     : request.requestPathInfo.resourcePath,
-                       selectors: []]
-
-            new Binding(map)
+            new Binding([
+                path: request.requestPathInfo.resourcePath,
+                selectors: request.requestPathInfo.selectors as List
+            ])
         }
     }
 
@@ -77,15 +77,14 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         then:
         extensionService.starImports.size() == 3
-        extensionService.starImports.containsAll(
-            [InputStream.class, SimpleDateFormat.class, BigDecimal.class]*.package.name)
+        extensionService.starImports.containsAll([InputStream, SimpleDateFormat, BigDecimal]*.package.name)
 
         when:
         extensionService.unbindStarImportExtensionProvider(firstProvider)
 
         then:
         extensionService.starImports.size() == 1
-        extensionService.starImports[0] == BigDecimal.class.package.name
+        extensionService.starImports[0] == BigDecimal.package.name
     }
 
     def "get binding"() {
@@ -109,14 +108,13 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.getBinding(request)["path"] == "/"
 
         when:
-        extensionService.unbindBindingExtensionProvider(firstProvider)
+        extensionService.unbindBindingExtensionProvider(secondProvider)
 
         then:
         extensionService.getBinding(request)["selectors"] == []
-        extensionService.getBinding(request)["path"] == "/"
 
         when:
-        extensionService.getBinding(request)["parameterNames"]
+        extensionService.getBinding(request)["path"]
 
         then:
         thrown(MissingPropertyException)

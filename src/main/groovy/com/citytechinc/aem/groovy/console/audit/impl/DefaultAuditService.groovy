@@ -50,14 +50,14 @@ class DefaultAuditService implements AuditService {
         try {
             def auditRecordNode = addAuditRecordNode(session)
 
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
+            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, response.script)
 
             if (response.exceptionStackTrace) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+                auditRecordNode.set(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
             } else {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
+                auditRecordNode.set(AuditRecord.PROPERTY_RESULT, response.result)
+                auditRecordNode.set(AuditRecord.PROPERTY_OUTPUT, response.output)
+                auditRecordNode.set(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
             }
 
             adminSession.save()

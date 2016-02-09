@@ -38,14 +38,14 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
         if (hasPermission(request)) {
             writeJsonResponse(response, consoleService.runScript(request))
         } else {
-            response.setStatus(SC_FORBIDDEN)
+            response.status = SC_FORBIDDEN
         }
     }
 
     boolean hasPermission(SlingHttpServletRequest request) {
         def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal)
 
-        def memberOfGroupIds = user.memberOf()*.getID()
+        def memberOfGroupIds = user.memberOf()*.ID
         def allowedGroupIds = configurationService.allowedGroups
 
         LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroupIds)

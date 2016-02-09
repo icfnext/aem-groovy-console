@@ -29,7 +29,7 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
         def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
 
-        def map = [
+        new Binding([
             log: LoggerFactory.getLogger("groovyconsole"),
             session: session,
             slingRequest: request,
@@ -39,9 +39,7 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
             nodeBuilder: new NodeBuilder(session),
             pageBuilder: new PageBuilder(session),
             bundleContext: bundleContext
-        ]
-
-        new Binding(map)
+        ])
     }
 
     @Activate

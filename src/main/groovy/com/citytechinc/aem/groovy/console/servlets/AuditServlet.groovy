@@ -66,7 +66,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
                 date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
                 scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
                 script: auditRecord.script,
-                exception: getException(auditRecord),
+                exception: auditRecord.exception,
                 link: "$consoleHref?script=${auditRecord.relativePath}",
                 relativePath: auditRecord.relativePath
             ]
@@ -95,25 +95,5 @@ class AuditServlet extends AbstractJsonResponseServlet {
         }
 
         auditRecords.sort { a, b -> b.date.timeInMillis <=> a.date.timeInMillis }
-    }
-
-    private static def getException(AuditRecord auditRecord) {
-        def exceptionStackTrace = auditRecord.exceptionStackTrace
-
-        def exception
-
-        if (exceptionStackTrace) {
-            def firstLine = exceptionStackTrace.readLines().first()
-
-            if (firstLine.contains(":")) {
-                exception = firstLine.substring(0, firstLine.indexOf(":"))
-            } else {
-                exception = firstLine
-            }
-        } else {
-            exception = ""
-        }
-
-        exception
     }
 }

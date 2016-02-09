@@ -8,19 +8,22 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
-import org.osgi.framework.Constants
-import org.osgi.service.component.ComponentConstants
 
 import javax.servlet.ServletException
+
+import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
+import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
+import static org.osgi.framework.Constants.OBJECTCLASS
+import static org.osgi.service.component.ComponentConstants.COMPONENT_NAME
 
 @SlingServlet(paths = "/bin/groovyconsole/services")
 class ServicesListServlet extends AbstractJsonResponseServlet {
 
-    def bundleContext
+    BundleContext bundleContext
 
     @Override
-    protected void doGet(final SlingHttpServletRequest request, final SlingHttpServletResponse
-        response) throws ServletException, IOException {
+    protected void doGet(SlingHttpServletRequest request,
+        SlingHttpServletResponse response) throws ServletException, IOException {
         writeJsonResponse(response, adaptersMap + servicesMap)
     }
 
@@ -29,15 +32,18 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         this.bundleContext = bundleContext
     }
 
-    private def getAdaptersMap() {
+    private Map<String, String> getAdaptersMap() {
         def adapters = [:] as TreeMap
 
-        def serviceReferences = bundleContext.getServiceReferences(AdapterFactory, null).findAll { serviceReference ->
-            serviceReference.getProperty(AdapterFactory.ADAPTABLE_CLASSES).contains(ResourceResolver.class.name)
+        def serviceReferences = bundleContext.getServiceReferences(AdapterFactory.name, null).findAll {
+            serviceReference ->
+                def adaptableClasses = serviceReference.getProperty(ADAPTABLE_CLASSES) as String[]
+
+                adaptableClasses.contains(ResourceResolver.name)
         }
 
         serviceReferences.each { serviceReference ->
-            serviceReference.getProperty(AdapterFactory.ADAPTER_CLASSES).each { String adapterClassName ->
+            serviceReference.getProperty(ADAPTER_CLASSES).each { String adapterClassName ->
                 adapters[adapterClassName] = getAdapterDeclaration(adapterClassName)
             }
         }
@@ -45,16 +51,17 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         adapters
     }
 
-    private def getServicesMap() {
+    private Map<String, String> getServicesMap() {
         def services = [:] as TreeMap
-        def allServices = [:]
+
+        Map<String, List<String>> allServices = [:]
 
         bundleContext.getAllServiceReferences(null, null).each { serviceReference ->
-            def name = serviceReference.getProperty(ComponentConstants.COMPONENT_NAME)
-            def objectClass = serviceReference.getProperty(Constants.OBJECTCLASS)
+            def name = serviceReference.getProperty(COMPONENT_NAME) as String
+            def objectClass = serviceReference.getProperty(OBJECTCLASS) as String[]
 
             objectClass.each { className ->
-                def implementationClassNames = allServices[className] ?: []
+                def implementationClassNames = allServices[className] as List ?: []
 
                 if (name) {
                     implementationClassNames.add(name)
@@ -64,7 +71,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
             }
         }
 
-        allServices.each { String className, implementationClassNames ->
+        allServices.each { className, implementationClassNames ->
             services[className] = getServiceDeclaration(className, null)
 
             if (implementationClassNames.size() > 1) {
@@ -77,20 +84,20 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         services
     }
 
-    private static def getAdapterDeclaration(String className) {
+    private static String getAdapterDeclaration(String className) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
 
         "def $variableName = resourceResolver.adaptTo($className)"
     }
 
-    private static def getServiceDeclaration(String className, implementationClassName) {
+    private static String getServiceDeclaration(String className, implementationClassName) {
         def simpleName = className.tokenize('.').last()
         def variableName = StringUtils.uncapitalize(simpleName)
         def declaration
 
         if (implementationClassName) {
-            def filter = "(${ComponentConstants.COMPONENT_NAME}=$implementationClassName)"
+            def filter = "($COMPONENT_NAME=$implementationClassName)"
 
             declaration = "def $variableName = getServices(\"$className\", \"$filter\")[0]"
         } else {

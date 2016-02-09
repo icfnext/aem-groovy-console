@@ -46,11 +46,11 @@ class DefaultExtensionService implements ExtensionService {
 
             binding.variables.each { key, value ->
                 if (bindings[key]) {
-                    LOG.warn("binding variable {} is already bound to value {}, cannot assign value = {}", key,
+                    LOG.info("binding variable {} is currently bound to value {}, overriding with value = {}", key,
                         bindings[key], value)
-                } else {
-                    bindings[key] = value
                 }
+
+                bindings[key] = value
             }
         }
 
@@ -80,14 +80,14 @@ class DefaultExtensionService implements ExtensionService {
     void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.add(extension)
 
-        LOG.info("added star import extension = {}", extension.class.name)
+        LOG.info("added star import extension = {} with imports = {}", extension.class.name, extension.starImports)
     }
 
     @Synchronized
     void unbindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.remove(extension)
 
-        LOG.info("removed star import extension = {}", extension.class.name)
+        LOG.info("removed star import extension = {} with imports = {}", extension.class.name, extension.starImports)
     }
 
     @Synchronized
