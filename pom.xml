@@ -207,6 +207,14 @@
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Export-Package>!*.impl,com.citytechinc.aem.groovy.console.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <!-- Exported package versions differ in major version between AEM61 and AEM62 -->
+                        <Import-Package>
+                          com.day.cq.commons.jcr;version="[5.7,7)",
+                          com.day.cq.replication;version="[5.17,7)",
+                          com.day.cq.wcm.tags;version="[5.7,7)",
+                          org.apache.felix.scr;resolution:=optional,
+                          *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -450,7 +458,7 @@
         <dependency>
             <groupId>com.citytechinc.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
