@@ -14,7 +14,6 @@ import javax.servlet.ServletException
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
 import static org.osgi.framework.Constants.OBJECTCLASS
-import static org.osgi.service.component.ComponentConstants.COMPONENT_NAME
 
 @SlingServlet(paths = "/bin/groovyconsole/services")
 class ServicesListServlet extends AbstractJsonResponseServlet {
@@ -35,16 +34,21 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
     private Map<String, String> getAdaptersMap() {
         def adapters = [:] as TreeMap
 
-        def serviceReferences = bundleContext.getServiceReferences(AdapterFactory.name, null).findAll {
-            serviceReference ->
-                def adaptableClasses = serviceReference.getProperty(ADAPTABLE_CLASSES) as String[]
+        def serviceReferences = bundleContext.getServiceReferences(AdapterFactory.name, null).findAll { serviceReference ->
+            def adaptableClasses = serviceReference.getProperty(ADAPTABLE_CLASSES) as String[]
 
-                adaptableClasses.contains(ResourceResolver.name)
+            adaptableClasses.contains(ResourceResolver.name)
         }
 
         serviceReferences.each { serviceReference ->
-            serviceReference.getProperty(ADAPTER_CLASSES).each { String adapterClassName ->
-                adapters[adapterClassName] = getAdapterDeclaration(adapterClassName)
+            def adapterClasses = serviceReference.getProperty(ADAPTER_CLASSES)
+
+            if (adapterClasses instanceof String[]) {
+                adapterClasses.each { String adapterClassName ->
+                    adapters[adapterClassName] = getAdapterDeclaration(adapterClassName)
+                }
+            } else {
+                adapters[adapterClasses] = getAdapterDeclaration(adapterClasses as String)
             }
         }
 
@@ -57,7 +61,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         Map<String, List<String>> allServices = [:]
 
         bundleContext.getAllServiceReferences(null, null).each { serviceReference ->
-            def name = serviceReference.getProperty(COMPONENT_NAME) as String
+            def name = serviceReference.getProperty("component.name") as String
             def objectClass = serviceReference.getProperty(OBJECTCLASS) as String[]
 
             objectClass.each { className ->
@@ -97,7 +101,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         def declaration
 
         if (implementationClassName) {
-            def filter = "($COMPONENT_NAME=$implementationClassName)"
+            def filter = "(component.name=$implementationClassName)"
 
             declaration = "def $variableName = getServices(\"$className\", \"$filter\")[0]"
         } else {

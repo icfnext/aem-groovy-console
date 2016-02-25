@@ -11,7 +11,6 @@ import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
-import org.apache.felix.scr.ScrService
 import org.osgi.framework.BundleContext
 
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
@@ -94,7 +93,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
         scriptMetaClassExtensionProvider.with {
             replicator = Mock(Replicator)
-            scrService = Mock(ScrService)
             queryBuilder = Mock(QueryBuilder)
             bundleContext = Mock(BundleContext)
         }

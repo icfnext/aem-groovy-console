@@ -8,7 +8,6 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
-import org.apache.felix.scr.ScrService
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -25,9 +24,6 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
     @Reference
     Replicator replicator
-
-    @Reference
-    ScrService scrService
 
     @Reference
     QueryBuilder queryBuilder
@@ -118,25 +114,6 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
             delegate.deactivate = { String path, ReplicationOptions options = null ->
                 replicator.replicate(session, ReplicationActionType.DEACTIVATE, path, options)
-            }
-
-            delegate.doWhileDisabled = { String componentClassName, Closure closure ->
-                def component = scrService.components.find { it.className == componentClassName }
-                def result = null
-
-                if (component) {
-                    component.disable()
-
-                    try {
-                        result = closure()
-                    } finally {
-                        component.enable()
-                    }
-                } else {
-                    result = closure()
-                }
-
-                result
             }
 
             delegate.createQuery { Map predicates ->
