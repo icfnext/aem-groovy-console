@@ -72,53 +72,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request) {
-        def stream = new ByteArrayOutputStream()
-
-        def binding = extensionService.getBinding(request)
-
-        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
-
-        def session = request.resourceResolver.adaptTo(Session)
-        def configuration = createConfiguration()
-        def shell = new GroovyShell(binding, configuration)
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
 
-        def response = null
+        runScriptInternal(request, scriptContent)
+    }
 
-        try {
-            def script = shell.parse(scriptContent)
-
-            extensionService.getScriptMetaClasses(request).each { meta ->
-                script.metaClass(meta)
-            }
-
-            def result = null
-
-            def runningTime = RUNNING_TIME {
-                result = script.run()
-            }
-
-            LOG.debug("script execution completed, running time = {}", runningTime)
-
-            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
-                runningTime)
-
-            auditAndNotify(session, response)
-        } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
-
-            response = RunScriptResponse.fromException(scriptContent, e)
-        } catch (Throwable t) {
-            LOG.error("error running script", t)
-
-            response = RunScriptResponse.fromException(scriptContent, t)
-
-            auditAndNotify(session, response)
-        } finally {
-            stream.close()
-        }
-
-        response
+    @Override
+    RunScriptResponse runScriptFile(SlingHttpServletRequest request) {
+        runScriptInternal(request, request.inputStream.text)
     }
 
     @Override
@@ -157,6 +118,55 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     // internals
+
+    private RunScriptResponse runScriptInternal(SlingHttpServletRequest request, String scriptContent) {
+        def stream = new ByteArrayOutputStream()
+
+        def binding = extensionService.getBinding(request)
+
+        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+
+        def session = request.resourceResolver.adaptTo(Session)
+        def configuration = createConfiguration()
+        def shell = new GroovyShell(binding, configuration)
+
+        def response = null
+
+        try {
+            def script = shell.parse(scriptContent)
+
+            extensionService.getScriptMetaClasses(request).each { meta ->
+                script.metaClass(meta)
+            }
+
+            def result = null
+
+            def runningTime = RUNNING_TIME {
+                result = script.run()
+            }
+
+            LOG.debug("script execution completed, running time = {}", runningTime)
+
+            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
+                runningTime)
+
+            auditAndNotify(session, response)
+        } catch (MultipleCompilationErrorsException e) {
+            LOG.error("script compilation error", e)
+
+            response = RunScriptResponse.fromException(scriptContent, e)
+        } catch (Throwable t) {
+            LOG.error("error running script", t)
+
+            response = RunScriptResponse.fromException(scriptContent, t)
+
+            auditAndNotify(session, response)
+        } finally {
+            stream.close()
+        }
+
+        response
+    }
 
     private void auditAndNotify(Session session, RunScriptResponse response) {
         if (!configurationService.auditDisabled) {
