@@ -4,7 +4,6 @@ import com.citytechinc.aem.groovy.console.audit.AuditRecord
 import com.citytechinc.aem.groovy.console.response.RunScriptResponse
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.sling.jcr.api.SlingRepository
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -19,10 +18,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
             groovyconsole()
         }
 
-        auditService.with {
-            repository = [loginAdministrative: { this.session }] as SlingRepository
-            activate()
-        }
+        slingContext.registerInjectActivateService(auditService)
     }
 
     def cleanup() {

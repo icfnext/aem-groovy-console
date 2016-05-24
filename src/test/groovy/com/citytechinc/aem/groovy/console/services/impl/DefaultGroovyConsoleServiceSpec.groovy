@@ -11,7 +11,6 @@ import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
-import org.osgi.framework.BundleContext
 
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
@@ -29,9 +28,20 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
+    def setupSpec() {
+        slingContext.registerService(QueryBuilder, Mock(QueryBuilder))
+        // slingContext.registerService(Replicator, Mock(Replicator))
+        slingContext.registerService(ConfigurationService, Mock(ConfigurationService))
+        slingContext.registerService(AuditService, Mock(AuditService))
+        slingContext.registerInjectActivateService(new DefaultBindingExtensionProvider())
+        slingContext.registerInjectActivateService(new DefaultExtensionService())
+        slingContext.registerInjectActivateService(new DefaultScriptMetaClassExtensionProvider())
+        slingContext.registerInjectActivateService(new DefaultGroovyConsoleService())
+    }
+
     def "run script"() {
         setup:
-        def consoleService = createConsoleService()
+        def consoleService = slingContext.getService(GroovyConsoleService)
 
         def request = requestBuilder.build {
             parameters = this.parameterMap
@@ -46,7 +56,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     def "save script"() {
         setup:
-        def consoleService = createConsoleService()
+        def consoleService = slingContext.getService(GroovyConsoleService)
 
         def request = requestBuilder.build {
             parameters = this.parameterMap
@@ -75,40 +85,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         assert map.output == "BEER" + System.getProperty("line.separator")
         assert !map.exceptionStackTrace
         assert map.runningTime
-    }
-
-    private GroovyConsoleService createConsoleService() {
-        def extensionService = new DefaultExtensionService()
-
-        def bindingExtensionProvider = new DefaultBindingExtensionProvider()
-
-        bindingExtensionProvider.with {
-            queryBuilder = Mock(QueryBuilder)
-            bundleContext = Mock(BundleContext)
-        }
-
-        extensionService.bindBindingExtensionProvider(bindingExtensionProvider)
-
-        def scriptMetaClassExtensionProvider = new DefaultScriptMetaClassExtensionProvider()
-
-        scriptMetaClassExtensionProvider.with {
-            replicator = Mock(Replicator)
-            queryBuilder = Mock(QueryBuilder)
-            bundleContext = Mock(BundleContext)
-        }
-
-        extensionService.bindScriptMetaClassExtensionProvider(scriptMetaClassExtensionProvider)
-
-        def consoleService = new DefaultGroovyConsoleService()
-
-        with(consoleService) {
-            configurationService = Mock(ConfigurationService)
-            auditService = Mock(AuditService)
-        }
-
-        consoleService.extensionService = extensionService
-
-        consoleService
     }
 
     private String getScriptAsString() {
