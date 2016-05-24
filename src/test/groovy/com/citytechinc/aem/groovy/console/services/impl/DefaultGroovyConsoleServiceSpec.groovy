@@ -9,7 +9,6 @@ import com.citytechinc.aem.groovy.console.extension.impl.DefaultScriptMetaClassE
 import com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService
 import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
@@ -30,7 +29,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     def setupSpec() {
         slingContext.registerService(QueryBuilder, Mock(QueryBuilder))
-        // slingContext.registerService(Replicator, Mock(Replicator))
         slingContext.registerService(ConfigurationService, Mock(ConfigurationService))
         slingContext.registerService(AuditService, Mock(AuditService))
         slingContext.registerInjectActivateService(new DefaultBindingExtensionProvider())
