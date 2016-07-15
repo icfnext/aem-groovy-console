@@ -11,7 +11,7 @@
     <groupId>com.citytechinc.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.1</version>
     <name>AEM Groovy Console</name>
     <description>
         The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
