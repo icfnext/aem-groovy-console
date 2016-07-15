@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>com.citytechinc.aem</groupId>
+        <groupId>com.icfolson.aem</groupId>
         <artifactId>parent</artifactId>
-        <version>6.2.0-SNAPSHOT</version>
+        <version>6.2.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -47,13 +47,6 @@
         <repository>
             <id>citytech-public</id>
             <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>apache-snapshots</id>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
         </repository>
     </repositories>
 
@@ -380,7 +373,7 @@
             <artifactId>org.apache.sling.jcr.api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.sling</groupId>
+            <groupId>com.adobe.granite.sling</groupId>
             <artifactId>org.apache.sling.jcr.resource</artifactId>
         </dependency>
         <dependency>
@@ -424,8 +417,8 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
+            <groupId>com.day.commons.osgi.wrapper</groupId>
+            <artifactId>com.day.commons.osgi.wrapper.commons-email</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -443,21 +436,21 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.6</version>
+            <version>2.4.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.citytechinc.aem.groovy.extension</groupId>
+            <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>1.1.0</version>
+            <version>2.0.0</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- test -->
         <dependency>
-            <groupId>com.citytechinc.aem.prosper</groupId>
+            <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>8.0.0-SNAPSHOT</version>
+            <version>8.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

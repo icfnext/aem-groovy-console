@@ -7,9 +7,9 @@ import com.citytechinc.aem.groovy.console.extension.impl.DefaultBindingExtension
 import com.citytechinc.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.citytechinc.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService
-import com.citytechinc.aem.prosper.specs.ProsperSpec
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.search.QueryBuilder
+import com.icfolson.aem.prosper.specs.ProsperSpec
 
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
 import static com.citytechinc.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT

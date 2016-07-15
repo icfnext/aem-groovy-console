@@ -1,10 +1,10 @@
 package com.citytechinc.aem.groovy.console.extension.impl
 
 import com.citytechinc.aem.groovy.console.api.BindingExtensionProvider
-import com.citytechinc.aem.groovy.extension.builders.NodeBuilder
-import com.citytechinc.aem.groovy.extension.builders.PageBuilder
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
+import com.icfolson.aem.groovy.extension.builders.NodeBuilder
+import com.icfolson.aem.groovy.extension.builders.PageBuilder
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
