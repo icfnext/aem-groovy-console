@@ -18,15 +18,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Installation
 
-1.  Install the console package.
-
-        mvn install -P local
-
-	or
-
-        mvn install -P local,replicate
-
-    The optional `replicate` profile activates the deployed package to the local publish instance.
+1. [Download the console package](https://github.com/Citytechinc/cq-groovy-console/releases/download/8.0.1/aem-groovy-console-8.0.1.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
