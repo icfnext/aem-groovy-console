@@ -399,7 +399,7 @@
         <dependency>
             <groupId>com.day.cq.wcm</groupId>
             <artifactId>cq-wcm-taglib</artifactId>
-            <version>[5.7.4,6.0.0]</version>
+            <version>[5.7.4,5.8.2]</version>
         </dependency>
         <dependency>
             <groupId>com.adobe.granite</groupId>
