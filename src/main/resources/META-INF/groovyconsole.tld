@@ -6,10 +6,10 @@
 
     <tlib-version>${project.version}</tlib-version>
     <short-name>groovyConsole</short-name>
-    <uri>http://www.citytechinc.com/taglibs/groovyconsole</uri>
+    <uri>http://www.icfolson.com/taglibs/groovyconsole</uri>
 
     <tag>
         <name>defineObjects</name>
-        <tag-class>com.citytechinc.aem.groovy.console.tags.DefineObjectsTag</tag-class>
+        <tag-class>com.icfolson.aem.groovy.console.tags.DefineObjectsTag</tag-class>
     </tag>
 </taglib>
