@@ -1,6 +1,6 @@
 # AEM Groovy Console
 
-[CITYTECH, Inc.](http://www.citytechinc.com)
+[ICF Olson](http://www.icfolson.com)
 
 ## Overview
 
@@ -34,11 +34,11 @@ If you are running AEM with a context path, set the Maven property `aem.context.
 
 ## Extensions
 
-Starting in version 7.0.0, the Groovy Console provides extension hooks to further customize script execution.  The console exposes an API containing three extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.citytechinc.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, metaclasses, and star imports.
+Starting in version 7.0.0, the Groovy Console provides extension hooks to further customize script execution.  The console exposes an API containing three extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.icfolson.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, metaclasses, and star imports.
 
 ### Notifications
 
-To provide custom notifications for script executions, bundles may implement the `com.citytechinc.aem.groovy.console.notification.NotificationService` interface (see the `com.citytechinc.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
+To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.citytechinc.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
 
 ## Notes
 
