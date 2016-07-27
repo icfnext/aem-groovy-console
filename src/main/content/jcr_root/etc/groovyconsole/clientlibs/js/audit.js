@@ -41,6 +41,13 @@ GroovyConsole.Audit = function () {
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
                     $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code>');
+                    $('td:eq(2)', row).popover({
+                        container: 'body',
+                        content: '<pre>' + data.script + '</pre>',
+                        html: true,
+                        placement: 'top',
+                        trigger: 'hover'
+                    });
 
                     if (data.exception.length) {
                         $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
