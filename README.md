@@ -10,7 +10,8 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Requirements
 
-* AEM 6.1 running on localhost:4502
+* AEM 6.2 running on localhost:4502
+* Versions 8.x.x are compatible with AEM 6.1
 * Versions 7.x.x are compatible with AEM 6.0
 * Versions 5.x.x and 6.x.x are compatible with CQ 5.6
 * Versions 3.x.x are compatible with CQ 5.4 and 5.5
@@ -18,7 +19,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Installation
 
-1. [Download the console package](https://github.com/Citytechinc/cq-groovy-console/releases/download/8.0.1/aem-groovy-console-8.0.1.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
+1. [Download the console package](https://github.com/Citytechinc/cq-groovy-console/releases/download/9.0.0/aem-groovy-console-9.0.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
@@ -38,7 +39,7 @@ Starting in version 7.0.0, the Groovy Console provides extension hooks to furthe
 
 ### Notifications
 
-To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.citytechinc.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
+To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.icfolson.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
 
 ## Notes
 
