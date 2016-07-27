@@ -36,7 +36,6 @@
             <includes>
                 <include>com.icfolson.aem.groovy.console:aem-groovy-console</include>
 	            <include>com.icfolson.aem.groovy.extension:aem-groovy-extension-bundle</include>
-	            <include>org.codehaus.groovy:groovy-all</include>
             </includes>
         </dependencySet>
     </dependencySets>

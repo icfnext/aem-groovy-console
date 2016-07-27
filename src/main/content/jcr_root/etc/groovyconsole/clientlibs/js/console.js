@@ -219,7 +219,7 @@ var GroovyConsole = function () {
 
                 hasTable = true;
             } catch (e) {
-                console.log('unable to parse JSON for table = ' + e.message);
+
             }
 
             return hasTable;
@@ -280,7 +280,7 @@ var GroovyConsole = function () {
         loadScript: function (scriptPath) {
             GroovyConsole.reset();
 
-            $.get(CQ.shared.HTTP.getContextPath() + '/crx/server/crx.default/jcr%3aroot' + scriptPath + '/jcr%3Acontent/jcr:data').done(function (script) {
+            $.get(CQ.shared.HTTP.getContextPath() + scriptPath + '/jcr:content/jcr:data').done(function (script) {
                 GroovyConsole.localStorage.saveScriptName(scriptPath);
                 GroovyConsole.showSuccess('Script loaded successfully.');
 

@@ -80,3 +80,7 @@ td.open-record, td.delete-record {
 #result-table table {
     background-color: #f5f5f5;
 }
+
+.popover {
+    max-width: 100%;
+}
