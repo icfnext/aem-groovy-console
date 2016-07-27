@@ -8,10 +8,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.citytechinc.aem.groovy.console</groupId>
+    <groupId>com.icfolson.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>9.0.0</version>
     <name>AEM Groovy Console</name>
     <description>
         The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
@@ -20,8 +20,8 @@
     </description>
 
     <organization>
-        <name>CITYTECH, Inc.</name>
-        <url>http://www.citytechinc.com</url>
+        <name>ICF Olson</name>
+        <url>http://www.icfolson.com</url>
     </organization>
 
     <licenses>
@@ -205,7 +205,7 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
-                        <Export-Package>!*.impl,com.citytechinc.aem.groovy.console.*</Export-Package>
+                        <Export-Package>!*.impl,com.icfolson.aem.groovy.console.*</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
