@@ -70,7 +70,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <aem.package.goal>install</aem.package.goal>
         <aem.username>admin</aem.username>
-        <aem.context.path/>
+        <aem.context.path />
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
         <assembly.descriptor.name>zip.xml</assembly.descriptor.name>
     </properties>
