@@ -143,11 +143,12 @@ var GroovyConsole = function () {
                     GroovyConsole.showError('Script is empty.');
                 }
             });
+
             $('body').keydown(function (e) {
-                if(e.ctrlKey && e.keyCode == 13){
+                if (e.ctrlKey && e.keyCode == 13) {
                     $("#run-script").click();
                 }
-            }
+            });
         },
 
         reset: function () {
