@@ -145,8 +145,12 @@ var GroovyConsole = function () {
             });
 
             $('body').keydown(function (e) {
-                if (e.ctrlKey && e.keyCode == 13) {
-                    $("#run-script").click();
+                if (e.ctrlKey) {
+                    if (e.keyCode == 13) {
+                        $('#run-script').click();
+                    } else if (e.keyCode == 78) {
+                        $('#new-script').click();
+                    }
                 }
             });
         },
