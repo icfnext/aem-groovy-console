@@ -143,6 +143,12 @@ var GroovyConsole = function () {
                     GroovyConsole.showError('Script is empty.');
                 }
             });
+
+            $('body').keydown(function (e) {
+                if (e.ctrlKey && e.keyCode == 13) {
+                    $("#run-script").click();
+                }
+            });
         },
 
         reset: function () {
@@ -219,7 +225,7 @@ var GroovyConsole = function () {
 
                 hasTable = true;
             } catch (e) {
-                console.log('unable to parse JSON for table = ' + e.message);
+
             }
 
             return hasTable;
