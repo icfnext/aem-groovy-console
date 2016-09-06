@@ -146,7 +146,11 @@ var GroovyConsole = function () {
 
             $('body').keydown(function (e) {
                 if (e.ctrlKey && e.keyCode == 13) {
-                    $("#run-script").click();
+                    $('#run-script').click();
+                }
+
+                if (e.ctrlKey && e.keyCode == 78) {
+                    $('#new-script').click();
                 }
             });
         },
