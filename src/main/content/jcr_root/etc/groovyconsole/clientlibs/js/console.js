@@ -143,6 +143,16 @@ var GroovyConsole = function () {
                     GroovyConsole.showError('Script is empty.');
                 }
             });
+
+            $('body').keydown(function (e) {
+                if (e.ctrlKey) {
+                    if (e.keyCode == 13) {
+                        $('#run-script').click();
+                    } else if (e.keyCode == 78) {
+                        $('#new-script').click();
+                    }
+                }
+            });
         },
 
         reset: function () {
