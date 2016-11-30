@@ -10,7 +10,7 @@ class DefaultStarImportExtensionProvider implements StarImportExtensionProvider 
 
     private static final Set<String> DEFAULT_STAR_IMPORTS = ["javax.jcr", "org.apache.sling.api",
         "org.apache.sling.api.resource", "com.day.cq.search", "com.day.cq.tagging", "com.day.cq.wcm.api",
-        "com.day.cq.replication"] as Set
+        "com.day.cq.replication", "groovy.json"] as Set
 
     @Override
     Set<String> getStarImports() {

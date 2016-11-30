@@ -3,15 +3,15 @@
 
     <parent>
         <groupId>com.icfolson.aem</groupId>
-        <artifactId>parent</artifactId>
-        <version>6.2.1</version>
+        <artifactId>aem-parent-uber-jar</artifactId>
+        <version>6.2.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>9.2.0-SNAPSHOT</version>
+    <version>10.0.0-SNAPSHOT</version>
     <name>AEM Groovy Console</name>
     <description>
         The AEM Groovy Console provides an interface for running Groovy scripts in the AEM (Adobe CQ) container. Scripts
@@ -33,29 +33,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</connection>
-        <developerConnection>scm:git:git@github.com:Citytechinc/cq-groovy-console.git</developerConnection>
-        <url>https://github.com/Citytechinc/cq-groovy-console</url>
+        <connection>scm:git:git@github.com:OlsonDigital/cq-groovy-console.git</connection>
+        <developerConnection>scm:git:git@github.com:OlsonDigital/cq-groovy-console.git</developerConnection>
+        <url>https://github.com/OlsonDigital/cq-groovy-console</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/Citytechinc/cq-groovy-console/issues</url>
     </issueManagement>
-
-    <repositories>
-        <repository>
-            <id>citytech-public</id>
-            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>citytech-public</id>
-            <url>http://nexus.citytech.ctmsp.com/content/groups/public</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <distributionManagement>
         <repository>
@@ -349,6 +335,11 @@
     <dependencies>
         <!-- inherited -->
         <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
+        </dependency>
+        <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
         </dependency>
@@ -361,64 +352,20 @@
             <artifactId>jsp-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.jcr.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.granite.sling</groupId>
-            <artifactId>org.apache.sling.jcr.resource</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.scripting.jsp.taglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.commons</groupId>
-            <artifactId>day-commons-text</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-search</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq</groupId>
-            <artifactId>cq-mailer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.day.cq.wcm</groupId>
-            <artifactId>cq-wcm-taglib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.granite</groupId>
-            <artifactId>com.adobe.granite.replication.core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.day.commons.osgi.wrapper</groupId>
-            <artifactId>com.day.commons.osgi.wrapper.commons-email</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -442,7 +389,7 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -450,7 +397,7 @@
         <dependency>
             <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>8.0.0</version>
+            <version>9.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

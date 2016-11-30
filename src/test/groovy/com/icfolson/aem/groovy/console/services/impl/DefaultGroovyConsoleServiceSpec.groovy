@@ -1,6 +1,7 @@
 package com.icfolson.aem.groovy.console.services.impl
 
 import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.audit.AuditService
@@ -31,6 +32,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         slingContext.registerService(QueryBuilder, Mock(QueryBuilder))
         slingContext.registerService(ConfigurationService, Mock(ConfigurationService))
         slingContext.registerService(AuditService, Mock(AuditService))
+        slingContext.registerService(Replicator, Mock(Replicator))
         slingContext.registerInjectActivateService(new DefaultBindingExtensionProvider())
         slingContext.registerInjectActivateService(new DefaultExtensionService())
         slingContext.registerInjectActivateService(new DefaultScriptMetaClassExtensionProvider())
