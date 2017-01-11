@@ -11,6 +11,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 ## Requirements
 
 * AEM 6.2 running on localhost:4502
+* Versions 9.x.x are compatible with AEM 6.2
 * Versions 8.x.x are compatible with AEM 6.1
 * Versions 7.x.x are compatible with AEM 6.0
 * Versions 5.x.x and 6.x.x are compatible with CQ 5.6
