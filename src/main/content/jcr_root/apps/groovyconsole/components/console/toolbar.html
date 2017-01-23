@@ -1,5 +1,3 @@
-<%@include file="/apps/groovyconsole/components/global.jsp" %>
-
 <div class="btn-toolbar" role="toolbar">
     <div class="btn-group">
         <button type="button" class="btn btn-success" id="run-script">
@@ -11,15 +9,12 @@
         <button type="button" class="btn btn-default" id="new-script">
             <span class="glyphicon glyphicon-pencil"></span> New</span>
         </button>
-
-        <c:if test="${isAuthor}">
-            <button type="button" class="btn btn-default" id="open-script">
-                <span class="glyphicon glyphicon-folder-open"></span> Open</span>
-            </button>
-            <button type="button" class="btn btn-default" id="save-script">
-                <span class="glyphicon glyphicon-hdd"></span> Save</span>
-            </button>
-        </c:if>
+        <button data-sly-test="${!wcmmode.disabled}" type="button" class="btn btn-default" id="open-script">
+            <span class="glyphicon glyphicon-folder-open"></span> Open</span>
+        </button>
+        <button data-sly-test="${!wcmmode.disabled}" type="button" class="btn btn-default" id="save-script">
+            <span class="glyphicon glyphicon-hdd"></span> Save</span>
+        </button>
     </div>
 
     <div id="loader">

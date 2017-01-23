@@ -1,0 +1,6 @@
+<template data-sly-template.headlibs="${@ designPath}"
+          data-sly-use.clientLib="${'/libs/granite/sightly/templates/clientlib.html'}"
+          data-sly-use.head="${'headlibs.js' @ designPath=designPath}">
+    <sly data-sly-test="${wcmmode.disabled}" data-sly-call="${clientLib.all @ categories='cq.shared,groovyconsole'}" />
+    <sly data-sly-test="${!wcmmode.disabled}" data-sly-call="${clientLib.all @ categories='cq.wcm.edit,groovyconsole'}" />
+</template>

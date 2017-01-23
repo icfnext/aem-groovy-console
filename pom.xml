@@ -40,7 +40,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Citytechinc/cq-groovy-console/issues</url>
+        <url>https://github.com/OlsonDigital/cq-groovy-console/issues</url>
     </issueManagement>
 
     <distributionManagement>
@@ -192,6 +192,8 @@
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
                         <Export-Package>!*.impl,com.icfolson.aem.groovy.console.*</Export-Package>
+                        <Require-Bundle>org.apache.sling.models.api</Require-Bundle>
+                        <Sling-Model-Packages>com.icfolson.aem.groovy.console.components</Sling-Model-Packages>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
                 </configuration>
@@ -350,6 +352,10 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
