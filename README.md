@@ -44,7 +44,7 @@ To provide custom notifications for script executions, bundles may implement the
 
 ## Notes
 
-Sample scripts can be found in the src/main/scripts directory.
+Sample scripts can be found in the `src/main/scripts` directory.
 
 ## Versioning
 
