@@ -39,7 +39,7 @@ class DefaultAuditService implements AuditService {
     private static final String DATE_FORMAT_DAY = "dd"
 
     @Reference
-    SlingRepository repository
+    private SlingRepository repository
 
     private Session adminSession
 
@@ -50,14 +50,14 @@ class DefaultAuditService implements AuditService {
         try {
             def auditRecordNode = addAuditRecordNode(session)
 
-            auditRecordNode.set(AuditRecord.PROPERTY_SCRIPT, response.script)
+            auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
 
             if (response.exceptionStackTrace) {
-                auditRecordNode.set(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
             } else {
-                auditRecordNode.set(AuditRecord.PROPERTY_RESULT, response.result)
-                auditRecordNode.set(AuditRecord.PROPERTY_OUTPUT, response.output)
-                auditRecordNode.set(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
             }
 
             adminSession.save()

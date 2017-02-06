@@ -2,6 +2,7 @@ package com.icfolson.aem.groovy.console.impl
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
+import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
@@ -98,7 +99,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         def script = request.getParameter(PARAMETER_SCRIPT)
 
-        saveFile(session, folderNode, script, fileName, new Date(), "application/octet-stream")
+        saveFile(session, folderNode, script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
         new SaveScriptResponse(fileName)
     }

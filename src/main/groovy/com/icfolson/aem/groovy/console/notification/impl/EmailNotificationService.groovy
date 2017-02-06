@@ -7,6 +7,7 @@ import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
+import org.apache.commons.mail.Email
 import org.apache.commons.mail.HtmlEmail
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -20,19 +21,19 @@ import javax.jcr.Session
 @Slf4j("LOG")
 class EmailNotificationService implements NotificationService {
 
-    static final def SUBJECT = "Groovy Console Script Execution Result"
+    static final String SUBJECT = "Groovy Console Script Execution Result"
 
-    static final def TEMPLATE_PATH_SUCCESS = "/email-success.template"
+    static final String TEMPLATE_PATH_SUCCESS = "/email-success.template"
 
-    static final def TEMPLATE_PATH_FAIL = "/email-fail.template"
+    static final String TEMPLATE_PATH_FAIL = "/email-fail.template"
 
-    static final def FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
+    static final String FORMAT_TIMESTAMP = "yyyy-MM-dd hh:mm:ss"
 
     @Reference
-    ConfigurationService configurationService
+    private ConfigurationService configurationService
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_UNARY)
-    MailService mailService
+    private MailService mailService
 
     @Override
     void notify(Session session, RunScriptResponse response) {
@@ -58,7 +59,7 @@ class EmailNotificationService implements NotificationService {
         }
     }
 
-    private def createEmail(Set<String> recipients, Map binding, String templatePath) {
+    private Email createEmail(Set<String> recipients, Map<String, String> binding, String templatePath) {
         def email = new HtmlEmail()
 
         recipients.each { name ->
@@ -76,7 +77,7 @@ class EmailNotificationService implements NotificationService {
         email
     }
 
-    private static def createBinding(Session session, RunScriptResponse response) {
+    private static Map<String, String> createBinding(Session session, RunScriptResponse response) {
         def binding = [
             username: session.userID,
             timestamp: new Date().format(FORMAT_TIMESTAMP),

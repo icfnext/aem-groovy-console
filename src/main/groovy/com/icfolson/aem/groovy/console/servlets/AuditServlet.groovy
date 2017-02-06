@@ -15,9 +15,9 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.P
 @SlingServlet(paths = "/bin/groovyconsole/audit")
 class AuditServlet extends AbstractJsonResponseServlet {
 
-    private static final def PARAMETER_START_DATE = "startDate"
+    private static final String PARAMETER_START_DATE = "startDate"
 
-    private static final def PARAMETER_END_DATE = "endDate"
+    private static final String PARAMETER_END_DATE = "endDate"
 
     private static final String DATE_FORMAT = "yyyy-MM-dd"
 

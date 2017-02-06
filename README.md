@@ -20,7 +20,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Installation
 
-1. [Download the console package](https://github.com/Citytechinc/cq-groovy-console/releases).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
+1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/10.0.0/aem-groovy-console-10.0.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
