@@ -61,7 +61,6 @@
         <osgi.bundle.status.skip>true</osgi.bundle.status.skip>
         <osgi.bundle.status.skip.publish>true</osgi.bundle.status.skip.publish>
         <assembly.descriptor.name>zip.xml</assembly.descriptor.name>
-        <aem.package.fileName>${project.build.directory}/${project.build.finalName}.zip</aem.package.fileName>
     </properties>
 
     <profiles>
@@ -273,7 +272,7 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>aem-groovy-extension-bundle</bundleName>
-                                <bundleName>aem-groovy-console</bundleName>
+                                <bundleName>aem-groovy-console;${project.version}</bundleName>
                             </bundleNames>
                             <host>${aem.host}</host>
                             <port>${aem.port.author}</port>
@@ -291,7 +290,7 @@
                         <configuration>
                             <bundleNames>
                                 <bundleName>aem-groovy-extension-bundle</bundleName>
-                                <bundleName>aem-groovy-console</bundleName>
+                                <bundleName>aem-groovy-console;${project.version}</bundleName>
                             </bundleNames>
                             <host>${aem.host}</host>
                             <port>${aem.port.publish}</port>
@@ -412,7 +411,7 @@
         <dependency>
             <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>9.0.0</version>
+            <version>9.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
