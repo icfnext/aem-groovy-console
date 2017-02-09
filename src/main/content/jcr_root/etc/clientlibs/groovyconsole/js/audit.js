@@ -13,9 +13,12 @@ GroovyConsole.Audit = function () {
                         data: null,
                         defaultContent: '<span class="glyphicon glyphicon-upload" title="Load Script"></span>'
                     },
-                    { data: 'date' },
                     {
-                        data: 'scriptPreview',
+                        data: 'date',
+                        searchable: false
+                    },
+                    {
+                        data: 'script',
                         orderable: false
                     },
                     {
@@ -25,6 +28,7 @@ GroovyConsole.Audit = function () {
                     {
                         className: 'delete-record',
                         orderable: false,
+                        searchable: false,
                         data: null,
                         defaultContent: '<span class="glyphicon glyphicon-trash" title="Delete Record"></span>'
                     }
@@ -40,7 +44,7 @@ GroovyConsole.Audit = function () {
                 },
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
-                    $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code>');
+                    $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
                     $('td:eq(2)', row).popover({
                         container: 'body',
                         content: '<pre>' + data.script + '</pre>',
