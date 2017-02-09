@@ -11,7 +11,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 ## Requirements
 
 * AEM 6.2 running on localhost:4502
-* Versions 9.x.x are compatible with AEM 6.2
+* Versions 9.x.x and 10.x.x are compatible with AEM 6.2
 * Versions 8.x.x are compatible with AEM 6.1
 * Versions 7.x.x are compatible with AEM 6.0
 * Versions 5.x.x and 6.x.x are compatible with CQ 5.6
@@ -20,7 +20,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://groovy.
 
 ## Installation
 
-1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/10.1.0/aem-groovy-console-10.1.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
+1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/10.1.1/aem-groovy-console-10.1.1.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 

@@ -55,8 +55,14 @@ class DefaultAuditService implements AuditService {
             if (response.exceptionStackTrace) {
                 auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
             } else {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+                if (response.result) {
+                    auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
+                }
+
+                if (response.output) {
+                    auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+                }
+
                 auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
             }
 
