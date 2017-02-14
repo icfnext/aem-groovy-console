@@ -16,6 +16,17 @@ class GroovyConsoleConstants {
 
     public static final String AUDIT_PATH = "$PATH_CONSOLE_ROOT/$JCR_CONTENT/$AUDIT_NODE_NAME"
 
+    public static final Set<String> DEFAULT_STAR_IMPORTS = [
+        "javax.jcr",
+        "org.apache.sling.api",
+        "org.apache.sling.api.resource",
+        "com.day.cq.search",
+        "com.day.cq.tagging",
+        "com.day.cq.wcm.api",
+        "com.day.cq.replication",
+        "groovy.json"
+    ] as Set
+
     private GroovyConsoleConstants() {
 
     }
