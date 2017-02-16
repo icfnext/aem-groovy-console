@@ -21,7 +21,6 @@ theme-github.js
 theme-idle_fingers.js
 theme-katzenmilch.js
 theme-kr.js
-theme-kr_theme.js
 theme-kuroir.js
 theme-merbivore.js
 theme-merbivore_soft.js
