@@ -190,8 +190,6 @@ class DefaultAuditService implements AuditService {
 
     @Activate
     void activate() {
-        //ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
-        //adminSession = resourceResolver.adaptTo(Session.class)
         adminSession = repository.loginService(null, null)
 
         checkAuditNode()

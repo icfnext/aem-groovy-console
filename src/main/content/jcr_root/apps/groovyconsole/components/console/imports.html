@@ -4,7 +4,7 @@
             <a data-toggle="collapse" data-parent="#info" href="#imports">Imports</a>
         </h4>
     </div>
-    <div id="imports" class="panel-collapse collapse">
+    <div id="imports" class="panel-collapse collapse" data-sly-use.imports="com.icfolson.aem.groovy.console.components.Imports">
         <div class="panel-body">
             <p>Additional packages imported into all scripts.</p>
             <ul>
@@ -15,6 +15,7 @@
                 <li><a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/package-summary.html" target="_blank">javax.jcr</a></li>
                 <li><a href="http://sling.apache.org/apidocs/sling7/org/apache/sling/api/package-summary.html" target="_blank">org.apache.sling.api</a></li>
                 <li><a href="http://sling.apache.org/apidocs/sling7/org/apache/sling/api/resource/package-summary.html" target="_blank">org.apache.sling.api.resource</a></li>
+                <li data-sly-repeat.import="${imports.starImports}">${import}</li>
             </ul>
         </div>
     </div>
