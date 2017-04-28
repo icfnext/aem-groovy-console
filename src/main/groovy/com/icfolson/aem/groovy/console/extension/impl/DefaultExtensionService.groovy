@@ -12,6 +12,7 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.resource.ResourceResolver
 
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -55,6 +56,11 @@ class DefaultExtensionService implements ExtensionService {
         }
 
         new Binding(bindings)
+    }
+
+    @Override
+    Binding getBinding(ResourceResolver resourceResolver) {
+        null
     }
 
     @Override
