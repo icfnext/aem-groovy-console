@@ -7,6 +7,7 @@ bootstrap.min.js
 bootstrap3-typeahead.min.js
 ace.js
 mode-groovy.js
+mode-json.js
 theme-ambiance.js
 theme-chaos.js
 theme-chrome.js
