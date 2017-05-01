@@ -13,7 +13,7 @@
     <entry key="version">${project.version}</entry>
     <entry key="requiresRoot">true</entry>
     <entry key="dependencies" />
-    <entry key="group" />
+    <entry key="group">ICF Olson</entry>
     <entry key="packageFormatVersion">2</entry>
     <entry key="lastWrapped">${timestamp}</entry>
     <entry key="lastWrappedBy">${aem.username}</entry>

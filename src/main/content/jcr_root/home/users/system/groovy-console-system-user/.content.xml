@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-    jcr:primaryType="rep:SystemUser"
-    jcr:uuid="3d75a089-8ec6-332f-aae4-5550f6ad06df"
-    rep:authorizableId="groovy-console-system-user"
-    rep:principalName="groovy-console-system-user"/>
+          jcr:primaryType="rep:SystemUser"
+          jcr:uuid="3d75a089-8ec6-332f-aae4-5550f6ad06df"
+          rep:authorizableId="groovy-console-system-user"
+          rep:principalName="groovy-console-system-user"/>
