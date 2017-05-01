@@ -1,0 +1,5 @@
+#base=source
+
+init.js
+jqm.granite.splitview.js
+setup.js

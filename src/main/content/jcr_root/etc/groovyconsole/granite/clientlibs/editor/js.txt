@@ -1,0 +1,11 @@
+#base=source
+
+bootstrap.min.js
+ace-noconflict.js
+mode-groovy-noconflict.js
+themes-noconflict.js
+theme-textmate-uncompressed.js
+modernizr.custom.2.6.2.js
+console.granite.js
+local-storage.js
+listthemes.js
