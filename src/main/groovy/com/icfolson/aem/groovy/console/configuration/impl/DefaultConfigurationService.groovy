@@ -78,9 +78,8 @@ class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Activate
-    @SuppressWarnings("deprecated")
     void activate(Map<String, Object> properties) {
-        resourceResolver = resourceResolverFactory.getAdministrativeResourceResolver(null)
+        resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
 
         modified(properties)
     }

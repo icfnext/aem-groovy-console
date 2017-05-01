@@ -4,6 +4,7 @@
     <comment>FileVault Package Properties</comment>
     <entry key="createdBy">${aem.username}</entry>
     <entry key="name">${project.artifactId}</entry>
+    <entry key="acHandling">merge</entry>
     <entry key="description">${project.description}</entry>
     <entry key="lastModified">${timestamp}</entry>
     <entry key="lastModifiedBy">${aem.username}</entry>
