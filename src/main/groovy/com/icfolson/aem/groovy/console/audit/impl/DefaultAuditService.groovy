@@ -12,6 +12,8 @@ import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceResolverFactory
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -187,9 +189,8 @@ class DefaultAuditService implements AuditService {
     }
 
     @Activate
-    @SuppressWarnings("deprecated")
     void activate() {
-        adminSession = repository.loginAdministrative(null)
+        adminSession = repository.loginService(null, null)
 
         checkAuditNode()
     }
