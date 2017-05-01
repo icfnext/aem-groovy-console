@@ -74,6 +74,11 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
             closure
         }
+
+        @Override
+        Closure getScriptMetaClass(ResourceResolver resourceResolver) {
+            null
+        }
     }
 
     def "get star imports"() {

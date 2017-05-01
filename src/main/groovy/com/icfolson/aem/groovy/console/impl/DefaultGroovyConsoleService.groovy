@@ -10,6 +10,7 @@ import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
+import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
@@ -22,8 +23,6 @@ import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.commons.json.JSONException
-import org.apache.sling.commons.json.JSONObject
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
@@ -284,11 +283,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         if (data) {
             try {
-                // constructor will throw exception if data is not valid JSON
-                new JSONObject(data)
-
                 binding["data"] = new JsonSlurper().parseText(data)
-            } catch (JSONException ignored) {
+            } catch (JsonException ignored) {
                 binding["data"] = data
             }
         }

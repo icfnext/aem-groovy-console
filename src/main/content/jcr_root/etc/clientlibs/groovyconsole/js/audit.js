@@ -66,7 +66,15 @@ GroovyConsole.Audit = function () {
                 var script = table.row(tr).data().relativePath;
 
                 $.getJSON('/bin/groovyconsole/audit.json?script=' + script, function (response) {
-                    editor.getSession().setValue(response.script);
+                    scriptEditor.getSession().setValue(response.script);
+
+                    if (response.data.length) {
+                        dataEditor.getSession().setValue(response.data);
+
+                        GroovyConsole.showOptions();
+                    } else {
+                        GroovyConsole.hideOptions();
+                    }
 
                     GroovyConsole.reset();
                     GroovyConsole.showResult(response);

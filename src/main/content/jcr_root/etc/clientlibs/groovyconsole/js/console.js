@@ -3,58 +3,68 @@ var GroovyConsole = function () {
     var resultDataTable;
 
     return {
-        initializeEditor: function () {
+        initializeEditors: function () {
+            // script editor
             window.scriptEditor = ace.edit('script-editor');
 
             scriptEditor.getSession().setMode('ace/mode/groovy');
             scriptEditor.setShowPrintMargin(false);
+            scriptEditor.on('change', function () {
+                GroovyConsole.localStorage.saveScriptEditorContent(scriptEditor.getSession().getDocument().getValue());
+            });
 
-            var container = $('#script-editor');
+            var $scriptEditor = $('#script-editor');
 
-            container.resizable({
+            $scriptEditor.resizable({
                 resize: function () {
                     scriptEditor.resize(true);
 
-                    GroovyConsole.localStorage.saveEditorHeight(container.height());
+                    GroovyConsole.localStorage.saveScriptEditorHeight($scriptEditor.height());
                 },
                 handles: 's'
             });
 
-            container.css('height', GroovyConsole.localStorage.getEditorHeight());
+            $scriptEditor.css('height', GroovyConsole.localStorage.getScriptEditorHeight());
 
-            var auditRecord = window.auditRecord;
-
-            if (auditRecord) {
-                // script loaded from audit
-                scriptEditor.getSession().setValue(auditRecord.script);
-
-                GroovyConsole.showResult(auditRecord);
-            } else {
-                scriptEditor.getSession().setValue(GroovyConsole.localStorage.getEditorData());
-            }
-
-            scriptEditor.on('change', function () {
-                GroovyConsole.localStorage.saveEditorData(scriptEditor.getSession().getDocument().getValue());
-            });
-        },
-
-        initializeData: function () {
+            // data/JSON editor
             window.dataEditor = ace.edit('data-editor');
 
             dataEditor.getSession().setOption('useWorker', false);
             dataEditor.getSession().setMode('ace/mode/json');
             dataEditor.setShowPrintMargin(false);
+            dataEditor.on('change', function () {
+                GroovyConsole.localStorage.saveDataEditorContent(dataEditor.getSession().getDocument().getValue());
+            });
 
-            var container = $('#data-editor');
+            var $dataEditor = $('#data-editor');
 
-            container.resizable({
+            $dataEditor.resizable({
                 resize: function () {
                     dataEditor.resize(true);
 
-                    // GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
+                    GroovyConsole.localStorage.saveDataEditorHeight($dataEditor.height());
                 },
                 handles: 's'
             });
+
+            $dataEditor.css('height', GroovyConsole.localStorage.getDataEditorHeight());
+
+            // load editor content
+            var auditRecord = window.auditRecord;
+
+            if (auditRecord) {
+                scriptEditor.getSession().setValue(auditRecord.script);
+                dataEditor.getSession().setValue(auditRecord.data);
+
+                GroovyConsole.showResult(auditRecord);
+            } else {
+                scriptEditor.getSession().setValue(GroovyConsole.localStorage.getScriptEditorContent());
+                dataEditor.getSession().setValue(GroovyConsole.localStorage.getDataEditorContent());
+            }
+
+            if (dataEditor.getSession().getDocument().getValue().length) {
+                GroovyConsole.showOptions();
+            }
         },
 
         initializeThemeMenu: function () {
@@ -66,7 +76,7 @@ var GroovyConsole = function () {
             var themes = $('#dropdown-themes li');
 
             var selectedElement = $.grep(themes, function (element) {
-                return $(element).find('a').data('target') == theme;
+                return $(element).find('a').data('target') === theme;
             });
 
             if (selectedElement.length) {
@@ -97,6 +107,8 @@ var GroovyConsole = function () {
 
                 scriptEditor.getSession().setValue('');
                 dataEditor.getSession().setValue('');
+
+                GroovyConsole.hideOptions();
             });
 
             $('#open-script').click(function () {
@@ -134,6 +146,7 @@ var GroovyConsole = function () {
 
                 if (script.length) {
                     scriptEditor.setReadOnly(true);
+                    dataEditor.setReadOnly(true);
 
                     GroovyConsole.showLoader();
                     GroovyConsole.disableButtons();
@@ -158,6 +171,7 @@ var GroovyConsole = function () {
                         }
                     }).always(function () {
                         scriptEditor.setReadOnly(false);
+                        dataEditor.setReadOnly(false);
 
                         GroovyConsole.hideLoader();
                         GroovyConsole.enableButtons();
@@ -271,6 +285,14 @@ var GroovyConsole = function () {
             }
         },
 
+        showOptions: function () {
+            $('#options').collapse('show');
+        },
+
+        hideOptions: function () {
+            $('#options').collapse('hide');
+        },
+
         disableButtons: function () {
             $('.btn').addClass('disabled');
         },
@@ -342,7 +364,7 @@ var GroovyConsole = function () {
             }).done(function () {
                 GroovyConsole.showSuccess('Script saved successfully.');
             }).fail(function () {
-                GroovyConsole.showError('Save failed, check error.log file.');
+                GroovyConsole.showError('Save failed, check AEM error.log file.');
             }).always(function () {
                 GroovyConsole.enableButtons();
             });
@@ -365,8 +387,7 @@ var GroovyConsole = function () {
 }();
 
 $(function () {
-    GroovyConsole.initializeEditor();
-    GroovyConsole.initializeData();
+    GroovyConsole.initializeEditors();
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
     GroovyConsole.initializeTooltips();

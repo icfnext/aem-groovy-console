@@ -66,6 +66,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
                 date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
                 scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
                 script: auditRecord.script,
+                data: auditRecord.data,
                 exception: auditRecord.exception,
                 link: "$consoleHref?script=${auditRecord.relativePath}",
                 relativePath: auditRecord.relativePath
