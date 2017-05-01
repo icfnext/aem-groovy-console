@@ -10,6 +10,7 @@ import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
 import org.slf4j.LoggerFactory
 
@@ -26,13 +27,20 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Override
     Binding getBinding(SlingHttpServletRequest request) {
-        def resourceResolver = request.resourceResolver
+        def binding = getBinding(request.resourceResolver)
+
+        binding.setVariable("slingRequest", request)
+
+        binding
+    }
+
+    @Override
+    Binding getBinding(ResourceResolver resourceResolver) {
         def session = resourceResolver.adaptTo(Session)
 
         new Binding([
             log: LoggerFactory.getLogger("groovyconsole"),
             session: session,
-            slingRequest: request,
             pageManager: resourceResolver.adaptTo(PageManager),
             resourceResolver: resourceResolver,
             queryBuilder: queryBuilder,

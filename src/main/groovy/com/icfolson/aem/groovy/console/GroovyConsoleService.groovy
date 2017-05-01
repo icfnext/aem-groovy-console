@@ -8,7 +8,5 @@ interface GroovyConsoleService {
 
     RunScriptResponse runScript(SlingHttpServletRequest request)
 
-    RunScriptResponse runScriptFile(SlingHttpServletRequest request)
-
     SaveScriptResponse saveScript(SlingHttpServletRequest request)
 }

@@ -10,6 +10,7 @@ import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
+import groovy.json.JsonSlurper
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.CharEncoding
@@ -20,15 +21,18 @@ import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.commons.json.JSONException
+import org.apache.sling.commons.json.JSONObject
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
-import javax.jcr.Binary
 import javax.jcr.Node
 import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
@@ -71,17 +75,150 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
+    /*
+    void runScriptAsync(SlingHttpServletRequest request) {
+        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
+
+        def stream = new ByteArrayOutputStream()
+
+        def resourceResolver = request.resourceResolver.clone(null)
+
+        def binding = getBinding(extensionService.getBinding(resourceResolver), data, stream)
+
+        def response = null
+
+        try {
+            def script = new GroovyShell(binding, configuration).parse(scriptContent)
+
+            extensionService.getScriptMetaClasses(request).each { meta ->
+                script.metaClass(meta)
+            }
+
+            def result = null
+
+            def runningTime = RUNNING_TIME {
+                result = script.run()
+            }
+
+            LOG.debug("script execution completed, running time = {}", runningTime)
+
+            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
+                runningTime)
+
+            auditAndNotify(resourceResolver, response)
+        } catch (MultipleCompilationErrorsException e) {
+            LOG.error("script compilation error", e)
+
+            response = RunScriptResponse.fromException(scriptContent, e)
+        } catch (Throwable t) {
+            LOG.error("error running script", t)
+
+            response = RunScriptResponse.fromException(scriptContent, t)
+
+            auditAndNotify(resourceResolver, response)
+        } finally {
+            stream.close()
+        }
+
+        response
+    }
+    */
+
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request) {
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
 
-        runScriptInternal(request, scriptContent)
+        def stream = new ByteArrayOutputStream()
+        def session = request.resourceResolver.adaptTo(Session)
+
+        def response = null
+
+        def binding = getBinding(extensionService.getBinding(request), data, stream)
+
+        try {
+            def script = new GroovyShell(binding, configuration).parse(scriptContent)
+
+            extensionService.getScriptMetaClasses(request).each { meta ->
+                script.metaClass(meta)
+            }
+
+            def result = null
+
+            def runningTime = RUNNING_TIME {
+                result = script.run()
+            }
+
+            LOG.debug("script execution completed, running time = {}", runningTime)
+
+            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
+                runningTime)
+
+            auditAndNotify(session, response)
+        } catch (MultipleCompilationErrorsException e) {
+            LOG.error("script compilation error", e)
+
+            response = RunScriptResponse.fromException(scriptContent, e)
+        } catch (Throwable t) {
+            LOG.error("error running script", t)
+
+            response = RunScriptResponse.fromException(scriptContent, t)
+
+            auditAndNotify(session, response)
+        } finally {
+            stream.close()
+        }
+
+        response
     }
 
-    @Override
-    RunScriptResponse runScriptFile(SlingHttpServletRequest request) {
-        runScriptInternal(request, request.inputStream.text)
+    /*
+    private RunScriptResponse runScriptInternal(SlingHttpServletRequest request, ResourceResolver resourceResolver,
+        Binding binding) {
+        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
+
+        def stream = new ByteArrayOutputStream()
+
+        def response = null
+
+        try {
+            def script = new GroovyShell(binding, configuration).parse(scriptContent)
+
+            extensionService.getScriptMetaClasses(request).each { meta ->
+                script.metaClass(meta)
+            }
+
+            def result = null
+
+            def runningTime = RUNNING_TIME {
+                result = script.run()
+            }
+
+            LOG.debug("script execution completed, running time = {}", runningTime)
+
+            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
+                runningTime)
+
+            auditAndNotify(resourceResolver, response)
+        } catch (MultipleCompilationErrorsException e) {
+            LOG.error("script compilation error", e)
+
+            response = RunScriptResponse.fromException(scriptContent, e)
+        } catch (Throwable t) {
+            LOG.error("error running script", t)
+
+            response = RunScriptResponse.fromException(scriptContent, t)
+
+            auditAndNotify(resourceResolver, response)
+        } finally {
+            stream.close()
+        }
+
+        response
     }
+    */
 
     @Override
     @Synchronized
@@ -120,53 +257,16 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     // internals
 
-    private RunScriptResponse runScriptInternal(SlingHttpServletRequest request, String scriptContent) {
-        def stream = new ByteArrayOutputStream()
+    private void auditAndNotify(ResourceResolver resourceResolver, RunScriptResponse response) {
+        def session = resourceResolver.adaptTo(Session)
 
-        def binding = extensionService.getBinding(request)
-
-        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
-
-        def session = request.resourceResolver.adaptTo(Session)
-        def configuration = createConfiguration()
-        def shell = new GroovyShell(binding, configuration)
-
-        def response = null
-
-        try {
-            def script = shell.parse(scriptContent)
-
-            extensionService.getScriptMetaClasses(request).each { meta ->
-                script.metaClass(meta)
-            }
-
-            def result = null
-
-            def runningTime = RUNNING_TIME {
-                result = script.run()
-            }
-
-            LOG.debug("script execution completed, running time = {}", runningTime)
-
-            response = RunScriptResponse.fromResult(scriptContent, result, stream.toString(CharEncoding.UTF_8),
-                runningTime)
-
-            auditAndNotify(session, response)
-        } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
-
-            response = RunScriptResponse.fromException(scriptContent, e)
-        } catch (Throwable t) {
-            LOG.error("error running script", t)
-
-            response = RunScriptResponse.fromException(scriptContent, t)
-
-            auditAndNotify(session, response)
-        } finally {
-            stream.close()
+        if (!configurationService.auditDisabled) {
+            auditService.createAuditRecord(session, response)
         }
 
-        response
+        notificationServices.each { notificationService ->
+            notificationService.notify(session, response)
+        }
     }
 
     private void auditAndNotify(Session session, RunScriptResponse response) {
@@ -179,7 +279,24 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private CompilerConfiguration createConfiguration() {
+    private Binding getBinding(Binding binding, String data, OutputStream stream) {
+        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+
+        if (data) {
+            try {
+                // constructor will throw exception if data is not valid JSON
+                new JSONObject(data)
+
+                binding["data"] = new JsonSlurper().parseText(data)
+            } catch (JSONException ignored) {
+                binding["data"] = data
+            }
+        }
+
+        binding
+    }
+
+    private CompilerConfiguration getConfiguration() {
         def configuration = new CompilerConfiguration()
 
         withConfig(configuration) {
@@ -197,11 +314,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
         resourceNode.setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
 
-        Binary binary = null
-
-        new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8)).withStream { stream ->
-            binary = session.valueFactory.createBinary(stream)
-        }
+        def stream = new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8))
+        def binary = session.valueFactory.createBinary(stream)
 
         resourceNode.setProperty(JcrConstants.JCR_DATA, binary)
         resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
