@@ -286,11 +286,19 @@ var GroovyConsole = function () {
         },
 
         showOptions: function () {
-            $('#options').collapse('show');
+            var $options = $('#options');
+
+            if (!$options.hasClass('in')) {
+                $options.collapse('show');
+            }
         },
 
         hideOptions: function () {
-            $('#options').collapse('hide');
+            var $options = $('#options');
+
+            if ($options.hasClass('in')) {
+                $options.collapse('hide');
+            }
         },
 
         disableButtons: function () {
