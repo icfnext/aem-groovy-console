@@ -12,7 +12,6 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -23,15 +22,15 @@ class DefaultExtensionService implements ExtensionService {
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
-    List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Override
     Set<String> getStarImports() {
@@ -56,11 +55,6 @@ class DefaultExtensionService implements ExtensionService {
         }
 
         new Binding(bindings)
-    }
-
-    @Override
-    Binding getBinding(ResourceResolver resourceResolver) {
-        null
     }
 
     @Override

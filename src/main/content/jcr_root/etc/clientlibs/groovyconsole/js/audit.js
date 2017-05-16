@@ -71,9 +71,9 @@ GroovyConsole.Audit = function () {
                     if (response.data.length) {
                         dataEditor.getSession().setValue(response.data);
 
-                        GroovyConsole.showOptions();
+                        GroovyConsole.showData();
                     } else {
-                        GroovyConsole.hideOptions();
+                        GroovyConsole.hideData();
                     }
 
                     GroovyConsole.reset();

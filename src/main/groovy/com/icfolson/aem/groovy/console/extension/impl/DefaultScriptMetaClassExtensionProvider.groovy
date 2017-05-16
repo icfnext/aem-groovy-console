@@ -13,7 +13,6 @@ import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
 
 import javax.jcr.Node
@@ -24,20 +23,16 @@ import javax.jcr.Session
 class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
     @Reference
-    Replicator replicator
+    private Replicator replicator
 
     @Reference
-    QueryBuilder queryBuilder
+    private QueryBuilder queryBuilder
 
-    BundleContext bundleContext
+    private BundleContext bundleContext
 
     @Override
     Closure getScriptMetaClass(SlingHttpServletRequest request) {
-        getScriptMetaClass(request.resourceResolver)
-    }
-
-    @Override
-    Closure getScriptMetaClass(ResourceResolver resourceResolver) {
+        def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
         def pageManager = resourceResolver.adaptTo(PageManager)
 

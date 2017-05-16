@@ -22,7 +22,6 @@ import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
@@ -74,56 +73,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
-    /*
-    void runScriptAsync(SlingHttpServletRequest request) {
-        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
-        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
-
-        def stream = new ByteArrayOutputStream()
-
-        def resourceResolver = request.resourceResolver.clone(null)
-
-        def binding = getBinding(extensionService.getBinding(resourceResolver), data, stream)
-
-        def response = null
-
-        try {
-            def script = new GroovyShell(binding, configuration).parse(scriptContent)
-
-            extensionService.getScriptMetaClasses(request).each { meta ->
-                script.metaClass(meta)
-            }
-
-            def result = null
-
-            def runningTime = RUNNING_TIME {
-                result = script.run()
-            }
-
-            LOG.debug("script execution completed, running time = {}", runningTime)
-
-            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
-                runningTime)
-
-            auditAndNotify(resourceResolver, response)
-        } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
-
-            response = RunScriptResponse.fromException(scriptContent, e)
-        } catch (Throwable t) {
-            LOG.error("error running script", t)
-
-            response = RunScriptResponse.fromException(scriptContent, t)
-
-            auditAndNotify(resourceResolver, response)
-        } finally {
-            stream.close()
-        }
-
-        response
-    }
-    */
-
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request) {
         def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
@@ -172,53 +121,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         response
     }
 
-    /*
-    private RunScriptResponse runScriptInternal(SlingHttpServletRequest request, ResourceResolver resourceResolver,
-        Binding binding) {
-        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
-        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
-
-        def stream = new ByteArrayOutputStream()
-
-        def response = null
-
-        try {
-            def script = new GroovyShell(binding, configuration).parse(scriptContent)
-
-            extensionService.getScriptMetaClasses(request).each { meta ->
-                script.metaClass(meta)
-            }
-
-            def result = null
-
-            def runningTime = RUNNING_TIME {
-                result = script.run()
-            }
-
-            LOG.debug("script execution completed, running time = {}", runningTime)
-
-            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
-                runningTime)
-
-            auditAndNotify(resourceResolver, response)
-        } catch (MultipleCompilationErrorsException e) {
-            LOG.error("script compilation error", e)
-
-            response = RunScriptResponse.fromException(scriptContent, e)
-        } catch (Throwable t) {
-            LOG.error("error running script", t)
-
-            response = RunScriptResponse.fromException(scriptContent, t)
-
-            auditAndNotify(resourceResolver, response)
-        } finally {
-            stream.close()
-        }
-
-        response
-    }
-    */
-
     @Override
     @Synchronized
     SaveScriptResponse saveScript(SlingHttpServletRequest request) {
@@ -255,18 +157,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     // internals
-
-    private void auditAndNotify(ResourceResolver resourceResolver, RunScriptResponse response) {
-        def session = resourceResolver.adaptTo(Session)
-
-        if (!configurationService.auditDisabled) {
-            auditService.createAuditRecord(session, response)
-        }
-
-        notificationServices.each { notificationService ->
-            notificationService.notify(session, response)
-        }
-    }
 
     private void auditAndNotify(Session session, RunScriptResponse response) {
         if (!configurationService.auditDisabled) {

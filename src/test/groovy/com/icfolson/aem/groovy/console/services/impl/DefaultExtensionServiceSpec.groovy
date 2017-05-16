@@ -6,7 +6,6 @@ import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 
 import java.text.SimpleDateFormat
 
@@ -41,11 +40,6 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
                 selectors: []
             ])
         }
-
-        @Override
-        Binding getBinding(ResourceResolver resourceResolver) {
-            return null
-        }
     }
 
     class SecondBindingExtensionProvider implements BindingExtensionProvider {
@@ -56,11 +50,6 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
                 path: request.requestPathInfo.resourcePath,
                 selectors: request.requestPathInfo.selectors as List
             ])
-        }
-
-        @Override
-        Binding getBinding(ResourceResolver resourceResolver) {
-            return null
         }
     }
 
@@ -73,11 +62,6 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
             }
 
             closure
-        }
-
-        @Override
-        Closure getScriptMetaClass(ResourceResolver resourceResolver) {
-            null
         }
     }
 

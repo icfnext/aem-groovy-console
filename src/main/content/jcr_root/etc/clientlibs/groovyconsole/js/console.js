@@ -63,7 +63,7 @@ var GroovyConsole = function () {
             }
 
             if (dataEditor.getSession().getDocument().getValue().length) {
-                GroovyConsole.showOptions();
+                GroovyConsole.showData();
             }
         },
 
@@ -108,7 +108,7 @@ var GroovyConsole = function () {
                 scriptEditor.getSession().setValue('');
                 dataEditor.getSession().setValue('');
 
-                GroovyConsole.hideOptions();
+                GroovyConsole.hideData();
             });
 
             $('#open-script').click(function () {
@@ -285,19 +285,19 @@ var GroovyConsole = function () {
             }
         },
 
-        showOptions: function () {
-            var $options = $('#options');
+        showData: function () {
+            var $data = $('#data');
 
-            if (!$options.hasClass('in')) {
-                $options.collapse('show');
+            if (!$data.hasClass('in')) {
+                $data.collapse('show');
             }
         },
 
-        hideOptions: function () {
-            var $options = $('#options');
+        hideData: function () {
+            var $data = $('#data');
 
-            if ($options.hasClass('in')) {
-                $options.collapse('hide');
+            if ($data.hasClass('in')) {
+                $data.collapse('hide');
             }
         },
 

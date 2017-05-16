@@ -1,7 +1,6 @@
 package com.icfolson.aem.groovy.console.api
 
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 
 /**
  * Services may implement this interface to supply additional metamethods to apply to the <code>Script</code> metaclass.
@@ -15,6 +14,4 @@ interface ScriptMetaClassExtensionProvider {
      * @return a closure containing metamethods to register for scripts
      */
     Closure getScriptMetaClass(SlingHttpServletRequest request)
-
-    Closure getScriptMetaClass(ResourceResolver resourceResolver)
 }
