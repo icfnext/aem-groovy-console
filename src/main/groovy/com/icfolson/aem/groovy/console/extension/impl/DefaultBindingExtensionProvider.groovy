@@ -20,9 +20,9 @@ import javax.jcr.Session
 class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Reference
-    QueryBuilder queryBuilder
+    private QueryBuilder queryBuilder
 
-    BundleContext bundleContext
+    private BundleContext bundleContext
 
     @Override
     Binding getBinding(SlingHttpServletRequest request) {

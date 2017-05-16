@@ -23,12 +23,12 @@ import javax.jcr.Session
 class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
     @Reference
-    Replicator replicator
+    private Replicator replicator
 
     @Reference
-    QueryBuilder queryBuilder
+    private QueryBuilder queryBuilder
 
-    BundleContext bundleContext
+    private BundleContext bundleContext
 
     @Override
     Closure getScriptMetaClass(SlingHttpServletRequest request) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:vlt="http://www.day.com/jcr/vault/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="vlt:PackageDefinition"
+          acHandling="merge"
+          buildCount="1"
+          requiresRoot="{Boolean}true"/>

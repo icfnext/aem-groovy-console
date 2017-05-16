@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/apps/groovyconsole/components"/>
+    <filter root="/apps/groovyconsole/config"/>
     <filter root="/apps/groovyconsole/install"/>
     <filter root="/apps/groovyconsole/templates"/>
     <filter root="/etc/clientlibs/groovyconsole"/>
@@ -8,4 +9,6 @@
         <exclude pattern="/etc/groovyconsole/scripts(/.*)?"/>
         <exclude pattern="/etc/groovyconsole/jcr:content/audit(/.*)?"/>
     </filter>
+    <filter root="/home/users/system/groovy-console-system-user"/>
+    <filter root="/rep:policy"/>
 </workspaceFilter>

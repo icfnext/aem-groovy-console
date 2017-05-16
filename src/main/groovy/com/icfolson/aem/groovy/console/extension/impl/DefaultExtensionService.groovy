@@ -22,15 +22,15 @@ class DefaultExtensionService implements ExtensionService {
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
         policy = ReferencePolicy.DYNAMIC)
-    List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
         referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
-    List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
+    private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Override
     Set<String> getStarImports() {

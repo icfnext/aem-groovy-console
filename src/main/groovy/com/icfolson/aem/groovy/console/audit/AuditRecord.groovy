@@ -13,6 +13,8 @@ class AuditRecord {
 
     public static final String PROPERTY_SCRIPT = "script"
 
+    public static final String PROPERTY_DATA = "data"
+
     public static final String PROPERTY_RESULT = "result"
 
     public static final String PROPERTY_OUTPUT = "output"

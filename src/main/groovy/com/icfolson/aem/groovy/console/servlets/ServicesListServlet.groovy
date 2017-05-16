@@ -37,7 +37,7 @@ class ServicesListServlet extends AbstractJsonResponseServlet {
         def serviceReferences = bundleContext.getServiceReferences(AdapterFactory.name, null).findAll { serviceReference ->
             def adaptableClasses = serviceReference.getProperty(ADAPTABLE_CLASSES) as String[]
 
-            adaptableClasses.contains(ResourceResolver.name)
+            adaptableClasses && adaptableClasses.contains(ResourceResolver.name)
         }
 
         serviceReferences.each { serviceReference ->

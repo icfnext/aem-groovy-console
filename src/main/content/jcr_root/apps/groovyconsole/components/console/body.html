@@ -3,6 +3,10 @@
 <div class="container">
     <sly data-sly-include="toolbar.html"></sly>
 
+    <div class="panel-group" id="data-group">
+        <sly data-sly-include="data.html"></sly>
+    </div>
+
     <div class="alert alert-success" id="message-success" role="alert" style="display: none;">
         <span class="message"></span>
     </div>
@@ -11,7 +15,7 @@
         <span class="message"></span>
     </div>
 
-    <div id="editor" class="ace_editor_wrapper"></div>
+    <div id="script-editor" class="ace_editor_wrapper"></div>
 
     <pre id="stacktrace" class="alert-danger" style="display: none;"></pre>
 

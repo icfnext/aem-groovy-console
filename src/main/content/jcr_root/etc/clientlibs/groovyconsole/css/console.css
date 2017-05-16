@@ -3,15 +3,25 @@ body {
     padding-bottom: 30px;
 }
 
-#editor {
+#script-editor {
     position: relative;
     height: 400px;
+}
+
+#data-editor {
+    position: relative;
+    height: 200px;
 }
 
 #loader {
     display: inline-block;
     margin-left: 5px;
     visibility: hidden;
+}
+
+#data-group {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #message-success, #message-error {

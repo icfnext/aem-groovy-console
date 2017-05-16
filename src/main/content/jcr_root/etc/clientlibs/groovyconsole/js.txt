@@ -7,6 +7,7 @@ bootstrap.min.js
 bootstrap3-typeahead.min.js
 ace.js
 mode-groovy.js
+mode-json.js
 theme-ambiance.js
 theme-chaos.js
 theme-chrome.js
@@ -21,7 +22,6 @@ theme-github.js
 theme-idle_fingers.js
 theme-katzenmilch.js
 theme-kr.js
-theme-kr_theme.js
 theme-kuroir.js
 theme-merbivore.js
 theme-merbivore_soft.js

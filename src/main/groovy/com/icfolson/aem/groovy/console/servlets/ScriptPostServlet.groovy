@@ -2,6 +2,7 @@ package com.icfolson.aem.groovy.console.servlets
 
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
@@ -12,6 +13,7 @@ import javax.servlet.ServletException
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @SlingServlet(paths = "/bin/groovyconsole/post")
+@Slf4j("LOG")
 class ScriptPostServlet extends AbstractJsonResponseServlet {
 
     @Reference

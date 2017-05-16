@@ -32,7 +32,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with result and output"() {
         when:
-        def response = RunScriptResponse.fromResult(script, result, output, runningTime)
+        def response = RunScriptResponse.fromResult(script, "data", result, output, runningTime)
         def auditRecord = auditService.createAuditRecord(session, response)
 
         then:
@@ -64,7 +64,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create multiple audit records"() {
         setup:
-        def response = RunScriptResponse.fromResult("script content", "result", "output", "running time")
+        def response = RunScriptResponse.fromResult("script content", "data", "result", "output", "running time")
         def auditRecords = []
 
         when:
@@ -78,7 +78,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "get audit records for valid date range"() {
         setup:
-        def response = RunScriptResponse.fromResult("script content", "result", "output", "running time")
+        def response = RunScriptResponse.fromResult("script content", "data", "result", "output", "running time")
 
         auditService.createAuditRecord(session, response)
 

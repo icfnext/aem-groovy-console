@@ -1,11 +1,19 @@
 GroovyConsole.localStorage = function () {
 
+    var SCRIPT_EDITOR = 'script';
+    var DATA_EDITOR = 'data';
     var EDITOR_HEIGHT = 'groovyconsole.editor.height';
-    var EDITOR_DATA = 'groovyconsole.editor.data';
+    var EDITOR_CONTENT = 'groovyconsole.editor.content';
     var THEME = 'groovyconsole.theme';
     var SCRIPT_NAME = 'groovyconsole.script.name';
 
-    function getValue(name, defaultValue) {
+    function getValue(propertyName, defaultValue, editorName) {
+        var name = propertyName;
+
+        if (typeof editorName !== 'undefined') {
+            name = propertyName + '.' + editorName;
+        }
+
         if (Modernizr.localstorage) {
             return window.localStorage[name] || defaultValue || '';
         }
@@ -13,33 +21,55 @@ GroovyConsole.localStorage = function () {
         return defaultValue || '';
     }
 
-    function saveValue(name, value) {
+    function saveValue(propertyName, value, editorName) {
+        var name = propertyName;
+
+        if (typeof editorName !== 'undefined') {
+            name = propertyName + '.' + editorName;
+        }
+
         if (Modernizr.localstorage) {
             window.localStorage[name] = value;
         }
     }
 
-    function clearValue (name) {
+    function clearValue(name) {
         if (Modernizr.localstorage) {
             window.localStorage[name] = '';
         }
     }
 
     return {
-        saveEditorHeight: function (value) {
-            saveValue(EDITOR_HEIGHT, value);
+        saveScriptEditorHeight: function (value) {
+            saveValue(EDITOR_HEIGHT, value, SCRIPT_EDITOR);
         },
 
-        getEditorHeight: function () {
-            return getValue(EDITOR_HEIGHT, $('#editor').css('height'));
+        saveDataEditorHeight: function (value) {
+            saveValue(EDITOR_HEIGHT, value, DATA_EDITOR);
         },
 
-        saveEditorData: function (value) {
-            saveValue(EDITOR_DATA, value);
+        getScriptEditorHeight: function () {
+            return getValue(EDITOR_HEIGHT, $('#script-editor').css('height'), SCRIPT_EDITOR);
         },
 
-        getEditorData: function () {
-            return getValue(EDITOR_DATA, '');
+        getDataEditorHeight: function () {
+            return getValue(EDITOR_HEIGHT, $('#data-editor').css('height'), DATA_EDITOR);
+        },
+
+        saveScriptEditorContent: function (value) {
+            saveValue(EDITOR_CONTENT, value, SCRIPT_EDITOR);
+        },
+
+        saveDataEditorContent: function (value) {
+            saveValue(EDITOR_CONTENT, value, DATA_EDITOR);
+        },
+
+        getScriptEditorContent: function () {
+            return getValue(EDITOR_CONTENT, '', SCRIPT_EDITOR);
+        },
+
+        getDataEditorContent: function () {
+            return getValue(EDITOR_CONTENT, '', DATA_EDITOR);
         },
 
         saveTheme: function (value) {

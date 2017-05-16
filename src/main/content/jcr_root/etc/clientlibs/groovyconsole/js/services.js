@@ -5,13 +5,13 @@ $(function () {
             updater: function (key) {
                 var declaration = services[key];
 
-                editor.navigateFileEnd();
+                scriptEditor.navigateFileEnd();
 
-                if (editor.getCursorPosition().column > 0) {
-                    editor.insert('\n\n');
+                if (scriptEditor.getCursorPosition().column > 0) {
+                    scriptEditor.insert('\n\n');
                 }
 
-                editor.insert(declaration);
+                scriptEditor.insert(declaration);
 
                 return '';
             }

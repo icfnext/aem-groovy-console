@@ -3,52 +3,80 @@ var GroovyConsole = function () {
     var resultDataTable;
 
     return {
-        initializeEditor: function () {
-            window.editor = ace.edit('editor');
+        initializeEditors: function () {
+            // script editor
+            window.scriptEditor = ace.edit('script-editor');
 
-            var GroovyMode = ace.require('ace/mode/groovy').Mode;
+            scriptEditor.getSession().setMode('ace/mode/groovy');
+            scriptEditor.setShowPrintMargin(false);
+            scriptEditor.on('change', function () {
+                GroovyConsole.localStorage.saveScriptEditorContent(scriptEditor.getSession().getDocument().getValue());
+            });
 
-            editor.getSession().setMode(new GroovyMode());
-            editor.setShowPrintMargin(false);
+            var $scriptEditor = $('#script-editor');
 
-            var editorDiv = $('#editor');
-
-            editorDiv.resizable({
+            $scriptEditor.resizable({
                 resize: function () {
-                    editor.resize(true);
+                    scriptEditor.resize(true);
 
-                    GroovyConsole.localStorage.saveEditorHeight(editorDiv.height());
+                    GroovyConsole.localStorage.saveScriptEditorHeight($scriptEditor.height());
                 },
                 handles: 's'
             });
 
-            editorDiv.css('height', GroovyConsole.localStorage.getEditorHeight());
+            $scriptEditor.css('height', GroovyConsole.localStorage.getScriptEditorHeight());
 
+            // data/JSON editor
+            window.dataEditor = ace.edit('data-editor');
+
+            dataEditor.getSession().setOption('useWorker', false);
+            dataEditor.getSession().setMode('ace/mode/json');
+            dataEditor.setShowPrintMargin(false);
+            dataEditor.on('change', function () {
+                GroovyConsole.localStorage.saveDataEditorContent(dataEditor.getSession().getDocument().getValue());
+            });
+
+            var $dataEditor = $('#data-editor');
+
+            $dataEditor.resizable({
+                resize: function () {
+                    dataEditor.resize(true);
+
+                    GroovyConsole.localStorage.saveDataEditorHeight($dataEditor.height());
+                },
+                handles: 's'
+            });
+
+            $dataEditor.css('height', GroovyConsole.localStorage.getDataEditorHeight());
+
+            // load editor content
             var auditRecord = window.auditRecord;
 
             if (auditRecord) {
-                // script loaded from audit
-                editor.getSession().setValue(auditRecord.script);
+                scriptEditor.getSession().setValue(auditRecord.script);
+                dataEditor.getSession().setValue(auditRecord.data);
 
                 GroovyConsole.showResult(auditRecord);
             } else {
-                editor.getSession().setValue(GroovyConsole.localStorage.getEditorData());
+                scriptEditor.getSession().setValue(GroovyConsole.localStorage.getScriptEditorContent());
+                dataEditor.getSession().setValue(GroovyConsole.localStorage.getDataEditorContent());
             }
 
-            editor.on('change', function () {
-                GroovyConsole.localStorage.saveEditorData(editor.getSession().getDocument().getValue());
-            });
+            if (dataEditor.getSession().getDocument().getValue().length) {
+                GroovyConsole.showData();
+            }
         },
 
         initializeThemeMenu: function () {
             var theme = GroovyConsole.localStorage.getTheme();
 
-            editor.setTheme(theme);
+            scriptEditor.setTheme(theme);
+            dataEditor.setTheme(theme);
 
             var themes = $('#dropdown-themes li');
 
             var selectedElement = $.grep(themes, function (element) {
-                return $(element).find('a').data('target') == theme;
+                return $(element).find('a').data('target') === theme;
             });
 
             if (selectedElement.length) {
@@ -58,7 +86,8 @@ var GroovyConsole = function () {
             themes.click(function () {
                 var theme = $(this).find('a').data('target');
 
-                editor.setTheme(theme);
+                scriptEditor.setTheme(theme);
+                dataEditor.setTheme(theme);
 
                 themes.removeClass('active');
                 $(this).addClass('active');
@@ -76,7 +105,10 @@ var GroovyConsole = function () {
                 GroovyConsole.localStorage.clearScriptName();
                 GroovyConsole.reset();
 
-                editor.getSession().setValue('');
+                scriptEditor.getSession().setValue('');
+                dataEditor.getSession().setValue('');
+
+                GroovyConsole.hideData();
             });
 
             $('#open-script').click(function () {
@@ -93,7 +125,7 @@ var GroovyConsole = function () {
                     return;
                 }
 
-                var script = editor.getSession().getValue();
+                var script = scriptEditor.getSession().getValue();
 
                 if (script.length) {
                     GroovyConsole.disableButtons();
@@ -110,10 +142,11 @@ var GroovyConsole = function () {
 
                 GroovyConsole.reset();
 
-                var script = editor.getSession().getValue();
+                var script = scriptEditor.getSession().getValue();
 
                 if (script.length) {
-                    editor.setReadOnly(true);
+                    scriptEditor.setReadOnly(true);
+                    dataEditor.setReadOnly(true);
 
                     GroovyConsole.showLoader();
                     GroovyConsole.disableButtons();
@@ -121,17 +154,19 @@ var GroovyConsole = function () {
                     $('#run-script-text').text('Running...');
 
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
-                        script: script
+                        script: script,
+                        data: dataEditor.getSession().getValue()
                     }).done(function (response) {
                         GroovyConsole.showResult(response);
                     }).fail(function (jqXHR) {
-                        if (jqXHR.status == 403) {
+                        if (jqXHR.status === 403) {
                             GroovyConsole.showError('You do not have permission to run scripts in the Groovy Console.');
                         } else {
                             GroovyConsole.showError('Script execution failed.  Check error.log file.');
                         }
                     }).always(function () {
-                        editor.setReadOnly(false);
+                        scriptEditor.setReadOnly(false);
+                        dataEditor.setReadOnly(false);
 
                         GroovyConsole.hideLoader();
                         GroovyConsole.enableButtons();
@@ -153,6 +188,10 @@ var GroovyConsole = function () {
                     }
                 }
             });
+        },
+
+        initializeTooltips: function () {
+            $('[data-toggle="tooltip"]').tooltip();
         },
 
         reset: function () {
@@ -241,6 +280,22 @@ var GroovyConsole = function () {
             }
         },
 
+        showData: function () {
+            var $data = $('#data');
+
+            if (!$data.hasClass('in')) {
+                $data.collapse('show');
+            }
+        },
+
+        hideData: function () {
+            var $data = $('#data');
+
+            if ($data.hasClass('in')) {
+                $data.collapse('hide');
+            }
+        },
+
         disableButtons: function () {
             $('.btn').addClass('disabled');
         },
@@ -294,7 +349,7 @@ var GroovyConsole = function () {
                 GroovyConsole.localStorage.saveScriptName(scriptPath);
                 GroovyConsole.showSuccess('Script loaded successfully.');
 
-                editor.getSession().setValue(script);
+                scriptEditor.getSession().setValue(script);
             }).fail(function () {
                 GroovyConsole.showError('Load failed, check error.log file.');
             }).always(function () {
@@ -308,11 +363,11 @@ var GroovyConsole = function () {
 
             $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/save', {
                 fileName: fileName,
-                script: editor.getSession().getValue()
+                script: scriptEditor.getSession().getValue()
             }).done(function () {
                 GroovyConsole.showSuccess('Script saved successfully.');
             }).fail(function () {
-                GroovyConsole.showError('Save failed, check error.log file.');
+                GroovyConsole.showError('Save failed, check AEM error.log file.');
             }).always(function () {
                 GroovyConsole.enableButtons();
             });
@@ -335,7 +390,8 @@ var GroovyConsole = function () {
 }();
 
 $(function () {
-    GroovyConsole.initializeEditor();
+    GroovyConsole.initializeEditors();
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
+    GroovyConsole.initializeTooltips();
 });
