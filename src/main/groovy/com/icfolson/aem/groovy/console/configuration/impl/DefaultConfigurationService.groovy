@@ -63,6 +63,8 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
+        resourceResolver.refresh()
+
         def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal)
 
         def memberOfGroupIds = user.memberOf()*.ID
