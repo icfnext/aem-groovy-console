@@ -28,6 +28,12 @@ Additional build profiles may be added in the project's pom.xml to support deplo
 
 AEM 6.0 no longer allows vanity paths for pages in /etc by default.  To enable access to the Groovy Console from /groovyconsole as in previous versions, the Apache Sling Resource Resolver Factory OSGi configuration must be updated to allow vanity paths from /etc.  The Groovy Console Configuration Service can then be updated to enable the vanity path if so desired.
 
+## Excluding the Groovy OSGi Bundle
+
+If your AEM instance has multiple applications using Groovy and the `groovy-all` bundle is already deployed, you can exclude this bundle from the Groovy Console package build with the `exclude-groovy-bundle` Maven profile.  This should prevent issues with conflicting Groovy versions at runtime.
+
+    mvn install -P local,exclude-groovy-bundle
+
 ## Context Path Support
 
 If you are running AEM with a context path, set the Maven property `aem.context.path` during installation.

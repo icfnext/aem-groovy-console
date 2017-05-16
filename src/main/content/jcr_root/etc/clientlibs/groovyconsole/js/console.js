@@ -153,18 +153,13 @@ var GroovyConsole = function () {
 
                     $('#run-script-text').text('Running...');
 
-                    var async = $('input[name="async"]').is(':checked');
-
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script,
-                        // async: async,
                         data: dataEditor.getSession().getValue()
                     }).done(function (response) {
-                        if (!async) {
-                            GroovyConsole.showResult(response);
-                        }
+                        GroovyConsole.showResult(response);
                     }).fail(function (jqXHR) {
-                        if (jqXHR.status == 403) {
+                        if (jqXHR.status === 403) {
                             GroovyConsole.showError('You do not have permission to run scripts in the Groovy Console.');
                         } else {
                             GroovyConsole.showError('Script execution failed.  Check error.log file.');
