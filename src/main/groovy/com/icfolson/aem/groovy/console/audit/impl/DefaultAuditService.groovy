@@ -48,6 +48,8 @@ class DefaultAuditService implements AuditService {
         def auditRecord = null
 
         try {
+            adminSession.refresh(false)
+
             def auditRecordNode = addAuditRecordNode(session)
 
             auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
@@ -82,6 +84,8 @@ class DefaultAuditService implements AuditService {
     @Override
     void deleteAllAuditRecords(Session session) throws RepositoryException {
         try {
+            adminSession.refresh(false)
+
             if (adminSession.nodeExists("$AUDIT_PATH/${session.userID}")) {
                 adminSession.getNode("$AUDIT_PATH/${session.userID}").nodes*.remove()
 
@@ -99,6 +103,8 @@ class DefaultAuditService implements AuditService {
     @Override
     void deleteAuditRecord(Session session, String relativePath) {
         try {
+            adminSession.refresh(false)
+
             adminSession.getNode("$AUDIT_PATH/${session.userID}").getNode(relativePath).remove()
 
             LOG.debug("deleted audit record at relative path = {}", relativePath)
@@ -116,6 +122,8 @@ class DefaultAuditService implements AuditService {
         def auditRecords = []
 
         try {
+            adminSession.refresh(false)
+
             if (adminSession.nodeExists("$AUDIT_PATH/${session.userID}")) {
                 adminSession.getNode("$AUDIT_PATH/${session.userID}").recurse { Node node ->
                     if (node.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
@@ -137,6 +145,8 @@ class DefaultAuditService implements AuditService {
         def auditRecord = null
 
         try {
+            adminSession.refresh(false)
+
             def auditNode = adminSession.getNode("$AUDIT_PATH/${session.userID}")
 
             if (auditNode.hasNode(relativePath)) {
@@ -159,6 +169,8 @@ class DefaultAuditService implements AuditService {
         def auditRecords = []
 
         try {
+            adminSession.refresh(false)
+
             def auditNode = adminSession.getNode("$AUDIT_PATH/${session.userID}")
 
             def currentDate = startDate
