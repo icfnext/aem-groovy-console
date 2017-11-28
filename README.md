@@ -17,12 +17,12 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
-`11.x.x` | `6.3`
-`10.x.x`, `9.x.x` | `6.2` 
-`8.x.x` | `6.1`
-`7.x.x` | `6.0`
-`6.x.x`, `5.x.x` | `5.6` (CQ)
-`3.x.x` | `5.5`, `5.4` (CQ)
+11.x.x | 6.3
+10.x.x, 9.x.x | 6.2 
+8.x.x | 6.1
+7.x.x | 6.0
+6.x.x, 5.x.x | 5.6 (CQ)
+3.x.x | 5.5, 5.4 (CQ)
 
 ## Installation
 
