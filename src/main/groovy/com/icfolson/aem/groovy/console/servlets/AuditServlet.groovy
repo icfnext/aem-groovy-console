@@ -65,6 +65,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
             def map = [
                 date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
                 scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
+                userId: auditRecord.userId,
                 script: auditRecord.script,
                 data: auditRecord.data,
                 exception: auditRecord.exception,

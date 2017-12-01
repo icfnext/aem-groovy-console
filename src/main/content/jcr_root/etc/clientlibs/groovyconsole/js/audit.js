@@ -63,9 +63,10 @@ GroovyConsole.Audit = function () {
 
             tableBody.on('click', 'td.open-record', function () {
                 var tr = $(this).closest('tr');
-                var script = table.row(tr).data().relativePath;
+                var data = table.row(tr).data();
+                var params = $.param({ userId: data.userId, script: data.relativePath });
 
-                $.getJSON('/bin/groovyconsole/audit.json?script=' + script, function (response) {
+                $.getJSON('/bin/groovyconsole/audit.json?' + params, function (response) {
                     scriptEditor.getSession().setValue(response.script);
 
                     if (response.data.length) {
@@ -85,10 +86,11 @@ GroovyConsole.Audit = function () {
 
             tableBody.on('click', 'td.delete-record', function () {
                 var tr = $(this).closest('tr');
-                var script = table.row(tr).data().relativePath;
+                var data = table.row(tr).data();
+                var params = $.param({ userId: data.userId, script: data.relativePath });
 
                 $.ajax({
-                    url: '/bin/groovyconsole/audit.json?script=' + script,
+                    url: '/bin/groovyconsole/audit.json?' + params,
                     type: 'DELETE'
                 }).done(function () {
                     GroovyConsole.Audit.showAlert('.alert-success', 'Audit record deleted successfully.');

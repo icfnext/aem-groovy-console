@@ -23,6 +23,10 @@ class AuditRecord {
 
     public static final String PROPERTY_RUNNING_TIME = "runningTime"
 
+    private static final Integer DEPTH_AUDIT_NODE = 4
+
+    private Node node
+
     @Delegate
     final RunScriptResponse response
 
@@ -31,9 +35,15 @@ class AuditRecord {
     final Calendar date
 
     AuditRecord(Node node) {
+        this.node = node
+
         path = node.path
         date = node.getProperty(JCR_CREATED).date
         response = RunScriptResponse.fromAuditRecordNode(node)
+    }
+
+    String getUserId() {
+        node.getAncestor(DEPTH_AUDIT_NODE).name
     }
 
     String getRelativePath() {
