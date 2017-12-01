@@ -11,7 +11,7 @@
     <groupId>com.icfolson.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>11.0.1</version>
+    <version>11.0.2</version>
     <name>AEM Groovy Console</name>
     <description>
         The AEM Groovy Console provides an interface for running Groovy scripts in the AEM container. Scripts can be
@@ -364,6 +364,10 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
