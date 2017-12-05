@@ -42,6 +42,9 @@ GroovyConsole.Audit = function () {
                     infoEmpty: '',
                     infoFiltered: '(filtered from _MAX_ total records)'
                 },
+                initComplete: function (settings, json) {
+
+                },
                 rowCallback: function (row, data) {
                     $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
                     $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
@@ -135,7 +138,13 @@ GroovyConsole.Audit = function () {
         },
 
         refreshAuditRecords: function () {
-            table.ajax.url('/bin/groovyconsole/audit.json').load();
+            table.ajax.url('/bin/groovyconsole/audit.json').load(function (json) {
+                if (json.data.length) {
+                    $('.delete-all').removeClass('hidden');
+                } else {
+                    $('.delete-all').addClass('hidden');
+                }
+            });
         },
 
         loadAuditRecords: function (startDate, endDate) {

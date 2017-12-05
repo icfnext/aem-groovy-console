@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default" data-sly-use.history="com.icfolson.aem.groovy.console.components.History">
     <div class="panel-heading">
         <h4 class="panel-title">
             <a data-toggle="collapse" data-parent="#info" href="#history">History</a>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
 
-                <div class="pull-right delete-all">
+                <div class="pull-right delete-all ${history.hasAuditRecords ? '' : 'hidden'}">
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#delete-all-modal">
                         <span class="glyphicon glyphicon-trash" title="Delete All"></span> Delete All
                     </button>
