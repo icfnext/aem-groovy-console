@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.audit.impl
 import com.day.cq.commons.jcr.JcrUtil
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
+import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
@@ -30,8 +31,6 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.P
 @Slf4j("LOG")
 class DefaultAuditService implements AuditService {
 
-    private static final String DATE_FORMAT = "yyyy/MM/dd"
-
     private static final String DATE_FORMAT_YEAR = "yyyy"
 
     private static final String DATE_FORMAT_MONTH = "MM"
@@ -41,11 +40,14 @@ class DefaultAuditService implements AuditService {
     @Reference
     private SlingRepository repository
 
+    @Reference
+    private ConfigurationService configurationService
+
     private Session adminSession
 
     @Override
-    AuditRecord createAuditRecord(Session session, RunScriptResponse response) {
-        def auditRecord = null
+    AuditRecord createAuditRecord(Session session, RunScriptResponse response) throws RepositoryException {
+        def auditRecord
 
         try {
             adminSession.refresh(false)
@@ -76,6 +78,8 @@ class DefaultAuditService implements AuditService {
             LOG.debug("created audit record = {}", auditRecord)
         } catch (RepositoryException e) {
             LOG.error("error creating audit record", e)
+
+            throw e
         }
 
         auditRecord
@@ -86,28 +90,29 @@ class DefaultAuditService implements AuditService {
         try {
             adminSession.refresh(false)
 
-            if (adminSession.nodeExists("$AUDIT_PATH/${session.userID}")) {
-                adminSession.getNode("$AUDIT_PATH/${session.userID}").nodes*.remove()
+            def auditNodePath = getAuditNodePath(session)
 
-                LOG.debug("deleted all audit record nodes for user = {}", session.userID)
+            if (adminSession.nodeExists(auditNodePath)) {
+                adminSession.getNode(auditNodePath).nodes*.remove()
+
+                LOG.debug("deleted all audit record nodes for path = {}", auditNodePath)
 
                 adminSession.save()
             }
         } catch (RepositoryException e) {
-            LOG.error("error deleting audit records for user = ${session.userID}", e)
+            LOG.error("error deleting audit records", e)
 
             throw e
         }
     }
 
     @Override
-    void deleteAuditRecord(Session session, String relativePath) {
+    void deleteAuditRecord(Session session, String userId, String relativePath) throws RepositoryException {
         try {
             adminSession.refresh(false)
+            adminSession.getNode("$AUDIT_PATH/$userId").getNode(relativePath).remove()
 
-            adminSession.getNode("$AUDIT_PATH/${session.userID}").getNode(relativePath).remove()
-
-            LOG.debug("deleted audit record at relative path = {}", relativePath)
+            LOG.debug("deleted audit record for user = {} at relative path = {}", userId, relativePath)
 
             adminSession.save()
         } catch (RepositoryException e) {
@@ -124,13 +129,9 @@ class DefaultAuditService implements AuditService {
         try {
             adminSession.refresh(false)
 
-            if (adminSession.nodeExists("$AUDIT_PATH/${session.userID}")) {
-                adminSession.getNode("$AUDIT_PATH/${session.userID}").recurse { Node node ->
-                    if (node.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
-                        auditRecords.add(new AuditRecord(node))
-                    }
-                }
-            }
+            def auditNodePath = getAuditNodePath(session)
+
+            auditRecords.addAll(findAllAuditRecords(auditNodePath))
         } catch (RepositoryException e) {
             LOG.error("error getting audit records", e)
 
@@ -141,13 +142,13 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    AuditRecord getAuditRecord(Session session, String relativePath) {
+    AuditRecord getAuditRecord(Session session, String userId, String relativePath) throws RepositoryException {
         def auditRecord = null
 
         try {
             adminSession.refresh(false)
 
-            def auditNode = adminSession.getNode("$AUDIT_PATH/${session.userID}")
+            def auditNode = adminSession.getNode("$AUDIT_PATH/$userId")
 
             if (auditNode.hasNode(relativePath)) {
                 def auditRecordNode = auditNode.getNode(relativePath)
@@ -158,6 +159,8 @@ class DefaultAuditService implements AuditService {
             }
         } catch (RepositoryException e) {
             LOG.error("error getting audit record", e)
+
+            throw e
         }
 
         auditRecord
@@ -166,29 +169,26 @@ class DefaultAuditService implements AuditService {
     @Override
     List<AuditRecord> getAuditRecords(Session session, Calendar startDate,
         Calendar endDate) throws RepositoryException {
-        def auditRecords = []
+        def auditRecords
 
         try {
             adminSession.refresh(false)
 
-            def auditNode = adminSession.getNode("$AUDIT_PATH/${session.userID}")
+            def auditNodePath = getAuditNodePath(session)
 
-            def currentDate = startDate
+            def visitor = new AuditRecordNodeVisitor()
 
-            while (!currentDate.after(endDate)) {
-                def currentDateRelativePath = startDate.format(DATE_FORMAT)
+            visitor.visit(adminSession.getNode(auditNodePath))
 
-                if (auditNode.hasNode(currentDateRelativePath)) {
-                    def currentDateNode = auditNode.getNode(currentDateRelativePath)
+            auditRecords = visitor.auditRecords.findAll { auditRecord ->
+                def auditRecordDate = auditRecord.date
 
-                    currentDateNode.each { Node node ->
-                        LOG.debug("found audit record for node = {}", node.path)
+                auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
+                auditRecordDate.set(Calendar.MINUTE, 0)
+                auditRecordDate.set(Calendar.SECOND, 0)
+                auditRecordDate.set(Calendar.MILLISECOND, 0)
 
-                        auditRecords.add(new AuditRecord(node))
-                    }
-                }
-
-                currentDate.add(Calendar.DAY_OF_MONTH, 1)
+                !auditRecordDate.before(startDate) && !auditRecordDate.after(endDate)
             }
         } catch (RepositoryException e) {
             LOG.error("error getting audit records for date range", e)
@@ -238,5 +238,23 @@ class DefaultAuditService implements AuditService {
 
             adminSession.save()
         }
+    }
+
+    private String getAuditNodePath(Session session) {
+        configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/${session.userID}"
+    }
+
+    private List<AuditRecord> findAllAuditRecords(String auditNodePath) {
+        def auditRecords = []
+
+        if (adminSession.nodeExists(auditNodePath)) {
+            def visitor = new AuditRecordNodeVisitor()
+
+            visitor.visit(adminSession.getNode(auditNodePath))
+
+            auditRecords.addAll(visitor.auditRecords)
+        }
+
+        auditRecords
     }
 }

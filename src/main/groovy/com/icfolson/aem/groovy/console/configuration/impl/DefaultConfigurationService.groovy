@@ -46,6 +46,10 @@ class DefaultConfigurationService implements ConfigurationService {
         boolValue = false)
     private static final String AUDIT_DISABLED = "audit.disabled"
 
+    @Property(label = "Display All Audit Records?", description = "If enabled, all audit records (including records for other users) will be displayed in the console history.",
+        boolValue = false)
+    private static final String AUDIT_DISPLAY_ALL = "audit.display.all"
+
     @Reference
     private ResourceResolverFactory resourceResolverFactory
 
@@ -61,6 +65,8 @@ class DefaultConfigurationService implements ConfigurationService {
 
     boolean auditDisabled
 
+    boolean displayAllAuditRecords
+
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
         resourceResolver.refresh()
@@ -71,7 +77,7 @@ class DefaultConfigurationService implements ConfigurationService {
 
         LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
 
-        allowedGroups ? memberOfGroupIds.intersect(allowedGroups) : true
+        allowedGroups ? memberOfGroupIds.intersect(allowedGroups as Iterable) : true
     }
 
     @Override
@@ -94,6 +100,7 @@ class DefaultConfigurationService implements ConfigurationService {
         allowedGroups = (properties.get(ALLOWED_GROUPS) ?: []).findAll() as Set
         vanityPathEnabled = properties.get(VANITY_PATH_ENABLED) ?: false
         auditDisabled = properties.get(AUDIT_DISABLED) ?: false
+        displayAllAuditRecords = properties.get(AUDIT_DISPLAY_ALL) ?: false
     }
 
     @Deactivate

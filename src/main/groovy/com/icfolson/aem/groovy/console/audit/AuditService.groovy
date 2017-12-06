@@ -12,8 +12,9 @@ interface AuditService {
      *
      * @param session request session for the user executing the script
      * @param response response containing execution result or exception
+     * @throws RepositoryException if error occurs creating audit record
      */
-    AuditRecord createAuditRecord(Session session, RunScriptResponse response)
+    AuditRecord createAuditRecord(Session session, RunScriptResponse response) throws RepositoryException
 
     /**
      * Delete all audit records.
@@ -27,10 +28,11 @@ interface AuditService {
      * Delete an audit record.
      *
      * @param session request session, only audit records for the current user will be deleted
+     * @param userId user that owns the audit record
      * @param relativePath relative path to audit record from parent audit node
      * @throws RepositoryException if an error occurs while deleting the audit record node
      */
-    void deleteAuditRecord(Session session, String relativePath) throws RepositoryException
+    void deleteAuditRecord(Session session, String userId, String relativePath) throws RepositoryException
 
     /**
      * Get all audit records.
@@ -45,10 +47,12 @@ interface AuditService {
      * Get the audit record at the given relative path.
      *
      * @param session request session, only audit records for the current user will be retrieved
+     * @param userId user that owns the audit record
      * @param relativePath relative path to audit record from parent audit node
      * @return audit record or null if none exists
+     * @throws RepositoryException if error occurs getting audit record
      */
-    AuditRecord getAuditRecord(Session session, String relativePath)
+    AuditRecord getAuditRecord(Session session, String userId, String relativePath) throws RepositoryException
 
     /**
      * Get a list of audit records for the given date range.

@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.servlets
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
@@ -10,14 +11,8 @@ import org.apache.sling.api.SlingHttpServletResponse
 
 import javax.jcr.Session
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
-
 @SlingServlet(paths = "/bin/groovyconsole/audit")
 class AuditServlet extends AbstractJsonResponseServlet {
-
-    private static final String PARAMETER_START_DATE = "startDate"
-
-    private static final String PARAMETER_END_DATE = "endDate"
 
     private static final String DATE_FORMAT = "yyyy-MM-dd"
 
@@ -32,28 +27,30 @@ class AuditServlet extends AbstractJsonResponseServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         def session = request.resourceResolver.adaptTo(Session)
-        def script = request.getParameter(PARAMETER_SCRIPT)
+        def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            writeJsonResponse(response, auditService.getAuditRecord(session, script) ?: [:])
+            writeJsonResponse(response, auditService.getAuditRecord(session, userId, script) ?: [:])
         } else {
-            writeJsonResponse(response, loadAuditRecords(request))
+            writeJsonResponse(response, getAuditRecordsData(request))
         }
     }
 
     @Override
     protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         def session = request.resourceResolver.adaptTo(Session)
-        def script = request.getParameter(PARAMETER_SCRIPT)
+        def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            auditService.deleteAuditRecord(session, script)
+            auditService.deleteAuditRecord(session, userId, script)
         } else {
             auditService.deleteAllAuditRecords(session)
         }
     }
 
-    private def loadAuditRecords(SlingHttpServletRequest request) {
+    private Map<String, Object> getAuditRecordsData(SlingHttpServletRequest request) {
         def auditRecords = getAuditRecords(request)
         def consoleHref = configurationService.consoleHref
 
@@ -65,10 +62,11 @@ class AuditServlet extends AbstractJsonResponseServlet {
             def map = [
                 date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
                 scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
+                userId: auditRecord.userId,
                 script: auditRecord.script,
                 data: auditRecord.data,
                 exception: auditRecord.exception,
-                link: "$consoleHref?script=${auditRecord.relativePath}",
+                link: "$consoleHref?userId=${auditRecord.userId}&script=${auditRecord.relativePath}",
                 relativePath: auditRecord.relativePath
             ]
 
@@ -81,8 +79,8 @@ class AuditServlet extends AbstractJsonResponseServlet {
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {
         def session = request.resourceResolver.adaptTo(Session)
 
-        def startDateParameter = request.getParameter(PARAMETER_START_DATE)
-        def endDateParameter = request.getParameter(PARAMETER_END_DATE)
+        def startDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_START_DATE)
+        def endDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_END_DATE)
 
         def auditRecords
 

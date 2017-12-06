@@ -1,11 +1,13 @@
 GroovyConsole.Audit = function () {
 
+    var AUDIT_URL = '/bin/groovyconsole/audit.json';
+
     var table;
 
     return {
         initialize: function () {
             table = $('.audit').DataTable({
-                ajax: '/bin/groovyconsole/audit.json',
+                ajax: AUDIT_URL,
                 columns: [
                     {
                         className: 'open-record',
@@ -63,9 +65,9 @@ GroovyConsole.Audit = function () {
 
             tableBody.on('click', 'td.open-record', function () {
                 var tr = $(this).closest('tr');
-                var script = table.row(tr).data().relativePath;
+                var data = table.row(tr).data();
 
-                $.getJSON('/bin/groovyconsole/audit.json?script=' + script, function (response) {
+                $.getJSON(AUDIT_URL, {'userId': data.userId, 'script': data.relativePath}, function (response) {
                     scriptEditor.getSession().setValue(response.script);
 
                     if (response.data.length) {
@@ -79,16 +81,20 @@ GroovyConsole.Audit = function () {
                     GroovyConsole.reset();
                     GroovyConsole.showResult(response);
 
-                    $('html, body').animate({ scrollTop: 0 });
+                    $('html, body').animate({scrollTop: 0});
                 });
             });
 
             tableBody.on('click', 'td.delete-record', function () {
                 var tr = $(this).closest('tr');
-                var script = table.row(tr).data().relativePath;
+                var data = table.row(tr).data();
 
                 $.ajax({
-                    url: '/bin/groovyconsole/audit.json?script=' + script,
+                    url: AUDIT_URL + '?' + $.param({
+                        'userId': data.userId,
+                        'script': data.relativePath
+                    }),
+                    traditional: true,
                     type: 'DELETE'
                 }).done(function () {
                     GroovyConsole.Audit.showAlert('.alert-success', 'Audit record deleted successfully.');
@@ -98,9 +104,9 @@ GroovyConsole.Audit = function () {
                 });
             });
 
-            $('#delete-all-modal .btn-warning').click(function () {
+            $('#delete-all-modal').find('.btn-warning').click(function () {
                 $.ajax({
-                    url: '/bin/groovyconsole/audit.json',
+                    url: AUDIT_URL,
                     type: 'DELETE'
                 }).done(function () {
                     GroovyConsole.Audit.showAlert('.alert-success', 'Audit records deleted successfully.');
@@ -118,7 +124,7 @@ GroovyConsole.Audit = function () {
 
             dateRange.daterangepicker({
                 maxDate: moment()
-            }).on('apply.daterangepicker', function(e, picker) {
+            }).on('apply.daterangepicker', function (e, picker) {
                 var startDate = picker.startDate.format('YYYY-MM-DD');
                 var endDate = picker.endDate.format('YYYY-MM-DD');
 
@@ -133,11 +139,19 @@ GroovyConsole.Audit = function () {
         },
 
         refreshAuditRecords: function () {
-            table.ajax.url('/bin/groovyconsole/audit.json').load();
+            table.ajax.url(AUDIT_URL).load(function (json) {
+                if (json.data.length) {
+                    $('.delete-all').removeClass('hidden');
+                } else {
+                    $('.delete-all').addClass('hidden');
+                }
+            });
         },
 
         loadAuditRecords: function (startDate, endDate) {
-            table.ajax.url('/bin/groovyconsole/audit.json?startDate=' + startDate + '&endDate=' + endDate).load();
+            var params = $.param({'startDate': startDate, 'endDate': endDate});
+
+            table.ajax.url(AUDIT_URL + '?' + params).load();
         },
 
         showAlert: function (selector, text) {

@@ -1,6 +1,7 @@
 package com.icfolson.aem.groovy.console.audit.impl
 
 import com.icfolson.aem.groovy.console.audit.AuditRecord
+import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -18,6 +19,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
             groovyconsole()
         }
 
+        slingContext.registerInjectActivateService(new DefaultConfigurationService())
         slingContext.registerInjectActivateService(auditService)
     }
 
@@ -82,9 +84,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
         auditService.createAuditRecord(session, response)
 
-        def date = new Date()
-        def startDate = (date + startDateOffset).toCalendar()
-        def endDate = (date + endDateOffset).toCalendar()
+        def startDate = getDate(startDateOffset)
+        def endDate = getDate(endDateOffset)
 
         expect:
         auditService.getAuditRecords(session, startDate, endDate).size() == size
@@ -97,6 +98,17 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         0               | 1             | 1
         -1              | 1             | 1
         1               | 2             | 0
+    }
+
+    private Calendar getDate(Integer offset) {
+        def date = (new Date() + offset).toCalendar()
+
+        date.set(Calendar.HOUR_OF_DAY, 0)
+        date.set(Calendar.MINUTE, 0)
+        date.set(Calendar.SECOND, 0)
+        date.set(Calendar.MILLISECOND, 0)
+
+        date
     }
 
     private void assertAuditRecordsCreated(List<AuditRecord> auditRecords) {
