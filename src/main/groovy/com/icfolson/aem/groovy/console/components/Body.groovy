@@ -11,6 +11,7 @@ import javax.inject.Inject
 import javax.jcr.Session
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_USER_ID
 
 @Model(adaptables = SlingHttpServletRequest)
 class Body {
@@ -26,11 +27,12 @@ class Body {
     @PostConstruct
     void init() {
         def script = request.getParameter(PARAMETER_SCRIPT)
+        def userId = request.getParameter(PARAMETER_USER_ID)
 
         if (script) {
             def session = request.resourceResolver.adaptTo(Session)
 
-            auditRecord = auditService.getAuditRecord(session, script)
+            auditRecord = auditService.getAuditRecord(session, userId, script)
         }
     }
 

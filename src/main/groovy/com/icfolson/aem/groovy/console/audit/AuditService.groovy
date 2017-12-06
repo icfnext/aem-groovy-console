@@ -28,15 +28,6 @@ interface AuditService {
      * Delete an audit record.
      *
      * @param session request session, only audit records for the current user will be deleted
-     * @param relativePath relative path to audit record from parent audit node
-     * @throws RepositoryException if an error occurs while deleting the audit record node
-     */
-    void deleteAuditRecord(Session session, String relativePath) throws RepositoryException
-
-    /**
-     * Delete an audit record.
-     *
-     * @param session request session, only audit records for the current user will be deleted
      * @param userId user that owns the audit record
      * @param relativePath relative path to audit record from parent audit node
      * @throws RepositoryException if an error occurs while deleting the audit record node
@@ -51,16 +42,6 @@ interface AuditService {
      * @throws RepositoryException if error occurs getting audit records
      */
     List<AuditRecord> getAllAuditRecords(Session session) throws RepositoryException
-
-    /**
-     * Get the audit record at the given relative path.
-     *
-     * @param session request session, only audit records for the current user will be retrieved
-     * @param relativePath relative path to audit record from parent audit node
-     * @return audit record or null if none exists
-     * @throws RepositoryException if error occurs getting audit record
-     */
-    AuditRecord getAuditRecord(Session session, String relativePath) throws RepositoryException
 
     /**
      * Get the audit record at the given relative path.

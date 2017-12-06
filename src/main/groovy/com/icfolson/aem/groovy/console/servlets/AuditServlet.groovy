@@ -28,20 +28,12 @@ class AuditServlet extends AbstractJsonResponseServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
-            def auditRecord
-
-            if (userId) {
-                auditRecord = auditService.getAuditRecord(session, userId, script)
-            } else {
-                auditRecord = auditService.getAuditRecord(session, script)
-            }
-
-            writeJsonResponse(response, auditRecord ?: [:])
+            writeJsonResponse(response, auditService.getAuditRecord(session, userId, script) ?: [:])
         } else {
-            writeJsonResponse(response, loadAuditRecords(request))
+            writeJsonResponse(response, getAuditRecordsData(request))
         }
     }
 
@@ -49,21 +41,16 @@ class AuditServlet extends AbstractJsonResponseServlet {
     protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) {
         def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
-
-            if (userId) {
-                auditService.deleteAuditRecord(session, userId, script)
-            } else {
-                auditService.deleteAuditRecord(session, script)
-            }
+            auditService.deleteAuditRecord(session, userId, script)
         } else {
             auditService.deleteAllAuditRecords(session)
         }
     }
 
-    private def loadAuditRecords(SlingHttpServletRequest request) {
+    private Map<String, Object> getAuditRecordsData(SlingHttpServletRequest request) {
         def auditRecords = getAuditRecords(request)
         def consoleHref = configurationService.consoleHref
 
@@ -79,7 +66,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
                 script: auditRecord.script,
                 data: auditRecord.data,
                 exception: auditRecord.exception,
-                link: "$consoleHref?script=${auditRecord.relativePath}",
+                link: "$consoleHref?userId=${auditRecord.userId}&script=${auditRecord.relativePath}",
                 relativePath: auditRecord.relativePath
             ]
 

@@ -107,11 +107,6 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAuditRecord(Session session, String relativePath) throws RepositoryException {
-        deleteAuditRecord(session, session.userID, relativePath)
-    }
-
-    @Override
     void deleteAuditRecord(Session session, String userId, String relativePath) throws RepositoryException {
         try {
             adminSession.refresh(false)
@@ -144,11 +139,6 @@ class DefaultAuditService implements AuditService {
         }
 
         auditRecords
-    }
-
-    @Override
-    AuditRecord getAuditRecord(Session session, String relativePath) throws RepositoryException {
-        getAuditRecord(session, session.userID, relativePath)
     }
 
     @Override
