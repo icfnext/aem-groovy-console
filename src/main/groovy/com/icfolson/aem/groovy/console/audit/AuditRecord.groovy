@@ -23,7 +23,7 @@ class AuditRecord {
 
     public static final String PROPERTY_RUNNING_TIME = "runningTime"
 
-    private static final Integer DEPTH_AUDIT_NODE = 4
+    private static final Integer DEPTH_USER_ID = 5
 
     private Node node
 
@@ -43,7 +43,7 @@ class AuditRecord {
     }
 
     String getUserId() {
-        node.getAncestor(DEPTH_AUDIT_NODE).name
+        node.getAncestor(DEPTH_USER_ID).name
     }
 
     String getRelativePath() {
