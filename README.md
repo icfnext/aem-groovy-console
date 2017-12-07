@@ -59,6 +59,18 @@ Vanity Path Enabled? | Enables `/groovyconsole` vanity path. **Apache Sling Reso
 Audit Disabled? | Disables auditing of script execution history. | False
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | False
 
+## Batch Script Execution
+
+Saved scripts can be remotely executed by sending a POST request to the console servlet with either the `scriptPath` or `scriptPaths` query parameter.
+
+### Single Script
+
+    curl -d "scriptPath=/etc/groovyconsole/scripts/samples/JcrSearch.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
+
+### Multiple Scripts
+
+    curl -d "scriptPaths=/etc/groovyconsole/scripts/samples/JcrSearch.groovy&scriptPaths=/etc/groovyconsole/scripts/samples/FulltextQuery.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
+
 ## Extensions
 
 Beginning in version 7.0.0, the Groovy Console provides extension hooks to further customize script execution.  The console exposes an API containing three extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.icfolson.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, metaclasses, and star imports.
