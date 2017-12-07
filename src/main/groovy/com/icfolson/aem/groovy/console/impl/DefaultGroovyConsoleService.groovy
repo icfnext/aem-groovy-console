@@ -29,6 +29,7 @@ import javax.jcr.Node
 import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
 
+import static com.google.common.base.Preconditions.checkNotNull
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
@@ -89,6 +90,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         } else {
             scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
         }
+
+        checkNotNull(scriptContent, "Script content cannot be empty.")
 
         def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
         def stream = new ByteArrayOutputStream()
@@ -213,7 +216,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     private String loadScriptContent(Session session, String scriptPath) {
         def binary = session.getNode(scriptPath)
             .getNode(JcrConstants.JCR_CONTENT)
-            .getProperty(JcrConstants.JCR_DATA).binary
+            .getProperty(JcrConstants.JCR_DATA)
+            .binary
 
         def scriptContent = binary.stream.text
 
