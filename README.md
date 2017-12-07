@@ -10,7 +10,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 ## Requirements
 
-* AEM author instance running on localhost:4502
+* AEM author instance running on [localhost:4502](http://localhost:4502/)
 * [Maven](http://maven.apache.org/) 3.x
 
 ## Compatibility
@@ -30,9 +30,9 @@ Groovy Console Version(s) | AEM Version
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 
-Additional build profiles may be added in the project's pom.xml to support deployment to non-localhost AEM servers.
+Additional build profiles may be added in the project's `pom.xml` to support deployment to non-localhost AEM servers.
 
-AEM 6.0 no longer allows vanity paths for pages in /etc by default.  To enable access to the Groovy Console from /groovyconsole as in previous versions, the Apache Sling Resource Resolver Factory OSGi configuration must be updated to allow vanity paths from /etc.  The Groovy Console Configuration Service can then be updated to enable the vanity path if so desired.
+AEM 6.0 no longer allows vanity paths for pages in `/etc` by default.  To enable access to the Groovy Console from `/groovyconsole` as in previous versions, the **Apache Sling Resource Resolver Factory** OSGi configuration must be updated to allow vanity paths from `/etc`.  The **Groovy Console Configuration Service** can then be updated to enable the vanity path if so desired.
 
 ## Excluding the Groovy OSGi Bundle
 
@@ -48,14 +48,14 @@ If you are running AEM with a context path, set the Maven property `aem.context.
 
 ## OSGi Configuration
 
-Navigate to the [OSGi console configuration page](http://localhost:4502/system/console/configMgr) and edit "Groovy Console Configuration Service".
+Navigate to the [OSGi console configuration page](http://localhost:4502/system/console/configMgr) and select the **Groovy Console Configuration Service**.
 
 Property | Description | Default Value
 ------------ | ------------- | ----------
 Email Enabled? | Check to enable email notification on completion of script execution. | False
 Email Recipients | Email addresses to receive notification. | []
 Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | []
-Vanity Path Enabled? | Enables /groovyconsole vanity path. Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist). | False
+Vanity Path Enabled? | Enables `/groovyconsole` vanity path. **Apache Sling Resource Resolver Factory** OSGi configuration must also be updated to allow vanity paths from `/etc`. | False
 Audit Disabled? | Disables auditing of script execution history. | False
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | False
 
