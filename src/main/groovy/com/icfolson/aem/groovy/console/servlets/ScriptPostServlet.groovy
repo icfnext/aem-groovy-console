@@ -2,6 +2,7 @@ package com.icfolson.aem.groovy.console.servlets
 
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.sling.SlingServlet
@@ -26,7 +27,19 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
         if (configurationService.hasPermission(request)) {
-            writeJsonResponse(response, consoleService.runScript(request))
+            def scriptPaths = request.getParameterValues(GroovyConsoleConstants.PARAMETER_SCRIPT_PATHS)
+
+            if (scriptPaths) {
+                writeJsonResponse(response, consoleService.runScripts(request, scriptPaths as List))
+            } else {
+                def scriptPath = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT_PATH)
+
+                if (scriptPath) {
+                    writeJsonResponse(response, consoleService.runScript(request, scriptPath))
+                } else {
+                    writeJsonResponse(response, consoleService.runScript(request))
+                }
+            }
         } else {
             response.status = SC_FORBIDDEN
         }

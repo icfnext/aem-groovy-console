@@ -75,12 +75,23 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request) {
-        def scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
-        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
+        runScript(request, null)
+    }
 
-        def stream = new ByteArrayOutputStream()
+    @Override
+    RunScriptResponse runScript(SlingHttpServletRequest request, String scriptPath) {
         def session = request.resourceResolver.adaptTo(Session)
 
+        def scriptContent
+
+        if (scriptPath) {
+            scriptContent = loadScriptContent(session, scriptPath)
+        } else {
+            scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
+        }
+
+        def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
+        def stream = new ByteArrayOutputStream()
         def response = null
 
         def binding = getBinding(extensionService.getBinding(request), data, stream)
@@ -119,6 +130,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
 
         response
+    }
+
+    @Override
+    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, List<String> scriptPaths) {
+        scriptPaths.collect { scriptPath ->
+            runScript(request, scriptPath)
+        }
     }
 
     @Override
@@ -192,6 +210,18 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
+    private String loadScriptContent(Session session, String scriptPath) {
+        def binary = session.getNode(scriptPath)
+            .getNode(JcrConstants.JCR_CONTENT)
+            .getProperty(JcrConstants.JCR_DATA).binary
+
+        def scriptContent = binary.stream.text
+
+        binary.dispose()
+
+        scriptContent
+    }
+
     private void saveFile(Session session, Node folderNode, String script, String fileName, Date date,
         String mimeType) {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
@@ -200,13 +230,11 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def stream = new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8))
         def binary = session.valueFactory.createBinary(stream)
 
-        resourceNode.with {
-            setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
-            setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
-            setProperty(JcrConstants.JCR_DATA, binary)
-            setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
-            setProperty(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
-        }
+        resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
+        resourceNode.setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
+        resourceNode.setProperty(JcrConstants.JCR_DATA, binary)
+        resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
+        resourceNode.setProperty(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
 
         session.save()
         binary.dispose()
