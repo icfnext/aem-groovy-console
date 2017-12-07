@@ -46,9 +46,9 @@ If you are running AEM with a context path, set the Maven property `aem.context.
 
     mvn install -P local -Daem.context.path=/context
 
-## Configuration
+## OSGi Configuration
 
-Navigate to the OSGi console configuration page and edit "Groovy Console Configuration Service".
+Navigate to the [OSGi console configuration page](http://localhost:4502/system/console/configMgr) and edit "Groovy Console Configuration Service".
 
 Property | Description | Default Value
 ------------ | ------------- | ----------
