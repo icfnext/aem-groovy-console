@@ -13,4 +13,6 @@ interface ConfigurationService {
     boolean isAuditDisabled()
 
     boolean isEmailEnabled()
+
+    boolean isDisplayAllAuditRecords()
 }

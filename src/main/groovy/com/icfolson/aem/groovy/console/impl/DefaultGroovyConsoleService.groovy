@@ -197,15 +197,16 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def fileNode = folderNode.addNode(Text.escapeIllegalJcrChars(fileName), JcrConstants.NT_FILE)
         def resourceNode = fileNode.addNode(JcrConstants.JCR_CONTENT, JcrConstants.NT_RESOURCE)
 
-        resourceNode.setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
-        resourceNode.setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
-
         def stream = new ByteArrayInputStream(script.getBytes(CharEncoding.UTF_8))
         def binary = session.valueFactory.createBinary(stream)
 
-        resourceNode.setProperty(JcrConstants.JCR_DATA, binary)
-        resourceNode.setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
-        resourceNode.setProperty(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
+        resourceNode.with {
+            setProperty(JcrConstants.JCR_MIMETYPE, mimeType)
+            setProperty(JcrConstants.JCR_ENCODING, CharEncoding.UTF_8)
+            setProperty(JcrConstants.JCR_DATA, binary)
+            setProperty(JcrConstants.JCR_LASTMODIFIED, date.time)
+            setProperty(JcrConstants.JCR_LAST_MODIFIED_BY, session.userID)
+        }
 
         session.save()
         binary.dispose()
