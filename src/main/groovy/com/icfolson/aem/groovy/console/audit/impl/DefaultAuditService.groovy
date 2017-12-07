@@ -55,7 +55,10 @@ class DefaultAuditService implements AuditService {
             def auditRecordNode = addAuditRecordNode(session)
 
             auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_DATA, response.data)
+
+            if (response.data) {
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_DATA, response.data)
+            }
 
             if (response.exceptionStackTrace) {
                 auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
