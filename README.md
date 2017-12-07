@@ -51,7 +51,7 @@ If you are running AEM with a context path, set the Maven property `aem.context.
 Navigate to the OSGi console configuration page and edit "Groovy Console Configuration Service".
 
 Property | Description | Default Value
------------- | -------------
+------------ | ------------- | ----------
 Email Enabled? | Check to enable email notification on completion of script execution. | False
 Email Recipients | Email addresses to receive notification. | []
 Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | []
