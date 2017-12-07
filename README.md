@@ -18,7 +18,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
 11.x.x | 6.3
-10.x.x, 9.x.x | 6.2 
+10.x.x, 9.x.x | 6.2
 8.x.x | 6.1
 7.x.x | 6.0
 6.x.x, 5.x.x | 5.6 (CQ)
@@ -45,6 +45,19 @@ If your AEM instance has multiple applications using Groovy and the `groovy-all`
 If you are running AEM with a context path, set the Maven property `aem.context.path` during installation.
 
     mvn install -P local -Daem.context.path=/context
+
+## Configuration
+
+Navigate to the OSGi console configuration page and edit "Groovy Console Configuration Service".
+
+Property | Description | Default Value
+------------ | -------------
+Email Enabled? | Check to enable email notification on completion of script execution. | False
+Email Recipients | Email addresses to receive notification. | []
+Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | []
+Vanity Path Enabled? | Enables /groovyconsole vanity path. Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist). | False
+Audit Disabled? | Disables auditing of script execution history. | False
+Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | False
 
 ## Extensions
 
