@@ -52,12 +52,12 @@ Navigate to the [OSGi console configuration page](http://localhost:4502/system/c
 
 Property | Description | Default Value
 ------------ | ------------- | ----------
-Email Enabled? | Check to enable email notification on completion of script execution. | False
-Email Recipients | Email addresses to receive notification. | []
-Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | []
-Vanity Path Enabled? | Enables `/groovyconsole` vanity path. **Apache Sling Resource Resolver Factory** OSGi configuration must also be updated to allow vanity paths from `/etc`. | False
-Audit Disabled? | Disables auditing of script execution history. | False
-Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | False
+Email Enabled? | Check to enable email notification on completion of script execution. | `false`
+Email Recipients | Email addresses to receive notification. | `[]`
+Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | `[]`
+Vanity Path Enabled? | Enables `/groovyconsole` vanity path. **Apache Sling Resource Resolver Factory** OSGi configuration must also be updated to allow vanity paths from `/etc`. | `false`
+Audit Disabled? | Disables auditing of script execution history. | `false`
+Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`
 
 ## Batch Script Execution
 
