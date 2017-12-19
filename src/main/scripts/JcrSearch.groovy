@@ -1,6 +1,6 @@
-def start = getPage("/content/geometrixx")
+def start = getPage("/content/we-retail")
 
-def query = createXPathQuery(start, "beer")
+def query = createXPathQuery(start, "Bike")
 
 println "query = ${query.statement}"
 

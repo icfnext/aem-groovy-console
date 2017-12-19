@@ -2,9 +2,9 @@ import com.day.cq.wcm.commons.ReferenceSearch
 
 def referenceSearch = new ReferenceSearch()
 
-referenceSearch.setSearchRoot("content/geometrixx")
+referenceSearch.setSearchRoot("content/we-retail")
 
-def map = referenceSearch.search(resourceResolver, "Geometrixx")
+def map = referenceSearch.search(resourceResolver, "Bike")
 def data = []
 
 map.each { path, info ->

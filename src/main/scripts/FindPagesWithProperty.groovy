@@ -1,4 +1,4 @@
-getPage("/content/geometrixx").recurse { page ->
+getPage("/content/we-retail").recurse { page ->
     def content = page.node
 
     if (content && !content.get("hideInNav")) {

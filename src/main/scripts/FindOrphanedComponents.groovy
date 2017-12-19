@@ -6,7 +6,7 @@ def validResourceTypes = componentManager.components*.resourceType
 
 def data = []
 
-getPage("/content/geometrixx").recurse { page ->
+getPage("/content/we-retail").recurse { page ->
     def content = page.node
 
     content?.recurse { node ->
