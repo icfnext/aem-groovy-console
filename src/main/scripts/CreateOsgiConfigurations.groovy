@@ -9,7 +9,7 @@ def admin = getService(ConfigurationAdmin)
 
 loggers.each { loggerName, fileName ->
     def config = admin.createFactoryConfiguration("org.apache.sling.commons.log.LogManager.factory.config",
-        "slinginstall:org.apache.sling.commons.log-4.0.0.jar")
+        "slinginstall:org.apache.sling.commons.log-5.0.0.jar")
 
     def properties = [
         "org.apache.sling.commons.log.level": "debug",

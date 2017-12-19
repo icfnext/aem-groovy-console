@@ -8,7 +8,7 @@ def properties = config.properties
 
 def mappings = properties.get("resource.resolver.mapping") as List
 
-mappings.add("/content/geometrixx/:/geo")
+mappings.add("/content/we-retail/:/wr/")
 
 properties.put("resource.resolver.mapping", mappings.toArray(new String[0]))
 

@@ -1,13 +1,13 @@
 import groovy.transform.Field
 
 @Field packagesPath = "/etc/packages"
-@Field packageName = "geometrixx"
+@Field packageName = "groovy-console-history"
 @Field definitionPath = "$packagesPath/${packageName}.zip/jcr:content/vlt:definition"
 
 def definitionNode = getOrAddDefinitionNode()
 def filterNode = getOrAddFilterNode(definitionNode)
 
-["/content/geometrixx", "/content/dam/geometrixx", "/etc/designs/geometrixx"].eachWithIndex { path, i ->
+["/etc/groovyconsole/jcr:content/audit"].eachWithIndex { path, i ->
     def f = filterNode.addNode("filter$i")
 
     f.set("mode", "replace")
