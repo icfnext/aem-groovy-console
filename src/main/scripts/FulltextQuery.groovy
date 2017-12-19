@@ -1,10 +1,7 @@
 def predicates = [
     "path": "/content/we-retail",
     "type": "cq:Page",
-    "fulltext": "Bike",
-    "orderby": "@jcr:score,@jcr:created",
-    "orderby.index": "true",
-    "orderby.sort": "desc"
+    "fulltext": "Biking"
 ]
 
 def query = createQuery(predicates)

@@ -1,7 +1,7 @@
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.wcm.api.NameConstants
 
-getPage('/content/we-retail').recurse { page ->
+getPage("/content/we-retail").recurse { page ->
     def content = page.node
 
     if (content) {

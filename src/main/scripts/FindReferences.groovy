@@ -4,7 +4,7 @@ def referenceSearch = new ReferenceSearch()
 
 referenceSearch.setSearchRoot("content/we-retail")
 
-def map = referenceSearch.search(resourceResolver, "Bike")
+def map = referenceSearch.search(resourceResolver, "Biking")
 def data = []
 
 map.each { path, info ->
