@@ -15,7 +15,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 ## Compatibility
 
-**AEM 6.4 Beta users**: the latest development version (`12.0.0-SNAPSHOT`) is compatible with AEM 6.4.  You will need to clone this repository and build with Maven to install (see [Building From Source](#building-from-source)).  The Groovy Console will have a proper downloadable release when the non-beta AEM 6.4 if officially released.
+**AEM 6.4 Beta users**: the latest development version (`12.0.0-SNAPSHOT`) is compatible with AEM 6.4.  You will need to clone this repository and build with Maven to install (see [Building From Source](#building-from-source)).  The Groovy Console will have a proper downloadable release when the non-beta AEM 6.4 is officially released.
 
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
