@@ -5,9 +5,7 @@ import com.icfolson.aem.groovy.console.table.Table
 import groovy.json.JsonBuilder
 import groovy.transform.Immutable
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.sling.jcr.resource.JcrPropertyMap
-
-import javax.jcr.Node
+import org.apache.sling.api.resource.Resource
 
 import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_DATA
 import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE
@@ -34,8 +32,8 @@ class RunScriptResponse {
         new RunScriptResponse(script, "", "", "", exceptionStackTrace, "")
     }
 
-    static RunScriptResponse fromAuditRecordNode(Node node) {
-        def properties = new JcrPropertyMap(node)
+    static RunScriptResponse fromAuditRecordResource(Resource resource) {
+        def properties = resource.valueMap
 
         def script = properties.get(PROPERTY_SCRIPT, "")
         def data = properties.get(PROPERTY_DATA, "")

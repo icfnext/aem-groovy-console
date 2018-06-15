@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.audit
 import com.day.text.Text
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.ToString
+import org.apache.sling.api.resource.Resource
 
 import javax.jcr.Node
 
@@ -25,7 +26,7 @@ class AuditRecord {
 
     private static final Integer DEPTH_USER_ID = 5
 
-    private Node node
+    private Resource resource
 
     @Delegate
     final RunScriptResponse response
@@ -34,16 +35,16 @@ class AuditRecord {
 
     final Calendar date
 
-    AuditRecord(Node node) {
-        this.node = node
+    AuditRecord(Resource resource) {
+        this.resource = resource
 
-        path = node.path
-        date = node.getProperty(JCR_CREATED).date
-        response = RunScriptResponse.fromAuditRecordNode(node)
+        path = resource.path
+        date = resource.valueMap.get(JCR_CREATED, Calendar)
+        response = RunScriptResponse.fromAuditRecordResource(resource)
     }
 
     String getUserId() {
-        node.getAncestor(DEPTH_USER_ID).name
+        resource.adaptTo(Node).getAncestor(DEPTH_USER_ID).name
     }
 
     String getRelativePath() {

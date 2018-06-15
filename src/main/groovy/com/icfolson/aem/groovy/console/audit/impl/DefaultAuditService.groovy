@@ -12,7 +12,9 @@ import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Deactivate
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
-import org.apache.sling.jcr.api.SlingRepository
+import org.apache.sling.api.resource.PersistenceException
+import org.apache.sling.api.resource.ResourceResolver
+import org.apache.sling.api.resource.ResourceResolverFactory
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -38,48 +40,33 @@ class DefaultAuditService implements AuditService {
     private static final String DATE_FORMAT_DAY = "dd"
 
     @Reference
-    private SlingRepository repository
+    private ResourceResolverFactory resourceResolverFactory
 
     @Reference
     private ConfigurationService configurationService
 
-    private Session adminSession
+    private ResourceResolver resourceResolver
 
     @Override
-    AuditRecord createAuditRecord(Session session, RunScriptResponse response) throws RepositoryException {
+    AuditRecord createAuditRecord(Session session, RunScriptResponse response)
+        throws RepositoryException, PersistenceException {
         def auditRecord
 
         try {
-            adminSession.refresh(false)
+            resourceResolver.refresh()
 
             def auditRecordNode = addAuditRecordNode(session)
 
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
+            setAuditRecordNodeProperties(auditRecordNode, response)
 
-            if (response.data) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_DATA, response.data)
-            }
+            resourceResolver.commit()
 
-            if (response.exceptionStackTrace) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
-            } else {
-                if (response.result) {
-                    auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
-                }
+            def auditRecordResource = resourceResolver.getResource(auditRecordNode.path)
 
-                if (response.output) {
-                    auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
-                }
-
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
-            }
-
-            adminSession.save()
-
-            auditRecord = new AuditRecord(auditRecordNode)
+            auditRecord = new AuditRecord(auditRecordResource)
 
             LOG.debug("created audit record = {}", auditRecord)
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | PersistenceException e) {
             LOG.error("error creating audit record", e)
 
             throw e
@@ -89,20 +76,24 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAllAuditRecords(Session session) throws RepositoryException {
+    void deleteAllAuditRecords(Session session) throws PersistenceException {
         try {
-            adminSession.refresh(false)
+            resourceResolver.refresh()
 
             def auditNodePath = getAuditNodePath(session)
 
-            if (adminSession.nodeExists(auditNodePath)) {
-                adminSession.getNode(auditNodePath).nodes*.remove()
+            def auditResource = resourceResolver.getResource(auditNodePath)
 
-                LOG.debug("deleted all audit record nodes for path = {}", auditNodePath)
+            if (auditResource) {
+                auditResource.listChildren().each { resource ->
+                    resourceResolver.delete(resource)
+                }
 
-                adminSession.save()
+                LOG.debug("deleted all audit record resources for path = {}", auditNodePath)
+
+                resourceResolver.commit()
             }
-        } catch (RepositoryException e) {
+        } catch (PersistenceException e) {
             LOG.error("error deleting audit records", e)
 
             throw e
@@ -110,15 +101,18 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAuditRecord(Session session, String userId, String relativePath) throws RepositoryException {
+    void deleteAuditRecord(Session session, String userId, String relativePath) throws PersistenceException {
         try {
-            adminSession.refresh(false)
-            adminSession.getNode("$AUDIT_PATH/$userId").getNode(relativePath).remove()
+            resourceResolver.refresh()
+
+            def auditRecordResource = resourceResolver.getResource("$AUDIT_PATH/$userId/$relativePath")
+
+            resourceResolver.delete(auditRecordResource)
 
             LOG.debug("deleted audit record for user = {} at relative path = {}", userId, relativePath)
 
-            adminSession.save()
-        } catch (RepositoryException e) {
+            resourceResolver.commit()
+        } catch (PersistenceException e) {
             LOG.error("error deleting audit record", e)
 
             throw e
@@ -126,92 +120,57 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    List<AuditRecord> getAllAuditRecords(Session session) throws RepositoryException {
-        def auditRecords = []
+    List<AuditRecord> getAllAuditRecords(Session session) {
+        resourceResolver.refresh()
 
-        try {
-            adminSession.refresh(false)
+        def auditNodePath = getAuditNodePath(session)
 
-            def auditNodePath = getAuditNodePath(session)
-
-            auditRecords.addAll(findAllAuditRecords(auditNodePath))
-        } catch (RepositoryException e) {
-            LOG.error("error getting audit records", e)
-
-            throw e
-        }
-
-        auditRecords
+        findAllAuditRecords(auditNodePath)
     }
 
     @Override
-    AuditRecord getAuditRecord(Session session, String userId, String relativePath) throws RepositoryException {
+    AuditRecord getAuditRecord(Session session, String userId, String relativePath) {
+        resourceResolver.refresh()
+
+        def auditRecordResource = resourceResolver.getResource("$AUDIT_PATH/$userId").getChild(relativePath)
+
         def auditRecord = null
 
-        try {
-            adminSession.refresh(false)
+        if (auditRecordResource) {
+            auditRecord = new AuditRecord(auditRecordResource)
 
-            def auditNode = adminSession.getNode("$AUDIT_PATH/$userId")
-
-            if (auditNode.hasNode(relativePath)) {
-                def auditRecordNode = auditNode.getNode(relativePath)
-
-                auditRecord = new AuditRecord(auditRecordNode)
-
-                LOG.debug("found audit record = {}", auditRecord)
-            }
-        } catch (RepositoryException e) {
-            LOG.error("error getting audit record", e)
-
-            throw e
+            LOG.debug("found audit record = {}", auditRecord)
         }
 
         auditRecord
     }
 
     @Override
-    List<AuditRecord> getAuditRecords(Session session, Calendar startDate,
-        Calendar endDate) throws RepositoryException {
-        def auditRecords
+    List<AuditRecord> getAuditRecords(Session session, Calendar startDate, Calendar endDate) {
+        resourceResolver.refresh()
 
-        try {
-            adminSession.refresh(false)
+        getAllAuditRecords(session).findAll { auditRecord ->
+            def auditRecordDate = auditRecord.date
 
-            def auditNodePath = getAuditNodePath(session)
+            auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
+            auditRecordDate.set(Calendar.MINUTE, 0)
+            auditRecordDate.set(Calendar.SECOND, 0)
+            auditRecordDate.set(Calendar.MILLISECOND, 0)
 
-            def visitor = new AuditRecordNodeVisitor()
-
-            visitor.visit(adminSession.getNode(auditNodePath))
-
-            auditRecords = visitor.auditRecords.findAll { auditRecord ->
-                def auditRecordDate = auditRecord.date
-
-                auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
-                auditRecordDate.set(Calendar.MINUTE, 0)
-                auditRecordDate.set(Calendar.SECOND, 0)
-                auditRecordDate.set(Calendar.MILLISECOND, 0)
-
-                !auditRecordDate.before(startDate) && !auditRecordDate.after(endDate)
-            }
-        } catch (RepositoryException e) {
-            LOG.error("error getting audit records for date range", e)
-
-            throw e
+            !auditRecordDate.before(startDate) && !auditRecordDate.after(endDate)
         }
-
-        auditRecords
     }
 
     @Activate
     void activate() {
-        adminSession = repository.loginService(null, null)
+        resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
 
         checkAuditNode()
     }
 
     @Deactivate
     void deactivate() {
-        adminSession?.logout()
+        resourceResolver?.close()
     }
 
     @Synchronized
@@ -220,6 +179,8 @@ class DefaultAuditService implements AuditService {
         def year = date.format(DATE_FORMAT_YEAR)
         def month = date.format(DATE_FORMAT_MONTH)
         def day = date.format(DATE_FORMAT_DAY)
+
+        def adminSession = resourceResolver.adaptTo(Session)
 
         def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/${session.userID}/$year/$month/$day",
             NT_UNSTRUCTURED, adminSession)
@@ -232,14 +193,37 @@ class DefaultAuditService implements AuditService {
     }
 
     private void checkAuditNode() {
-        def contentNode = adminSession.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
+        def session = resourceResolver.adaptTo(Session)
+        def contentNode = session.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
 
         if (!contentNode.hasNode(AUDIT_NODE_NAME)) {
             LOG.info("audit node does not exist, adding")
 
             contentNode.addNode(AUDIT_NODE_NAME)
 
-            adminSession.save()
+            session.save()
+        }
+    }
+
+    private void setAuditRecordNodeProperties(Node auditRecordNode, RunScriptResponse response) {
+        auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
+
+        if (response.data) {
+            auditRecordNode.setProperty(AuditRecord.PROPERTY_DATA, response.data)
+        }
+
+        if (response.exceptionStackTrace) {
+            auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+        } else {
+            if (response.result) {
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
+            }
+
+            if (response.output) {
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+            }
+
+            auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
         }
     }
 
@@ -250,12 +234,16 @@ class DefaultAuditService implements AuditService {
     private List<AuditRecord> findAllAuditRecords(String auditNodePath) {
         def auditRecords = []
 
-        if (adminSession.nodeExists(auditNodePath)) {
-            def visitor = new AuditRecordNodeVisitor()
+        def auditResource = resourceResolver.getResource(auditNodePath)
 
-            visitor.visit(adminSession.getNode(auditNodePath))
+        if (auditResource) {
+            auditResource.listChildren().each { resource ->
+                if (resource.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
+                    auditRecords.add(new AuditRecord(resource))
+                }
 
-            auditRecords.addAll(visitor.auditRecords)
+                auditRecords.addAll(findAllAuditRecords(resource.path))
+            }
         }
 
         auditRecords

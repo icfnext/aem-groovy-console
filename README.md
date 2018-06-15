@@ -15,6 +15,8 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 ## Compatibility
 
+**AEM 6.4 Beta users**: the latest development version (`12.0.0-SNAPSHOT`) is compatible with AEM 6.4.  You will need to clone this repository and build with Maven to install (see [Building From Source](#building-from-source)).  The Groovy Console will have a proper downloadable release when the non-beta AEM 6.4 is officially released.
+
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
 11.x.x | 6.3
@@ -33,6 +35,12 @@ Groovy Console Version(s) | AEM Version
 Additional build profiles may be added in the project's `pom.xml` to support deployment to non-localhost AEM servers.
 
 AEM 6.0 no longer allows vanity paths for pages in `/etc` by default.  To enable access to the Groovy Console from `/groovyconsole` as in previous versions, the **Apache Sling Resource Resolver Factory** OSGi configuration must be updated to allow vanity paths from `/etc`.  The **Groovy Console Configuration Service** can then be updated to enable the vanity path if so desired.
+
+## Building From Source
+
+To build and install the latest development version of the Groovy Console (or if you've made source modifications), run the following Maven command.
+
+    mvn install -P local
 
 ## Excluding the Groovy OSGi Bundle
 
