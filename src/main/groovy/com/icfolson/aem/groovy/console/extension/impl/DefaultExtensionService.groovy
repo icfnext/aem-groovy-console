@@ -46,7 +46,7 @@ class DefaultExtensionService implements ExtensionService {
 
             binding.variables.each { key, value ->
                 if (bindings[key]) {
-                    LOG.info("binding variable {} is currently bound to value {}, overriding with value = {}", key,
+                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", key,
                         bindings[key], value)
                 }
 
