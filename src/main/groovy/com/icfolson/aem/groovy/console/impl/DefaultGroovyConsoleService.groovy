@@ -121,11 +121,11 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            response = RunScriptResponse.fromException(scriptContent, e)
+            response = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            response = RunScriptResponse.fromException(scriptContent, t)
+            response = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), t)
 
             auditAndNotify(session, response)
         } finally {
