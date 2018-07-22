@@ -5,9 +5,9 @@
         </h4>
     </div>
     <div id="bindings" class="panel-collapse collapse">
-        <div class="panel-body" data-sly-use.bindings="com.icfolson.aem.groovy.console.components.Bindings">
+        <div class="panel-body" data-sly-use.bindingsInfo="com.icfolson.aem.groovy.console.components.BindingsInfo">
             <p>The binding variables listed below are available for use in all scripts.</p>
-            ${bindings.description @ context='html'}
+            ${bindingsInfo.description @ context='html'}
         </div>
     </div>
 </div>

@@ -9,7 +9,7 @@ import org.apache.sling.models.annotations.Model
 import javax.inject.Inject
 
 @Model(adaptables = SlingHttpServletRequest)
-class Bindings {
+class BindingsInfo {
 
     @Inject
     private SlingHttpServletRequest request
