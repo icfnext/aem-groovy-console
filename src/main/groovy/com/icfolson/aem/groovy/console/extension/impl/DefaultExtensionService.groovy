@@ -58,6 +58,17 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
+    String getBindingDescription(SlingHttpServletRequest request) {
+        bindingExtensionProviders.findResults { extension ->
+            extension.getBindingDescription(request)
+        }.collect { description ->
+            "<div>${description}</div>"
+        }.inject("") { combinedDescription, description ->
+            "${combinedDescription}${description}"
+        }
+    }
+
+    @Override
     List<Closure> getScriptMetaClasses(SlingHttpServletRequest request) {
         scriptMetaClassExtensionProviders*.getScriptMetaClass(request)
     }

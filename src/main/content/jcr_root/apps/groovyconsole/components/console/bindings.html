@@ -5,17 +5,9 @@
         </h4>
     </div>
     <div id="bindings" class="panel-collapse collapse">
-        <div class="panel-body">
+        <div class="panel-body" data-sly-use.bindingsInfo="com.icfolson.aem.groovy.console.components.BindingsInfo">
             <p>The binding variables listed below are available for use in all scripts.</p>
-            <ul>
-                <li>session - <a href="https://docs.adobe.com/docs/en/spec/javax.jcr/javadocs/jcr-2.0/javax/jcr/Session.html" target="_blank">javax.jcr.Session</a></li>
-                <li>pageManager - com.day.cq.wcm.api.PageManager</li>
-                <li>resourceResolver - <a href="https://sling.apache.org/apidocs/sling10/org/apache/sling/api/resource/ResourceResolver.html" target="_blank">org.apache.sling.api.resource.ResourceResolver</a></li>
-                <li>slingRequest - <a href="https://sling.apache.org/apidocs/sling10/org/apache/sling/api/SlingHttpServletRequest.html" target="_blank">org.apache.sling.api.SlingHttpServletRequest</a></li>
-                <li>queryBuilder - <a href="https://helpx.adobe.com/experience-manager/6-4/sites/developing/using/reference-materials/javadoc/com/day/cq/search/QueryBuilder.html" target="_blank">com.day.cq.search.QueryBuilder</a></li>
-                <li>bundleContext - <a href="http://www.osgi.org/javadoc/r4v43/core/org/osgi/framework/BundleContext.html" target="_blank">org.osgi.framework.BundleContext</a></li>
-                <li>log - <a href="http://www.slf4j.org/api/org/slf4j/Logger.html" target="_blank">org.slf4j.Logger</a></li>
-            </ul>
+            ${bindingsInfo.description @ context='html'}
         </div>
     </div>
 </div>

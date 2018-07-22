@@ -42,6 +42,10 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
         ])
     }
 
+    String getBindingDescriptionFilePath() {
+        return '/apps/groovyconsole/components/console/defaultbindings.html'
+    }
+
     @Activate
     void activate(BundleContext bundleContext) {
         this.bundleContext = bundleContext
