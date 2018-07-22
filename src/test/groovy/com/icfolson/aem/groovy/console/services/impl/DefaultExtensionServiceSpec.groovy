@@ -40,6 +40,10 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
                 selectors: []
             ])
         }
+
+        String getBindingDescription(SlingHttpServletRequest request) {
+            "first"
+        }
     }
 
     class SecondBindingExtensionProvider implements BindingExtensionProvider {
@@ -50,6 +54,10 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
                 path: request.requestPathInfo.resourcePath,
                 selectors: request.requestPathInfo.selectors as List
             ])
+        }
+
+        String getBindingDescription(SlingHttpServletRequest request) {
+            "second"
         }
     }
 
@@ -106,12 +114,14 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.getBinding(request)["selectors"] == request.requestPathInfo.selectors as List
         extensionService.getBinding(request)["parameterNames"] == request.parameterMap.keySet()
         extensionService.getBinding(request)["path"] == "/"
+        extensionService.getBindingDescription(request) == "<div>first</div><div>second</div>"
 
         when:
         extensionService.unbindBindingExtensionProvider(secondProvider)
 
         then:
         extensionService.getBinding(request)["selectors"] == []
+        extensionService.getBindingDescription(request) == "<div>first</div>"
 
         when:
         extensionService.getBinding(request)["path"]
