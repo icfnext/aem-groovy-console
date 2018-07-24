@@ -17,7 +17,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
-12.x.x | 6.4
+13.x.x, 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x | 6.2
 8.x.x | 6.1

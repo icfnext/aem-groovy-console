@@ -1,6 +1,7 @@
 package com.icfolson.aem.groovy.console.extension.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
+import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
@@ -38,23 +39,21 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
-    Binding getBinding(SlingHttpServletRequest request) {
-        def bindings = [:]
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+        def bindingVariables = [:]
 
         bindingExtensionProviders.each { extension ->
-            def binding = extension.getBinding(request)
-
-            binding.variables.each { key, value ->
-                if (bindings[key]) {
-                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", key,
-                        bindings[key], value)
+            extension.getBindingVariables(request).each { name, variable ->
+                if (bindingVariables[name]) {
+                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
+                        bindingVariables[name], variable.value)
                 }
 
-                bindings[key] = value
+                bindingVariables[name] = variable
             }
         }
 
-        new Binding(bindings)
+        bindingVariables
     }
 
     @Override
