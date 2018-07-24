@@ -4,6 +4,7 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.extension.ExtensionService
@@ -97,7 +98,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def stream = new ByteArrayOutputStream()
         def response = null
 
-        def binding = getBinding(extensionService.getBinding(request), data, stream)
+        def binding = getBinding(extensionService.getBindingVariables(request), data, stream)
 
         try {
             def script = new GroovyShell(binding, configuration).parse(scriptContent)
@@ -189,8 +190,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private Binding getBinding(Binding binding, String data, OutputStream stream) {
+    private Binding getBinding(Map<String, BindingVariable> bindingVariables, String data, OutputStream stream) {
+        def binding = new Binding()
+
         binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+
+        bindingVariables.each { name, variable ->
+            binding.setVariable(name, variable.value)
+        }
 
         if (data) {
             try {

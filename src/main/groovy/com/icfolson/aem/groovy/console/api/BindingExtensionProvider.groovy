@@ -8,11 +8,11 @@ import org.apache.sling.api.SlingHttpServletRequest
 interface BindingExtensionProvider {
 
     /**
-     * Get the binding for this request.  All bindings provided by extension services will be merged prior to script
-     * execution.
+     * Get the binding variables for this request.  All bindings provided by extension services will be merged prior to
+     * script execution.
      *
      * @param request current request
-     * @return binding map for request
+     * @return map of binding variables for request
      */
-    Binding getBinding(SlingHttpServletRequest request)
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request)
 }

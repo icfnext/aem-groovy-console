@@ -1,6 +1,7 @@
 package com.icfolson.aem.groovy.console.services.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
+import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
@@ -34,22 +35,22 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     class FirstBindingExtensionProvider implements BindingExtensionProvider {
 
         @Override
-        Binding getBinding(SlingHttpServletRequest request) {
-            new Binding([
-                parameterNames: request.parameterMap.keySet(),
-                selectors: []
-            ])
+        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+            [
+                parameterNames: new BindingVariable(request.parameterMap.keySet()),
+                selectors: new BindingVariable([])
+            ]
         }
     }
 
     class SecondBindingExtensionProvider implements BindingExtensionProvider {
 
         @Override
-        Binding getBinding(SlingHttpServletRequest request) {
-            new Binding([
-                path: request.requestPathInfo.resourcePath,
-                selectors: request.requestPathInfo.selectors as List
-            ])
+        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+            [
+                path: new BindingVariable(request.requestPathInfo.resourcePath),
+                selectors: new BindingVariable(request.requestPathInfo.selectors as List)
+            ]
         }
     }
 
@@ -103,21 +104,18 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.bindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBinding(request)["selectors"] == request.requestPathInfo.selectors as List
-        extensionService.getBinding(request)["parameterNames"] == request.parameterMap.keySet()
-        extensionService.getBinding(request)["path"] == "/"
+        extensionService.getBindingVariables(request)["selectors"].value == request.requestPathInfo.selectors as List
+        extensionService.getBindingVariables(request)["parameterNames"].value == request.parameterMap.keySet()
+        extensionService.getBindingVariables(request)["path"].value == "/"
 
         when:
         extensionService.unbindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBinding(request)["selectors"] == []
+        extensionService.getBindingVariables(request)["selectors"].value == []
 
-        when:
-        extensionService.getBinding(request)["path"]
-
-        then:
-        thrown(MissingPropertyException)
+        and:
+        !extensionService.getBindingVariables(request)["path"]
     }
 
     def "get script metaclasses"() {
