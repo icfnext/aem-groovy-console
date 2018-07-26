@@ -8,7 +8,7 @@ import org.apache.sling.models.annotations.Model
 import javax.inject.Inject
 
 @Model(adaptables = Resource)
-class Imports {
+class ImportsPanel {
 
     @Inject
     private ExtensionService extensionService

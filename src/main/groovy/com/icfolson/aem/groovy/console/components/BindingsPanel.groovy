@@ -10,7 +10,7 @@ import org.apache.sling.models.annotations.injectorspecific.Self
 import javax.inject.Inject
 
 @Model(adaptables = SlingHttpServletRequest)
-class Bindings {
+class BindingsPanel {
 
     @Self
     private SlingHttpServletRequest request
