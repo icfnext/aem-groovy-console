@@ -8,6 +8,17 @@ import org.apache.sling.api.SlingHttpServletRequest
 interface BindingExtensionProvider {
 
     /**
+     * Get the binding for this request.  All bindings provided by extension services will be merged prior to script
+     * execution.
+     *
+     * @param request current request
+     * @return binding map for request
+     * @deprecated use {@link #getBindingVariables} instead to supply documentation for binding variables
+     */
+    @Deprecated
+    Binding getBinding(SlingHttpServletRequest request)
+
+    /**
      * Get the binding variables for this request.  All bindings provided by extension services will be merged prior to
      * script execution.
      *

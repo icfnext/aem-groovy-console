@@ -203,6 +203,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             try {
                 binding["data"] = new JsonSlurper().parseText(data)
             } catch (JsonException ignored) {
+                // if data cannot be parsed as a JSON object, bind it as a String
                 binding["data"] = data
             }
         }
