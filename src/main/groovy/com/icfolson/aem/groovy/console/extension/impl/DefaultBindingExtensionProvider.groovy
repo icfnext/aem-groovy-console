@@ -29,20 +29,7 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Override
     Binding getBinding(SlingHttpServletRequest request) {
-        def resourceResolver = request.resourceResolver
-        def session = resourceResolver.adaptTo(Session)
-
-        new Binding([
-            log: LoggerFactory.getLogger("groovyconsole"),
-            session: session,
-            slingRequest: request,
-            pageManager: resourceResolver.adaptTo(PageManager),
-            resourceResolver: resourceResolver,
-            queryBuilder: queryBuilder,
-            nodeBuilder: new NodeBuilder(session),
-            pageBuilder: new PageBuilder(session),
-            bundleContext: bundleContext
-        ])
+        new Binding()
     }
 
     @Override

@@ -40,7 +40,7 @@ class DefaultExtensionService implements ExtensionService {
 
     @Override
     Binding getBinding(SlingHttpServletRequest request) {
-        null
+        new Binding()
     }
 
     @Override
@@ -48,8 +48,14 @@ class DefaultExtensionService implements ExtensionService {
         def bindingVariables = [:]
 
         bindingExtensionProviders.each { extension ->
+            // support for deprecated API
             extension.getBinding(request).variables.each { name, value ->
+                if (bindingVariables[name]) {
+                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
+                        bindingVariables[name], value)
+                }
 
+                bindingVariables[name] = new BindingVariable(value)
             }
 
             extension.getBindingVariables(request).each { name, variable ->
