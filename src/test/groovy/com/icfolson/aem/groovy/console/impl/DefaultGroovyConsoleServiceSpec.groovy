@@ -1,4 +1,4 @@
-package com.icfolson.aem.groovy.console.services.impl
+package com.icfolson.aem.groovy.console.impl
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
@@ -9,7 +9,6 @@ import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
-import com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 
 import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME

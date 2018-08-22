@@ -10,7 +10,8 @@
             <ul>
                 <li>getPage(String path) - <span class="muted">Get the <a href="http://dev.day.com/content/docs/en/cq/current/javadoc/com/day/cq/wcm/api/Page.html" target="_blank">Page</a> for the given path, or null if it does not exist.</span></li>
                 <li>getNode(String path) - <span class="muted">Get the <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/Node.html" target="_blank">Node</a> for the given path.  Throws <a href="http://www.day.com/maven/jsr170/javadocs/jcr-2.0/javax/jcr/RepositoryException.html">javax.jcr.RepositoryException</a> if it does not exist.</span></li>
-                <li>getResource(String path) - <span class="muted">Get the <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/Resource.html" target="_blank">Resource</a> for the given path, or null if it does not exist.</li>
+                <li>getResource(String path) - <span class="muted">Get the <a href="http://sling.apache.org/apidocs/sling5/org/apache/sling/api/resource/Resource.html" target="_blank">Resource</a> for the given path, or null if it does not exist.</span></li>
+                <li>getModel(String path, Class type) - <span class="muted">Get an instance of a Sling Model class for the Resource at the given path.</span></li>
                 <li>getService(Class&lt;ServiceType&gt; serviceType) - <span class="muted">Get the OSGi service instance for the given type, e.g. <a href="http://dev.day.com/docs/en/cq/current/javadoc/com/day/cq/workflow/WorkflowService.html" target="_blank">com.day.cq.workflow.WorkflowService</a>.</span></li>
                 <li>getService(String className) - <span class="muted">Get the OSGi service instance for the given class name.</span></li>
                 <li>getServices(Class&lt;ServiceType&gt; serviceType, String filter) - <span class="muted">Get OSGi services for the given type and filter expression.</span></li>

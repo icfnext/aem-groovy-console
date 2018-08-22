@@ -1,4 +1,4 @@
-package com.icfolson.aem.groovy.console.services.impl
+package com.icfolson.aem.groovy.console.extension.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
@@ -20,7 +20,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         @Override
         Set<String> getStarImports() {
-            [InputStream.class.package.name, SimpleDateFormat.class.package.name] as Set
+            [InputStream.getPackage().name, SimpleDateFormat.getPackage().name] as Set
         }
     }
 
@@ -28,11 +28,16 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         @Override
         Set<String> getStarImports() {
-            [BigDecimal.class.package.name] as Set
+            [BigDecimal.getPackage().name] as Set
         }
     }
 
     class FirstBindingExtensionProvider implements BindingExtensionProvider {
+
+        @Override
+        Binding getBinding(SlingHttpServletRequest request) {
+            null
+        }
 
         @Override
         Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
@@ -44,6 +49,11 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     }
 
     class SecondBindingExtensionProvider implements BindingExtensionProvider {
+
+        @Override
+        Binding getBinding(SlingHttpServletRequest request) {
+            null
+        }
 
         @Override
         Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
@@ -78,14 +88,14 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         then:
         extensionService.starImports.size() == 3
-        extensionService.starImports.containsAll([InputStream, SimpleDateFormat, BigDecimal]*.package.name)
+        extensionService.starImports.containsAll([InputStream, SimpleDateFormat, BigDecimal]*.getPackage().name)
 
         when:
         extensionService.unbindStarImportExtensionProvider(firstProvider)
 
         then:
         extensionService.starImports.size() == 1
-        extensionService.starImports[0] == BigDecimal.package.name
+        extensionService.starImports[0] == BigDecimal.getPackage().name
     }
 
     def "get binding"() {

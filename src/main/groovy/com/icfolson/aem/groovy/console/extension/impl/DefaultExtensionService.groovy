@@ -49,13 +49,17 @@ class DefaultExtensionService implements ExtensionService {
 
         bindingExtensionProviders.each { extension ->
             // support for deprecated API
-            extension.getBinding(request).variables.each { name, value ->
-                if (bindingVariables[name]) {
-                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
-                        bindingVariables[name], value)
-                }
+            def binding = extension.getBinding(request)
 
-                bindingVariables[name] = new BindingVariable(value)
+            if (binding) {
+                binding.variables.each { name, value ->
+                    if (bindingVariables[name]) {
+                        LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}",
+                            name, bindingVariables[name], value)
+                    }
+
+                    bindingVariables[name] = new BindingVariable(value)
+                }
             }
 
             extension.getBindingVariables(request).each { name, variable ->
