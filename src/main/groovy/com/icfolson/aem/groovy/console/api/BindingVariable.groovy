@@ -18,7 +18,7 @@ class BindingVariable {
     String link
 
     /**
-     * Create a new binding variable with the given value.  Type of variable will be derived from it's class..
+     * Create a new binding variable with the given value.  Type of variable will be derived from it's class.
      *
      * @param value binding value
      */

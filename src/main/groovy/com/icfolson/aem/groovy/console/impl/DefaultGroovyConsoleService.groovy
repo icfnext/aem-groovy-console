@@ -216,7 +216,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         withConfig(configuration) {
             imports {
-                star extensionService.starImports as String[]
+                star extensionService.starImports*.packageName as String[]
             }
         }
     }

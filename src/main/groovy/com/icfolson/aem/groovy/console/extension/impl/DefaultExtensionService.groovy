@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.extension.impl
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
@@ -34,7 +35,7 @@ class DefaultExtensionService implements ExtensionService {
     private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
     @Override
-    Set<String> getStarImports() {
+    Set<StarImport> getStarImports() {
         starImportExtensionProviders.collectMany { it.starImports } as Set
     }
 

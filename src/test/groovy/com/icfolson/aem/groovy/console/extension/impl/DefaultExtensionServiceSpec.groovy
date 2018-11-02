@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.extension.impl
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
@@ -19,16 +20,18 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     class FirstStarImportExtensionProvider implements StarImportExtensionProvider {
 
         @Override
-        Set<String> getStarImports() {
-            [InputStream.getPackage().name, SimpleDateFormat.getPackage().name] as Set
+        Set<StarImport> getStarImports() {
+            [InputStream, SimpleDateFormat].collect { clazz ->
+                new StarImport(clazz.package.name)
+            } as Set
         }
     }
 
     class SecondStarImportExtensionProvider implements StarImportExtensionProvider {
 
         @Override
-        Set<String> getStarImports() {
-            [BigDecimal.getPackage().name] as Set
+        Set<StarImport> getStarImports() {
+            [new StarImport(BigDecimal.getPackage().name)] as Set
         }
     }
 
@@ -88,14 +91,15 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         then:
         extensionService.starImports.size() == 3
-        extensionService.starImports.containsAll([InputStream, SimpleDateFormat, BigDecimal]*.getPackage().name)
+        extensionService.starImports*.packageName.containsAll(
+            [InputStream, SimpleDateFormat, BigDecimal]*.getPackage().name)
 
         when:
         extensionService.unbindStarImportExtensionProvider(firstProvider)
 
         then:
         extensionService.starImports.size() == 1
-        extensionService.starImports[0] == BigDecimal.getPackage().name
+        extensionService.starImports[0].packageName == BigDecimal.getPackage().name
     }
 
     def "get binding"() {

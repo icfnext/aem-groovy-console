@@ -279,6 +279,7 @@
                             <contextPath>${aem.context.path}</contextPath>
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                     <execution>
@@ -298,6 +299,7 @@
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
                             <skip>${osgi.bundle.status.skip.publish}</skip>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                 </executions>

@@ -12,5 +12,5 @@ interface StarImportExtensionProvider {
      *
      * @return set of star imports
      */
-    Set<String> getStarImports()
+    Set<StarImport> getStarImports()
 }
