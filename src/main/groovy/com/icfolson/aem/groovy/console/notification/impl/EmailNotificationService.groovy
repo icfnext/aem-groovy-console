@@ -85,7 +85,10 @@ class EmailNotificationService implements NotificationService {
         ]
 
         if (response.exceptionStackTrace) {
-            binding.stackTrace = response.exceptionStackTrace
+            binding.putAll([
+                stackTrace: response.exceptionStackTrace,
+                output: response.output
+            ])
         } else {
             binding.putAll([
                 result: response.result,

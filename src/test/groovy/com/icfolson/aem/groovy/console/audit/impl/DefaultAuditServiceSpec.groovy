@@ -53,7 +53,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
     def "create audit record for script with exception"() {
         when:
         def exception = new RuntimeException("")
-        def response = RunScriptResponse.fromException("script content", exception)
+        def response = RunScriptResponse.fromException("script content", "output", exception)
         def auditRecord = auditService.createAuditRecord(session, response)
 
         then:
@@ -61,6 +61,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
         and:
         auditRecord.script == "script content"
+        auditRecord.output == "output"
         auditRecord.exceptionStackTrace == ExceptionUtils.getStackTrace(exception)
     }
 
