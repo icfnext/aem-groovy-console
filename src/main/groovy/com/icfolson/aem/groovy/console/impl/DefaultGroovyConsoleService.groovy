@@ -1,20 +1,16 @@
 package com.icfolson.aem.groovy.console.impl
 
-import com.day.cq.commons.jcr.JcrConstants
-import com.day.cq.commons.jcr.JcrUtil
-import com.google.common.net.MediaType
-import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.console.audit.AuditService
-import com.icfolson.aem.groovy.console.configuration.ConfigurationService
-import com.icfolson.aem.groovy.console.extension.ExtensionService
-import com.icfolson.aem.groovy.console.notification.NotificationService
-import com.icfolson.aem.groovy.console.response.RunScriptResponse
-import com.icfolson.aem.groovy.console.response.SaveScriptResponse
-import groovy.json.JsonException
-import groovy.json.JsonSlurper
-import groovy.transform.Synchronized
-import groovy.util.logging.Slf4j
+import static com.google.common.base.Preconditions.checkNotNull
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
+import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
+
+import java.util.concurrent.CopyOnWriteArrayList
+
+import javax.jcr.Node
+import javax.jcr.Session
+
 import org.apache.commons.lang3.CharEncoding
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -26,15 +22,22 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
-import javax.jcr.Node
-import javax.jcr.Session
-import java.util.concurrent.CopyOnWriteArrayList
+import com.day.cq.commons.jcr.JcrConstants
+import com.day.cq.commons.jcr.JcrUtil
+import com.google.common.net.MediaType
+import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.console.audit.AuditService
+import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.extension.ExtensionService
+import com.icfolson.aem.groovy.console.notification.NotificationService
+import com.icfolson.aem.groovy.console.response.RunScriptResponse
+import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 
-import static com.google.common.base.Preconditions.checkNotNull
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
-import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
+import groovy.json.JsonException
+import groovy.json.JsonSlurper
+import groovy.transform.Synchronized
+import groovy.util.logging.Slf4j
 
 @Service(GroovyConsoleService)
 @Component
@@ -98,7 +101,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def stream = new ByteArrayOutputStream()
         def response = null
 
-        def binding = getBinding(extensionService.getBindingVariables(request), data, stream)
+        def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
+        def binding = getBinding(extensionService.getBindingVariables(request, printStream), data, printStream)
 
         try {
             def script = new GroovyShell(binding, configuration).parse(scriptContent)
@@ -190,10 +194,10 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private Binding getBinding(Map<String, BindingVariable> bindingVariables, String data, OutputStream stream) {
+    private Binding getBinding(Map<String, BindingVariable> bindingVariables, String data, PrintStream stream) {
         def binding = new Binding()
 
-        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+        binding["out"] = stream
 
         bindingVariables.each { name, variable ->
             binding.setVariable(name, variable.value)

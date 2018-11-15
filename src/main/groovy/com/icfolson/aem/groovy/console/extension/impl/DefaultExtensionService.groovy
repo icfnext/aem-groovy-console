@@ -1,13 +1,7 @@
 package com.icfolson.aem.groovy.console.extension.impl
 
-import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
-import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
-import com.icfolson.aem.groovy.console.api.StarImport
-import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
-import com.icfolson.aem.groovy.console.extension.ExtensionService
-import groovy.transform.Synchronized
-import groovy.util.logging.Slf4j
+import java.util.concurrent.CopyOnWriteArrayList
+
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
@@ -15,7 +9,15 @@ import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
 
-import java.util.concurrent.CopyOnWriteArrayList
+import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
+import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.icfolson.aem.groovy.console.api.StarImport
+import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
+import com.icfolson.aem.groovy.console.extension.ExtensionService
+
+import groovy.transform.Synchronized
+import groovy.util.logging.Slf4j
 
 @Service(ExtensionService)
 @Component(immediate = true)
@@ -45,7 +47,7 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
-    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request, PrintStream printStream) {
         def bindingVariables = [:]
 
         bindingExtensionProviders.each { extension ->
@@ -63,7 +65,7 @@ class DefaultExtensionService implements ExtensionService {
                 }
             }
 
-            extension.getBindingVariables(request).each { name, variable ->
+            extension.getBindingVariables(request, printStream).each { name, variable ->
                 if (bindingVariables[name]) {
                     LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
                         bindingVariables[name], variable.value)

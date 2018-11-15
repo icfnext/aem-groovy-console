@@ -1,11 +1,7 @@
 package com.icfolson.aem.groovy.console.extension.impl
 
-import com.day.cq.search.QueryBuilder
-import com.day.cq.wcm.api.PageManager
-import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
-import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.extension.builders.NodeBuilder
-import com.icfolson.aem.groovy.extension.builders.PageBuilder
+import javax.jcr.Session
+
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -16,7 +12,12 @@ import org.osgi.framework.BundleContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.jcr.Session
+import com.day.cq.search.QueryBuilder
+import com.day.cq.wcm.api.PageManager
+import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
+import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.extension.builders.NodeBuilder
+import com.icfolson.aem.groovy.extension.builders.PageBuilder
 
 @Service(BindingExtensionProvider)
 @Component(immediate = true)
@@ -33,7 +34,7 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
     }
 
     @Override
-    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request, PrintStream printStream) {
         def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
 

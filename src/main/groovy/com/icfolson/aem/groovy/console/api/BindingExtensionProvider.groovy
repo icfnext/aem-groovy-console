@@ -23,7 +23,8 @@ interface BindingExtensionProvider {
      * script execution.
      *
      * @param request current request
+     * @param printStream output stream
      * @return map of binding variables for request
      */
-    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request)
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request, PrintStream printStream)
 }
