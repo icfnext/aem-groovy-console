@@ -11,7 +11,8 @@ interface GroovyConsoleService {
 
     RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath)
 
-    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response, List<String> scriptPaths)
+    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response,
+        List<String> scriptPaths)
 
     SaveScriptResponse saveScript(SlingHttpServletRequest request)
 }
