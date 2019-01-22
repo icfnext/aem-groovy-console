@@ -13,6 +13,7 @@ import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.models.factory.ModelFactory
 import org.osgi.framework.BundleContext
 
 import javax.jcr.Node
@@ -82,6 +83,15 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
             delegate.save = {
                 session.save()
+            }
+
+            delegate.getModel = { String path, Class type ->
+                def modelFactoryReference = bundleContext.getServiceReference(ModelFactory)
+                def modelFactory = bundleContext.getService(modelFactoryReference)
+
+                def resource = resourceResolver.resolve(path)
+
+                modelFactory.createModel(resource, type)
             }
 
             delegate.getService = { Class serviceType ->

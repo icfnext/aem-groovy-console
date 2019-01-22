@@ -1,4 +1,4 @@
-package com.icfolson.aem.groovy.console.services.impl
+package com.icfolson.aem.groovy.console.impl
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
@@ -9,12 +9,7 @@ import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
-import com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService
 import com.icfolson.aem.prosper.specs.ProsperSpec
-
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
@@ -22,7 +17,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
-    static final def PATH_FOLDER = "/etc/groovyconsole/$RELATIVE_PATH_SCRIPT_FOLDER"
+    static final def PATH_FOLDER = "/etc/groovyconsole/$DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER"
 
     static final def PATH_FILE = "$PATH_FOLDER/$SCRIPT_FILE_NAME"
 
@@ -47,8 +42,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             parameters = this.parameterMap
         }
 
+        def response = responseBuilder.build()
+
         when:
-        def map = consoleService.runScript(request)
+        def map = consoleService.runScript(request, response)
 
         then:
         assertScriptResult(map)
@@ -98,6 +95,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     private Map<String, Object> getParameterMap() {
-        [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
+        [(DefaultGroovyConsoleService.PARAMETER_FILE_NAME): (SCRIPT_NAME), (DefaultGroovyConsoleService
+            .PARAMETER_SCRIPT): scriptAsString]
     }
 }

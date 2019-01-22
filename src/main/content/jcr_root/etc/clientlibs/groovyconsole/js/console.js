@@ -220,6 +220,12 @@ var GroovyConsole = function () {
             var runningTime = response.runningTime;
 
             if (exceptionStackTrace && exceptionStackTrace.length) {
+                if (output && output.length) {
+                    $('#output pre').text(output);
+                    $('#output').removeClass('alert-success')
+                        .addClass('alert-danger')
+                        .fadeIn('fast');
+                }
                 $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
             } else {
                 if (!GroovyConsole.showTable(response) && result && result.length) {
@@ -229,7 +235,9 @@ var GroovyConsole = function () {
 
                 if (output && output.length) {
                     $('#output pre').text(output);
-                    $('#output').fadeIn('fast');
+                    $('#output').removeClass('alert-danger')
+                        .addClass('alert-success')
+                        .fadeIn('fast');
                 }
 
                 if (runningTime && runningTime.length) {

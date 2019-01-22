@@ -8,7 +8,7 @@ import javax.inject.Inject
 import javax.jcr.Session
 
 @Model(adaptables = SlingHttpServletRequest)
-class History {
+class HistoryPanel {
 
     @Inject
     private AuditService auditService

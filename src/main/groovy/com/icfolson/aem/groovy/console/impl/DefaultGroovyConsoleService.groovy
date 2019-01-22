@@ -23,6 +23,7 @@ import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.SlingHttpServletResponse
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
@@ -76,12 +77,12 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     private ExtensionService extensionService
 
     @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request) {
-        runScript(request, null)
+    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response) {
+        runScript(request, response, null)
     }
 
     @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request, String scriptPath) {
+    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath) {
         def session = request.resourceResolver.adaptTo(Session)
 
         def scriptContent
@@ -96,9 +97,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
         def stream = new ByteArrayOutputStream()
-        def response = null
+        def runScriptResponse = null
 
-        def binding = getBinding(extensionService.getBindingVariables(request), data, stream)
+        def binding = getBinding(extensionService.getBindingVariables(request, response), data, stream)
 
         try {
             def script = new GroovyShell(binding, configuration).parse(scriptContent)
@@ -115,31 +116,32 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug("script execution completed, running time = {}", runningTime)
 
-            response = RunScriptResponse.fromResult(scriptContent, data, result, stream.toString(CharEncoding.UTF_8),
-                runningTime)
+            runScriptResponse = RunScriptResponse.fromResult(scriptContent, data, result,
+                stream.toString(CharEncoding.UTF_8), runningTime)
 
-            auditAndNotify(session, response)
+            auditAndNotify(session, runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            response = RunScriptResponse.fromException(scriptContent, e)
+            runScriptResponse = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            response = RunScriptResponse.fromException(scriptContent, t)
+            runScriptResponse = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), t)
 
-            auditAndNotify(session, response)
+            auditAndNotify(session, runScriptResponse)
         } finally {
             stream.close()
         }
 
-        response
+        runScriptResponse
     }
 
     @Override
-    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, List<String> scriptPaths) {
+    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response,
+        List<String> scriptPaths) {
         scriptPaths.collect { scriptPath ->
-            runScript(request, scriptPath)
+            runScript(request, response, scriptPath)
         }
     }
 
@@ -203,6 +205,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             try {
                 binding["data"] = new JsonSlurper().parseText(data)
             } catch (JsonException ignored) {
+                // if data cannot be parsed as a JSON object, bind it as a String
                 binding["data"] = data
             }
         }
@@ -215,7 +218,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         withConfig(configuration) {
             imports {
-                star extensionService.starImports as String[]
+                star extensionService.starImports*.packageName as String[]
             }
         }
     }

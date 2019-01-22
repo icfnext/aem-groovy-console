@@ -4,11 +4,11 @@
             <a data-toggle="collapse" data-parent="#info" href="#bindings">Bindings</a>
         </h4>
     </div>
-    <div id="bindings" class="panel-collapse collapse" data-sly-use.bindings="com.icfolson.aem.groovy.console.components.Bindings">
+    <div id="bindings" class="panel-collapse collapse" data-sly-use.component="com.icfolson.aem.groovy.console.components.BindingsPanel">
         <div class="panel-body">
             <p>The binding variables listed below are available for use in all scripts.</p>
-            <ul data-sly-list="${bindings.bindingVariables}">
-                <li>${item} - <a data-sly-unwrap="${!bindings.bindingVariables[item].link}" href="${bindings.bindingVariables[item].link}" target="_blank">${bindings.bindingVariables[item].type.name}</a></li>
+            <ul data-sly-list="${component.bindingVariables}">
+                <li>${item} - <a data-sly-unwrap="${!component.bindingVariables[item].link}" href="${component.bindingVariables[item].link}" target="_blank">${component.bindingVariables[item].type.name}</a></li>
             </ul>
         </div>
     </div>

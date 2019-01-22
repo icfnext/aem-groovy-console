@@ -26,7 +26,7 @@ Groovy Console Version(s) | AEM Version
 
 ## Installation
 
-1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/11.0.0/aem-groovy-console-11.0.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
+1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/11.4.0/aem-groovy-console-11.4.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
 2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
 

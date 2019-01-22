@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>aem-parent-uber-jar</artifactId>
-        <version>6.3.1.1</version>
+        <version>6.3.2.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -146,7 +146,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.0</version>
                 <configuration>
                     <includes>
                         <include>**/*Spec*</include>
@@ -240,7 +240,7 @@
             <plugin>
                 <groupId>com.icfolson.maven.plugins</groupId>
                 <artifactId>aem-package-maven-plugin</artifactId>
-                <version>0.6.0</version>
+                <version>0.7.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -261,7 +261,7 @@
             <plugin>
                 <groupId>com.icfolson.maven.plugins</groupId>
                 <artifactId>osgi-bundle-status-maven-plugin</artifactId>
-                <version>2.0.1</version>
+                <version>2.0.2</version>
                 <executions>
                     <execution>
                         <id>status-author</id>
@@ -279,7 +279,7 @@
                             <contextPath>${aem.context.path}</contextPath>
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
-                            <retryDelay>1000</retryDelay>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                     <execution>
@@ -299,7 +299,7 @@
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
                             <skip>${osgi.bundle.status.skip.publish}</skip>
-                            <retryDelay>1000</retryDelay>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                 </executions>
@@ -399,7 +399,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.13</version>
+            <version>2.4.15</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
