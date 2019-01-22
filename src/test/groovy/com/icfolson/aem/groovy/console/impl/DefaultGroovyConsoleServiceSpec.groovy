@@ -11,13 +11,17 @@ import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
 
+import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
+import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
+import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
+
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     static final def SCRIPT_NAME = "Script"
 
     static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
-    static final def PATH_FOLDER = "/etc/groovyconsole/$DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER"
+    static final def PATH_FOLDER = "/etc/groovyconsole/$RELATIVE_PATH_SCRIPT_FOLDER"
 
     static final def PATH_FILE = "$PATH_FOLDER/$SCRIPT_FILE_NAME"
 
@@ -95,7 +99,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     private Map<String, Object> getParameterMap() {
-        [(DefaultGroovyConsoleService.PARAMETER_FILE_NAME): (SCRIPT_NAME), (DefaultGroovyConsoleService
-            .PARAMETER_SCRIPT): scriptAsString]
+        [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
     }
 }
