@@ -11,6 +11,7 @@ import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
 import org.slf4j.Logger
@@ -33,7 +34,8 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
     }
 
     @Override
-    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
+        SlingHttpServletResponse response) {
         def resourceResolver = request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
 
@@ -44,6 +46,8 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
                 "https://docs.adobe.com/docs/en/spec/javax.jcr/javadocs/jcr-2.0/javax/jcr/Session.html"),
             slingRequest: new BindingVariable(request, SlingHttpServletRequest,
                 "https://sling.apache.org/apidocs/sling10/org/apache/sling/api/SlingHttpServletRequest.html"),
+            slingResponse: new BindingVariable(response, SlingHttpServletResponse,
+                "https://sling.apache.org/apidocs/sling10/org/apache/sling/api/SlingHttpServletResponse.html"),
             pageManager: new BindingVariable(resourceResolver.adaptTo(PageManager), PageManager),
             resourceResolver: new BindingVariable(resourceResolver, ResourceResolver,
                 "https://sling.apache.org/apidocs/sling10/org/apache/sling/api/resource/ResourceResolver.html"),

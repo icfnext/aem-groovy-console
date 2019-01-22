@@ -14,6 +14,7 @@ import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.api.SlingHttpServletResponse
 
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -45,7 +46,8 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
-    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request) {
+    Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
+        SlingHttpServletResponse response) {
         def bindingVariables = [:]
 
         bindingExtensionProviders.each { extension ->
@@ -63,7 +65,7 @@ class DefaultExtensionService implements ExtensionService {
                 }
             }
 
-            extension.getBindingVariables(request).each { name, variable ->
+            extension.getBindingVariables(request, response).each { name, variable ->
                 if (bindingVariables[name]) {
                     LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
                         bindingVariables[name], variable.value)
