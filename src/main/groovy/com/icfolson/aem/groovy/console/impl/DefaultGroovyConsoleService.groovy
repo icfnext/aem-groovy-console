@@ -83,23 +83,22 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Override
     RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath) {
-        def session = request.resourceResolver.adaptTo(Session)
-
-        def scriptContent
-
-        if (scriptPath) {
-            scriptContent = loadScriptContent(session, scriptPath)
-        } else {
-            scriptContent = request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
-        }
-
-        checkNotNull(scriptContent, "Script content cannot be empty.")
-
+        def scriptContent = checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty.")
         def data = request.getRequestParameter(PARAMETER_DATA)?.getString(CharEncoding.UTF_8)
-        def stream = new ByteArrayOutputStream()
-        def runScriptResponse = null
 
-        def binding = getBinding(extensionService.getBindingVariables(request, response), data, stream)
+        def stream = new ByteArrayOutputStream()
+
+        def scriptContext = new DefaultScriptContext(
+            request: request,
+            response: response,
+            printStream: new PrintStream(stream, true, CharEncoding.UTF_8),
+            scriptContent: scriptContent,
+            data: data
+        )
+
+        def binding = getBinding(extensionService.getBindingVariables(scriptContext), data)
+
+        def runScriptResponse = null
 
         try {
             def script = new GroovyShell(binding, configuration).parse(scriptContent)
@@ -116,20 +115,19 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug("script execution completed, running time = {}", runningTime)
 
-            runScriptResponse = RunScriptResponse.fromResult(scriptContent, data, result,
-                stream.toString(CharEncoding.UTF_8), runningTime)
+            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, stream.toString(CharEncoding.UTF_8), runningTime)
 
-            auditAndNotify(session, runScriptResponse)
+            auditAndNotify(runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), e)
+            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CharEncoding.UTF_8), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContent, stream.toString(CharEncoding.UTF_8), t)
+            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CharEncoding.UTF_8), t)
 
-            auditAndNotify(session, runScriptResponse)
+            auditAndNotify(runScriptResponse)
         } finally {
             stream.close()
         }
@@ -182,20 +180,26 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     // internals
 
-    private void auditAndNotify(Session session, RunScriptResponse response) {
-        if (!configurationService.auditDisabled) {
-            auditService.createAuditRecord(session, response)
-        }
-
-        notificationServices.each { notificationService ->
-            notificationService.notify(session, response)
+    private String getScriptContent(SlingHttpServletRequest request, String scriptPath) {
+        if (scriptPath) {
+            loadScriptContent(request, scriptPath)
+        } else {
+            request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CharEncoding.UTF_8)
         }
     }
 
-    private Binding getBinding(Map<String, BindingVariable> bindingVariables, String data, OutputStream stream) {
-        def binding = new Binding()
+    private void auditAndNotify(RunScriptResponse response) {
+        if (!configurationService.auditDisabled) {
+            auditService.createAuditRecord(response)
+        }
 
-        binding["out"] = new PrintStream(stream, true, CharEncoding.UTF_8)
+        notificationServices.each { notificationService ->
+            notificationService.notify(response)
+        }
+    }
+
+    private Binding getBinding(Map<String, BindingVariable> bindingVariables, String data) {
+        def binding = new Binding()
 
         bindingVariables.each { name, variable ->
             binding.setVariable(name, variable.value)
@@ -223,7 +227,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         }
     }
 
-    private String loadScriptContent(Session session, String scriptPath) {
+    private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {
+        def session = request.resourceResolver.adaptTo(Session)
+
         def binary = session.getNode(scriptPath)
             .getNode(JcrConstants.JCR_CONTENT)
             .getProperty(JcrConstants.JCR_DATA)

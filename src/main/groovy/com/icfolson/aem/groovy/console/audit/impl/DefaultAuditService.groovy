@@ -48,14 +48,14 @@ class DefaultAuditService implements AuditService {
     private ResourceResolver resourceResolver
 
     @Override
-    AuditRecord createAuditRecord(Session session, RunScriptResponse response)
+    AuditRecord createAuditRecord(RunScriptResponse response)
         throws RepositoryException, PersistenceException {
         def auditRecord
 
         try {
             resourceResolver.refresh()
 
-            def auditRecordNode = addAuditRecordNode(session)
+            def auditRecordNode = addAuditRecordNode(response.userId)
 
             setAuditRecordNodeProperties(auditRecordNode, response)
 
@@ -76,11 +76,11 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAllAuditRecords(Session session) throws PersistenceException {
+    void deleteAllAuditRecords(String userId) throws PersistenceException {
         try {
             resourceResolver.refresh()
 
-            def auditNodePath = getAuditNodePath(session)
+            def auditNodePath = getAuditNodePath(userId)
 
             def auditResource = resourceResolver.getResource(auditNodePath)
 
@@ -101,7 +101,7 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAuditRecord(Session session, String userId, String relativePath) throws PersistenceException {
+    void deleteAuditRecord(String userId, String relativePath) throws PersistenceException {
         try {
             resourceResolver.refresh()
 
@@ -120,16 +120,16 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    List<AuditRecord> getAllAuditRecords(Session session) {
+    List<AuditRecord> getAllAuditRecords(String userId) {
         resourceResolver.refresh()
 
-        def auditNodePath = getAuditNodePath(session)
+        def auditNodePath = getAuditNodePath(userId)
 
         findAllAuditRecords(auditNodePath)
     }
 
     @Override
-    AuditRecord getAuditRecord(Session session, String userId, String relativePath) {
+    AuditRecord getAuditRecord(String userId, String relativePath) {
         resourceResolver.refresh()
 
         def auditRecordResource = resourceResolver.getResource("$AUDIT_PATH/$userId").getChild(relativePath)
@@ -146,10 +146,10 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    List<AuditRecord> getAuditRecords(Session session, Calendar startDate, Calendar endDate) {
+    List<AuditRecord> getAuditRecords(String userId, Calendar startDate, Calendar endDate) {
         resourceResolver.refresh()
 
-        getAllAuditRecords(session).findAll { auditRecord ->
+        getAllAuditRecords(userId).findAll { auditRecord ->
             def auditRecordDate = auditRecord.date
 
             auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
@@ -174,7 +174,7 @@ class DefaultAuditService implements AuditService {
     }
 
     @Synchronized
-    private Node addAuditRecordNode(Session session) {
+    private Node addAuditRecordNode(String userId) {
         def date = Calendar.instance
         def year = date.format(DATE_FORMAT_YEAR)
         def month = date.format(DATE_FORMAT_MONTH)
@@ -182,7 +182,7 @@ class DefaultAuditService implements AuditService {
 
         def adminSession = resourceResolver.adaptTo(Session)
 
-        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/${session.userID}/$year/$month/$day",
+        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/$userId/$year/$month/$day",
             NT_UNSTRUCTURED, adminSession)
         def auditRecordNode = JcrUtil.createUniqueNode(auditRecordParentNode, AUDIT_RECORD_NODE_PREFIX, NT_UNSTRUCTURED,
             adminSession)
@@ -231,8 +231,8 @@ class DefaultAuditService implements AuditService {
         }
     }
 
-    private String getAuditNodePath(Session session) {
-        configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/${session.userID}"
+    private String getAuditNodePath(String userId) {
+        configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/$userId"
     }
 
     private List<AuditRecord> findAllAuditRecords(String auditNodePath) {

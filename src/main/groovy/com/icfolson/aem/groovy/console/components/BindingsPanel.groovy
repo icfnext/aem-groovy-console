@@ -25,6 +25,7 @@ class BindingsPanel {
 
     @Memoized
     Map<String, BindingVariable> getBindingVariables() {
+        // def printStream = new PrintStream(stream, true, CharEncoding.UTF_8)
         extensionService.getBindingVariables(request, response)
     }
 }
