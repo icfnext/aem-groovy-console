@@ -92,6 +92,8 @@ class DefaultAuditService implements AuditService {
                 LOG.debug("deleted all audit record resources for path = {}", auditNodePath)
 
                 resourceResolver.commit()
+            } else {
+                LOG.debug("audit resource not found for user ID = {}", userId)
             }
         } catch (PersistenceException e) {
             LOG.error("error deleting audit records", e)

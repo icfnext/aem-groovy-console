@@ -42,7 +42,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
         if (script) {
             auditService.deleteAuditRecord(userId, script)
         } else {
-            auditService.deleteAllAuditRecords(userId)
+            auditService.deleteAllAuditRecords(request.resourceResolver.userID)
         }
     }
 
