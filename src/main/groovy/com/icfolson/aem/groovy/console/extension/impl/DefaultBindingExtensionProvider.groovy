@@ -7,6 +7,8 @@ import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.extension.builders.NodeBuilder
 import com.icfolson.aem.groovy.extension.builders.PageBuilder
+import groovy.json.JsonException
+import groovy.json.JsonSlurper
 import org.apache.felix.scr.annotations.Activate
 import org.apache.felix.scr.annotations.Component
 import org.apache.felix.scr.annotations.Reference
@@ -65,6 +67,17 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
             out: new BindingVariable(scriptContext.printStream, PrintStream,
                 "https://docs.oracle.com/javase/8/docs/api/java/io/PrintStream.html")
         ]
+
+        if (scriptContext.data) {
+            try {
+                def json = new JsonSlurper().parseText(scriptContext.data)
+
+                bindingVariables["data"] = new BindingVariable(json, json.class)
+            } catch (JsonException ignored) {
+                // if data cannot be parsed as a JSON object, bind it as a String
+                bindingVariables["data"] = new BindingVariable(scriptContext.data, String)
+            }
+        }
 
         bindingVariables
     }

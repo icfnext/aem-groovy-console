@@ -12,8 +12,6 @@ import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
-import groovy.json.JsonException
-import groovy.json.JsonSlurper
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.felix.scr.annotations.Component
@@ -203,15 +201,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         extensionService.getBindingVariables(scriptContext).each { name, variable ->
             binding.setVariable(name, variable.value)
-        }
-
-        if (scriptContext.data) {
-            try {
-                binding["data"] = new JsonSlurper().parseText(scriptContext.data)
-            } catch (JsonException ignored) {
-                // if data cannot be parsed as a JSON object, bind it as a String
-                binding["data"] = scriptContext.data
-            }
         }
 
         binding
