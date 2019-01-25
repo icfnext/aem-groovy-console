@@ -32,16 +32,16 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             if (scriptPaths) {
                 LOG.debug("running scripts for paths = {}", scriptPaths)
 
-                writeJsonResponse(response, consoleService.runScripts(request, scriptPaths as List))
+                writeJsonResponse(response, consoleService.runScripts(request, response, scriptPaths as List))
             } else {
                 def scriptPath = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT_PATH)
 
                 if (scriptPath) {
                     LOG.debug("running script for path = {}", scriptPath)
 
-                    writeJsonResponse(response, consoleService.runScript(request, scriptPath))
+                    writeJsonResponse(response, consoleService.runScript(request, response, scriptPath))
                 } else {
-                    writeJsonResponse(response, consoleService.runScript(request))
+                    writeJsonResponse(response, consoleService.runScript(request, response))
                 }
             }
         } else {

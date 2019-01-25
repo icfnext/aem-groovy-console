@@ -10,6 +10,7 @@ import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
+import org.apache.sling.api.SlingHttpServletResponse
 
 class DefaultExtensionServiceSpec extends ProsperSpec {
 
@@ -43,7 +44,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         }
 
         @Override
-        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request, PrintStream printStream) {
+        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
+            SlingHttpServletResponse response, PrintStream printStream) {
             [
                 parameterNames: new BindingVariable(request.parameterMap.keySet()),
                 selectors: new BindingVariable([])
@@ -59,7 +61,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         }
 
         @Override
-        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request, PrintStream printStream) {
+        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
+            SlingHttpServletResponse response, PrintStream printStream) {
             [
                 path: new BindingVariable(request.requestPathInfo.resourcePath),
                 selectors: new BindingVariable(request.requestPathInfo.selectors as List)
@@ -109,6 +112,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
             parameters = PARAMETERS
         }
 
+        def response = responseBuilder.build()
+
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()
         def secondProvider = new SecondBindingExtensionProvider()
@@ -118,18 +123,19 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.bindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBindingVariables(request, null)["selectors"].value == request.requestPathInfo.selectors as List
-        extensionService.getBindingVariables(request, null)["parameterNames"].value == request.parameterMap.keySet()
-        extensionService.getBindingVariables(request, null)["path"].value == "/"
+        extensionService.getBindingVariables(request, response, null)[
+            "selectors"].value == request.requestPathInfo.selectors as List
+        extensionService.getBindingVariables(request, response, null)["parameterNames"].value == request.parameterMap.keySet()
+        extensionService.getBindingVariables(request, response, null)["path"].value == "/"
 
         when:
         extensionService.unbindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBindingVariables(request, null)["selectors"].value == []
+        extensionService.getBindingVariables(request, response, null)["selectors"].value == []
 
         and:
-        !extensionService.getBindingVariables(request, null)["path"]
+        !extensionService.getBindingVariables(request, response, null)["path"]
     }
 
     def "get script metaclasses"() {
