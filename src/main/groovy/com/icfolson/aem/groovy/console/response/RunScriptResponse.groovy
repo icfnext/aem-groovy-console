@@ -29,14 +29,14 @@ class RunScriptResponse {
         }
 
         new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, resultString, output, "", runningTime,
-            scriptContext.request.resourceResolver.userID)
+            scriptContext.userId)
     }
 
     static RunScriptResponse fromException(ScriptContext scriptContext, String output, Throwable throwable) {
         def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
 
-        new RunScriptResponse(scriptContext.scriptContent, "", "", output, exceptionStackTrace, "",
-            scriptContext.request.resourceResolver.userID)
+        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, "", output, exceptionStackTrace, "",
+            scriptContext.userId)
     }
 
     static RunScriptResponse fromAuditRecordResource(Resource resource) {

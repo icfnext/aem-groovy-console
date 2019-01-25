@@ -6,7 +6,6 @@ import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
-import com.icfolson.aem.groovy.console.impl.DefaultScriptContext
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
 
@@ -112,7 +111,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response, null, null, null)
+        def scriptContext = new ScriptContext(request, response, null, null, null)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()

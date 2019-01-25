@@ -1,8 +1,8 @@
 package com.icfolson.aem.groovy.console.audit.impl
 
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationService
-import com.icfolson.aem.groovy.console.impl.DefaultScriptContext
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -38,7 +38,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response, null, script, "data")
+        def scriptContext = new ScriptContext(request, response, null, script, "data")
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, output, runningTime)
 
@@ -62,7 +62,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response, null, "script content", null)
+        def scriptContext = new ScriptContext(request, response, null, "script content", null)
 
         def exception = new RuntimeException("")
 
@@ -84,7 +84,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response, null, "script content", "data")
+        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 
@@ -104,7 +104,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response, null, "script content", "data")
+        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 
