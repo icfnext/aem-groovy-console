@@ -46,8 +46,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             parameters = this.parameterMap
         }
 
+        def response = responseBuilder.build()
+
         when:
-        def map = consoleService.runScript(request)
+        def map = consoleService.runScript(request, response)
 
         then:
         assertScriptResult(map)
