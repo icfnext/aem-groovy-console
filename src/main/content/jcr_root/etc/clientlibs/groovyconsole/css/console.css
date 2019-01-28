@@ -91,6 +91,10 @@ td.open-record, td.delete-record {
     background-color: #f5f5f5;
 }
 
+#history table {
+    width: 100%;
+}
+
 .popover {
     max-width: 100%;
 }
