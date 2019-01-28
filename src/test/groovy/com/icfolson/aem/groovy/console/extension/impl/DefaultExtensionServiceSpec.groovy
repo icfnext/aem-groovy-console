@@ -2,13 +2,12 @@ package com.icfolson.aem.groovy.console.extension.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
-import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
 
 import java.text.SimpleDateFormat
 
@@ -44,10 +43,9 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         }
 
         @Override
-        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) {
+        Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
             [
-                parameterNames: new BindingVariable(request.parameterMap.keySet()),
+                parameterNames: new BindingVariable(scriptContext.request.parameterMap.keySet()),
                 selectors: new BindingVariable([])
             ]
         }
@@ -61,11 +59,10 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         }
 
         @Override
-        Map<String, BindingVariable> getBindingVariables(SlingHttpServletRequest request,
-            SlingHttpServletResponse response) {
+        Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
             [
-                path: new BindingVariable(request.requestPathInfo.resourcePath),
-                selectors: new BindingVariable(request.requestPathInfo.selectors as List)
+                path: new BindingVariable(scriptContext.request.requestPathInfo.resourcePath),
+                selectors: new BindingVariable(scriptContext.request.requestPathInfo.selectors as List)
             ]
         }
     }
@@ -114,6 +111,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
+        def scriptContext = new ScriptContext(request, response, null, null, null)
+
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()
         def secondProvider = new SecondBindingExtensionProvider()
@@ -123,19 +122,19 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.bindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBindingVariables(request, response)[
+        extensionService.getBindingVariables(scriptContext)[
             "selectors"].value == request.requestPathInfo.selectors as List
-        extensionService.getBindingVariables(request, response)["parameterNames"].value == request.parameterMap.keySet()
-        extensionService.getBindingVariables(request, response)["path"].value == "/"
+        extensionService.getBindingVariables(scriptContext)["parameterNames"].value == request.parameterMap.keySet()
+        extensionService.getBindingVariables(scriptContext)["path"].value == "/"
 
         when:
         extensionService.unbindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBindingVariables(request, response)["selectors"].value == []
+        extensionService.getBindingVariables(scriptContext)["selectors"].value == []
 
         and:
-        !extensionService.getBindingVariables(request, response)["path"]
+        !extensionService.getBindingVariables(scriptContext)["path"]
     }
 
     def "get script metaclasses"() {

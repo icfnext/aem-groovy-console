@@ -14,8 +14,6 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.Service
 
-import javax.jcr.Session
-
 @Service(NotificationService)
 @Component
 @Slf4j("LOG")
@@ -36,12 +34,12 @@ class EmailNotificationService implements NotificationService {
     private MailService mailService
 
     @Override
-    void notify(Session session, RunScriptResponse response) {
+    void notify(RunScriptResponse response) {
         if (configurationService.emailEnabled && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
-                def binding = createBinding(session, response)
+                def binding = createBinding(response)
                 def templatePath = response.exceptionStackTrace ? TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS
 
                 def email = createEmail(recipients, binding, templatePath)
@@ -77,9 +75,9 @@ class EmailNotificationService implements NotificationService {
         email
     }
 
-    private static Map<String, String> createBinding(Session session, RunScriptResponse response) {
+    private Map<String, String> createBinding(RunScriptResponse response) {
         def binding = [
-            username: session.userID,
+            username: response.userId,
             timestamp: new Date().format(FORMAT_TIMESTAMP),
             script: response.script
         ]

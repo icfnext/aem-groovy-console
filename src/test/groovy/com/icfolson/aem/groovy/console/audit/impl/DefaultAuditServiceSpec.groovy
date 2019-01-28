@@ -1,5 +1,6 @@
 package com.icfolson.aem.groovy.console.audit.impl
 
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
@@ -25,7 +26,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def cleanup() {
         // remove all audit nodes
-        auditService.getAllAuditRecords(session)*.path.each {
+        auditService.getAllAuditRecords(resourceResolver.userID)*.path.each {
             session.getNode(it).remove()
         }
 
@@ -34,8 +35,14 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with result and output"() {
         when:
-        def response = RunScriptResponse.fromResult(script, "data", result, output, runningTime)
-        def auditRecord = auditService.createAuditRecord(session, response)
+        def request = requestBuilder.build()
+        def response = responseBuilder.build()
+
+        def scriptContext = new ScriptContext(request, response, null, script, "data")
+
+        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, output, runningTime)
+
+        def auditRecord = auditService.createAuditRecord(runScriptResponse)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -52,9 +59,16 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create audit record for script with exception"() {
         when:
+        def request = requestBuilder.build()
+        def response = responseBuilder.build()
+
+        def scriptContext = new ScriptContext(request, response, null, "script content", null)
+
         def exception = new RuntimeException("")
-        def response = RunScriptResponse.fromException("script content", "output", exception)
-        def auditRecord = auditService.createAuditRecord(session, response)
+
+        def runScriptResponse = RunScriptResponse.fromException(scriptContext, "output", exception)
+
+        def auditRecord = auditService.createAuditRecord(runScriptResponse)
 
         then:
         assertNodeExists(auditRecord.path)
@@ -67,12 +81,18 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "create multiple audit records"() {
         setup:
-        def response = RunScriptResponse.fromResult("script content", "data", "result", "output", "running time")
+        def request = requestBuilder.build()
+        def response = responseBuilder.build()
+
+        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
+
+        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
+
         def auditRecords = []
 
         when:
         (1..5).each {
-            auditRecords.add(auditService.createAuditRecord(session, response))
+            auditRecords.add(auditService.createAuditRecord(runScriptResponse))
         }
 
         then:
@@ -81,15 +101,20 @@ class DefaultAuditServiceSpec extends ProsperSpec {
 
     def "get audit records for valid date range"() {
         setup:
-        def response = RunScriptResponse.fromResult("script content", "data", "result", "output", "running time")
+        def request = requestBuilder.build()
+        def response = responseBuilder.build()
 
-        auditService.createAuditRecord(session, response)
+        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
+
+        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
+
+        auditService.createAuditRecord(runScriptResponse)
 
         def startDate = getDate(startDateOffset)
         def endDate = getDate(endDateOffset)
 
         expect:
-        auditService.getAuditRecords(session, startDate, endDate).size() == size
+        auditService.getAuditRecords(resourceResolver.userID, startDate, endDate).size() == size
 
         where:
         startDateOffset | endDateOffset | size

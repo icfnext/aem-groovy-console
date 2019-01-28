@@ -5,7 +5,6 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.models.annotations.Model
 
 import javax.inject.Inject
-import javax.jcr.Session
 
 @Model(adaptables = SlingHttpServletRequest)
 class HistoryPanel {
@@ -17,8 +16,6 @@ class HistoryPanel {
     private SlingHttpServletRequest request
 
     Boolean isHasAuditRecords() {
-        def session = request.resourceResolver.adaptTo(Session)
-
-        !auditService.getAllAuditRecords(session).empty
+        !auditService.getAllAuditRecords(request.resourceResolver.userID).empty
     }
 }
