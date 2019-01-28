@@ -14,7 +14,6 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
-import org.apache.sling.api.SlingHttpServletRequest
 
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -41,29 +40,10 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
-    Binding getBinding(SlingHttpServletRequest request) {
-        new Binding()
-    }
-
-    @Override
     Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
         def bindingVariables = [:]
 
         bindingExtensionProviders.each { extension ->
-            // support for deprecated API
-            def binding = extension.getBinding(scriptContext.request)
-
-            if (binding) {
-                binding.variables.each { name, value ->
-                    if (bindingVariables[name]) {
-                        LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}",
-                            name, bindingVariables[name], value)
-                    }
-
-                    bindingVariables[name] = new BindingVariable(value)
-                }
-            }
-
             extension.getBindingVariables(scriptContext).each { name, variable ->
                 if (bindingVariables[name]) {
                     LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
@@ -78,8 +58,8 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
-    List<Closure> getScriptMetaClasses(SlingHttpServletRequest request) {
-        scriptMetaClassExtensionProviders*.getScriptMetaClass(request)
+    List<Closure> getScriptMetaClasses(ScriptContext scriptContext) {
+        scriptMetaClassExtensionProviders*.getScriptMetaClass(scriptContext)
     }
 
     @Synchronized

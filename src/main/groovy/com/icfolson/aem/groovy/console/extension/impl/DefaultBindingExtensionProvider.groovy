@@ -32,11 +32,6 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
     private BundleContext bundleContext
 
     @Override
-    Binding getBinding(SlingHttpServletRequest request) {
-        new Binding()
-    }
-
-    @Override
     Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
         def resourceResolver = scriptContext.request.resourceResolver
         def session = resourceResolver.adaptTo(Session)

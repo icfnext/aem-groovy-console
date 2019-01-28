@@ -7,7 +7,6 @@ import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
-import org.apache.sling.api.SlingHttpServletRequest
 
 import java.text.SimpleDateFormat
 
@@ -38,11 +37,6 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     class FirstBindingExtensionProvider implements BindingExtensionProvider {
 
         @Override
-        Binding getBinding(SlingHttpServletRequest request) {
-            null
-        }
-
-        @Override
         Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
             [
                 parameterNames: new BindingVariable(scriptContext.request.parameterMap.keySet()),
@@ -52,11 +46,6 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     }
 
     class SecondBindingExtensionProvider implements BindingExtensionProvider {
-
-        @Override
-        Binding getBinding(SlingHttpServletRequest request) {
-            null
-        }
 
         @Override
         Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
@@ -70,7 +59,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     class TestScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
         @Override
-        Closure getScriptMetaClass(SlingHttpServletRequest request) {
+        Closure getScriptMetaClass(ScriptContext scriptContext) {
             def closure = {
 
             }
@@ -144,6 +133,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
             parameters = PARAMETERS
         }
 
+        def scriptContext = new ScriptContext(request)
+
         def extensionService = new DefaultExtensionService()
         def firstProvider = new TestScriptMetaClassExtensionProvider()
         def secondProvider = new TestScriptMetaClassExtensionProvider()
@@ -153,12 +144,12 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.bindScriptMetaClassExtensionProvider(secondProvider)
 
         then:
-        extensionService.getScriptMetaClasses(request).size() == 2
+        extensionService.getScriptMetaClasses(scriptContext).size() == 2
 
         when:
         extensionService.unbindScriptMetaClassExtensionProvider(secondProvider)
 
         then:
-        extensionService.getScriptMetaClasses(request).size() == 1
+        extensionService.getScriptMetaClasses(scriptContext).size() == 1
     }
 }

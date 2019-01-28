@@ -100,7 +100,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         try {
             def script = new GroovyShell(binding, configuration).parse(scriptContext.scriptContent)
 
-            extensionService.getScriptMetaClasses(request).each { meta ->
+            extensionService.getScriptMetaClasses(scriptContext).each { meta ->
                 script.metaClass(meta)
             }
 
