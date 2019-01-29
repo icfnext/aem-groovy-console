@@ -24,6 +24,7 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.customizers.CompilationCustomizer
 
 import javax.jcr.Node
 import javax.jcr.Session
@@ -33,7 +34,6 @@ import static com.google.common.base.Preconditions.checkNotNull
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
-import static org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder.withConfig
 
 @Service(GroovyConsoleService)
 @Component
@@ -207,13 +207,8 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     private CompilerConfiguration getConfiguration() {
-        def configuration = new CompilerConfiguration()
-
-        withConfig(configuration) {
-            imports {
-                star extensionService.starImports*.packageName as String[]
-            }
-        }
+        new CompilerConfiguration().addCompilationCustomizers(extensionService.compilationCustomizers
+            as CompilationCustomizer[])
     }
 
     private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {

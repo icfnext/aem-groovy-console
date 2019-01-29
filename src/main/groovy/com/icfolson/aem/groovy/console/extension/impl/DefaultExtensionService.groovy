@@ -2,9 +2,9 @@ package com.icfolson.aem.groovy.console.extension.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.console.api.CompilationCustomizerExtensionProvider
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
-import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
@@ -14,6 +14,8 @@ import org.apache.felix.scr.annotations.Reference
 import org.apache.felix.scr.annotations.ReferenceCardinality
 import org.apache.felix.scr.annotations.ReferencePolicy
 import org.apache.felix.scr.annotations.Service
+import org.codehaus.groovy.control.customizers.CompilationCustomizer
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -34,10 +36,11 @@ class DefaultExtensionService implements ExtensionService {
         referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
     private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Override
-    Set<StarImport> getStarImports() {
-        starImportExtensionProviders.collectMany { it.starImports } as Set
-    }
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
+        referenceInterface = CompilationCustomizerExtensionProvider,
+        policy = ReferencePolicy.DYNAMIC)
+    private List<CompilationCustomizerExtensionProvider> compilationCustomizerExtensionProviders =
+        new CopyOnWriteArrayList<>()
 
     @Override
     Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
@@ -60,6 +63,26 @@ class DefaultExtensionService implements ExtensionService {
     @Override
     List<Closure> getScriptMetaClasses(ScriptContext scriptContext) {
         scriptMetaClassExtensionProviders*.getScriptMetaClass(scriptContext)
+    }
+
+    @Override
+    List<CompilationCustomizer> getCompilationCustomizers() {
+        def importPackageNames = starImportExtensionProviders
+            .collectMany { it.starImports }
+            .unique()
+            .collect { it.packageName }
+
+        def compilationCustomizers = []
+
+        if (importPackageNames) {
+            compilationCustomizers.add(new ImportCustomizer().addStarImports(importPackageNames as String[]))
+        }
+
+        compilationCustomizerExtensionProviders.each { provider ->
+            compilationCustomizers.addAll(provider.compilationCustomizers)
+        }
+
+        compilationCustomizers
     }
 
     @Synchronized
@@ -102,5 +125,19 @@ class DefaultExtensionService implements ExtensionService {
         scriptMetaClassExtensionProviders.remove(extension)
 
         LOG.info("removed script metaclass extension = {}", extension.class.name)
+    }
+
+    @Synchronized
+    void bindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
+        compilationCustomizerExtensionProviders.add(extension)
+
+        LOG.info("adding compilation customizer extension = {}", extension.class.name)
+    }
+
+    @Synchronized
+    void unbindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
+        compilationCustomizerExtensionProviders.remove(extension)
+
+        LOG.info("removed compilation customizer extension = {}", extension.class.name)
     }
 }
