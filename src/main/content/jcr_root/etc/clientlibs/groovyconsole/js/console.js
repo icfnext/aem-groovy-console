@@ -12,6 +12,9 @@ var GroovyConsole = function () {
             scriptEditor.on('change', function () {
                 GroovyConsole.localStorage.saveScriptEditorContent(scriptEditor.getSession().getDocument().getValue());
             });
+            scriptEditor.setOptions({
+                enableBasicAutocompletion: true
+            });
 
             var $scriptEditor = $('#script-editor');
 
