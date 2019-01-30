@@ -1,13 +1,17 @@
 package com.icfolson.aem.groovy.console.extension.impl
 
+import com.google.common.io.ByteStreams
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
+import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
-import spock.lang.Ignore
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.customizers.CompilationCustomizer
 
 import java.text.SimpleDateFormat
 
@@ -17,21 +21,13 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
     static final def PARAMETERS = [firstName: "Clarence", lastName: "Wiggum"]
 
-    class FirstStarImportExtensionProvider implements StarImportExtensionProvider {
+    static final def SCRIPT = "new SimpleDateFormat()"
+
+    class TestStarImportExtensionProvider implements StarImportExtensionProvider {
 
         @Override
         Set<StarImport> getStarImports() {
-            [InputStream, SimpleDateFormat].collect { clazz ->
-                new StarImport(clazz.package.name)
-            } as Set
-        }
-    }
-
-    class SecondStarImportExtensionProvider implements StarImportExtensionProvider {
-
-        @Override
-        Set<StarImport> getStarImports() {
-            [new StarImport(BigDecimal.getPackage().name)] as Set
+            [new StarImport(SimpleDateFormat.package.name)] as Set
         }
     }
 
@@ -69,35 +65,46 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         }
     }
 
-    @Ignore
-    def "get star imports"() {
+    def "get compilation customizers"() {
         setup:
         def extensionService = new DefaultExtensionService()
-        def firstProvider = new FirstStarImportExtensionProvider()
-        def secondProvider = new SecondStarImportExtensionProvider()
+        def firstProvider = new TestStarImportExtensionProvider()
 
         when:
         extensionService.bindStarImportExtensionProvider(firstProvider)
-        extensionService.bindStarImportExtensionProvider(secondProvider)
 
         then:
         extensionService.compilationCustomizers.size() == 1
-
-        and:
-
-        extensionService.starImports.size() == 3
-        extensionService.starImports*.packageName.containsAll(
-            [InputStream, SimpleDateFormat, BigDecimal]*.getPackage().name)
 
         when:
         extensionService.unbindStarImportExtensionProvider(firstProvider)
 
         then:
-        extensionService.compilationCustomizers.size() == 1
+        extensionService.compilationCustomizers.size() == 0
+    }
+
+    def "star imports"() {
+        setup:
+        def extensionService = new DefaultExtensionService()
+        def starImportExtensionProvider = new TestStarImportExtensionProvider()
+
+        when:
+        extensionService.bindStarImportExtensionProvider(starImportExtensionProvider)
 
         and:
-        extensionService.starImports.size() == 1
-        extensionService.starImports[0].packageName == BigDecimal.getPackage().name
+        runScriptWithExtensionService(extensionService)
+
+        then:
+        notThrown(MultipleCompilationErrorsException)
+
+        when:
+        extensionService.unbindStarImportExtensionProvider(starImportExtensionProvider)
+
+        and:
+        runScriptWithExtensionService(extensionService)
+
+        then:   
+        thrown(MultipleCompilationErrorsException)
     }
 
     def "get binding"() {
@@ -160,5 +167,14 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         then:
         extensionService.getScriptMetaClasses(scriptContext).size() == 1
+    }
+
+    private void runScriptWithExtensionService(ExtensionService extensionService) {
+        def binding = new Binding(out: new PrintStream(ByteStreams.nullOutputStream()))
+
+        def configuration = new CompilerConfiguration().addCompilationCustomizers(
+            extensionService.compilationCustomizers as CompilationCustomizer[])
+
+        new GroovyShell(binding, configuration).parse(SCRIPT).run()
     }
 }
