@@ -9,21 +9,19 @@ import com.icfolson.aem.groovy.extension.builders.NodeBuilder
 import com.icfolson.aem.groovy.extension.builders.PageBuilder
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.jcr.Session
 
-@Service(BindingExtensionProvider)
-@Component(immediate = true)
+@Component(service = BindingExtensionProvider, immediate = true)
 class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Reference

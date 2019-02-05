@@ -14,17 +14,16 @@ import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.ReferenceCardinality
-import org.apache.felix.scr.annotations.ReferencePolicy
-import org.apache.felix.scr.annotations.Service
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
+import org.osgi.service.component.annotations.ReferenceCardinality
+import org.osgi.service.component.annotations.ReferencePolicy
 
 import javax.jcr.Node
 import javax.jcr.Session
@@ -35,8 +34,7 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.E
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 
-@Service(GroovyConsoleService)
-@Component
+@Component(service = GroovyConsoleService)
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
@@ -66,8 +64,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ConfigurationService configurationService
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
-        referenceInterface = NotificationService, policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private List<NotificationService> notificationServices = new CopyOnWriteArrayList<>()
 
     @Reference

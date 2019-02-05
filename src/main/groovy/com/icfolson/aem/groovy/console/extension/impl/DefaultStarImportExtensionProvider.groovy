@@ -3,11 +3,9 @@ package com.icfolson.aem.groovy.console.extension.impl
 import com.google.common.collect.ImmutableSet
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Service
+import org.osgi.service.component.annotations.Component
 
-@Service(StarImportExtensionProvider)
-@Component(immediate = true)
+@Component(service = StarImportExtensionProvider, immediate = true)
 class DefaultStarImportExtensionProvider implements StarImportExtensionProvider {
 
     private static final String AEM_JAVADOC_PREFIX = "https://helpx.adobe" +

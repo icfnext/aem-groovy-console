@@ -9,18 +9,16 @@ import com.day.cq.wcm.api.PageManager
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.table.Table
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.Service
 import org.apache.sling.models.factory.ModelFactory
 import org.osgi.framework.BundleContext
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 
 import javax.jcr.Node
 import javax.jcr.Session
 
-@Service(ScriptMetaClassExtensionProvider)
-@Component(immediate = true)
+@Component(service = ScriptMetaClassExtensionProvider, immediate = true)
 class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
     @Reference

@@ -7,14 +7,13 @@ import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Deactivate
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.resource.PersistenceException
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ResourceResolverFactory
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Deactivate
+import org.osgi.service.component.annotations.Reference
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
@@ -28,8 +27,7 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.A
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_RECORD_NODE_PREFIX
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 
-@Component(immediate = true)
-@Service(AuditService)
+@Component(service = AuditService, immediate = true)
 @Slf4j("LOG")
 class DefaultAuditService implements AuditService {
 

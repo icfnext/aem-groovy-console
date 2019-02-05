@@ -9,36 +9,29 @@ import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.ReferenceCardinality
-import org.apache.felix.scr.annotations.ReferencePolicy
-import org.apache.felix.scr.annotations.Service
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
 import org.codehaus.groovy.control.customizers.ImportCustomizer
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
+import org.osgi.service.component.annotations.ReferenceCardinality
+import org.osgi.service.component.annotations.ReferencePolicy
 
 import java.util.concurrent.CopyOnWriteArrayList
 
-@Service(ExtensionService)
-@Component(immediate = true)
+@Component(service = ExtensionService, immediate = true)
 @Slf4j("LOG")
 class DefaultExtensionService implements ExtensionService {
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
-        policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
-        policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
-        referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
-        referenceInterface = CompilationCustomizerExtensionProvider,
-        policy = ReferencePolicy.DYNAMIC)
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     private List<CompilationCustomizerExtensionProvider> compilationCustomizerExtensionProviders =
         new CopyOnWriteArrayList<>()
 
