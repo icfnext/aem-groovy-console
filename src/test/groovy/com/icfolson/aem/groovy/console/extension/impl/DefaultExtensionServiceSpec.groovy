@@ -103,7 +103,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         and:
         runScriptWithExtensionService(extensionService)
 
-        then:   
+        then:
         thrown(MultipleCompilationErrorsException)
     }
 
