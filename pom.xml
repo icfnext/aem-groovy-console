@@ -3,12 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-        <groupId>com.icfolson.aem</groupId>
-        <artifactId>aem-parent-uber-jar</artifactId>
-        <version>6.4.1.1</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
@@ -21,9 +15,11 @@
         or JCR APIs.
     </description>
 
+    <url>https://github.com/icfnext/aem-groovy-console</url>
+
     <organization>
-        <name>ICF Olson</name>
-        <url>http://www.icfolson.com</url>
+        <name>ICF Next</name>
+        <url>http://www.icfnext.com</url>
     </organization>
 
     <licenses>
@@ -35,14 +31,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:OlsonDigital/aem-groovy-console.git</connection>
-        <developerConnection>scm:git:git@github.com:OlsonDigital/aem-groovy-console.git</developerConnection>
-        <url>https://github.com/OlsonDigital/aem-groovy-console</url>
+        <connection>scm:git:git@github.com:icfnext/aem-groovy-console.git</connection>
+        <developerConnection>scm:git:git@github.com:icfnext/aem-groovy-console.git</developerConnection>
+        <url>https://github.com/icfnext/aem-groovy-console</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/OlsonDigital/aem-groovy-console/issues</url>
+        <url>https://github.com/icfnext/aem-groovy-console/issues</url>
     </issueManagement>
 
     <distributionManagement>
@@ -53,6 +49,7 @@
     </distributionManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -337,63 +334,79 @@
     </build>
 
     <dependencies>
-        <!-- inherited -->
+        <!-- provided -->
         <dependency>
             <groupId>com.adobe.aem</groupId>
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
+            <version>6.3.2.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <version>1.5.0-b01</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.annotation</artifactId>
+            <version>6.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>3.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.servlets.annotations</artifactId>
-            <version>1.0.0</version>
+            <version>1.5</version>
         </dependency>
 
-        <!-- provided -->
+        <!-- groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -403,8 +416,15 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>5.0.0</version>
+            <version>7.0.0-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- compile -->
+        <dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.servlets.annotations</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- test -->
