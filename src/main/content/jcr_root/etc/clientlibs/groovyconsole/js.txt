@@ -6,6 +6,7 @@ moment.min.js
 bootstrap.min.js
 bootstrap3-typeahead.min.js
 ace.js
+ext-language_tools.js
 mode-groovy.js
 mode-json.js
 theme-ambiance.js
