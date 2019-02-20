@@ -13,7 +13,7 @@
     <entry key="version">${project.version}</entry>
     <entry key="requiresRoot">true</entry>
     <entry key="dependencies">day/cq60/product:cq-content:6.3.64</entry>
-    <entry key="group">ICF Olson</entry>
+    <entry key="group">ICF Next</entry>
     <entry key="packageFormatVersion">2</entry>
     <entry key="lastWrapped">${timestamp}</entry>
     <entry key="lastWrappedBy">${aem.username}</entry>
