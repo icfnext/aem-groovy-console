@@ -5,7 +5,6 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
-import org.apache.sling.servlets.annotations.SlingServletPaths
 import org.osgi.framework.BundleContext
 import org.osgi.service.component.annotations.Activate
 import org.osgi.service.component.annotations.Component
@@ -17,8 +16,9 @@ import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
 import static org.osgi.framework.Constants.OBJECTCLASS
 
-@Component(service = Servlet)
-@SlingServletPaths("/bin/groovyconsole/services")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/services"
+])
 class ServicesListServlet extends AbstractJsonResponseServlet {
 
     private BundleContext bundleContext

@@ -6,14 +6,14 @@ import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
-import org.apache.sling.servlets.annotations.SlingServletPaths
 import org.osgi.service.component.annotations.Component
 import org.osgi.service.component.annotations.Reference
 
 import javax.servlet.Servlet
 
-@Component(service = Servlet)
-@SlingServletPaths("/bin/groovyconsole/audit")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/audit"
+])
 class AuditServlet extends AbstractJsonResponseServlet {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd"
