@@ -167,7 +167,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     @Synchronized
-    void unbindNotificationServices(NotificationService notificationService) {
+    void unbindNotificationService(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
         LOG.info("removed notification service = {}", notificationService.class.name)
