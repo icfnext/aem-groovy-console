@@ -64,8 +64,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ConfigurationService configurationService
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private List<NotificationService> notificationServices = new CopyOnWriteArrayList<>()
+    private volatile List<NotificationService> notificationServices = new CopyOnWriteArrayList<>()
 
     @Reference
     private AuditService auditService
@@ -159,6 +158,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         new SaveScriptResponse(fileName)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)

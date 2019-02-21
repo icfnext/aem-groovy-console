@@ -5,6 +5,7 @@ import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.CompilationCustomizerExtensionProvider
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
@@ -22,17 +23,13 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Slf4j("LOG")
 class DefaultExtensionService implements ExtensionService {
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    private List<CompilationCustomizerExtensionProvider> compilationCustomizerExtensionProviders =
+    private volatile List<CompilationCustomizerExtensionProvider> compilationCustomizerExtensionProviders =
         new CopyOnWriteArrayList<>()
 
     @Override
@@ -59,11 +56,13 @@ class DefaultExtensionService implements ExtensionService {
     }
 
     @Override
+    Set<StarImport> getStarImports() {
+        starImportExtensionProviders.collectMany { it.starImports } as Set
+    }
+
+    @Override
     List<CompilationCustomizer> getCompilationCustomizers() {
-        def importPackageNames = starImportExtensionProviders
-            .collectMany { it.starImports }
-            .unique()
-            .collect { it.packageName }
+        def importPackageNames = starImports.collect { it.packageName }
 
         def compilationCustomizers = []
 
@@ -78,6 +77,7 @@ class DefaultExtensionService implements ExtensionService {
         compilationCustomizers
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.add(extension)
@@ -92,6 +92,7 @@ class DefaultExtensionService implements ExtensionService {
         LOG.info("removed binding extension = {}", extension.class.name)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.add(extension)
@@ -106,6 +107,7 @@ class DefaultExtensionService implements ExtensionService {
         LOG.info("removed star import extension = {} with imports = {}", extension.class.name, extension.starImports)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.add(extension)
@@ -120,6 +122,7 @@ class DefaultExtensionService implements ExtensionService {
         LOG.info("removed script metaclass extension = {}", extension.class.name)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
         compilationCustomizerExtensionProviders.add(extension)
