@@ -17,7 +17,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
-14.x.x | 6.3.3, 6.4
+14.x.x | 6.3.3, 6.4, 6.5*
 13.x.x, 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x | 6.2
@@ -27,6 +27,8 @@ Groovy Console Version(s) | AEM Version
 3.x.x | 5.5, 5.4 (CQ)
 
 _Beginning in version 14.0.0, the Groovy Console content structure has been reorganized to align with Adobe guidelines.  See [here](https://github.com/icfnext/aem-groovy-console/issues/82) and [here](https://helpx.adobe.com/experience-manager/6-4/sites/deploying/using/repository-restructuring.html) for details._
+
+_* Tentative_
 
 ## Installation
 
