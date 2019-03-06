@@ -4,7 +4,7 @@
 
 ## Overview
 
-The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/etc/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
 ![Screenshot](src/site/screenshot.png)
 
@@ -17,6 +17,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version
 ------------ | -------------
+14.x.x | 6.3.3, 6.4
 13.x.x, 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x | 6.2
@@ -25,15 +26,17 @@ Groovy Console Version(s) | AEM Version
 6.x.x, 5.x.x | 5.6 (CQ)
 3.x.x | 5.5, 5.4 (CQ)
 
+_Beginning in version 14.0.0, the Groovy Console content structure has been reorganized to align with Adobe guidelines.  See [here](https://github.com/icfnext/aem-groovy-console/issues/82) and [here](https://helpx.adobe.com/experience-manager/6-4/sites/deploying/using/repository-restructuring.html) for details._
+
 ## Installation
 
-1. [Download the console package](https://github.com/OlsonDigital/aem-groovy-console/releases/download/12.0.0/aem-groovy-console-12.0.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
+1. [Download the console package](https://github.com/icfnext/aem-groovy-console/releases/download/14.0.0/aem-groovy-console-14.0.0.zip).  For previous versions, tags can be checked out from GitHub and built directly from the source (e.g. `mvn install`).
 
-2.  [Verify](http://localhost:4502/etc/groovyconsole.html) the installation.
+2.  [Verify](http://localhost:4502/apps/groovyconsole.html) the installation.
 
 Additional build profiles may be added in the project's `pom.xml` to support deployment to non-localhost AEM servers.
 
-AEM 6.0 no longer allows vanity paths for pages in `/etc` by default.  To enable access to the Groovy Console from `/groovyconsole` as in previous versions, the **Apache Sling Resource Resolver Factory** OSGi configuration must be updated to allow vanity paths from `/etc`.  The **Groovy Console Configuration Service** can then be updated to enable the vanity path if so desired.
+To enable access to the Groovy Console from `/groovyconsole`, update the **Groovy Console Configuration Service** via the [OSGi console configuration page](http://localhost:4502/system/console/configMgr) to enable the vanity path.
 
 ## Building From Source
 
@@ -62,7 +65,7 @@ Property | Description | Default Value
 Email Enabled? | Check to enable email notification on completion of script execution. | `false`
 Email Recipients | Email addresses to receive notification. | `[]`
 Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | `[]`
-Vanity Path Enabled? | Enables `/groovyconsole` vanity path. **Apache Sling Resource Resolver Factory** OSGi configuration must also be updated to allow vanity paths from `/etc`. | `false`
+Vanity Path Enabled? | Enables `/groovyconsole` vanity path. | `false`
 Audit Disabled? | Disables auditing of script execution history. | `false`
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`
 
@@ -72,11 +75,11 @@ Saved scripts can be remotely executed by sending a POST request to the console 
 
 ### Single Script
 
-    curl -d "scriptPath=/etc/groovyconsole/scripts/samples/JcrSearch.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
+    curl -d "scriptPath=/var/groovyconsole/scripts/samples/JcrSearch.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
 
 ### Multiple Scripts
 
-    curl -d "scriptPaths=/etc/groovyconsole/scripts/samples/JcrSearch.groovy&scriptPaths=/etc/groovyconsole/scripts/samples/FulltextQuery.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
+    curl -d "scriptPaths=/var/groovyconsole/scripts/samples/JcrSearch.groovy&scriptPaths=/var/groovyconsole/scripts/samples/FulltextQuery.groovy" -X POST -u admin:admin http://localhost:4502/bin/groovyconsole/post.json
 
 ## Extensions
 
@@ -86,7 +89,7 @@ Beginning in version 7.0.0, the Groovy Console provides extension hooks to furth
 
 To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.icfolson.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
 
-## Notes
+## Sample Scripts
 
 Sample scripts can be found in the `src/main/scripts` directory.
 
