@@ -110,8 +110,9 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
     def "get binding"() {
         setup:
         def request = requestBuilder.build {
+            path = "/"
             selectors = SELECTORS
-            parameters = PARAMETERS
+            parameterMap = PARAMETERS
         }
 
         def response = responseBuilder.build()
@@ -127,8 +128,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         extensionService.bindBindingExtensionProvider(secondProvider)
 
         then:
-        extensionService.getBindingVariables(scriptContext)[
-            "selectors"].value == request.requestPathInfo.selectors as List
+        extensionService.getBindingVariables(scriptContext)["selectors"].value == request.requestPathInfo.selectors as List
         extensionService.getBindingVariables(scriptContext)["parameterNames"].value == request.parameterMap.keySet()
         extensionService.getBindingVariables(scriptContext)["path"].value == "/"
 
@@ -146,7 +146,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         setup:
         def request = requestBuilder.build {
             selectors = SELECTORS
-            parameters = PARAMETERS
+            parameterMap = PARAMETERS
         }
 
         def scriptContext = new ScriptContext(request)

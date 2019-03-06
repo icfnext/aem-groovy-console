@@ -95,13 +95,6 @@ td.open-record, td.delete-record {
     width: 100%;
 }
 
-#history td {
-    max-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .popover {
     max-width: 100%;
 }

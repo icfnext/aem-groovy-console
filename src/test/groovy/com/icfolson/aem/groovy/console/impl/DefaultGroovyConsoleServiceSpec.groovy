@@ -43,7 +43,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         def consoleService = slingContext.getService(GroovyConsoleService)
 
         def request = requestBuilder.build {
-            parameters = this.parameterMap
+            parameterMap = this.parameterMap
         }
 
         def response = responseBuilder.build()
@@ -60,7 +60,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         def consoleService = slingContext.getService(GroovyConsoleService)
 
         def request = requestBuilder.build {
-            parameters = this.parameterMap
+            parameterMap = this.parameterMap
         }
 
         and:
