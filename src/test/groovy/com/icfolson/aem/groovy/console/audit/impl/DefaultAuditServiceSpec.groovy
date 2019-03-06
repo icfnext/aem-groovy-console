@@ -6,6 +6,7 @@ import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationSe
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.sling.jcr.resource.JcrResourceConstants
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -16,8 +17,8 @@ class DefaultAuditServiceSpec extends ProsperSpec {
     DefaultAuditService auditService = new DefaultAuditService()
 
     def setupSpec() {
-        pageBuilder.etc {
-            groovyconsole()
+        pageBuilder.var {
+            groovyconsole(JcrResourceConstants.NT_SLING_FOLDER)
         }
 
         slingContext.registerInjectActivateService(new DefaultConfigurationService())

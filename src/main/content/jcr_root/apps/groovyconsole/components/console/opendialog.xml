@@ -9,7 +9,7 @@
           xtype="browsedialog">
     <treeRoot
         jcr:primaryType="nt:unstructured"
-        name="etc/groovyconsole/scripts"
+        name="var/groovyconsole/scripts"
         text="Scripts"
         draggable="{Boolean}false"
         singleClickExpand="{Boolean}true"

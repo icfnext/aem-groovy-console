@@ -24,7 +24,9 @@ class AuditRecord {
 
     public static final String PROPERTY_RUNNING_TIME = "runningTime"
 
-    private static final Integer DEPTH_USER_ID = 5
+    private static final Integer DEPTH_USER_ID = 4
+
+    private static final Integer DEPTH_RELATIVE_PATH = 3
 
     private Resource resource
 
@@ -48,7 +50,7 @@ class AuditRecord {
     }
 
     String getRelativePath() {
-        (path - Text.getAbsoluteParent(path, 4)).substring(1)
+        (path - Text.getAbsoluteParent(path, DEPTH_RELATIVE_PATH)).substring(1)
     }
 
     String getException() {

@@ -1,10 +1,10 @@
 package com.icfolson.aem.groovy.console.constants
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT
-
 class GroovyConsoleConstants {
 
-    public static final String PATH_CONSOLE_ROOT = "/etc/groovyconsole"
+    public static final String PATH_CONSOLE_ROOT = "/var/groovyconsole"
+
+    public static final String PATH_SCRIPTS_FOLDER = "$PATH_CONSOLE_ROOT/scripts"
 
     public static final String EXTENSION_GROOVY = ".groovy"
 
@@ -26,7 +26,7 @@ class GroovyConsoleConstants {
 
     public static final String AUDIT_RECORD_NODE_PREFIX = "record"
 
-    public static final String AUDIT_PATH = "$PATH_CONSOLE_ROOT/$JCR_CONTENT/$AUDIT_NODE_NAME"
+    public static final String AUDIT_PATH = "$PATH_CONSOLE_ROOT/$AUDIT_NODE_NAME"
 
     private GroovyConsoleConstants() {
 

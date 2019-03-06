@@ -19,7 +19,6 @@ import javax.jcr.Node
 import javax.jcr.RepositoryException
 import javax.jcr.Session
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT
 import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
 import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_NODE_NAME
@@ -182,8 +181,8 @@ class DefaultAuditService implements AuditService {
 
         def adminSession = resourceResolver.adaptTo(Session)
 
-        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/$userId/$year/$month/$day",
-            NT_UNSTRUCTURED, adminSession)
+        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/$userId/$year/$month/$day", NT_UNSTRUCTURED,
+            adminSession)
         def auditRecordNode = JcrUtil.createUniqueNode(auditRecordParentNode, AUDIT_RECORD_NODE_PREFIX, NT_UNSTRUCTURED,
             adminSession)
 
@@ -194,12 +193,12 @@ class DefaultAuditService implements AuditService {
 
     private void checkAuditNode() {
         def session = resourceResolver.adaptTo(Session)
-        def contentNode = session.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
+        def consoleRootNode = session.getNode(PATH_CONSOLE_ROOT)
 
-        if (!contentNode.hasNode(AUDIT_NODE_NAME)) {
+        if (!consoleRootNode.hasNode(AUDIT_NODE_NAME)) {
             LOG.info("audit node does not exist, adding")
 
-            contentNode.addNode(AUDIT_NODE_NAME)
+            consoleRootNode.addNode(AUDIT_NODE_NAME, NT_UNSTRUCTURED)
 
             session.save()
         }

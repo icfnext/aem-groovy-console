@@ -32,15 +32,13 @@ import java.util.concurrent.CopyOnWriteArrayList
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
 
 @Component(service = GroovyConsoleService)
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     private static final String CHARSET = Charsets.UTF_8.name()
-
-    static final String RELATIVE_PATH_SCRIPT_FOLDER = "scripts"
 
     static final String PARAMETER_FILE_NAME = "fileName"
 
@@ -141,8 +139,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Synchronized
     SaveScriptResponse saveScript(SlingHttpServletRequest request) {
         def session = request.resourceResolver.adaptTo(Session)
-        def folderNode = JcrUtil.createPath("$PATH_CONSOLE_ROOT/$RELATIVE_PATH_SCRIPT_FOLDER", JcrConstants.NT_FOLDER,
-            session)
+        def folderNode = JcrUtil.createPath(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER, session)
 
         def name = request.getParameter(PARAMETER_FILE_NAME)
         def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"

@@ -54,23 +54,23 @@ table.dataTable thead .sorting_desc_disabled {
 }
 
 table.dataTable thead .sorting {
-    background: url('../img/sort_both.png') no-repeat center right;
+    background: url('../resources/img/sort_both.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_asc {
-    background: url('../img/sort_asc.png') no-repeat center right;
+    background: url('../resources/img/sort_asc.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_desc {
-    background: url('../img/sort_desc.png') no-repeat center right;
+    background: url('../resources/img/sort_desc.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_asc_disabled {
-    background: url('../img/sort_asc_disabled.png') no-repeat center right;
+    background: url('../resources/img/sort_asc_disabled.png') no-repeat center right;
 }
 
 table.dataTable thead .sorting_desc_disabled {
-    background: url('../img/sort_desc_disabled.png') no-repeat center right;
+    background: url('../resources/img/sort_desc_disabled.png') no-repeat center right;
 }
 
 table.dataTable thead > tr > th {

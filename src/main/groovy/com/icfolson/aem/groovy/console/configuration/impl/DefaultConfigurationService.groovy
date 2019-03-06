@@ -19,7 +19,7 @@ import org.osgi.service.metatype.annotations.Designate
 @Slf4j("LOG")
 class DefaultConfigurationService implements ConfigurationService {
 
-    private static final String DEFAULT_PATH = "/etc/groovyconsole.html"
+    private static final String DEFAULT_PATH = "/apps/groovyconsole.html"
 
     private static final String VANITY_PATH = "/groovyconsole"
 

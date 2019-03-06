@@ -1,7 +1,7 @@
 #base=css
 
-bootstrap.min.css
-bootstrap-theme.min.css
+bootstrap.css
+bootstrap-theme.css
 daterangepicker-bs3.css
 datatables.css
 console.css

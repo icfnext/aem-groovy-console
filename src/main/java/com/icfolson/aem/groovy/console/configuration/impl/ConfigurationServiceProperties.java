@@ -20,7 +20,7 @@ public @interface ConfigurationServiceProperties {
     String[] allowedGroups() default {};
 
     @AttributeDefinition(name = "Vanity Path Enabled?",
-        description = "Enables /groovyconsole vanity path.  Apache Sling Resource Resolver Factory OSGi configuration must also be updated to allow vanity paths from /etc (resource.resolver.vanitypath.whitelist).")
+        description = "Enables /groovyconsole vanity path.")
     boolean vanityPathEnabled() default false;
 
     @AttributeDefinition(name = "Audit Disabled?", description = "Disables auditing of script execution history.")

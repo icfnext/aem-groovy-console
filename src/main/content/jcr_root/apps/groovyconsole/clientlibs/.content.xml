@@ -5,4 +5,5 @@
           jcr:primaryType="cq:ClientLibraryFolder"
           sling:resourceType="widgets/clientlib"
           categories="[groovyconsole]"
+          allowProxy="{Boolean}true"
           dependencies="[cq.shared]"/>

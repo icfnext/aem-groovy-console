@@ -10,10 +10,11 @@ import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionPro
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
+import org.apache.sling.jcr.resource.JcrResourceConstants
 
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
 import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
 import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.RELATIVE_PATH_SCRIPT_FOLDER
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
@@ -21,9 +22,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     static final def SCRIPT_FILE_NAME = "${SCRIPT_NAME}.groovy"
 
-    static final def PATH_FOLDER = "/etc/groovyconsole/$RELATIVE_PATH_SCRIPT_FOLDER"
-
-    static final def PATH_FILE = "$PATH_FOLDER/$SCRIPT_FILE_NAME"
+    static final def PATH_FILE = "$PATH_SCRIPTS_FOLDER/$SCRIPT_FILE_NAME"
 
     static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
@@ -57,22 +56,21 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
     def "save script"() {
         setup:
+        nodeBuilder.var {
+            groovyconsole(JcrResourceConstants.NT_SLING_FOLDER)
+        }
+
         def consoleService = slingContext.getService(GroovyConsoleService)
 
         def request = requestBuilder.build {
             parameterMap = this.parameterMap
         }
 
-        and:
-        nodeBuilder.etc {
-            groovyconsole()
-        }
-
         when:
         consoleService.saveScript(request)
 
         then:
-        assertNodeExists(PATH_FOLDER, JcrConstants.NT_FOLDER)
+        assertNodeExists(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER)
         assertNodeExists(PATH_FILE, JcrConstants.NT_FILE)
         assertNodeExists(PATH_FILE_CONTENT, JcrConstants.NT_RESOURCE,
             [(JcrConstants.JCR_MIMETYPE): "application/octet-stream"])
