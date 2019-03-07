@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>aem-parent-uber-jar</artifactId>
-        <version>6.4.1</version>
+        <version>7.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.icfolson.aem.groovy.console</groupId>
     <artifactId>aem-groovy-console</artifactId>
     <packaging>jar</packaging>
-    <version>12.1.0</version>
+    <version>13.0.0</version>
     <name>AEM Groovy Console</name>
     <description>
         The AEM Groovy Console provides an interface for running Groovy scripts in the AEM container. Scripts can be
@@ -19,9 +21,11 @@
         or JCR APIs.
     </description>
 
+    <url>https://github.com/icfnext/aem-groovy-console</url>
+
     <organization>
-        <name>ICF Olson</name>
-        <url>http://www.icfolson.com</url>
+        <name>ICF Next</name>
+        <url>http://www.icfnext.com</url>
     </organization>
 
     <licenses>
@@ -33,14 +37,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:OlsonDigital/aem-groovy-console.git</connection>
-        <developerConnection>scm:git:git@github.com:OlsonDigital/aem-groovy-console.git</developerConnection>
-        <url>https://github.com/OlsonDigital/aem-groovy-console</url>
+        <connection>scm:git:git@github.com:icfnext/aem-groovy-console.git</connection>
+        <developerConnection>scm:git:git@github.com:icfnext/aem-groovy-console.git</developerConnection>
+        <url>https://github.com/icfnext/aem-groovy-console</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/OlsonDigital/aem-groovy-console/issues</url>
+        <url>https://github.com/icfnext/aem-groovy-console/issues</url>
     </issueManagement>
 
     <distributionManagement>
@@ -51,6 +55,7 @@
     </distributionManagement>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -108,8 +113,6 @@
     </profiles>
 
     <build>
-        <sourceDirectory>src/main/groovy</sourceDirectory>
-        <testSourceDirectory>src/test/groovy</testSourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -124,7 +127,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <compilerId>groovy-eclipse-compiler</compilerId>
                     <source>1.8</source>
@@ -145,43 +148,26 @@
                 </dependencies>
             </plugin>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Spec*</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <version>1.24.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scanClasses>true</scanClasses>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>4.1.0</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
+                        <id>generate-manifest</id>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>bundle</id>
                         <goals>
                             <goal>bundle</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
+                    <unpackBundle>true</unpackBundle>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
@@ -191,6 +177,16 @@
                         <Sling-Model-Packages>com.icfolson.aem.groovy.console.components</Sling-Model-Packages>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <trimStackTrace>false</trimStackTrace>
+                    <includes>
+                        <include>**/*Spec*</include>
+                    </includes>
                 </configuration>
             </plugin>
             <plugin>
@@ -279,6 +275,7 @@
                             <contextPath>${aem.context.path}</contextPath>
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                     <execution>
@@ -298,6 +295,7 @@
                             <username>${aem.username}</username>
                             <password>${aem.password}</password>
                             <skip>${osgi.bundle.status.skip.publish}</skip>
+                            <retryDelay>5000</retryDelay>
                         </configuration>
                     </execution>
                 </executions>
@@ -343,12 +341,7 @@
     </build>
 
     <dependencies>
-        <!-- inherited -->
-        <dependency>
-            <groupId>com.adobe.aem</groupId>
-            <artifactId>uber-jar</artifactId>
-            <classifier>apis</classifier>
-        </dependency>
+        <!-- inherited from parent -->
         <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
@@ -356,10 +349,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jsp-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -370,12 +359,20 @@
             <artifactId>mail</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -386,24 +383,17 @@
             <artifactId>commons-email</artifactId>
         </dependency>
 
-        <!-- compile -->
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.12.0</version>
-        </dependency>
-
-        <!-- provided -->
+        <!-- groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>2.4.13</version>
+            <version>2.4.15</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>5.0.0</version>
+            <version>7.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -411,8 +401,15 @@
         <dependency>
             <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>12.0.0</version>
+            <version>14.0.0</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- uber jar included last to allow other dependencies to override included versions -->
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
         </dependency>
     </dependencies>
 </project>

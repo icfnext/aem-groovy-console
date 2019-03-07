@@ -1,11 +1,14 @@
 package com.icfolson.aem.groovy.console.response
 
+import com.day.text.Text
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.table.Table
 import groovy.json.JsonBuilder
 import groovy.transform.Immutable
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.sling.api.resource.Resource
+import org.apache.sling.api.resource.ResourceUtil
 
 import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_DATA
 import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE
@@ -14,7 +17,9 @@ import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_SCRIPT
 @Immutable
 class RunScriptResponse {
 
-    static RunScriptResponse fromResult(String script, String data, Object result, String output, String runningTime) {
+    private static final int LEVEL_USERID = 4
+
+    static RunScriptResponse fromResult(ScriptContext scriptContext, Object result, String output, String runningTime) {
         def resultString
 
         if (result instanceof Table) {
@@ -23,13 +28,15 @@ class RunScriptResponse {
             resultString = result as String
         }
 
-        new RunScriptResponse(script, data, resultString, output, "", runningTime)
+        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, resultString, output, "", runningTime,
+            scriptContext.userId)
     }
 
-    static RunScriptResponse fromException(String script, Throwable throwable) {
+    static RunScriptResponse fromException(ScriptContext scriptContext, String output, Throwable throwable) {
         def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
 
-        new RunScriptResponse(script, "", "", "", exceptionStackTrace, "")
+        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, "", output, exceptionStackTrace, "",
+            scriptContext.userId)
     }
 
     static RunScriptResponse fromAuditRecordResource(Resource resource) {
@@ -38,17 +45,20 @@ class RunScriptResponse {
         def script = properties.get(PROPERTY_SCRIPT, "")
         def data = properties.get(PROPERTY_DATA, "")
         def exceptionStackTrace = properties.get(PROPERTY_EXCEPTION_STACK_TRACE, "")
+        def output = properties.get(AuditRecord.PROPERTY_OUTPUT, "")
+
+        def userIdResourcePath = ResourceUtil.getParent(resource.path, LEVEL_USERID)
+        def userId = Text.getName(userIdResourcePath)
 
         def response
 
         if (exceptionStackTrace) {
-            response = new RunScriptResponse(script, data, "", "", exceptionStackTrace, "")
+            response = new RunScriptResponse(script, data, "", output, exceptionStackTrace, "", userId)
         } else {
             def result = properties.get(AuditRecord.PROPERTY_RESULT, "")
-            def output = properties.get(AuditRecord.PROPERTY_OUTPUT, "")
             def runningTime = properties.get(AuditRecord.PROPERTY_RUNNING_TIME, "")
 
-            response = new RunScriptResponse(script, data, result, output, "", runningTime)
+            response = new RunScriptResponse(script, data, result, output, "", runningTime, userId)
         }
 
         response
@@ -65,4 +75,6 @@ class RunScriptResponse {
     String exceptionStackTrace
 
     String runningTime
+
+    String userId
 }

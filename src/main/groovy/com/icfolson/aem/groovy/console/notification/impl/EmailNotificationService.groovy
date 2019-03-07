@@ -1,23 +1,19 @@
 package com.icfolson.aem.groovy.console.notification.impl
 
 import com.day.cq.mailer.MailService
+import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang3.CharEncoding
 import org.apache.commons.mail.Email
 import org.apache.commons.mail.HtmlEmail
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.ReferenceCardinality
-import org.apache.felix.scr.annotations.Service
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
+import org.osgi.service.component.annotations.ReferenceCardinality
 
-import javax.jcr.Session
-
-@Service(NotificationService)
-@Component
+@Component(service = NotificationService)
 @Slf4j("LOG")
 class EmailNotificationService implements NotificationService {
 
@@ -32,16 +28,16 @@ class EmailNotificationService implements NotificationService {
     @Reference
     private ConfigurationService configurationService
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_UNARY)
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
     private MailService mailService
 
     @Override
-    void notify(Session session, RunScriptResponse response) {
+    void notify(RunScriptResponse response) {
         if (configurationService.emailEnabled && mailService) {
             def recipients = configurationService.emailRecipients
 
             if (recipients) {
-                def binding = createBinding(session, response)
+                def binding = createBinding(response)
                 def templatePath = response.exceptionStackTrace ? TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS
 
                 def email = createEmail(recipients, binding, templatePath)
@@ -69,7 +65,7 @@ class EmailNotificationService implements NotificationService {
         def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
 
         email.with {
-            charset = CharEncoding.UTF_8
+            charset = Charsets.UTF_8.name()
             subject = SUBJECT
             htmlMsg = template.make(binding).toString()
         }
@@ -77,15 +73,18 @@ class EmailNotificationService implements NotificationService {
         email
     }
 
-    private static Map<String, String> createBinding(Session session, RunScriptResponse response) {
+    private Map<String, String> createBinding(RunScriptResponse response) {
         def binding = [
-            username: session.userID,
+            username: response.userId,
             timestamp: new Date().format(FORMAT_TIMESTAMP),
             script: response.script
         ]
 
         if (response.exceptionStackTrace) {
-            binding.stackTrace = response.exceptionStackTrace
+            binding.putAll([
+                stackTrace: response.exceptionStackTrace,
+                output: response.output
+            ])
         } else {
             binding.putAll([
                 result: response.result,

@@ -1,14 +1,17 @@
 package com.icfolson.aem.groovy.console.servlets
 
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 
+import javax.servlet.Servlet
 import javax.servlet.ServletException
 
-@SlingServlet(paths = "/bin/groovyconsole/save")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/save"
+])
 class ScriptSavingServlet extends AbstractJsonResponseServlet {
 
     @Reference

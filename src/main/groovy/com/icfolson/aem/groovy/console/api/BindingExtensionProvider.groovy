@@ -1,18 +1,16 @@
 package com.icfolson.aem.groovy.console.api
 
-import org.apache.sling.api.SlingHttpServletRequest
-
 /**
  * Services may implement this interface to supply additional binding values for Groovy script executions.
  */
 interface BindingExtensionProvider {
 
     /**
-     * Get the binding for this request.  All bindings provided by extension services will be merged prior to script
-     * execution.
+     * Get the binding variables for this script execution.  All bindings provided by extension services will be merged
+     * prior to script execution.
      *
-     * @param request current request
-     * @return binding map for request
+     * @param scriptContext context for current script execution
+     * @return map of binding variables for request
      */
-    Binding getBinding(SlingHttpServletRequest request)
+    Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext)
 }

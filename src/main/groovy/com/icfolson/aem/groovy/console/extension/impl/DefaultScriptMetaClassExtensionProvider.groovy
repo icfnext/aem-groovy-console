@@ -6,20 +6,19 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.table.Table
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.Service
-import org.apache.sling.api.SlingHttpServletRequest
+import org.apache.sling.models.factory.ModelFactory
 import org.osgi.framework.BundleContext
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 
 import javax.jcr.Node
 import javax.jcr.Session
 
-@Service(ScriptMetaClassExtensionProvider)
-@Component(immediate = true)
+@Component(service = ScriptMetaClassExtensionProvider, immediate = true)
 class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensionProvider {
 
     @Reference
@@ -31,8 +30,8 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
     private BundleContext bundleContext
 
     @Override
-    Closure getScriptMetaClass(SlingHttpServletRequest request) {
-        def resourceResolver = request.resourceResolver
+    Closure getScriptMetaClass(ScriptContext scriptContext) {
+        def resourceResolver = scriptContext.request.resourceResolver
         def session = resourceResolver.adaptTo(Session)
         def pageManager = resourceResolver.adaptTo(PageManager)
 
@@ -82,6 +81,15 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
             delegate.save = {
                 session.save()
+            }
+
+            delegate.getModel = { String path, Class type ->
+                def modelFactoryReference = bundleContext.getServiceReference(ModelFactory)
+                def modelFactory = bundleContext.getService(modelFactoryReference)
+
+                def resource = resourceResolver.resolve(path)
+
+                modelFactory.createModel(resource, type)
             }
 
             delegate.getService = { Class serviceType ->

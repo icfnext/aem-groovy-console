@@ -4,14 +4,16 @@ import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 
-import javax.jcr.Session
+import javax.servlet.Servlet
 
-@SlingServlet(paths = "/bin/groovyconsole/audit")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/audit"
+])
 class AuditServlet extends AbstractJsonResponseServlet {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd"
@@ -26,12 +28,11 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
         def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            writeJsonResponse(response, auditService.getAuditRecord(session, userId, script) ?: [:])
+            writeJsonResponse(response, auditService.getAuditRecord(userId, script) ?: [:])
         } else {
             writeJsonResponse(response, getAuditRecordsData(request))
         }
@@ -39,14 +40,13 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
     @Override
     protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        def session = request.resourceResolver.adaptTo(Session)
         def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
         def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
 
         if (script) {
-            auditService.deleteAuditRecord(session, userId, script)
+            auditService.deleteAuditRecord(userId, script)
         } else {
-            auditService.deleteAllAuditRecords(session)
+            auditService.deleteAllAuditRecords(request.resourceResolver.userID)
         }
     }
 
@@ -77,20 +77,19 @@ class AuditServlet extends AbstractJsonResponseServlet {
     }
 
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {
-        def session = request.resourceResolver.adaptTo(Session)
-
         def startDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_START_DATE)
         def endDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_END_DATE)
 
         def auditRecords
 
         if (!startDateParameter || !endDateParameter) {
-            auditRecords = auditService.getAllAuditRecords(session)
+            auditRecords = auditService.getAllAuditRecords(request.resourceResolver.userID)
         } else {
             def startDate = Date.parse(DATE_FORMAT, startDateParameter)
             def endDate = Date.parse(DATE_FORMAT, endDateParameter)
 
-            auditRecords = auditService.getAuditRecords(session, startDate.toCalendar(), endDate.toCalendar())
+            auditRecords = auditService.getAuditRecords(request.resourceResolver.userID, startDate.toCalendar(),
+                endDate.toCalendar())
         }
 
         auditRecords.sort { a, b -> b.date.timeInMillis <=> a.date.timeInMillis }

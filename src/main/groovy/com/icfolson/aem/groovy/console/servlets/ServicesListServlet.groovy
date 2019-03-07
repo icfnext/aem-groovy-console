@@ -1,21 +1,24 @@
 package com.icfolson.aem.groovy.console.servlets
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.adapter.AdapterFactory
 import org.apache.sling.api.resource.ResourceResolver
 import org.osgi.framework.BundleContext
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
 
+import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTABLE_CLASSES
 import static org.apache.sling.api.adapter.AdapterFactory.ADAPTER_CLASSES
 import static org.osgi.framework.Constants.OBJECTCLASS
 
-@SlingServlet(paths = "/bin/groovyconsole/services")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/services"
+])
 class ServicesListServlet extends AbstractJsonResponseServlet {
 
     private BundleContext bundleContext

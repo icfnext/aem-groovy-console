@@ -7,20 +7,18 @@ import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Activate
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Deactivate
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.Service
 import org.apache.sling.api.resource.PersistenceException
 import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ResourceResolverFactory
+import org.osgi.service.component.annotations.Activate
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Deactivate
+import org.osgi.service.component.annotations.Reference
 
 import javax.jcr.Node
 import javax.jcr.RepositoryException
 import javax.jcr.Session
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CONTENT
 import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
 import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_NODE_NAME
@@ -28,8 +26,7 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.A
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_RECORD_NODE_PREFIX
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 
-@Component(immediate = true)
-@Service(AuditService)
+@Component(service = AuditService, immediate = true)
 @Slf4j("LOG")
 class DefaultAuditService implements AuditService {
 
@@ -48,14 +45,14 @@ class DefaultAuditService implements AuditService {
     private ResourceResolver resourceResolver
 
     @Override
-    AuditRecord createAuditRecord(Session session, RunScriptResponse response)
+    AuditRecord createAuditRecord(RunScriptResponse response)
         throws RepositoryException, PersistenceException {
         def auditRecord
 
         try {
             resourceResolver.refresh()
 
-            def auditRecordNode = addAuditRecordNode(session)
+            def auditRecordNode = addAuditRecordNode(response.userId)
 
             setAuditRecordNodeProperties(auditRecordNode, response)
 
@@ -76,11 +73,11 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAllAuditRecords(Session session) throws PersistenceException {
+    void deleteAllAuditRecords(String userId) throws PersistenceException {
         try {
             resourceResolver.refresh()
 
-            def auditNodePath = getAuditNodePath(session)
+            def auditNodePath = getAuditNodePath(userId)
 
             def auditResource = resourceResolver.getResource(auditNodePath)
 
@@ -92,6 +89,8 @@ class DefaultAuditService implements AuditService {
                 LOG.debug("deleted all audit record resources for path = {}", auditNodePath)
 
                 resourceResolver.commit()
+            } else {
+                LOG.debug("audit resource not found for user ID = {}", userId)
             }
         } catch (PersistenceException e) {
             LOG.error("error deleting audit records", e)
@@ -101,7 +100,7 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    void deleteAuditRecord(Session session, String userId, String relativePath) throws PersistenceException {
+    void deleteAuditRecord(String userId, String relativePath) throws PersistenceException {
         try {
             resourceResolver.refresh()
 
@@ -120,16 +119,16 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    List<AuditRecord> getAllAuditRecords(Session session) {
+    List<AuditRecord> getAllAuditRecords(String userId) {
         resourceResolver.refresh()
 
-        def auditNodePath = getAuditNodePath(session)
+        def auditNodePath = getAuditNodePath(userId)
 
         findAllAuditRecords(auditNodePath)
     }
 
     @Override
-    AuditRecord getAuditRecord(Session session, String userId, String relativePath) {
+    AuditRecord getAuditRecord(String userId, String relativePath) {
         resourceResolver.refresh()
 
         def auditRecordResource = resourceResolver.getResource("$AUDIT_PATH/$userId").getChild(relativePath)
@@ -146,10 +145,10 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
-    List<AuditRecord> getAuditRecords(Session session, Calendar startDate, Calendar endDate) {
+    List<AuditRecord> getAuditRecords(String userId, Calendar startDate, Calendar endDate) {
         resourceResolver.refresh()
 
-        getAllAuditRecords(session).findAll { auditRecord ->
+        getAllAuditRecords(userId).findAll { auditRecord ->
             def auditRecordDate = auditRecord.date
 
             auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
@@ -174,7 +173,7 @@ class DefaultAuditService implements AuditService {
     }
 
     @Synchronized
-    private Node addAuditRecordNode(Session session) {
+    private Node addAuditRecordNode(String userId) {
         def date = Calendar.instance
         def year = date.format(DATE_FORMAT_YEAR)
         def month = date.format(DATE_FORMAT_MONTH)
@@ -182,8 +181,8 @@ class DefaultAuditService implements AuditService {
 
         def adminSession = resourceResolver.adaptTo(Session)
 
-        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/${session.userID}/$year/$month/$day",
-            NT_UNSTRUCTURED, adminSession)
+        def auditRecordParentNode = JcrUtil.createPath("$AUDIT_PATH/$userId/$year/$month/$day", NT_UNSTRUCTURED,
+            adminSession)
         def auditRecordNode = JcrUtil.createUniqueNode(auditRecordParentNode, AUDIT_RECORD_NODE_PREFIX, NT_UNSTRUCTURED,
             adminSession)
 
@@ -194,12 +193,12 @@ class DefaultAuditService implements AuditService {
 
     private void checkAuditNode() {
         def session = resourceResolver.adaptTo(Session)
-        def contentNode = session.getNode(PATH_CONSOLE_ROOT).getNode(JCR_CONTENT)
+        def consoleRootNode = session.getNode(PATH_CONSOLE_ROOT)
 
-        if (!contentNode.hasNode(AUDIT_NODE_NAME)) {
+        if (!consoleRootNode.hasNode(AUDIT_NODE_NAME)) {
             LOG.info("audit node does not exist, adding")
 
-            contentNode.addNode(AUDIT_NODE_NAME)
+            consoleRootNode.addNode(AUDIT_NODE_NAME, NT_UNSTRUCTURED)
 
             session.save()
         }
@@ -214,6 +213,10 @@ class DefaultAuditService implements AuditService {
 
         if (response.exceptionStackTrace) {
             auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+
+            if (response.output) {
+                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+            }
         } else {
             if (response.result) {
                 auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
@@ -227,8 +230,8 @@ class DefaultAuditService implements AuditService {
         }
     }
 
-    private String getAuditNodePath(Session session) {
-        configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/${session.userID}"
+    private String getAuditNodePath(String userId) {
+        configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/$userId"
     }
 
     private List<AuditRecord> findAllAuditRecords(String auditNodePath) {

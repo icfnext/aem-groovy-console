@@ -4,16 +4,19 @@ import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.sling.SlingServlet
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
 
+import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
-@SlingServlet(paths = "/bin/groovyconsole/post")
+@Component(service = Servlet, property = [
+    "sling.servlet.paths=/bin/groovyconsole/post"
+])
 @Slf4j("LOG")
 class ScriptPostServlet extends AbstractJsonResponseServlet {
 
@@ -32,16 +35,16 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             if (scriptPaths) {
                 LOG.debug("running scripts for paths = {}", scriptPaths)
 
-                writeJsonResponse(response, consoleService.runScripts(request, scriptPaths as List))
+                writeJsonResponse(response, consoleService.runScripts(request, response, scriptPaths as List))
             } else {
                 def scriptPath = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT_PATH)
 
                 if (scriptPath) {
                     LOG.debug("running script for path = {}", scriptPath)
 
-                    writeJsonResponse(response, consoleService.runScript(request, scriptPath))
+                    writeJsonResponse(response, consoleService.runScript(request, response, scriptPath))
                 } else {
-                    writeJsonResponse(response, consoleService.runScript(request))
+                    writeJsonResponse(response, consoleService.runScript(request, response))
                 }
             }
         } else {

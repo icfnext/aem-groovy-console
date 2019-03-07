@@ -1,67 +1,83 @@
 package com.icfolson.aem.groovy.console.extension.impl
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
+import com.icfolson.aem.groovy.console.api.BindingVariable
+import com.icfolson.aem.groovy.console.api.CompilationCustomizerExtensionProvider
+import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
+import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
-import org.apache.felix.scr.annotations.Component
-import org.apache.felix.scr.annotations.Reference
-import org.apache.felix.scr.annotations.ReferenceCardinality
-import org.apache.felix.scr.annotations.ReferencePolicy
-import org.apache.felix.scr.annotations.Service
-import org.apache.sling.api.SlingHttpServletRequest
+import org.codehaus.groovy.control.customizers.CompilationCustomizer
+import org.codehaus.groovy.control.customizers.ImportCustomizer
+import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Reference
+import org.osgi.service.component.annotations.ReferenceCardinality
+import org.osgi.service.component.annotations.ReferencePolicy
 
 import java.util.concurrent.CopyOnWriteArrayList
 
-@Service(ExtensionService)
-@Component(immediate = true)
+@Component(service = ExtensionService, immediate = true)
 @Slf4j("LOG")
 class DefaultExtensionService implements ExtensionService {
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = BindingExtensionProvider,
-        policy = ReferencePolicy.DYNAMIC)
-    private List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<BindingExtensionProvider> bindingExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, referenceInterface = StarImportExtensionProvider,
-        policy = ReferencePolicy.DYNAMIC)
-    private List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<StarImportExtensionProvider> starImportExtensionProviders = new CopyOnWriteArrayList<>()
 
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE,
-        referenceInterface = ScriptMetaClassExtensionProvider, policy = ReferencePolicy.DYNAMIC)
-    private List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
+    private volatile List<ScriptMetaClassExtensionProvider> scriptMetaClassExtensionProviders = new CopyOnWriteArrayList<>()
+
+    private volatile List<CompilationCustomizerExtensionProvider> compilationCustomizerExtensionProviders =
+        new CopyOnWriteArrayList<>()
 
     @Override
-    Set<String> getStarImports() {
+    Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
+        def bindingVariables = [:]
+
+        bindingExtensionProviders.each { extension ->
+            extension.getBindingVariables(scriptContext).each { name, variable ->
+                if (bindingVariables[name]) {
+                    LOG.debug("binding variable {} is currently bound to value {}, overriding with value = {}", name,
+                        bindingVariables[name], variable.value)
+                }
+
+                bindingVariables[name] = variable
+            }
+        }
+
+        bindingVariables
+    }
+
+    @Override
+    List<Closure> getScriptMetaClasses(ScriptContext scriptContext) {
+        scriptMetaClassExtensionProviders*.getScriptMetaClass(scriptContext)
+    }
+
+    @Override
+    Set<StarImport> getStarImports() {
         starImportExtensionProviders.collectMany { it.starImports } as Set
     }
 
     @Override
-    Binding getBinding(SlingHttpServletRequest request) {
-        def bindings = [:]
+    List<CompilationCustomizer> getCompilationCustomizers() {
+        def importPackageNames = starImports.collect { it.packageName }
 
-        bindingExtensionProviders.each { extension ->
-            def binding = extension.getBinding(request)
+        def compilationCustomizers = []
 
-            binding.variables.each { key, value ->
-                if (bindings[key]) {
-                    LOG.info("binding variable {} is currently bound to value {}, overriding with value = {}", key,
-                        bindings[key], value)
-                }
-
-                bindings[key] = value
-            }
+        if (importPackageNames) {
+            compilationCustomizers.add(new ImportCustomizer().addStarImports(importPackageNames as String[]))
         }
 
-        new Binding(bindings)
+        compilationCustomizerExtensionProviders.each { provider ->
+            compilationCustomizers.addAll(provider.compilationCustomizers)
+        }
+
+        compilationCustomizers
     }
 
-    @Override
-    List<Closure> getScriptMetaClasses(SlingHttpServletRequest request) {
-        scriptMetaClassExtensionProviders*.getScriptMetaClass(request)
-    }
-
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.add(extension)
@@ -76,6 +92,7 @@ class DefaultExtensionService implements ExtensionService {
         LOG.info("removed binding extension = {}", extension.class.name)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.add(extension)
@@ -90,6 +107,7 @@ class DefaultExtensionService implements ExtensionService {
         LOG.info("removed star import extension = {} with imports = {}", extension.class.name, extension.starImports)
     }
 
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @Synchronized
     void bindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.add(extension)
@@ -102,5 +120,20 @@ class DefaultExtensionService implements ExtensionService {
         scriptMetaClassExtensionProviders.remove(extension)
 
         LOG.info("removed script metaclass extension = {}", extension.class.name)
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    @Synchronized
+    void bindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
+        compilationCustomizerExtensionProviders.add(extension)
+
+        LOG.info("adding compilation customizer extension = {}", extension.class.name)
+    }
+
+    @Synchronized
+    void unbindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
+        compilationCustomizerExtensionProviders.remove(extension)
+
+        LOG.info("removed compilation customizer extension = {}", extension.class.name)
     }
 }

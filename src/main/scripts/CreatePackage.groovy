@@ -7,7 +7,7 @@ import groovy.transform.Field
 def definitionNode = getOrAddDefinitionNode()
 def filterNode = getOrAddFilterNode(definitionNode)
 
-["/etc/groovyconsole/jcr:content/audit"].eachWithIndex { path, i ->
+["/var/groovyconsole/audit"].eachWithIndex { path, i ->
     def f = filterNode.addNode("filter$i")
 
     f.set("mode", "replace")

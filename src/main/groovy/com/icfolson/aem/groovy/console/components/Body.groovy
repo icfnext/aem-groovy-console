@@ -8,7 +8,6 @@ import org.apache.sling.models.annotations.Model
 
 import javax.annotation.PostConstruct
 import javax.inject.Inject
-import javax.jcr.Session
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_USER_ID
@@ -30,9 +29,7 @@ class Body {
         def script = request.getParameter(PARAMETER_SCRIPT)
 
         if (script) {
-            def session = request.resourceResolver.adaptTo(Session)
-
-            auditRecord = auditService.getAuditRecord(session, userId, script)
+            auditRecord = auditService.getAuditRecord(userId, script)
         }
     }
 
