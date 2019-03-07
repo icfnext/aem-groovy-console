@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.icfolson.aem</groupId>
         <artifactId>aem-parent-uber-jar</artifactId>
-        <version>7.0.0-SNAPSHOT</version>
+        <version>7.0.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -393,7 +393,7 @@
         <dependency>
             <groupId>com.icfolson.aem.groovy.extension</groupId>
             <artifactId>aem-groovy-extension-bundle</artifactId>
-            <version>7.0.0-SNAPSHOT</version>
+            <version>7.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -401,7 +401,7 @@
         <dependency>
             <groupId>com.icfolson.aem.prosper</groupId>
             <artifactId>prosper</artifactId>
-            <version>14.0.0-SNAPSHOT</version>
+            <version>14.0.0</version>
             <scope>test</scope>
         </dependency>
 
