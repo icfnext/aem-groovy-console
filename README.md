@@ -81,7 +81,7 @@ Saved scripts can be remotely executed by sending a POST request to the console 
 
 ## Extensions
 
-Beginning in version 7.0.0, the Groovy Console provides extension hooks to further customize script execution.  The console exposes an API containing three extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.icfolson.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, metaclasses, and star imports.
+The Groovy Console provides extension hooks to further customize script execution.  The console provides an API containing extension provider interfaces that can be implemented as OSGi services in any bundle deployed to an AEM instance.  See the default extension providers in the `com.icfolson.aem.groovy.console.extension.impl` package for examples of how a bundle can implement these services to supply additional script bindings, compilation customizers, metaclasses, and star imports.
 
 Service Interface | Description
 ------------ | -------------
