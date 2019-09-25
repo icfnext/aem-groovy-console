@@ -50,7 +50,7 @@ class DefaultConfigurationService implements ConfigurationService {
 
         LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
 
-        allowedGroups ? memberOfGroupIds.intersect(allowedGroups as Iterable) : true
+        allowedGroups ? user.admin || memberOfGroupIds.intersect(allowedGroups as Iterable) : true
     }
 
     @Override
