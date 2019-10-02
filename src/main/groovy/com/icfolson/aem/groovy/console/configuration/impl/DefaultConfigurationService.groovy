@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.Modified
 import org.osgi.service.component.annotations.Reference
 import org.osgi.service.metatype.annotations.Designate
 
-@Component(service = ConfigurationService)
+@Component(service = ConfigurationService, immediate = true)
 @Designate(ocd = ConfigurationServiceProperties)
 @Slf4j("LOG")
 class DefaultConfigurationService implements ConfigurationService {
