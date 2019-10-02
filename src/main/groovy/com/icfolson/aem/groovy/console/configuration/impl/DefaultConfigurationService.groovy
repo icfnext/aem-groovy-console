@@ -3,13 +3,12 @@ package com.icfolson.aem.groovy.console.configuration.impl
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
+import org.apache.jackrabbit.api.security.user.User
 import org.apache.jackrabbit.api.security.user.UserManager
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.resource.ResourceResolver
 import org.apache.sling.api.resource.ResourceResolverFactory
 import org.osgi.service.component.annotations.Activate
 import org.osgi.service.component.annotations.Component
-import org.osgi.service.component.annotations.Deactivate
 import org.osgi.service.component.annotations.Modified
 import org.osgi.service.component.annotations.Reference
 import org.osgi.service.metatype.annotations.Designate
@@ -26,8 +25,6 @@ class DefaultConfigurationService implements ConfigurationService {
     @Reference
     private ResourceResolverFactory resourceResolverFactory
 
-    private ResourceResolver resourceResolver
-
     boolean emailEnabled
 
     Set<String> emailRecipients
@@ -42,15 +39,22 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
-        resourceResolver.refresh()
+        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
 
-        def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal)
+        def hasPermission = false
 
-        def memberOfGroupIds = user.memberOf()*.ID
+        try {
+            def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
+            def memberOfGroupIds = user.memberOf()*.ID
 
-        LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
+            LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
 
-        allowedGroups ? memberOfGroupIds.intersect(allowedGroups as Iterable) : true
+            hasPermission = allowedGroups ? user.admin || memberOfGroupIds.intersect(allowedGroups as Iterable) : false
+        } finally {
+            resourceResolver.close()
+        }
+
+        hasPermission
     }
 
     @Override
@@ -59,25 +63,14 @@ class DefaultConfigurationService implements ConfigurationService {
     }
 
     @Activate
-    void activate(ConfigurationServiceProperties properties) {
-        resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
-
-        modified(properties)
-    }
-
     @Modified
     @Synchronized
-    void modified(ConfigurationServiceProperties properties) {
+    void activate(ConfigurationServiceProperties properties) {
         emailEnabled = properties.emailEnabled()
         emailRecipients = (properties.emailRecipients() ?: []).findAll() as Set
         allowedGroups = (properties.allowedGroups() ?: []).findAll() as Set
         vanityPathEnabled = properties.vanityPathEnabled()
         auditDisabled = properties.auditDisabled()
         displayAllAuditRecords = properties.auditDisplayAll()
-    }
-
-    @Deactivate
-    void deactivate() {
-        resourceResolver?.close()
     }
 }
