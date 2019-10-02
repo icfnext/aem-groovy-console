@@ -34,7 +34,7 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.E
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
 
-@Component(service = GroovyConsoleService)
+@Component(service = GroovyConsoleService, immediate = true)
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
 
