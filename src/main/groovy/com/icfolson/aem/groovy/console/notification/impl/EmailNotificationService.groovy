@@ -13,7 +13,7 @@ import org.osgi.service.component.annotations.Component
 import org.osgi.service.component.annotations.Reference
 import org.osgi.service.component.annotations.ReferenceCardinality
 
-@Component(service = NotificationService)
+@Component(service = NotificationService, immediate = true)
 @Slf4j("LOG")
 class EmailNotificationService implements NotificationService {
 
