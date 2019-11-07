@@ -4,7 +4,7 @@
 
 ## Overview
 
-The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After ainstalling the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
 ![Screenshot](src/site/screenshot.png)
 
@@ -62,7 +62,7 @@ Property | Description | Default Value
 ------------ | ------------- | ----------
 Email Enabled? | Check to enable email notification on completion of script execution. | `false`
 Email Recipients | Email addresses to receive notification. | `[]`
-Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | `[]`
+Allowed Groups | List of group names that are authorized to use the console.  Required.  If empty, no script executions will be allowed. | `[]`
 Vanity Path Enabled? | Enables `/groovyconsole` vanity path. | `false`
 Audit Disabled? | Disables auditing of script execution history. | `false`
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`

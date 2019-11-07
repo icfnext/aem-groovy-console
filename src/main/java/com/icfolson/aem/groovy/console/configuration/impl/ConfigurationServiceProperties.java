@@ -15,7 +15,7 @@ public @interface ConfigurationServiceProperties {
     String[] emailRecipients() default {};
 
     @AttributeDefinition(name = "Allowed Groups",
-        description = "List of group names that are authorized to use the console.  If empty, no authorization check is performed.",
+        description = "List of group names that are authorized to use the console.  Required.  If empty, no script executions will be allowed.",
         cardinality = 20)
     String[] allowedGroups() default {};
 
