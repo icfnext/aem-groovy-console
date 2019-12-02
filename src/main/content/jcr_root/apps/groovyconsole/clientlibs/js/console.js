@@ -216,6 +216,28 @@ var GroovyConsole = function () {
             }
         },
 
+        handleDownloadLink: function (parent, content) {
+            var $parent = document.querySelector(parent);
+            var $downloadLink = $parent.querySelector('.download__link');
+
+            if (!$downloadLink) {
+                return;
+            }
+
+            if ($downloadLink.href) {
+                window.URL.revokeObjectURL($downloadLink.href);
+            }
+
+            if (content) {
+                var data = new Blob([content], {type: 'text/plain'});
+                var textFile = window.URL.createObjectURL(data);
+
+                $downloadLink.href = textFile;
+            } else {
+                $downloadLink.style.display = "none";
+            }
+        },
+
         showResult: function (response) {
             var result = response.result;
             var output = response.output;
@@ -232,11 +254,13 @@ var GroovyConsole = function () {
                 $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
             } else {
                 if (!GroovyConsole.showTable(response) && result && result.length) {
+                    this.handleDownloadLink('#result', result);
                     $('#result pre').text(result);
                     $('#result').fadeIn('fast');
                 }
 
                 if (output && output.length) {
+                    this.handleDownloadLink('#output', output);
                     $('#output pre').text(output);
                     $('#output').removeClass('alert-danger')
                         .addClass('alert-success')
