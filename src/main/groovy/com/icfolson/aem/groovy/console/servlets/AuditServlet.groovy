@@ -11,7 +11,7 @@ import org.osgi.service.component.annotations.Reference
 
 import javax.servlet.Servlet
 
-@Component(service = Servlet, property = [
+@Component(service = Servlet, immediate = true, property = [
     "sling.servlet.paths=/bin/groovyconsole/audit"
 ])
 class AuditServlet extends AbstractJsonResponseServlet {

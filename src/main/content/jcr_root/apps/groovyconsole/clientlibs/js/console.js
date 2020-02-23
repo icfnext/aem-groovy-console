@@ -230,9 +230,8 @@ var GroovyConsole = function () {
 
             if (content) {
                 var data = new Blob([content], {type: 'text/plain'});
-                var textFile = window.URL.createObjectURL(data);
 
-                $downloadLink.href = textFile;
+                $downloadLink.href = window.URL.createObjectURL(data);
             } else {
                 $downloadLink.style.display = "none";
             }
@@ -307,12 +306,6 @@ var GroovyConsole = function () {
             }
 
             return hasTable;
-        },
-
-        destroyTable: function () {
-            if (resultDataTable) {
-                resultDataTable.destroy();
-            }
         },
 
         showData: function () {

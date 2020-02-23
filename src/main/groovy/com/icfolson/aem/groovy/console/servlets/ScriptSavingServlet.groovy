@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Reference
 import javax.servlet.Servlet
 import javax.servlet.ServletException
 
-@Component(service = Servlet, property = [
+@Component(service = Servlet, immediate = true, property = [
     "sling.servlet.paths=/bin/groovyconsole/save"
 ])
 class ScriptSavingServlet extends AbstractJsonResponseServlet {

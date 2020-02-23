@@ -14,7 +14,7 @@ import javax.servlet.ServletException
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
-@Component(service = Servlet, property = [
+@Component(service = Servlet, immediate = true, property = [
     "sling.servlet.paths=/bin/groovyconsole/post"
 ])
 @Slf4j("LOG")
