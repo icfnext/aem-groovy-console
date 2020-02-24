@@ -1,7 +1,7 @@
 package com.icfolson.aem.groovy.console.components
 
 import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Memoized
 import org.apache.sling.api.SlingHttpServletRequest
@@ -26,7 +26,7 @@ class BindingsPanel {
 
     @Memoized
     Map<String, BindingVariable> getBindingVariables() {
-        def scriptContext = new ScriptContext(
+        def scriptContext = new DefaultScriptContext(
             request: request,
             response: response
         )

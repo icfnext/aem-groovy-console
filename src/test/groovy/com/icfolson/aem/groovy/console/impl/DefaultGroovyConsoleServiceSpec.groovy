@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.impl
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
+import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditService
@@ -42,13 +43,18 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         setup:
         def consoleService = slingContext.getService(GroovyConsoleService)
 
-        def request = requestBuilder.build {
-            parameterMap = this.parameterMap
-        }
-
+        def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new DefaultScriptContext(request, response)
+        def outputStream = new ByteArrayOutputStream()
+
+        def scriptContext = new DefaultScriptContext(
+            request: request,
+            response: response,
+            outputStream: outputStream,
+            printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
+            scriptContent: scriptAsString
+        )
 
         when:
         def map = consoleService.runScript(scriptContext)
