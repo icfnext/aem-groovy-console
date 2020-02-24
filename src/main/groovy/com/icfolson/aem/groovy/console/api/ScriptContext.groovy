@@ -1,26 +1,27 @@
 package com.icfolson.aem.groovy.console.api
 
-import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
+import org.apache.sling.api.resource.ResourceResolver
 
 /**
  * Context variables for Groovy script execution.
  */
-@TupleConstructor
-class ScriptContext {
+interface ScriptContext {
 
-    SlingHttpServletRequest request
+    ResourceResolver getResourceResolver()
 
-    SlingHttpServletResponse response
+    SlingHttpServletRequest getRequest()
 
-    PrintStream printStream
+    SlingHttpServletResponse getResponse()
 
-    String scriptContent
+    ByteArrayOutputStream getOutputStream()
 
-    String data
+    PrintStream getPrintStream()
 
-    String getUserId() {
-        request.resourceResolver.userID
-    }
+    String getScriptContent()
+
+    String getData()
+
+    String getUserId()
 }

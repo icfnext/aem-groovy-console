@@ -31,7 +31,7 @@ class DefaultBindingExtensionProvider implements BindingExtensionProvider {
 
     @Override
     Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
-        def resourceResolver = scriptContext.request.resourceResolver
+        def resourceResolver = scriptContext.resourceResolver
         def session = resourceResolver.adaptTo(Session)
 
         def bindingVariables = [

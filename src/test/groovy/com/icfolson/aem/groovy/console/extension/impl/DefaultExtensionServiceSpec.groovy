@@ -7,6 +7,7 @@ import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
+import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -117,7 +118,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, null, null)
+        def scriptContext = new DefaultScriptContext(request, response, null, null, null, null)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()
@@ -149,7 +150,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
             parameterMap = PARAMETERS
         }
 
-        def scriptContext = new ScriptContext(request)
+        def scriptContext = new DefaultScriptContext(request)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new TestScriptMetaClassExtensionProvider()

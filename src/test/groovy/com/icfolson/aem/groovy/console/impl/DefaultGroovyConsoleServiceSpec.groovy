@@ -4,17 +4,18 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.jcr.resource.JcrResourceConstants
 
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
@@ -47,8 +48,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
+        def scriptContext = new DefaultScriptContext(request, response)
+
         when:
-        def map = consoleService.runScript(request, response)
+        def map = consoleService.runScript(scriptContext)
 
         then:
         assertScriptResult(map)
@@ -97,6 +100,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     private Map<String, Object> getParameterMap() {
-        [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
+        [(GroovyConsoleConstants.PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
     }
 }

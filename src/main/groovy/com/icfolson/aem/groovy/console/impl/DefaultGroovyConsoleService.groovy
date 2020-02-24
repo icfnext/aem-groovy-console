@@ -2,7 +2,6 @@ package com.icfolson.aem.groovy.console.impl
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
-import com.google.common.base.Charsets
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.ScriptContext
@@ -16,7 +15,6 @@ import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
@@ -29,24 +27,17 @@ import javax.jcr.Node
 import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
 
-import static com.google.common.base.Preconditions.checkNotNull
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.CHARSET
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.FORMAT_RUNNING_TIME
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_FILE_NAME
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.TIME_ZONE_RUNNING_TIME
 
 @Component(service = GroovyConsoleService, immediate = true)
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
-
-    private static final String CHARSET = Charsets.UTF_8.name()
-
-    static final String PARAMETER_FILE_NAME = "fileName"
-
-    static final String PARAMETER_SCRIPT = "script"
-
-    static final String FORMAT_RUNNING_TIME = "HH:mm:ss.SSS"
-
-    static final String TIME_ZONE_RUNNING_TIME = "GMT"
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -71,22 +62,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     private ExtensionService extensionService
 
     @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        runScript(request, response, null)
-    }
-
-    @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath) {
-        def stream = new ByteArrayOutputStream()
-
-        def scriptContext = new ScriptContext(
-            request: request,
-            response: response,
-            printStream: new PrintStream(stream, true, CHARSET),
-            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty."),
-            data: request.getRequestParameter(PARAMETER_DATA)?.getString(CHARSET)
-        )
-
+    RunScriptResponse runScript(ScriptContext scriptContext) {
         def binding = getBinding(scriptContext)
 
         def runScriptResponse = null
@@ -106,33 +82,27 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug("script execution completed, running time = {}", runningTime)
 
-            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, stream.toString(CHARSET),
-                runningTime)
+            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result,
+                scriptContext.outputStream.toString(CHARSET), runningTime)
 
             auditAndNotify(runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CHARSET), e)
+            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+                scriptContext.outputStream.toString(CHARSET), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CHARSET), t)
+            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+                scriptContext.outputStream.toString(CHARSET), t)
 
             auditAndNotify(runScriptResponse)
         } finally {
-            stream.close()
+            scriptContext.outputStream.close()
         }
 
         runScriptResponse
-    }
-
-    @Override
-    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response,
-        List<String> scriptPaths) {
-        scriptPaths.collect { scriptPath ->
-            runScript(request, response, scriptPath)
-        }
     }
 
     @Override
@@ -172,14 +142,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     // internals
 
-    private String getScriptContent(SlingHttpServletRequest request, String scriptPath) {
-        if (scriptPath) {
-            loadScriptContent(request, scriptPath)
-        } else {
-            request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CHARSET)
-        }
-    }
-
     private void auditAndNotify(RunScriptResponse response) {
         if (!configurationService.auditDisabled) {
             auditService.createAuditRecord(response)
@@ -203,21 +165,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     private CompilerConfiguration getConfiguration() {
         new CompilerConfiguration().addCompilationCustomizers(extensionService.compilationCustomizers
             as CompilationCustomizer[])
-    }
-
-    private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {
-        def session = request.resourceResolver.adaptTo(Session)
-
-        def binary = session.getNode(scriptPath)
-            .getNode(JcrConstants.JCR_CONTENT)
-            .getProperty(JcrConstants.JCR_DATA)
-            .binary
-
-        def scriptContent = binary.stream.text
-
-        binary.dispose()
-
-        scriptContent
     }
 
     private void saveFile(Session session, Node folderNode, String script, String fileName, Date date,

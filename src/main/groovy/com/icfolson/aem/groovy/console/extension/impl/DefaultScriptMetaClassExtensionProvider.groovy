@@ -31,7 +31,7 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
     @Override
     Closure getScriptMetaClass(ScriptContext scriptContext) {
-        def resourceResolver = scriptContext.request.resourceResolver
+        def resourceResolver = scriptContext.resourceResolver
         def session = resourceResolver.adaptTo(Session)
         def pageManager = resourceResolver.adaptTo(PageManager)
 
