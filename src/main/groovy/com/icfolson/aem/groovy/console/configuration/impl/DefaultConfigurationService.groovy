@@ -49,7 +49,7 @@ class DefaultConfigurationService implements ConfigurationService {
 
             LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
 
-            hasPermission = allowedGroups ? user.admin || memberOfGroupIds.intersect(allowedGroups as Iterable) : false
+            hasPermission = user.admin || (allowedGroups ? memberOfGroupIds.intersect(allowedGroups as Iterable) : false)
         } finally {
             resourceResolver.close()
         }
