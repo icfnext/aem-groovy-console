@@ -1,13 +1,13 @@
 package com.icfolson.aem.groovy.console.api.impl
 
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.ServletScriptContext
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 
 @TupleConstructor
-class DefaultScriptContext implements ScriptContext {
+class DefaultScriptContext implements ServletScriptContext {
 
     SlingHttpServletRequest request
 
