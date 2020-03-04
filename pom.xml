@@ -346,6 +346,11 @@
             <artifactId>org.osgi.service.metatype.annotations</artifactId>
             <version>1.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.component</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 
         <!-- provided -->
         <dependency>
@@ -376,6 +381,18 @@
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
             <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.annotation</artifactId>
+            <version>6.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
