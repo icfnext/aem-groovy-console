@@ -5,7 +5,8 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
@@ -48,7 +49,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
         def outputStream = new ByteArrayOutputStream()
 
-        def scriptContext = new DefaultScriptContext(
+        def scriptContext = new RequestScriptContext(
             request: request,
             response: response,
             outputStream: outputStream,
@@ -75,8 +76,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             parameterMap = this.parameterMap
         }
 
+        def scriptData = new RequestScriptData(request)
+
         when:
-        consoleService.saveScript(request)
+        consoleService.saveScript(scriptData)
 
         then:
         assertNodeExists(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER)

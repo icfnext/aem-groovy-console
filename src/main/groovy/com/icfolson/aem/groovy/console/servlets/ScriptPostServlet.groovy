@@ -4,7 +4,7 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.api.impl.DefaultScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import groovy.util.logging.Slf4j
 import org.apache.sling.api.SlingHttpServletRequest
@@ -70,7 +70,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
     private ScriptContext getScriptContext(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath) {
         def outputStream = new ByteArrayOutputStream()
 
-        new DefaultScriptContext(
+        new RequestScriptContext(
             request: request,
             response: response,
             outputStream: outputStream,

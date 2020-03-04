@@ -5,6 +5,7 @@ import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.ScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.extension.ExtensionService
@@ -14,7 +15,6 @@ import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
-import org.apache.sling.api.SlingHttpServletRequest
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
@@ -28,10 +28,7 @@ import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.CHARSET
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.FORMAT_RUNNING_TIME
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_FILE_NAME
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.TIME_ZONE_RUNNING_TIME
 
@@ -107,20 +104,17 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
     @Override
     @Synchronized
-    SaveScriptResponse saveScript(SlingHttpServletRequest request) {
-        def session = request.resourceResolver.adaptTo(Session)
+    SaveScriptResponse saveScript(ScriptData scriptData) {
+        def session = scriptData.resourceResolver.adaptTo(Session)
         def folderNode = JcrUtil.createPath(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER, session)
 
-        def name = request.getParameter(PARAMETER_FILE_NAME)
-        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
+        def fileName = scriptData.fileName
 
         if (folderNode.hasNode(fileName)) {
             folderNode.getNode(fileName).remove()
         }
 
-        def script = request.getParameter(PARAMETER_SCRIPT)
-
-        saveFile(session, folderNode, script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
+        saveFile(session, folderNode, scriptData.scriptContent, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
         new SaveScriptResponse(fileName)
     }

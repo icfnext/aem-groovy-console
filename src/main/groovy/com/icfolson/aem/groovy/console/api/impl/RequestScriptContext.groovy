@@ -7,7 +7,7 @@ import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 
 @TupleConstructor
-class DefaultScriptContext implements ServletScriptContext {
+class RequestScriptContext implements ServletScriptContext {
 
     SlingHttpServletRequest request
 
