@@ -98,3 +98,11 @@ td.open-record, td.delete-record {
 .popover {
     max-width: 100%;
 }
+
+.btn-toolbar .form-inline {
+    margin: 10px 0 5px 5px;
+}
+
+.btn-toolbar .form-inline .checkbox {
+    margin-right: 5px;
+}

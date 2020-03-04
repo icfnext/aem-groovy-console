@@ -158,7 +158,9 @@ var GroovyConsole = function () {
 
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script,
-                        data: dataEditor.getSession().getValue()
+                        data: dataEditor.getSession().getValue(),
+                        async: $('input[name="async"]')[0].checked,
+                        dryRun: $('input[name="dryRun"]')[0].checked
                     }).done(function (response) {
                         GroovyConsole.showResult(response);
                     }).fail(function (jqXHR) {
@@ -287,7 +289,7 @@ var GroovyConsole = function () {
 
                 $.each(json.columns, function (i, columnName) {
                     headerRow.append('<th>' + columnName + '</th>');
-                    columns.push({ title: columnName });
+                    columns.push({title: columnName});
                 });
 
                 resultDataTable = resultTable.DataTable({

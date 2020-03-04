@@ -17,7 +17,6 @@ import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static com.google.common.base.Preconditions.checkNotNull
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATH
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATHS
@@ -75,8 +74,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             response: response,
             outputStream: outputStream,
             printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty."),
-            data: request.getRequestParameter(PARAMETER_DATA)?.getString(Charsets.UTF_8.name())
+            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty.")
         )
     }
 

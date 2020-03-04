@@ -21,4 +21,9 @@ class JobScriptContext implements ScriptContext {
     String getUserId() {
         resourceResolver.userID
     }
+
+    @Override
+    boolean isAsync() {
+        false
+    }
 }

@@ -3,11 +3,18 @@ package com.icfolson.aem.groovy.console.impl
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
+import com.google.common.util.concurrent.FutureCallback
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.ListeningExecutorService
+import com.google.common.util.concurrent.MoreExecutors
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptData
+import com.icfolson.aem.groovy.console.api.impl.AsyncScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.configuration.impl.ConfigurationServiceProperties
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
@@ -18,7 +25,9 @@ import org.apache.jackrabbit.util.Text
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
+import org.osgi.service.component.annotations.Activate
 import org.osgi.service.component.annotations.Component
+import org.osgi.service.component.annotations.Deactivate
 import org.osgi.service.component.annotations.Reference
 import org.osgi.service.component.annotations.ReferenceCardinality
 import org.osgi.service.component.annotations.ReferencePolicy
@@ -26,6 +35,7 @@ import org.osgi.service.component.annotations.ReferencePolicy
 import javax.jcr.Node
 import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executors
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.CHARSET
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.FORMAT_RUNNING_TIME
@@ -58,8 +68,45 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
+    private ListeningExecutorService executorService
+
     @Override
     RunScriptResponse runScript(ScriptContext scriptContext) {
+        def runScriptResponse
+
+        if (scriptContext.async) {
+            def asyncResourceResolver = scriptContext.resourceResolver.clone(null)
+            def asyncScriptContext = new AsyncScriptContext(scriptContext, asyncResourceResolver)
+
+            def asyncResult = executorService.submit {
+                try {
+                    getRunScriptResponse(asyncScriptContext)
+                } finally {
+                    asyncResourceResolver.close()
+                }
+            } as ListenableFuture<RunScriptResponse>
+
+            Futures.addCallback(asyncResult, new FutureCallback<RunScriptResponse>() {
+                @Override
+                void onSuccess(RunScriptResponse result) {
+                    LOG.info("asynchronous groovy script completed")
+                }
+
+                @Override
+                void onFailure(Throwable throwable) {
+                    LOG.error("error running asynchronous groovy script", throwable)
+                }
+            }, executorService)
+
+            runScriptResponse = RunScriptResponse.fromAsync(scriptContext)
+        } else {
+            runScriptResponse = getRunScriptResponse(scriptContext)
+        }
+
+        runScriptResponse
+    }
+
+    private RunScriptResponse getRunScriptResponse(ScriptContext scriptContext) {
         def binding = getBinding(scriptContext)
 
         def runScriptResponse = null
@@ -117,6 +164,17 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         saveFile(session, folderNode, scriptData.scriptContent, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
         new SaveScriptResponse(fileName)
+    }
+
+    @Activate
+    void activate(ConfigurationServiceProperties properties) {
+        executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(properties.threadPoolSize()))
+    }
+
+    @Deactivate
+    void deactivate() {
+        // ensure executor service is shutdown before allowing deactivation of the service
+        executorService.shutdown()
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

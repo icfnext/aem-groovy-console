@@ -118,7 +118,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
-        def scriptContext = new RequestScriptContext(request, response, null, null, null, null)
+        def scriptContext = new RequestScriptContext(request, response, null, null, null)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()

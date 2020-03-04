@@ -29,4 +29,8 @@ public @interface ConfigurationServiceProperties {
     @AttributeDefinition(name = "Display All Audit Records?",
         description = "If enabled, all audit records (including records for other users) will be displayed in the console history.")
     boolean auditDisplayAll() default false;
+
+    @AttributeDefinition(name = "Thread Pool Size",
+        description = "Number of threads available for running asynchronous Groovy scripts.")
+    int threadPoolSize() default 1;
 }

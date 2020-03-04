@@ -32,6 +32,8 @@ class GroovyConsoleConstants {
 
     public static final String PARAMETER_DATA = "data"
 
+    public static final String PARAMETER_ASYNC = "async"
+
     public static final String AUDIT_NODE_NAME = "audit"
 
     public static final String AUDIT_RECORD_NODE_PREFIX = "record"
