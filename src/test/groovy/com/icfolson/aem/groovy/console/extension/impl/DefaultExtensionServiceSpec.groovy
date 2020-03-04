@@ -7,6 +7,7 @@ import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -36,7 +37,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         @Override
         Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
             [
-                parameterNames: new BindingVariable(scriptContext.request.parameterMap.keySet()),
+                parameterNames: new BindingVariable((scriptContext as RequestScriptContext).request.parameterMap.keySet()),
                 selectors: new BindingVariable([])
             ]
         }
@@ -47,8 +48,8 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
         @Override
         Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
             [
-                path: new BindingVariable(scriptContext.request.requestPathInfo.resourcePath),
-                selectors: new BindingVariable(scriptContext.request.requestPathInfo.selectors as List)
+                path: new BindingVariable((scriptContext as RequestScriptContext).request.requestPathInfo.resourcePath),
+                selectors: new BindingVariable((scriptContext as RequestScriptContext).request.requestPathInfo.selectors as List)
             ]
         }
     }
@@ -117,7 +118,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
 
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, null, null)
+        def scriptContext = new RequestScriptContext(request, response, null, null, null, null)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new FirstBindingExtensionProvider()
@@ -149,7 +150,7 @@ class DefaultExtensionServiceSpec extends ProsperSpec {
             parameterMap = PARAMETERS
         }
 
-        def scriptContext = new ScriptContext(request)
+        def scriptContext = new RequestScriptContext(request)
 
         def extensionService = new DefaultExtensionService()
         def firstProvider = new TestScriptMetaClassExtensionProvider()

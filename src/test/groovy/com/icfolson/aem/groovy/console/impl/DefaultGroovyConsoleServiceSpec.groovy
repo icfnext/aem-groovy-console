@@ -3,18 +3,21 @@ package com.icfolson.aem.groovy.console.impl
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
+import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionProvider
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.jcr.resource.JcrResourceConstants
 
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_FILE_NAME
-import static com.icfolson.aem.groovy.console.impl.DefaultGroovyConsoleService.PARAMETER_SCRIPT
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 
@@ -41,14 +44,21 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
         setup:
         def consoleService = slingContext.getService(GroovyConsoleService)
 
-        def request = requestBuilder.build {
-            parameterMap = this.parameterMap
-        }
-
+        def request = requestBuilder.build()
         def response = responseBuilder.build()
 
+        def outputStream = new ByteArrayOutputStream()
+
+        def scriptContext = new RequestScriptContext(
+            request: request,
+            response: response,
+            outputStream: outputStream,
+            printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
+            scriptContent: scriptAsString
+        )
+
         when:
-        def map = consoleService.runScript(request, response)
+        def map = consoleService.runScript(scriptContext)
 
         then:
         assertScriptResult(map)
@@ -66,8 +76,10 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             parameterMap = this.parameterMap
         }
 
+        def scriptData = new RequestScriptData(request)
+
         when:
-        consoleService.saveScript(request)
+        consoleService.saveScript(scriptData)
 
         then:
         assertNodeExists(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER)
@@ -97,6 +109,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     private Map<String, Object> getParameterMap() {
-        [(PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
+        [(GroovyConsoleConstants.PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
     }
 }

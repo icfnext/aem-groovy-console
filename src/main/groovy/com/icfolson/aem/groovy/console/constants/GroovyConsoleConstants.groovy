@@ -1,5 +1,7 @@
 package com.icfolson.aem.groovy.console.constants
 
+import com.google.common.base.Charsets
+
 class GroovyConsoleConstants {
 
     public static final String PATH_CONSOLE_ROOT = "/var/groovyconsole"
@@ -7,6 +9,14 @@ class GroovyConsoleConstants {
     public static final String PATH_SCRIPTS_FOLDER = "$PATH_CONSOLE_ROOT/scripts"
 
     public static final String EXTENSION_GROOVY = ".groovy"
+
+    public static final String CHARSET = Charsets.UTF_8.name()
+
+    public static final String FORMAT_RUNNING_TIME = "HH:mm:ss.SSS"
+
+    public static final String TIME_ZONE_RUNNING_TIME = "GMT"
+
+    public static final String PARAMETER_FILE_NAME = "fileName"
 
     public static final String PARAMETER_SCRIPT_PATH = "scriptPath"
 

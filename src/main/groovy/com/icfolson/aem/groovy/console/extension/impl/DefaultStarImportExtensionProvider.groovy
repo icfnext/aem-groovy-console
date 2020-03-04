@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Component
 class DefaultStarImportExtensionProvider implements StarImportExtensionProvider {
 
     private static final String AEM_JAVADOC_PREFIX = "https://helpx.adobe" +
-        ".com/experience-manager/6-4/sites/developing/using/reference-materials/javadoc"
+        ".com/experience-manager/6-5/sites/developing/using/reference-materials/javadoc"
 
     private static final String JCR_JAVADOC_PREFIX = "https://docs.adobe.com/docs/en/spec/javax.jcr/javadocs/jcr-2.0"
 
@@ -18,6 +18,7 @@ class DefaultStarImportExtensionProvider implements StarImportExtensionProvider 
     private static final String JAVADOC_SUFFIX = "package-summary.html"
 
     private static final Set<StarImport> IMPORTS = ImmutableSet.of(
+        new StarImport("com.day.cq.dam.api", "$AEM_JAVADOC_PREFIX/com/day/cq/dam/api/$JAVADOC_SUFFIX"),
         new StarImport("com.day.cq.search", "$AEM_JAVADOC_PREFIX/com/day/cq/search/$JAVADOC_SUFFIX"),
         new StarImport("com.day.cq.tagging", "$AEM_JAVADOC_PREFIX/com/day/cq/tagging/$JAVADOC_SUFFIX"),
         new StarImport("com.day.cq.wcm.api", "$AEM_JAVADOC_PREFIX/com/day/cq/wcm/api/$JAVADOC_SUFFIX"),
