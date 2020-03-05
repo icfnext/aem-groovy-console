@@ -16,6 +16,12 @@ class GroovyConsoleConstants {
 
     public static final String TIME_ZONE_RUNNING_TIME = "GMT"
 
+    // request parameters
+
+    public static final String PARAMETER_TITLE = "title"
+
+    public static final String PARAMETER_DESCRIPTION = "description"
+
     public static final String PARAMETER_FILE_NAME = "fileName"
 
     public static final String PARAMETER_SCRIPT_PATH = "scriptPath"
@@ -33,6 +39,25 @@ class GroovyConsoleConstants {
     public static final String PARAMETER_DATA = "data"
 
     public static final String PARAMETER_ASYNC = "async"
+
+    // job properties
+
+    public static final String JOB_TOPIC = "groovyconsole/job"
+
+    public static final String JOB_PROPERTY_CRON_EXPRESSION = "cronExpression"
+
+    public static final String JOB_PROPERTY_EMAIL_TO = "emailTo"
+
+    public static final Set<String> JOB_PROPERTIES = [
+        PARAMETER_TITLE,
+        PARAMETER_DESCRIPTION,
+        PARAMETER_SCRIPT,
+        PARAMETER_DATA,
+        JOB_PROPERTY_CRON_EXPRESSION,
+        JOB_PROPERTY_EMAIL_TO
+    ] as Set
+
+    // audit
 
     public static final String AUDIT_NODE_NAME = "audit"
 

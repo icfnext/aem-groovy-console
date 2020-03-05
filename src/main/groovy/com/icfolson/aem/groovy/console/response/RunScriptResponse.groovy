@@ -20,7 +20,7 @@ class RunScriptResponse {
     private static final int LEVEL_USERID = 4
 
     static RunScriptResponse fromAsync(ScriptContext scriptContext) {
-        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, "", "", "", "", scriptContext.userId)
+        new RunScriptResponse(scriptContext.script, scriptContext.data, "", "", "", "", scriptContext.userId)
     }
 
     static RunScriptResponse fromResult(ScriptContext scriptContext, Object result, String output, String runningTime) {
@@ -32,14 +32,14 @@ class RunScriptResponse {
             resultString = result as String
         }
 
-        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, resultString, output, "", runningTime,
+        new RunScriptResponse(scriptContext.script, scriptContext.data, resultString, output, "", runningTime,
             scriptContext.userId)
     }
 
     static RunScriptResponse fromException(ScriptContext scriptContext, String output, Throwable throwable) {
         def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
 
-        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, "", output, exceptionStackTrace, "",
+        new RunScriptResponse(scriptContext.script, scriptContext.data, "", output, exceptionStackTrace, "",
             scriptContext.userId)
     }
 

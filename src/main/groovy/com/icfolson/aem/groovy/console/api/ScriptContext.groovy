@@ -33,7 +33,7 @@ interface ScriptContext {
      *
      * @return script content
      */
-    String getScriptContent()
+    String getScript()
 
     /**
      * JSON or String data to be consumed by script.

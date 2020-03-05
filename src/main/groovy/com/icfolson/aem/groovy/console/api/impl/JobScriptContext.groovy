@@ -13,7 +13,7 @@ class JobScriptContext implements ScriptContext {
 
     PrintStream printStream
 
-    String scriptContent
+    String script
 
     String data
 

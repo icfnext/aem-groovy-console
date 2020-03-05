@@ -39,7 +39,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, script, "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, script)
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, output, runningTime)
 
@@ -63,7 +63,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content", null)
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
         def exception = new RuntimeException("")
 
@@ -85,7 +85,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content", "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 
@@ -105,7 +105,7 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content", "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
         def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 

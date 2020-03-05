@@ -21,7 +21,7 @@ class RequestScriptContext implements ServletScriptContext {
 
     PrintStream printStream
 
-    String scriptContent
+    String script
 
     @Override
     ResourceResolver getResourceResolver() {

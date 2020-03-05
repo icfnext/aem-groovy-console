@@ -9,12 +9,14 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.ListeningExecutorService
 import com.google.common.util.concurrent.MoreExecutors
 import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.JobProperties
 import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptData
 import com.icfolson.aem.groovy.console.api.impl.AsyncScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.configuration.impl.ConfigurationServiceProperties
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
@@ -22,6 +24,8 @@ import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
+import org.apache.sling.event.jobs.Job
+import org.apache.sling.event.jobs.JobManager
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
@@ -68,6 +72,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
+    @Reference
+    private JobManager jobManager
+
     private ListeningExecutorService executorService
 
     @Override
@@ -112,7 +119,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def runScriptResponse = null
 
         try {
-            def script = new GroovyShell(binding, configuration).parse(scriptContext.scriptContent)
+            def script = new GroovyShell(binding, configuration).parse(scriptContext.script)
 
             extensionService.getScriptMetaClasses(scriptContext).each { meta ->
                 script.metaClass(meta)
@@ -164,6 +171,11 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         saveFile(session, folderNode, scriptData.scriptContent, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
         new SaveScriptResponse(fileName)
+    }
+
+    @Override
+    Job addScheduledJob(JobProperties jobProperties) {
+        jobManager.addJob(GroovyConsoleConstants.JOB_TOPIC, jobProperties)
     }
 
     @Activate

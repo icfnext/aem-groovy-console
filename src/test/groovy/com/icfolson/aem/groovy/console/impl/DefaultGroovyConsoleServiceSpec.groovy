@@ -14,6 +14,7 @@ import com.icfolson.aem.groovy.console.extension.impl.DefaultBindingExtensionPro
 import com.icfolson.aem.groovy.console.extension.impl.DefaultExtensionService
 import com.icfolson.aem.groovy.console.extension.impl.DefaultScriptMetaClassExtensionProvider
 import com.icfolson.aem.prosper.specs.ProsperSpec
+import org.apache.sling.event.jobs.JobManager
 import org.apache.sling.jcr.resource.JcrResourceConstants
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
@@ -30,6 +31,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     static final def PATH_FILE_CONTENT = "$PATH_FILE/${JcrConstants.JCR_CONTENT}"
 
     def setupSpec() {
+        slingContext.registerService(JobManager, Mock(JobManager))
         slingContext.registerService(QueryBuilder, Mock(QueryBuilder))
         slingContext.registerService(ConfigurationService, Mock(ConfigurationService))
         slingContext.registerService(AuditService, Mock(AuditService))
@@ -54,7 +56,7 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
             response: response,
             outputStream: outputStream,
             printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-            scriptContent: scriptAsString
+            script: scriptAsString
         )
 
         when:
