@@ -48,6 +48,4 @@ interface ScriptContext {
      * @return user ID
      */
     String getUserId()
-
-    boolean isAsync()
 }

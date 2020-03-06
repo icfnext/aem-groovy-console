@@ -15,7 +15,7 @@ public @interface ConfigurationServiceProperties {
     String[] emailRecipients() default {};
 
     @AttributeDefinition(name = "Allowed Groups",
-        description = "List of group names that are authorized to use the console.  Required.  If empty, no script executions will be allowed.",
+        description = "List of group names that are authorized to use the console.  By default, only the 'admin' user has permission to execute scripts.",
         cardinality = 20)
     String[] allowedGroups() default {};
 
@@ -29,8 +29,4 @@ public @interface ConfigurationServiceProperties {
     @AttributeDefinition(name = "Display All Audit Records?",
         description = "If enabled, all audit records (including records for other users) will be displayed in the console history.")
     boolean auditDisplayAll() default false;
-
-    @AttributeDefinition(name = "Thread Pool Size",
-        description = "Number of threads available for running asynchronous Groovy scripts.")
-    int threadPoolSize() default 1;
 }

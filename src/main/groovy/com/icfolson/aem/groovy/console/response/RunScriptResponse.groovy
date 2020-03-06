@@ -19,10 +19,6 @@ class RunScriptResponse {
 
     private static final int LEVEL_USERID = 4
 
-    static RunScriptResponse fromAsync(ScriptContext scriptContext) {
-        new RunScriptResponse(scriptContext.script, scriptContext.data, "", "", "", "", scriptContext.userId)
-    }
-
     static RunScriptResponse fromResult(ScriptContext scriptContext, Object result, String output, String runningTime) {
         def resultString
 

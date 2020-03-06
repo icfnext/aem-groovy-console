@@ -3,7 +3,8 @@
 <div class="container">
     <sly data-sly-include="toolbar.html"></sly>
 
-    <div class="panel-group" id="data-group">
+    <div class="panel-group" id="toolbar-group">
+        <sly data-sly-include="scheduler.html"></sly>
         <sly data-sly-include="data.html"></sly>
     </div>
 
@@ -25,7 +26,7 @@
     <div id="result-table" class="alert alert-success" role="alert" style="display: none;">
         <table class="table table-striped table-bordered">
             <thead>
-                <tr></tr>
+            <tr></tr>
             </thead>
             <tbody></tbody>
         </table>

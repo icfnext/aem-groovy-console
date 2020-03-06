@@ -74,19 +74,19 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             response: response,
             outputStream: outputStream,
             printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty.")
+            script: checkNotNull(getScript(request, scriptPath), "Script cannot be empty.")
         )
     }
 
-    private String getScriptContent(SlingHttpServletRequest request, String scriptPath) {
+    private String getScript(SlingHttpServletRequest request, String scriptPath) {
         if (scriptPath) {
-            loadScriptContent(request, scriptPath)
+            loadScript(request, scriptPath)
         } else {
             request.getRequestParameter(PARAMETER_SCRIPT)?.getString(Charsets.UTF_8.name())
         }
     }
 
-    private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {
+    private String loadScript(SlingHttpServletRequest request, String scriptPath) {
         def session = request.resourceResolver.adaptTo(Session)
 
         def binary = session.getNode(scriptPath)
@@ -94,10 +94,10 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             .getProperty(JcrConstants.JCR_DATA)
             .binary
 
-        def scriptContent = binary.stream.text
+        def script = binary.stream.text
 
         binary.dispose()
 
-        scriptContent
+        script
     }
 }

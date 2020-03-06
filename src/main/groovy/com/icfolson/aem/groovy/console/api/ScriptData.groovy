@@ -26,5 +26,5 @@ interface ScriptData {
      *
      * @return script content
      */
-    String getScriptContent()
+    String getScript()
 }

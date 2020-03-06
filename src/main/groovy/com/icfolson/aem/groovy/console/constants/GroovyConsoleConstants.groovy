@@ -38,8 +38,6 @@ class GroovyConsoleConstants {
 
     public static final String PARAMETER_DATA = "data"
 
-    public static final String PARAMETER_ASYNC = "async"
-
     // job properties
 
     public static final String JOB_TOPIC = "groovyconsole/job"

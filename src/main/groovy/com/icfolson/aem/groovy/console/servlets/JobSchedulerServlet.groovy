@@ -32,7 +32,7 @@ class JobSchedulerServlet extends AbstractJsonResponseServlet {
         if (configurationService.hasPermission(request)) {
             def jobProperties = JobProperties.fromRequest(request)
 
-            LOG.debug("adding job with properties : {}", jobProperties)
+            LOG.debug("adding job with properties : {}", jobProperties.toMap())
 
             consoleService.addScheduledJob(jobProperties)
 

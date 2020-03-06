@@ -19,7 +19,7 @@ body {
     visibility: hidden;
 }
 
-#data-group {
+#toolbar-group {
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -83,7 +83,7 @@ td.open-record, td.delete-record {
     overflow-x: hidden;
 }
 
-.form-group {
+#history .form-group {
     margin-bottom: 0;
 }
 
@@ -97,12 +97,4 @@ td.open-record, td.delete-record {
 
 .popover {
     max-width: 100%;
-}
-
-.btn-toolbar .form-inline {
-    margin: 10px 0 5px 5px;
-}
-
-.btn-toolbar .form-inline .checkbox {
-    margin-right: 5px;
 }

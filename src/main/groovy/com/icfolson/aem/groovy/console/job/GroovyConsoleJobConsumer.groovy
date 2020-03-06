@@ -3,6 +3,7 @@ package com.icfolson.aem.groovy.console.job
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.impl.JobScriptContext
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import groovy.util.logging.Slf4j
 import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.event.jobs.Job
@@ -24,6 +25,10 @@ class GroovyConsoleJobConsumer implements JobConsumer {
 
     @Override
     JobResult process(Job job) {
+        LOG.info("executing groovy console job with properties : {}", job.propertyNames.collectEntries { propertyName ->
+            [propertyName, job.getProperty(propertyName)]
+        })
+
         def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
 
         resourceResolver.withCloseable {
@@ -33,13 +38,14 @@ class GroovyConsoleJobConsumer implements JobConsumer {
                 resourceResolver: resourceResolver,
                 outputStream: outputStream,
                 printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-                scriptContent: job.getProperty("scriptContent", String),
-                data: job.getProperty("data", String)
+                script: job.getProperty(GroovyConsoleConstants.PARAMETER_SCRIPT, String),
+                data: job.getProperty(GroovyConsoleConstants.PARAMETER_DATA, String)
             )
 
-            def runScriptResponse = groovyConsoleService.runScript(scriptContext)
+            groovyConsoleService.runScript(scriptContext)
 
-            runScriptResponse.exceptionStackTrace ? JobResult.CANCEL : JobResult.OK
+            // runScriptResponse.exceptionStackTrace ? JobResult.CANCEL : JobResult.OK
+            JobResult.OK
         }
     }
 }

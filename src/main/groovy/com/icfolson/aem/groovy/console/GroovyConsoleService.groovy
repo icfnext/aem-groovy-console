@@ -5,7 +5,6 @@ import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptData
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
-import org.apache.sling.event.jobs.Job
 
 /**
  * Service for executing and saving Groovy scripts.
@@ -29,10 +28,9 @@ interface GroovyConsoleService {
     SaveScriptResponse saveScript(ScriptData scriptData)
 
     /**
-     * Schedule a Groovy Console job execution.
+     * Run or schedule a Groovy Console job execution.
      *
-     * @param jobProperties map of job properties
-     * @return job
+     * @param jobProperties job properties
      */
-    Job addScheduledJob(JobProperties jobProperties)
+    void addScheduledJob(JobProperties jobProperties)
 }

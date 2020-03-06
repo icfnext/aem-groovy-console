@@ -27,7 +27,7 @@ class RequestScriptData implements ScriptData {
     }
 
     @Override
-    String getScriptContent() {
+    String getScript() {
         request.getParameter(PARAMETER_SCRIPT)
     }
 }

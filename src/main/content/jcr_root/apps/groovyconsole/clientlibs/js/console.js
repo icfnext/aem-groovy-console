@@ -138,6 +138,51 @@ var GroovyConsole = function () {
                 }
             });
 
+            $('#schedule-job').click(function () {
+                if ($('#schedule-job').hasClass('disabled')) {
+                    return;
+                }
+
+                var script = scriptEditor.getSession().getValue();
+
+                if (script.length) {
+                    scriptEditor.setReadOnly(true);
+                    dataEditor.setReadOnly(true);
+
+                    GroovyConsole.showLoader();
+                    GroovyConsole.disableButtons();
+
+                    $('#schedule-job-text').text('Scheduling...');
+
+                    $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/jobs.json', {
+                        script: script,
+                        data: dataEditor.getSession().getValue(),
+                        title: $('input[name="title"]').val(),
+                        description: $('input[name="description"]').val(),
+                        cronExpression: $('input[name="cronExpression"]').val()
+                    }).done(function (response) {
+                        GroovyConsole.showSuccess('Job scheduled successfully.');
+                    }).fail(function (jqXHR) {
+                        if (jqXHR.status === 403) {
+                            GroovyConsole.showError('You do not have permission to schedule jobs in the Groovy Console.');
+                        } else {
+                            GroovyConsole.showError('Job scheduling failed.  Check error.log file.');
+                        }
+                    }).always(function () {
+                        scriptEditor.setReadOnly(false);
+                        dataEditor.setReadOnly(false);
+
+                        GroovyConsole.hideLoader();
+                        GroovyConsole.enableButtons();
+                        // GroovyConsole.Audit.refreshAuditRecords();
+
+                        $('#schedule-job-text').text('Schedule Job');
+                    });
+                } else {
+                    GroovyConsole.showError('Script is empty.');
+                }
+            });
+
             $('#run-script').click(function () {
                 if ($('#run-script').hasClass('disabled')) {
                     return;
@@ -158,9 +203,7 @@ var GroovyConsole = function () {
 
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/post.json', {
                         script: script,
-                        data: dataEditor.getSession().getValue(),
-                        async: $('input[name="async"]')[0].checked,
-                        dryRun: $('input[name="dryRun"]')[0].checked
+                        data: dataEditor.getSession().getValue()
                     }).done(function (response) {
                         GroovyConsole.showResult(response);
                     }).fail(function (jqXHR) {

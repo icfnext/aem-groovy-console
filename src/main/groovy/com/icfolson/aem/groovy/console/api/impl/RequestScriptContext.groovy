@@ -7,7 +7,6 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_ASYNC
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
 
 @TupleConstructor
@@ -36,12 +35,5 @@ class RequestScriptContext implements ServletScriptContext {
     @Override
     String getData() {
         request.getRequestParameter(PARAMETER_DATA)?.getString(Charsets.UTF_8.name())
-    }
-
-    @Override
-    boolean isAsync() {
-        def async = request.getRequestParameter(PARAMETER_ASYNC)?.getString(Charsets.UTF_8.name())
-
-        Boolean.valueOf(async)
     }
 }

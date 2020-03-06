@@ -1,38 +1,37 @@
 package com.icfolson.aem.groovy.console.api
 
 import com.google.common.base.Charsets
+import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_PROPERTIES
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_PROPERTY_CRON_EXPRESSION
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_PROPERTY_EMAIL_TO
 
-class JobProperties implements Map<String, Object> {
+@TupleConstructor
+class JobProperties {
 
-    @Delegate
-    Map<String, Object> properties = [:]
+    Map<String, Object> properties
 
     static JobProperties fromRequest(SlingHttpServletRequest request) {
-        def jobProperties = new JobProperties()
+        def properties = JOB_PROPERTIES.collectEntries { propertyName ->
+            [propertyName, request.getRequestParameter(propertyName)?.getString(Charsets.UTF_8.name())]
+        }.findAll { it.value != null }
 
-        JOB_PROPERTIES.each { propertyName ->
-            jobProperties[propertyName] = request.getRequestParameter(propertyName)?.getString(Charsets.UTF_8.name())
-        }
-
-        jobProperties
+        new JobProperties(properties)
     }
 
     List<String> getEmailTo() {
-        def emailTo = get(JOB_PROPERTY_EMAIL_TO) as String
+        def emailTo = properties.get(JOB_PROPERTY_EMAIL_TO) as String
 
         emailTo ? emailTo.tokenize(",")*.trim() : []
     }
 
     String getCronExpression() {
-        get(JOB_PROPERTY_CRON_EXPRESSION)
+        properties.get(JOB_PROPERTY_CRON_EXPRESSION)
     }
 
-    private JobProperties() {
-
+    Map<String, Object> toMap() {
+        properties
     }
 }
