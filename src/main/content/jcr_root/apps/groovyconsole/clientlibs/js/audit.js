@@ -2,6 +2,8 @@ GroovyConsole.Audit = function () {
 
     var AUDIT_URL = '/bin/groovyconsole/audit.json';
 
+    var DOWNLOAD_URL = '/bin/groovyconsole/download';
+
     var table;
 
     return {
@@ -26,6 +28,16 @@ GroovyConsole.Audit = function () {
                     {
                         data: 'exception',
                         orderable: false
+                    },
+                    {
+                        className: 'download-record',
+                        orderable: false,
+                        searchable: false,
+                        data: null,
+                        defaultContent: '<div class="btn-group" role="group">\n' +
+                            '  <button type="button" class="btn btn-default download-result">Result</button>\n' +
+                            '  <button type="button" class="btn btn-default download-output">Output</button>\n' +
+                            '</div>'
                     },
                     {
                         className: 'delete-record',
@@ -58,6 +70,21 @@ GroovyConsole.Audit = function () {
                     if (data.exception.length) {
                         $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
                     }
+
+                    $('td:eq(4) .download-result', row).click(function () {
+                        window.location = DOWNLOAD_URL + '?' + $.param({
+                            'userId': data.userId,
+                            'script': data.relativePath,
+                            'result': true
+                        });
+                    });
+
+                    $('td:eq(4) .download-output', row).click(function () {
+                        window.location = DOWNLOAD_URL + '?' + $.param({
+                            'userId': data.userId,
+                            'script': data.relativePath
+                        });
+                    });
                 }
             });
 

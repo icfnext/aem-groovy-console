@@ -99,6 +99,14 @@ td.edit-scheduled-job, td.delete-scheduled-job {
     width: 100%;
 }
 
+#history td {
+    vertical-align: middle;
+}
+
+#scheduled-jobs td {
+    vertical-align: middle;
+}
+
 .popover {
     max-width: 100%;
 }

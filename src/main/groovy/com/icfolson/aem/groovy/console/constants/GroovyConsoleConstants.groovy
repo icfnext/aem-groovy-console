@@ -18,6 +18,8 @@ class GroovyConsoleConstants {
 
     public static final String DATE_FORMAT_DISPLAY = "yyyy-MM-dd HH:mm:ss"
 
+    public static final String DATE_FORMAT_FILE_NAME = "yyyy-MM-dd'T'HHmmss"
+
     // request parameters/properties
 
     public static final String ID = "id"
@@ -47,6 +49,8 @@ class GroovyConsoleConstants {
     public static final String EMAIL_TO = "emailTo"
 
     public static final String DATE_CREATED = "dateCreated"
+
+    public static final String RESULT = "result"
 
     // job properties
 

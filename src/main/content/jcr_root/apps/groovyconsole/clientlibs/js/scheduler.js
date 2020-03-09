@@ -81,13 +81,13 @@ GroovyConsole.Scheduler = function () {
                         GroovyConsole.hideData();
                     }
 
+                    GroovyConsole.showScheduler();
+                    GroovyConsole.reset();
+
                     $('#scheduler-form input[name="title"]').val(response.title);
                     $('#scheduler-form input[name="description"]').val(response.description);
                     $('#scheduler-form input[name="cronExpression"]').val(response.cronExpression);
                     $('#scheduler-form input[type="checkbox"]').prop('checked', false);
-
-                    GroovyConsole.showScheduler();
-                    GroovyConsole.reset();
 
                     $('html, body').animate({scrollTop: 0});
                 });
