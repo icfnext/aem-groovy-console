@@ -126,11 +126,12 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     @Override
-    void addScheduledJob(JobProperties jobProperties) {
+    boolean addScheduledJob(JobProperties jobProperties) {
         if (jobProperties.cronExpression) {
             LOG.info("adding scheduled job with properties : {}", jobProperties.toMap())
 
             jobManager.createJob(GroovyConsoleConstants.JOB_TOPIC)
+                .properties(jobProperties.toMap())
                 .schedule()
                 .cron(jobProperties.cronExpression)
                 .add()

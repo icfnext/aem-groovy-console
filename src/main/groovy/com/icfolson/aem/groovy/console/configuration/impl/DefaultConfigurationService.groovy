@@ -31,6 +31,8 @@ class DefaultConfigurationService implements ConfigurationService {
 
     Set<String> allowedGroups
 
+    Set<String> allowedScheduledJobsGroups
+
     boolean vanityPathEnabled
 
     boolean auditDisabled
@@ -39,22 +41,12 @@ class DefaultConfigurationService implements ConfigurationService {
 
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
-        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
+        isAdminOrAllowedGroupMember(request, allowedGroups)
+    }
 
-        def hasPermission = false
-
-        try {
-            def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
-            def memberOfGroupIds = user.memberOf()*.ID
-
-            LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
-
-            hasPermission = user.admin || (allowedGroups ? memberOfGroupIds.intersect(allowedGroups as Iterable) : false)
-        } finally {
-            resourceResolver.close()
-        }
-
-        hasPermission
+    @Override
+    boolean hasScheduledJobPermission(SlingHttpServletRequest request) {
+        isAdminOrAllowedGroupMember(request, allowedScheduledJobsGroups)
     }
 
     @Override
@@ -69,8 +61,28 @@ class DefaultConfigurationService implements ConfigurationService {
         emailEnabled = properties.emailEnabled()
         emailRecipients = (properties.emailRecipients() ?: []).findAll() as Set
         allowedGroups = (properties.allowedGroups() ?: []).findAll() as Set
+        allowedScheduledJobsGroups = (properties.allowedScheduledJobsGroups() ?: []).findAll() as Set
         vanityPathEnabled = properties.vanityPathEnabled()
         auditDisabled = properties.auditDisabled()
         displayAllAuditRecords = properties.auditDisplayAll()
+    }
+
+    private boolean isAdminOrAllowedGroupMember(SlingHttpServletRequest request, Set<String> groupIds) {
+        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
+
+        def isAdminOrAllowedGroupMember = false
+
+        try {
+            def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
+            def memberOfGroupIds = user.memberOf()*.ID
+
+            LOG.debug("member of group IDs : {}, allowed group IDs : {}", memberOfGroupIds, groupIds)
+
+            isAdminOrAllowedGroupMember = user.admin || (groupIds ? memberOfGroupIds.intersect(groupIds as Iterable) : false)
+        } finally {
+            resourceResolver.close()
+        }
+
+        isAdminOrAllowedGroupMember
     }
 }

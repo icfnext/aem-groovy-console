@@ -8,21 +8,21 @@
         <div class="panel-body">
             <p>Scheduler info.</p>
 
-            <form class="form-horizontal">
+            <form class="form-horizontal" id="scheduler-form">
                 <div class="form-group">
                     <label for="job-title" class="col-sm-2 control-label">Job Title</label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-4">
                         <input type="text" class="form-control" name="title" id="job-title" placeholder="Job Title">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="job-description" class="col-sm-2 control-label">Job Description</label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" name="description" id="job-description" placeholder="Job Description">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-8">
+                    <div class="col-sm-offset-2 col-sm-4">
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="immediate"> Immediate
@@ -32,12 +32,12 @@
                 </div>
                 <div class="form-group">
                     <label for="cron-expression" class="col-sm-2 control-label">Cron Expression</label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-4">
                         <input type="text" class="form-control" name="cronExpression" id="cron-expression" placeholder="Cron Expression">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-8">
+                    <div class="col-sm-offset-2 col-sm-4">
                         <button type="button" class="btn btn-primary" id="schedule-job">
                             <span class="glyphicon glyphicon-time"></span> <span id="schedule-job-text">Schedule Job</span>
                         </button>

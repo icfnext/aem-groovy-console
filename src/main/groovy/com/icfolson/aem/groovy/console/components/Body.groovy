@@ -9,8 +9,8 @@ import org.apache.sling.models.annotations.Model
 import javax.annotation.PostConstruct
 import javax.inject.Inject
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_USER_ID
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.USER_ID
 
 @Model(adaptables = SlingHttpServletRequest)
 class Body {
@@ -25,8 +25,8 @@ class Body {
 
     @PostConstruct
     void init() {
-        def userId = request.getParameter(PARAMETER_USER_ID)
-        def script = request.getParameter(PARAMETER_SCRIPT)
+        def userId = request.getParameter(USER_ID)
+        def script = request.getParameter(SCRIPT)
 
         if (script) {
             auditRecord = auditService.getAuditRecord(userId, script)

@@ -6,6 +6,8 @@ interface ConfigurationService {
 
     boolean hasPermission(SlingHttpServletRequest request)
 
+    boolean hasScheduledJobPermission(SlingHttpServletRequest request)
+
     String getConsoleHref()
 
     Set<String> getEmailRecipients()

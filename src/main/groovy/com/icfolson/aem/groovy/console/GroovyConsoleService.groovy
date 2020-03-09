@@ -31,6 +31,7 @@ interface GroovyConsoleService {
      * Run or schedule a Groovy Console job execution.
      *
      * @param jobProperties job properties
+     * @return true if job was successfully added
      */
-    void addScheduledJob(JobProperties jobProperties)
+    boolean addScheduledJob(JobProperties jobProperties)
 }

@@ -38,8 +38,8 @@ class GroovyConsoleJobConsumer implements JobConsumer {
                 resourceResolver: resourceResolver,
                 outputStream: outputStream,
                 printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-                script: job.getProperty(GroovyConsoleConstants.PARAMETER_SCRIPT, String),
-                data: job.getProperty(GroovyConsoleConstants.PARAMETER_DATA, String)
+                script: job.getProperty(GroovyConsoleConstants.SCRIPT, String),
+                data: job.getProperty(GroovyConsoleConstants.DATA, String)
             )
 
             groovyConsoleService.runScript(scriptContext)

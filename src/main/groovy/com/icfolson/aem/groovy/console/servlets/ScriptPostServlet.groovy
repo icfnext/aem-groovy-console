@@ -17,9 +17,9 @@ import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static com.google.common.base.Preconditions.checkNotNull
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATH
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATHS
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT_PATH
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT_PATHS
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @Component(service = Servlet, immediate = true, property = [
@@ -38,7 +38,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
         if (configurationService.hasPermission(request)) {
-            def scriptPaths = request.getParameterValues(PARAMETER_SCRIPT_PATHS)
+            def scriptPaths = request.getParameterValues(SCRIPT_PATHS)
 
             if (scriptPaths) {
                 LOG.debug("running scripts for paths : {}", scriptPaths)
@@ -51,7 +51,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
 
                 writeJsonResponse(response, runScriptResponses)
             } else {
-                def scriptPath = request.getParameter(PARAMETER_SCRIPT_PATH)
+                def scriptPath = request.getParameter(SCRIPT_PATH)
 
                 if (scriptPath) {
                     LOG.debug("running script for path : {}", scriptPath)
@@ -82,7 +82,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
         if (scriptPath) {
             loadScript(request, scriptPath)
         } else {
-            request.getRequestParameter(PARAMETER_SCRIPT)?.getString(Charsets.UTF_8.name())
+            request.getRequestParameter(SCRIPT)?.getString(Charsets.UTF_8.name())
         }
     }
 

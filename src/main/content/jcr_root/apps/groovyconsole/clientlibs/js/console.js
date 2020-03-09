@@ -112,6 +112,7 @@ var GroovyConsole = function () {
                 dataEditor.getSession().setValue('');
 
                 GroovyConsole.hideData();
+                GroovyConsole.hideScheduler();
             });
 
             $('#open-script').click(function () {
@@ -160,10 +161,12 @@ var GroovyConsole = function () {
                         title: $('input[name="title"]').val(),
                         description: $('input[name="description"]').val(),
                         cronExpression: $('input[name="cronExpression"]').val()
-                    }).done(function (response) {
+                    }).done(function () {
                         GroovyConsole.showSuccess('Job scheduled successfully.');
                     }).fail(function (jqXHR) {
-                        if (jqXHR.status === 403) {
+                        if (jqXHR.status === 400) {
+                            GroovyConsole.showError('Invalid Cron expression.');
+                        } else if (jqXHR.status === 403) {
                             GroovyConsole.showError('You do not have permission to schedule jobs in the Groovy Console.');
                         } else {
                             GroovyConsole.showError('Job scheduling failed.  Check error.log file.');
@@ -174,7 +177,7 @@ var GroovyConsole = function () {
 
                         GroovyConsole.hideLoader();
                         GroovyConsole.enableButtons();
-                        // GroovyConsole.Audit.refreshAuditRecords();
+                        GroovyConsole.Scheduler.refreshScheduledJobs();
 
                         $('#schedule-job-text').text('Schedule Job');
                     });
@@ -252,6 +255,10 @@ var GroovyConsole = function () {
             $('#result,#result-table,#output,#running-time').fadeOut('fast');
             $('#result pre,#output pre,#running-time pre').text('');
 
+            // clear scheduler
+            $('#scheduler-form input[type="text"]').val('');
+            $('#scheduler-form input[type="checkbox"]').prop('checked', false);
+
             var resultTableData = $('#result-table').find('th');
 
             // destroy datatable and remove columns if it exists
@@ -295,16 +302,19 @@ var GroovyConsole = function () {
                         .addClass('alert-danger')
                         .fadeIn('fast');
                 }
+
                 $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
             } else {
                 if (!GroovyConsole.showTable(response) && result && result.length) {
                     this.handleDownloadLink('#result', result);
+
                     $('#result pre').text(result);
                     $('#result').fadeIn('fast');
                 }
 
                 if (output && output.length) {
                     this.handleDownloadLink('#output', output);
+
                     $('#output pre').text(output);
                     $('#output').removeClass('alert-danger')
                         .addClass('alert-success')
@@ -353,11 +363,27 @@ var GroovyConsole = function () {
             return hasTable;
         },
 
+        showScheduler: function () {
+            var $data = $('#scheduler');
+
+            if (!$data.hasClass('in')) {
+                $data.collapse('show');
+            }
+        },
+
         showData: function () {
             var $data = $('#data');
 
             if (!$data.hasClass('in')) {
                 $data.collapse('show');
+            }
+        },
+
+        hideScheduler: function () {
+            var $scheduler = $('#scheduler');
+
+            if ($scheduler.hasClass('in')) {
+                $scheduler.collapse('hide');
             }
         },
 

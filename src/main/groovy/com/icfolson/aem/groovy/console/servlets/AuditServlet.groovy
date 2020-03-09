@@ -4,6 +4,7 @@ import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
+import com.icfolson.aem.groovy.console.utils.GroovyScriptUtils
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.osgi.service.component.annotations.Component
@@ -18,8 +19,6 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd"
 
-    private static final String DATE_FORMAT_DISPLAY = "yyyy-MM-dd HH:mm:ss"
-
     @Reference
     private AuditService auditService
 
@@ -28,8 +27,8 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
-        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
+        def script = request.getParameter(GroovyConsoleConstants.SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.USER_ID)
 
         if (script) {
             writeJsonResponse(response, auditService.getAuditRecord(userId, script) ?: [:])
@@ -40,8 +39,8 @@ class AuditServlet extends AbstractJsonResponseServlet {
 
     @Override
     protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        def script = request.getParameter(GroovyConsoleConstants.PARAMETER_SCRIPT)
-        def userId = request.getParameter(GroovyConsoleConstants.PARAMETER_USER_ID)
+        def script = request.getParameter(GroovyConsoleConstants.SCRIPT)
+        def userId = request.getParameter(GroovyConsoleConstants.USER_ID)
 
         if (script) {
             auditService.deleteAuditRecord(userId, script)
@@ -57,11 +56,9 @@ class AuditServlet extends AbstractJsonResponseServlet {
         def data = []
 
         auditRecords.each { auditRecord ->
-            def lines = auditRecord.script.readLines()
-
             def map = [
-                date: auditRecord.date.format(DATE_FORMAT_DISPLAY),
-                scriptPreview: lines.first() + (lines.size() > 1 ? " [...]" : ""),
+                date: auditRecord.date.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY),
+                scriptPreview: GroovyScriptUtils.getScriptPreview(auditRecord.script),
                 userId: auditRecord.userId,
                 script: auditRecord.script,
                 data: auditRecord.data,
@@ -77,8 +74,8 @@ class AuditServlet extends AbstractJsonResponseServlet {
     }
 
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {
-        def startDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_START_DATE)
-        def endDateParameter = request.getParameter(GroovyConsoleConstants.PARAMETER_END_DATE)
+        def startDateParameter = request.getParameter(GroovyConsoleConstants.START_DATE)
+        def endDateParameter = request.getParameter(GroovyConsoleConstants.END_DATE)
 
         def auditRecords
 

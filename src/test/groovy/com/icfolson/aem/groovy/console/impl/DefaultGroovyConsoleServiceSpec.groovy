@@ -17,7 +17,7 @@ import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.event.jobs.JobManager
 import org.apache.sling.jcr.resource.JcrResourceConstants
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
@@ -111,6 +111,6 @@ class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
     }
 
     private Map<String, Object> getParameterMap() {
-        [(GroovyConsoleConstants.PARAMETER_FILE_NAME): (SCRIPT_NAME), (PARAMETER_SCRIPT): scriptAsString]
+        [(GroovyConsoleConstants.FILE_NAME): (SCRIPT_NAME), (SCRIPT): scriptAsString]
     }
 }

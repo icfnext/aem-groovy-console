@@ -16,43 +16,49 @@ class GroovyConsoleConstants {
 
     public static final String TIME_ZONE_RUNNING_TIME = "GMT"
 
-    // request parameters
+    public static final String DATE_FORMAT_DISPLAY = "yyyy-MM-dd HH:mm:ss"
 
-    public static final String PARAMETER_TITLE = "title"
+    // request parameters/properties
 
-    public static final String PARAMETER_DESCRIPTION = "description"
+    public static final String ID = "id"
 
-    public static final String PARAMETER_FILE_NAME = "fileName"
+    public static final String TITLE = "title"
 
-    public static final String PARAMETER_SCRIPT_PATH = "scriptPath"
+    public static final String DESCRIPTION = "description"
 
-    public static final String PARAMETER_SCRIPT_PATHS = "scriptPaths"
+    public static final String FILE_NAME = "fileName"
 
-    public static final String PARAMETER_SCRIPT = "script"
+    public static final String SCRIPT_PATH = "scriptPath"
 
-    public static final String PARAMETER_USER_ID = "userId"
+    public static final String SCRIPT_PATHS = "scriptPaths"
 
-    public static final String PARAMETER_START_DATE = "startDate"
+    public static final String SCRIPT = "script"
 
-    public static final String PARAMETER_END_DATE = "endDate"
+    public static final String USER_ID = "userId"
 
-    public static final String PARAMETER_DATA = "data"
+    public static final String START_DATE = "startDate"
+
+    public static final String END_DATE = "endDate"
+
+    public static final String DATA = "data"
+
+    public static final String CRON_EXPRESSION = "cronExpression"
+
+    public static final String EMAIL_TO = "emailTo"
+
+    public static final String DATE_CREATED = "dateCreated"
 
     // job properties
 
     public static final String JOB_TOPIC = "groovyconsole/job"
 
-    public static final String JOB_PROPERTY_CRON_EXPRESSION = "cronExpression"
-
-    public static final String JOB_PROPERTY_EMAIL_TO = "emailTo"
-
     public static final Set<String> JOB_PROPERTIES = [
-        PARAMETER_TITLE,
-        PARAMETER_DESCRIPTION,
-        PARAMETER_SCRIPT,
-        PARAMETER_DATA,
-        JOB_PROPERTY_CRON_EXPRESSION,
-        JOB_PROPERTY_EMAIL_TO
+        TITLE,
+        DESCRIPTION,
+        SCRIPT,
+        DATA,
+        CRON_EXPRESSION,
+        EMAIL_TO
     ] as Set
 
     // audit

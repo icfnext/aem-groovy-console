@@ -73,6 +73,10 @@ td.open-record, td.delete-record {
     cursor: pointer;
 }
 
+td.edit-scheduled-job, td.delete-scheduled-job {
+    cursor: pointer;
+}
+
 .delete-all {
     padding-right: 15px;
 }

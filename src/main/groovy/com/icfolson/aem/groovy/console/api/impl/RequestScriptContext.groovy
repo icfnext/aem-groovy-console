@@ -7,7 +7,7 @@ import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
 
 @TupleConstructor
 class RequestScriptContext implements ServletScriptContext {
@@ -34,6 +34,6 @@ class RequestScriptContext implements ServletScriptContext {
 
     @Override
     String getData() {
-        request.getRequestParameter(PARAMETER_DATA)?.getString(Charsets.UTF_8.name())
+        request.getRequestParameter(DATA)?.getString(Charsets.UTF_8.name())
     }
 }
