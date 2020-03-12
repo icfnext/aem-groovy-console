@@ -1,6 +1,5 @@
 package com.icfolson.aem.groovy.console.api.impl
 
-import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.api.ServletScriptContext
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
@@ -9,6 +8,9 @@ import org.apache.sling.api.resource.ResourceResolver
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
 
+/**
+ * Script context for request-based (i.e. via the console) script executions.
+ */
 @TupleConstructor
 class RequestScriptContext implements ServletScriptContext {
 
@@ -34,6 +36,6 @@ class RequestScriptContext implements ServletScriptContext {
 
     @Override
     String getData() {
-        request.getRequestParameter(DATA)?.getString(Charsets.UTF_8.name())
+        request.getParameter(DATA)
     }
 }

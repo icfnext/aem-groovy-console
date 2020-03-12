@@ -1,14 +1,13 @@
 package com.icfolson.aem.groovy.console.api
 
-import com.google.common.base.Charsets
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.CRON_EXPRESSION
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATE_CREATED
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EMAIL_TO
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.ID
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_PROPERTIES
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCHEDULED_JOB_ID
 
 @TupleConstructor
 class JobProperties {
@@ -17,11 +16,11 @@ class JobProperties {
 
     static JobProperties fromRequest(SlingHttpServletRequest request) {
         def properties = JOB_PROPERTIES.collectEntries { propertyName ->
-            [propertyName, request.getRequestParameter(propertyName)?.getString(Charsets.UTF_8.name())]
+            [propertyName, request.getParameter(propertyName)]
         }.findAll { it.value != null }
 
         properties[DATE_CREATED] = Calendar.instance
-        properties[ID] = UUID.randomUUID().toString()
+        properties[SCHEDULED_JOB_ID] = UUID.randomUUID().toString()
 
         new JobProperties(properties)
     }

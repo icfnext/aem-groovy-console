@@ -18,7 +18,7 @@ import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATE_CREATED
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.ID
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCHEDULED_JOB_ID
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
@@ -39,13 +39,15 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
     private JobManager jobManager
 
     @Override
-    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
-        def scheduledJob = findScheduledJob(request)
+    protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
+        throws ServletException, IOException {
+        def scheduledJob = findScheduledJobById(request)
 
         if (scheduledJob) {
+            // single job
             writeJsonResponse(response, scheduledJob.jobProperties)
         } else {
+            // list all jobs
             def scheduledJobs = jobManager.getScheduledJobs(
                 GroovyConsoleConstants.JOB_TOPIC, 0, null).collect { scheduledJobInfo ->
                 new ImmutableMap.Builder<String, Object>()
@@ -60,9 +62,18 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
     }
 
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
+        throws ServletException, IOException {
         if (configurationService.hasScheduledJobPermission(request)) {
+            def scheduledJob = findScheduledJobById(request)
+
+            // 'edit' existing job by unscheduling and adding new
+            if (scheduledJob) {
+                LOG.info("found existing scheduled job, unscheduling and adding new job...")
+
+                scheduledJob.unschedule()
+            }
+
             def jobProperties = JobProperties.fromRequest(request)
 
             LOG.debug("adding job with properties : {}", jobProperties.toMap())
@@ -80,10 +91,10 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
     }
 
     @Override
-    protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
+    protected void doDelete(SlingHttpServletRequest request, SlingHttpServletResponse response)
+        throws ServletException, IOException {
         if (configurationService.hasScheduledJobPermission(request)) {
-            def scheduledJob = findScheduledJob(request)
+            def scheduledJob = findScheduledJobById(request)
 
             if (scheduledJob) {
                 scheduledJob.unschedule()
@@ -95,13 +106,15 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
         }
     }
 
-    private ScheduledJobInfo findScheduledJob(SlingHttpServletRequest request) {
-        def id = request.getParameter(ID)
+    private ScheduledJobInfo findScheduledJobById(SlingHttpServletRequest request) {
+        def id = request.getParameter(SCHEDULED_JOB_ID)
 
         def scheduledJobInfo = null
 
         if (id) {
-            scheduledJobInfo = jobManager.scheduledJobs.find { job -> job.jobProperties[ID] == id }
+            scheduledJobInfo = jobManager.scheduledJobs.find { job ->
+                job.jobProperties[SCHEDULED_JOB_ID] == id
+            }
         }
 
         scheduledJobInfo

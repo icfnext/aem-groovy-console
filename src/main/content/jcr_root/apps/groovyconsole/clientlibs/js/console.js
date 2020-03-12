@@ -160,7 +160,8 @@ var GroovyConsole = function () {
                         data: dataEditor.getSession().getValue(),
                         title: $('input[name="title"]').val(),
                         description: $('input[name="description"]').val(),
-                        cronExpression: $('input[name="cronExpression"]').val()
+                        cronExpression: $('input[name="cronExpression"]').val(),
+                        mediaType: $('select[name="mediaType"]').val()
                     }).done(function () {
                         GroovyConsole.showSuccess('Job scheduled successfully.');
                     }).fail(function (jqXHR) {
@@ -256,8 +257,10 @@ var GroovyConsole = function () {
             $('#result pre,#output pre,#running-time pre').text('');
 
             // clear scheduler
+            $('#scheduler-form input[type="hidden"]').val('');
             $('#scheduler-form input[type="text"]').val('');
             $('#scheduler-form input[type="checkbox"]').prop('checked', false);
+            $('#scheduler-form input[type="select"]').val('');
 
             var resultTableData = $('#result-table').find('th');
 

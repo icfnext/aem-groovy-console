@@ -35,8 +35,8 @@ GroovyConsole.Audit = function () {
                         searchable: false,
                         data: null,
                         defaultContent: '<div class="btn-group" role="group">\n' +
-                            '  <button type="button" class="btn btn-default download-result">Result</button>\n' +
-                            '  <button type="button" class="btn btn-default download-output">Output</button>\n' +
+                            '  <button type="button" class="btn btn-default download-result hidden">Result</button>\n' +
+                            '  <button type="button" class="btn btn-default download-output hidden">Output</button>\n' +
                             '</div>'
                     },
                     {
@@ -71,20 +71,28 @@ GroovyConsole.Audit = function () {
                         $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
                     }
 
-                    $('td:eq(4) .download-result', row).click(function () {
-                        window.location = DOWNLOAD_URL + '?' + $.param({
-                            'userId': data.userId,
-                            'script': data.relativePath,
-                            'result': true
-                        });
-                    });
+                    var buttons = []
 
-                    $('td:eq(4) .download-output', row).click(function () {
-                        window.location = DOWNLOAD_URL + '?' + $.param({
-                            'userId': data.userId,
-                            'script': data.relativePath
-                        });
-                    });
+                    if (data.hasResult) {
+                        buttons.push($('<button type="button" class="btn btn-default download-result">Result</button>').click(function () {
+                            window.location = DOWNLOAD_URL + '?' + $.param({
+                                'userId': data.userId,
+                                'script': data.relativePath,
+                                'result': true
+                            });
+                        }));
+                    }
+
+                    if (data.hasOutput) {
+                        buttons.push($('<button type="button" class="btn btn-default">Output</button>').click(function () {
+                            window.location = DOWNLOAD_URL + '?' + $.param({
+                                'userId': data.userId,
+                                'script': data.relativePath
+                            });
+                        }));
+                    }
+
+                    $('td:eq(4)', row).html($('<div class="btn-group" role="group"></div>').html(buttons));
                 }
             });
 

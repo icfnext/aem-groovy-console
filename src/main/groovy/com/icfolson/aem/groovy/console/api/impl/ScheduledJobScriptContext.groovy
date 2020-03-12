@@ -1,11 +1,11 @@
 package com.icfolson.aem.groovy.console.api.impl
 
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.JobScriptContext
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.resource.ResourceResolver
 
 @TupleConstructor
-class JobScriptContext implements ScriptContext {
+class ScheduledJobScriptContext implements JobScriptContext {
 
     ResourceResolver resourceResolver
 
@@ -16,6 +16,10 @@ class JobScriptContext implements ScriptContext {
     String script
 
     String data
+
+    String jobId
+
+    String mediaType
 
     @Override
     String getUserId() {

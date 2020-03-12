@@ -8,21 +8,11 @@ import org.apache.sling.api.resource.Resource
 import javax.jcr.Node
 
 import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_ID
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.MEDIA_TYPE
 
 @ToString(includePackage = false, includes = ["path"])
 class AuditRecord {
-
-    public static final String PROPERTY_SCRIPT = "script"
-
-    public static final String PROPERTY_DATA = "data"
-
-    public static final String PROPERTY_RESULT = "result"
-
-    public static final String PROPERTY_OUTPUT = "output"
-
-    public static final String PROPERTY_EXCEPTION_STACK_TRACE = "exceptionStackTrace"
-
-    public static final String PROPERTY_RUNNING_TIME = "runningTime"
 
     private static final Integer DEPTH_USER_ID = 4
 
@@ -67,5 +57,13 @@ class AuditRecord {
         }
 
         exception
+    }
+
+    String getJobId() {
+        resource.valueMap.get(JOB_ID, String)
+    }
+
+    String getMediaType() {
+        resource.valueMap.get(MEDIA_TYPE, String)
     }
 }

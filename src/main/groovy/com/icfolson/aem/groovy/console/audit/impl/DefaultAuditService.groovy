@@ -24,7 +24,15 @@ import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_NODE_NAME
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_PATH
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_RECORD_NODE_PREFIX
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXCEPTION_STACK_TRACE
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_ID
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.MEDIA_TYPE
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.OUTPUT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.RESULT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.RUNNING_TIME
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 
 @Component(service = AuditService, immediate = true)
 @Slf4j("LOG")
@@ -128,6 +136,13 @@ class DefaultAuditService implements AuditService {
     }
 
     @Override
+    AuditRecord getAuditRecord(String jobId) {
+        findAllAuditRecords(AUDIT_PATH).find { auditRecord ->
+            auditRecord.jobId == jobId
+        }
+    }
+
+    @Override
     AuditRecord getAuditRecord(String userId, String relativePath) {
         resourceResolver.refresh()
 
@@ -205,28 +220,36 @@ class DefaultAuditService implements AuditService {
     }
 
     private void setAuditRecordNodeProperties(Node auditRecordNode, RunScriptResponse response) {
-        auditRecordNode.setProperty(AuditRecord.PROPERTY_SCRIPT, response.script)
+        auditRecordNode.setProperty(SCRIPT, response.script)
 
         if (response.data) {
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_DATA, response.data)
+            auditRecordNode.setProperty(DATA, response.data)
+        }
+
+        if (response.jobId) {
+            auditRecordNode.setProperty(JOB_ID, response.jobId)
+        }
+
+        if (response.mediaType) {
+            auditRecordNode.setProperty(MEDIA_TYPE, response.mediaType)
         }
 
         if (response.exceptionStackTrace) {
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
+            auditRecordNode.setProperty(EXCEPTION_STACK_TRACE, response.exceptionStackTrace)
 
             if (response.output) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+                auditRecordNode.setProperty(OUTPUT, response.output)
             }
         } else {
             if (response.result) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_RESULT, response.result)
+                auditRecordNode.setProperty(RESULT, response.result)
             }
 
             if (response.output) {
-                auditRecordNode.setProperty(AuditRecord.PROPERTY_OUTPUT, response.output)
+                auditRecordNode.setProperty(OUTPUT, response.output)
             }
 
-            auditRecordNode.setProperty(AuditRecord.PROPERTY_RUNNING_TIME, response.runningTime)
+            auditRecordNode.setProperty(RUNNING_TIME, response.runningTime)
         }
     }
 

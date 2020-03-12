@@ -1,5 +1,4 @@
 package com.icfolson.aem.groovy.console.api
-
 /**
  * Services may implement this interface to supply additional metamethods to apply to the <code>Script</code> metaclass.
  */

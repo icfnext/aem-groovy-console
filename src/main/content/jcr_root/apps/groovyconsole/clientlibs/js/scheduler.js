@@ -70,7 +70,7 @@ GroovyConsole.Scheduler = function () {
                 var tr = $(this).closest('tr');
                 var data = table.row(tr).data();
 
-                $.getJSON(SCHEDULER_URL, {'id': data.id}, function (response) {
+                $.getJSON(SCHEDULER_URL, {'scheduledJobId': data.scheduledJobId}, function (response) {
                     scriptEditor.getSession().setValue(response.script);
 
                     if (response.data.length) {
@@ -84,6 +84,7 @@ GroovyConsole.Scheduler = function () {
                     GroovyConsole.showScheduler();
                     GroovyConsole.reset();
 
+                    $('#scheduler-form input[name="scheduledJobId"]').val(data.scheduledJobId);
                     $('#scheduler-form input[name="title"]').val(response.title);
                     $('#scheduler-form input[name="description"]').val(response.description);
                     $('#scheduler-form input[name="cronExpression"]').val(response.cronExpression);
@@ -98,7 +99,7 @@ GroovyConsole.Scheduler = function () {
                 var data = table.row(tr).data();
 
                 $.ajax({
-                    url: SCHEDULER_URL + '?' + $.param({'id': data.id}),
+                    url: SCHEDULER_URL + '?' + $.param({'scheduledJobId': data.scheduledJobId}),
                     traditional: true,
                     type: 'DELETE'
                 }).done(function () {

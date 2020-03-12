@@ -22,7 +22,9 @@ class GroovyConsoleConstants {
 
     // request parameters/properties
 
-    public static final String ID = "id"
+    public static final String SCHEDULED_JOB_ID = "scheduledJobId"
+
+    public static final String JOB_ID = "jobId"
 
     public static final String TITLE = "title"
 
@@ -52,6 +54,14 @@ class GroovyConsoleConstants {
 
     public static final String RESULT = "result"
 
+    public static final String OUTPUT = "output"
+
+    public static final String MEDIA_TYPE = "mediaType"
+
+    public static final String EXCEPTION_STACK_TRACE = "exceptionStackTrace"
+
+    public static final String RUNNING_TIME = "runningTime"
+
     // job properties
 
     public static final String JOB_TOPIC = "groovyconsole/job"
@@ -62,7 +72,8 @@ class GroovyConsoleConstants {
         SCRIPT,
         DATA,
         CRON_EXPRESSION,
-        EMAIL_TO
+        EMAIL_TO,
+        MEDIA_TYPE
     ] as Set
 
     // audit

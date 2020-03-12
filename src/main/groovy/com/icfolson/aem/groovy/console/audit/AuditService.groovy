@@ -42,6 +42,14 @@ interface AuditService {
     List<AuditRecord> getAllAuditRecords(String userId)
 
     /**
+     * Get the audit record for the given job ID.
+     *
+     * @param jobId Sling-generated ID for the job
+     * @return audit record or null if not found
+     */
+    AuditRecord getAuditRecord(String jobId)
+
+    /**
      * Get the audit record at the given relative path.
      *
      * @param userId user that owns the audit record

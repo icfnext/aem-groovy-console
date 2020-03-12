@@ -1,6 +1,6 @@
 package com.icfolson.aem.groovy.console.audit.impl
 
-import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
+import com.icfolson.aem.groovy.console.api.context.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse

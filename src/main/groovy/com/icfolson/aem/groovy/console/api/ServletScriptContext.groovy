@@ -8,7 +8,17 @@ import org.apache.sling.api.SlingHttpServletResponse
  */
 interface ServletScriptContext extends ScriptContext {
 
+    /**
+     * Get the servlet request.
+     *
+     * @return request
+     */
     SlingHttpServletRequest getRequest()
 
+    /**
+     * Get the servlet response.
+     *
+     * @return response
+     */
     SlingHttpServletResponse getResponse()
 }

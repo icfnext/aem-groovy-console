@@ -9,6 +9,8 @@
             <p>Scheduler info.</p>
 
             <form class="form-horizontal" id="scheduler-form">
+                <input type="hidden" name="scheduledJobId"/>
+
                 <div class="form-group">
                     <label for="job-title" class="col-sm-2 control-label">Job Title</label>
                     <div class="col-sm-4">
@@ -22,7 +24,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-4">
+                    <div class="col-sm-offset-2 col-sm-2">
                         <div class="checkbox">
                             <label>
                                 <input type="checkbox" name="immediate"> Immediate
@@ -37,9 +39,22 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="media-type" class="col-sm-2 control-label">Media Type</label>
+                    <div class="col-sm-4">
+                        <select id="media-type" name="mediaType" class="form-control">
+                            <option selected value="text/plain">Plain Text</option>
+                            <option value="text/csv">CSV</option>
+                            <option value="text/xml">XML</option>
+                            <option value="text/html">HTML</option>
+                        </select>
+                        <p class="help-block">Select the media type to use when downloading script output.</p>
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-4">
                         <button type="button" class="btn btn-primary" id="schedule-job">
-                            <span class="glyphicon glyphicon-time"></span> <span id="schedule-job-text">Schedule Job</span>
+                            <span class="glyphicon glyphicon-time"></span>
+                            <span id="schedule-job-text">Schedule Job</span>
                         </button>
                     </div>
                 </div>
