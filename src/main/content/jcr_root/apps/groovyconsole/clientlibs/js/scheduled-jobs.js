@@ -1,13 +1,13 @@
-GroovyConsole.Scheduler = function () {
+GroovyConsole.ScheduledJobs = function () {
 
-    var SCHEDULER_URL = '/bin/groovyconsole/jobs.json';
+    var JOBS_URL = '/bin/groovyconsole/jobs.json';
 
     var table;
 
     return {
         initialize: function () {
             table = $('.scheduled-jobs').DataTable({
-                ajax: SCHEDULER_URL,
+                ajax: JOBS_URL,
                 columns: [
                     {
                         className: 'edit-scheduled-job',
@@ -70,7 +70,7 @@ GroovyConsole.Scheduler = function () {
                 var tr = $(this).closest('tr');
                 var data = table.row(tr).data();
 
-                $.getJSON(SCHEDULER_URL, {'scheduledJobId': data.scheduledJobId}, function (response) {
+                $.getJSON(JOBS_URL, {'scheduledJobId': data.scheduledJobId}, function (response) {
                     scriptEditor.getSession().setValue(response.script);
 
                     if (response.data.length) {
@@ -99,20 +99,20 @@ GroovyConsole.Scheduler = function () {
                 var data = table.row(tr).data();
 
                 $.ajax({
-                    url: SCHEDULER_URL + '?' + $.param({'scheduledJobId': data.scheduledJobId}),
+                    url: JOBS_URL + '?' + $.param({'scheduledJobId': data.scheduledJobId}),
                     traditional: true,
                     type: 'DELETE'
                 }).done(function () {
-                    GroovyConsole.Scheduler.showAlert('.alert-success', 'Scheduled job deleted successfully.');
-                    GroovyConsole.Scheduler.refreshScheduledJobs();
+                    GroovyConsole.ScheduledJobs.showAlert('.alert-success', 'Scheduled job deleted successfully.');
+                    GroovyConsole.ScheduledJobs.refreshScheduledJobs();
                 }).fail(function () {
-                    GroovyConsole.Scheduler.showAlert('.alert-danger', 'Error deleting scheduled job.');
+                    GroovyConsole.ScheduledJobs.showAlert('.alert-danger', 'Error deleting scheduled job.');
                 });
             });
         },
 
         refreshScheduledJobs: function () {
-            table.ajax.url(SCHEDULER_URL).load();
+            table.ajax.url(JOBS_URL).load();
         },
 
         showAlert: function (selector, text) {
@@ -128,5 +128,5 @@ GroovyConsole.Scheduler = function () {
 }();
 
 $(function () {
-    GroovyConsole.Scheduler.initialize();
+    GroovyConsole.ScheduledJobs.initialize();
 });

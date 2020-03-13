@@ -162,12 +162,13 @@ var GroovyConsole = function () {
                         jobDescription: $('input[name="jobDescription"]').val(),
                         cronExpression: $('input[name="cronExpression"]').val(),
                         mediaType: $('select[name="mediaType"]').val(),
-
                         scheduledJobId: $('input[name="scheduledJobId"]').val()
                     }).done(function () {
                         GroovyConsole.showSuccess('Job scheduled successfully.');
                         GroovyConsole.clearScheduler();
                         GroovyConsole.hideScheduler();
+
+                        $('#scheduled-jobs').collapse('show');
                     }).fail(function (jqXHR) {
                         if (jqXHR.status === 400) {
                             GroovyConsole.showError('Invalid Cron expression.');
@@ -182,7 +183,7 @@ var GroovyConsole = function () {
 
                         GroovyConsole.hideLoader();
                         GroovyConsole.enableButtons();
-                        GroovyConsole.Scheduler.refreshScheduledJobs();
+                        GroovyConsole.ScheduledJobs.refreshScheduledJobs();
 
                         $('#schedule-job-text').text('Schedule Job');
                     });

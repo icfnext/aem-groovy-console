@@ -48,5 +48,5 @@ datatables.js
 console.js
 services.js
 audit.js
-scheduler.js
+scheduled-jobs.js
 local-storage.js
