@@ -2,9 +2,11 @@ package com.icfolson.aem.groovy.console.components
 
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
+import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import groovy.json.JsonBuilder
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.models.annotations.Model
+import org.apache.sling.models.annotations.injectorspecific.OSGiService
 
 import javax.annotation.PostConstruct
 import javax.inject.Inject
@@ -15,11 +17,14 @@ import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.U
 @Model(adaptables = SlingHttpServletRequest)
 class Body {
 
-    @Inject
+    @OSGiService
     private AuditService auditService
 
     @Inject
     private SlingHttpServletRequest request
+
+    @OSGiService
+    private ConfigurationService configurationService
 
     private AuditRecord auditRecord
 
@@ -35,5 +40,9 @@ class Body {
 
     String getAuditRecordJson() {
         auditRecord ? new JsonBuilder(auditRecord).toString() : null
+    }
+
+    boolean isHasScheduledJobPermission() {
+        configurationService.hasScheduledJobPermission(request)
     }
 }

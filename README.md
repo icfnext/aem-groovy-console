@@ -1,7 +1,5 @@
 # AEM Groovy Console
 
-[ICF Next](http://www.icfnext.com)
-
 ## Overview
 
 The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After ainstalling the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
@@ -17,7 +15,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version(s)
 ------------ | -------------
-14.x.x, 13.x.x | 6.3, 6.4, 6.5
+15.x.x, 14.x.x, 13.x.x | 6.3, 6.4, 6.5
 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x | 6.2
@@ -93,6 +91,10 @@ Service Interface | Description
 ## Notifications
 
 To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.icfolson.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
+
+## Scheduler
+
+The Scheduler allows for immediate or Cron-based script execution.  Scripts are executed as [Sling Jobs](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html) and are audited in the same manner as scripts executed in the console.
 
 ## Sample Scripts
 

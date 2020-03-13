@@ -53,10 +53,8 @@ class AuditServlet extends AbstractJsonResponseServlet {
         def auditRecords = getAuditRecords(request)
         def consoleHref = configurationService.consoleHref
 
-        def data = []
-
-        auditRecords.each { auditRecord ->
-            def map = [
+        [data: auditRecords.collect { auditRecord ->
+            [
                 date: auditRecord.date.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY),
                 scriptPreview: GroovyScriptUtils.getScriptPreview(auditRecord.script),
                 userId: auditRecord.userId,
@@ -68,11 +66,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
                 hasResult: auditRecord.result as Boolean,
                 hasOutput: auditRecord.output as Boolean
             ]
-
-            data.add(map)
-        }
-
-        [data: data]
+        }]
     }
 
     private List<AuditRecord> getAuditRecords(SlingHttpServletRequest request) {

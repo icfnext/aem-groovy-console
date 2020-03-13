@@ -41,26 +41,27 @@ class ScriptDownloadServlet extends SlingSafeMethodsServlet {
 
         if (auditRecord) {
             def mediaType = result ? DEFAULT_MEDIA_TYPE : getMediaType(auditRecord)
-
-            def fileName = new StringBuilder()
-
-            fileName.append(result ? "result-" : getOutputFileName(auditRecord))
-            fileName.append(auditRecord.date.format(DATE_FORMAT_FILE_NAME))
-            fileName.append(".")
-            fileName.append(mimeTypeService.getExtension(mediaType))
+            def fileName = getFileName(auditRecord, result as Boolean, mediaType)
+            def text = result ? auditRecord.result : auditRecord.output
 
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${fileName.toString()}")
 
             response.contentType = mediaType
             response.characterEncoding = GroovyConsoleConstants.CHARSET
-
-            def text = result ? auditRecord.result : auditRecord.output
-
             response.contentLength = text.length()
             response.outputStream.write(text.getBytes(GroovyConsoleConstants.CHARSET))
         } else {
             response.status = SC_BAD_REQUEST
         }
+    }
+
+    private String getFileName(AuditRecord auditRecord, Boolean result, String mediaType) {
+        new StringBuilder()
+            .append(result ? "result-" : getOutputFileName(auditRecord))
+            .append(auditRecord.date.format(DATE_FORMAT_FILE_NAME))
+            .append(".")
+            .append(mimeTypeService.getExtension(mediaType))
+            .toString()
     }
 
     private String getOutputFileName(AuditRecord auditRecord) {

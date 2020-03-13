@@ -107,6 +107,7 @@ var GroovyConsole = function () {
 
                 GroovyConsole.localStorage.clearScriptName();
                 GroovyConsole.reset();
+                GroovyConsole.clearScheduler();
 
                 scriptEditor.getSession().setValue('');
                 dataEditor.getSession().setValue('');
@@ -143,6 +144,8 @@ var GroovyConsole = function () {
                 if ($('#schedule-job').hasClass('disabled')) {
                     return;
                 }
+
+                GroovyConsole.reset();
 
                 var script = scriptEditor.getSession().getValue();
 
@@ -198,6 +201,7 @@ var GroovyConsole = function () {
                 }
 
                 GroovyConsole.reset();
+                GroovyConsole.clearScheduler();
 
                 var script = scriptEditor.getSession().getValue();
 
@@ -262,7 +266,7 @@ var GroovyConsole = function () {
             $('#result pre,#output pre,#running-time pre').text('');
 
             // clear scheduler
-            GroovyConsole.clearScheduler();
+            // GroovyConsole.clearScheduler();
 
             var resultTableData = $('#result-table').find('th');
 

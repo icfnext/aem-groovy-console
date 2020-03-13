@@ -1,12 +1,7 @@
 <sly data-sly-include="header.html"></sly>
 
-<div class="container">
+<div class="container" data-sly-use.body="com.icfolson.aem.groovy.console.components.Body">
     <sly data-sly-include="toolbar.html"></sly>
-
-    <div class="panel-group" id="toolbar-group">
-        <sly data-sly-include="scheduler.html"></sly>
-        <sly data-sly-include="data.html"></sly>
-    </div>
 
     <div class="alert alert-success" id="message-success" role="alert" style="display: none;">
         <span class="message"></span>
@@ -14,6 +9,11 @@
 
     <div class="alert alert-danger" id="message-error" role="alert" style="display: none;">
         <span class="message"></span>
+    </div>
+
+    <div class="panel-group" id="toolbar-group">
+        <sly data-sly-include="scheduler.html" data-sly-test="${body.hasScheduledJobPermission}"></sly>
+        <sly data-sly-include="data.html"></sly>
     </div>
 
     <div id="script-editor" class="ace_editor_wrapper"></div>
@@ -46,7 +46,7 @@
 
     <div class="panel-group" id="info">
         <sly data-sly-include="history.html"></sly>
-        <sly data-sly-include="scheduled-jobs.html"></sly>
+        <sly data-sly-include="scheduled-jobs.html" data-sly-test="${body.hasScheduledJobPermission}"></sly>
         <sly data-sly-include="bindings.html"></sly>
         <sly data-sly-include="imports.html"></sly>
         <sly data-sly-include="methods.html"></sly>
@@ -56,6 +56,6 @@
     </div>
 </div>
 
-<script type="text/javascript" data-sly-use.body="com.icfolson.aem.groovy.console.components.Body" data-sly-test="${body.auditRecordJson}">
+<script type="text/javascript" data-sly-test="${body.auditRecordJson}">
     var auditRecord = ${body.auditRecordJson @ context='unsafe'};
 </script>
