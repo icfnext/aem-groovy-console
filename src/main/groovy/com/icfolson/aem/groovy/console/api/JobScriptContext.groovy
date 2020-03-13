@@ -15,5 +15,5 @@ interface JobScriptContext extends ScriptContext {
      *
      * @return
      */
-    String getMediaType()
+    JobProperties getJobProperties()
 }

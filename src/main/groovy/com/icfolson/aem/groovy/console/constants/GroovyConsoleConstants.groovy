@@ -26,9 +26,9 @@ class GroovyConsoleConstants {
 
     public static final String JOB_ID = "jobId"
 
-    public static final String TITLE = "title"
+    public static final String JOB_TITLE = "jobTitle"
 
-    public static final String DESCRIPTION = "description"
+    public static final String JOB_DESCRIPTION = "jobDescription"
 
     public static final String FILE_NAME = "fileName"
 
@@ -67,8 +67,8 @@ class GroovyConsoleConstants {
     public static final String JOB_TOPIC = "groovyconsole/job"
 
     public static final Set<String> JOB_PROPERTIES = [
-        TITLE,
-        DESCRIPTION,
+        JOB_TITLE,
+        JOB_DESCRIPTION,
         SCRIPT,
         DATA,
         CRON_EXPRESSION,
@@ -77,6 +77,15 @@ class GroovyConsoleConstants {
     ] as Set
 
     // audit
+
+    public static final Set<String> AUDIT_JOB_PROPERTIES = [
+        SCHEDULED_JOB_ID,
+        JOB_TITLE,
+        JOB_DESCRIPTION,
+        CRON_EXPRESSION,
+        EMAIL_TO,
+        MEDIA_TYPE
+    ] as Set
 
     public static final String AUDIT_NODE_NAME = "audit"
 

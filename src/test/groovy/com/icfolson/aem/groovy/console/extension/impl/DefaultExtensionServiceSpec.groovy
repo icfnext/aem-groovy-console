@@ -7,7 +7,7 @@ import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
-import com.icfolson.aem.groovy.console.api.context.impl.RequestScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.codehaus.groovy.control.CompilerConfiguration

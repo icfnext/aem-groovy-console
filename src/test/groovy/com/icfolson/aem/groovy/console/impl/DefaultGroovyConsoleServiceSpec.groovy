@@ -5,8 +5,8 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.QueryBuilder
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.context.impl.RequestScriptContext
-import com.icfolson.aem.groovy.console.api.context.impl.RequestScriptData
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
@@ -17,8 +17,8 @@ import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.sling.event.jobs.JobManager
 import org.apache.sling.jcr.resource.JcrResourceConstants
 
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 
 class DefaultGroovyConsoleServiceSpec extends ProsperSpec {
 

@@ -2,41 +2,28 @@ package com.icfolson.aem.groovy.console.audit
 
 import com.day.text.Text
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
 import groovy.transform.ToString
 import org.apache.sling.api.resource.Resource
 
-import javax.jcr.Node
-
 import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_ID
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.MEDIA_TYPE
 
 @ToString(includePackage = false, includes = ["path"])
-class AuditRecord {
-
-    private static final Integer DEPTH_USER_ID = 4
+class AuditRecord implements RunScriptResponse {
 
     private static final Integer DEPTH_RELATIVE_PATH = 3
-
-    private Resource resource
-
-    @Delegate
-    final RunScriptResponse response
 
     final String path
 
     final Calendar date
 
-    AuditRecord(Resource resource) {
-        this.resource = resource
+    @Delegate
+    final RunScriptResponse response
 
+    AuditRecord(Resource resource) {
         path = resource.path
         date = resource.valueMap.get(JCR_CREATED, Calendar)
-        response = RunScriptResponse.fromAuditRecordResource(resource)
-    }
-
-    String getUserId() {
-        resource.adaptTo(Node).getAncestor(DEPTH_USER_ID).name
+        response = DefaultRunScriptResponse.fromAuditRecordResource(resource)
     }
 
     String getRelativePath() {
@@ -57,13 +44,5 @@ class AuditRecord {
         }
 
         exception
-    }
-
-    String getJobId() {
-        resource.valueMap.get(JOB_ID, String)
-    }
-
-    String getMediaType() {
-        resource.valueMap.get(MEDIA_TYPE, String)
     }
 }

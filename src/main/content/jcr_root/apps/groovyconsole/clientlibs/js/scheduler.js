@@ -17,10 +17,10 @@ GroovyConsole.Scheduler = function () {
                         defaultContent: '<span class="glyphicon glyphicon-pencil" title="Edit Scheduled Job"></span>'
                     },
                     {
-                        data: 'title'
+                        data: 'jobTitle'
                     },
                     {
-                        data: 'description',
+                        data: 'jobDescription',
                         orderable: false
                     },
                     {
@@ -85,8 +85,8 @@ GroovyConsole.Scheduler = function () {
                     GroovyConsole.reset();
 
                     $('#scheduler-form input[name="scheduledJobId"]').val(data.scheduledJobId);
-                    $('#scheduler-form input[name="title"]').val(response.title);
-                    $('#scheduler-form input[name="description"]').val(response.description);
+                    $('#scheduler-form input[name="jobTitle"]').val(response.jobTitle);
+                    $('#scheduler-form input[name="jobDescription"]').val(response.jobDescription);
                     $('#scheduler-form input[name="cronExpression"]').val(response.cronExpression);
                     $('#scheduler-form input[type="checkbox"]').prop('checked', false);
 

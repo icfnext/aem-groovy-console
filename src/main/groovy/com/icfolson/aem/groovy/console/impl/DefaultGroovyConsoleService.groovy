@@ -14,6 +14,8 @@ import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultSaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
@@ -85,19 +87,19 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
             LOG.debug("script execution completed, running time = {}", runningTime)
 
-            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result,
+            runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, result,
                 scriptContext.outputStream.toString(CHARSET), runningTime)
 
             auditAndNotify(runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
                 scriptContext.outputStream.toString(CHARSET), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
                 scriptContext.outputStream.toString(CHARSET), t)
 
             auditAndNotify(runScriptResponse)
@@ -122,7 +124,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
 
         saveFile(session, folderNode, scriptData.script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
-        new SaveScriptResponse(fileName)
+        new DefaultSaveScriptResponse(fileName)
     }
 
     @Override

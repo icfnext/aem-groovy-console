@@ -158,12 +158,16 @@ var GroovyConsole = function () {
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/jobs.json', {
                         script: script,
                         data: dataEditor.getSession().getValue(),
-                        title: $('input[name="title"]').val(),
-                        description: $('input[name="description"]').val(),
+                        jobTitle: $('input[name="jobTitle"]').val(),
+                        jobDescription: $('input[name="jobDescription"]').val(),
                         cronExpression: $('input[name="cronExpression"]').val(),
-                        mediaType: $('select[name="mediaType"]').val()
+                        mediaType: $('select[name="mediaType"]').val(),
+
+                        scheduledJobId: $('input[name="scheduledJobId"]').val()
                     }).done(function () {
                         GroovyConsole.showSuccess('Job scheduled successfully.');
+                        GroovyConsole.clearScheduler();
+                        GroovyConsole.hideScheduler();
                     }).fail(function (jqXHR) {
                         if (jqXHR.status === 400) {
                             GroovyConsole.showError('Invalid Cron expression.');
@@ -257,10 +261,7 @@ var GroovyConsole = function () {
             $('#result pre,#output pre,#running-time pre').text('');
 
             // clear scheduler
-            $('#scheduler-form input[type="hidden"]').val('');
-            $('#scheduler-form input[type="text"]').val('');
-            $('#scheduler-form input[type="checkbox"]').prop('checked', false);
-            $('#scheduler-form input[type="select"]').val('');
+            GroovyConsole.clearScheduler();
 
             var resultTableData = $('#result-table').find('th');
 
@@ -380,6 +381,13 @@ var GroovyConsole = function () {
             if (!$data.hasClass('in')) {
                 $data.collapse('show');
             }
+        },
+
+        clearScheduler: function () {
+            $('#scheduler-form input[type="hidden"]').val('');
+            $('#scheduler-form input[type="text"]').val('');
+            $('#scheduler-form input[type="checkbox"]').prop('checked', false);
+            $('#scheduler-form input[type="select"]').val('');
         },
 
         hideScheduler: function () {

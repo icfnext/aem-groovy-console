@@ -21,13 +21,13 @@ import javax.jcr.Session
 
 import static com.day.cq.commons.jcr.JcrConstants.MIX_CREATED
 import static com.day.cq.commons.jcr.JcrConstants.NT_UNSTRUCTURED
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_JOB_PROPERTIES
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_NODE_NAME
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_PATH
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.AUDIT_RECORD_NODE_PREFIX
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXCEPTION_STACK_TRACE
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.JOB_ID
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.MEDIA_TYPE
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.OUTPUT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_CONSOLE_ROOT
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.RESULT
@@ -230,8 +230,16 @@ class DefaultAuditService implements AuditService {
             auditRecordNode.setProperty(JOB_ID, response.jobId)
         }
 
-        if (response.mediaType) {
-            auditRecordNode.setProperty(MEDIA_TYPE, response.mediaType)
+        if (response.jobProperties) {
+            response.jobProperties.toMap()
+                .findAll { entry -> AUDIT_JOB_PROPERTIES.contains(entry.key) }
+                .each { entry ->
+                    if (entry.value instanceof String) {
+                        auditRecordNode.setProperty(entry.key, entry.value as String)
+                    } else if (entry.value instanceof Calendar) {
+                        auditRecordNode.setProperty(entry.key, entry.value as Calendar)
+                    }
+                }
         }
 
         if (response.exceptionStackTrace) {

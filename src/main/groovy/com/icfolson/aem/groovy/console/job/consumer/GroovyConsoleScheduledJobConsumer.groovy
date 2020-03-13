@@ -2,17 +2,14 @@ package com.icfolson.aem.groovy.console.job.consumer
 
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.context.impl.ScheduledJobScriptContext
+import com.icfolson.aem.groovy.console.api.JobProperties
+import com.icfolson.aem.groovy.console.api.impl.ScheduledJobScriptContext
 import groovy.util.logging.Slf4j
 import org.apache.sling.api.resource.ResourceResolverFactory
 import org.apache.sling.event.jobs.Job
 import org.apache.sling.event.jobs.consumer.JobConsumer
 import org.osgi.service.component.annotations.Component
 import org.osgi.service.component.annotations.Reference
-
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.MEDIA_TYPE
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
 
 @Component(service = JobConsumer, immediate = true, property = [
     "job.topics=groovyconsole/job"
@@ -41,10 +38,8 @@ class GroovyConsoleScheduledJobConsumer implements JobConsumer {
                 resourceResolver: resourceResolver,
                 outputStream: outputStream,
                 printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-                script: job.getProperty(SCRIPT, String),
-                data: job.getProperty(DATA, String),
                 jobId: job.id,
-                mediaType: job.getProperty(MEDIA_TYPE)
+                jobProperties: JobProperties.fromJob(job)
             )
 
             groovyConsoleService.runScript(scriptContext)

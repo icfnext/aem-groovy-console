@@ -1,5 +1,6 @@
 package com.icfolson.aem.groovy.console.servlets
 
+import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.HttpHeaders
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.audit.AuditRecord
@@ -43,7 +44,7 @@ class ScriptDownloadServlet extends SlingSafeMethodsServlet {
 
             def fileName = new StringBuilder()
 
-            fileName.append(result ? "result-" : "output-")
+            fileName.append(result ? "result-" : getOutputFileName(auditRecord))
             fileName.append(auditRecord.date.format(DATE_FORMAT_FILE_NAME))
             fileName.append(".")
             fileName.append(mimeTypeService.getExtension(mediaType))
@@ -62,11 +63,24 @@ class ScriptDownloadServlet extends SlingSafeMethodsServlet {
         }
     }
 
+    private String getOutputFileName(AuditRecord auditRecord) {
+        def outputFileName
+
+        if (auditRecord.jobProperties?.jobTitle) {
+            outputFileName = JcrUtil.createValidName(auditRecord.jobProperties.jobTitle,
+                JcrUtil.HYPHEN_LABEL_CHAR_MAPPING).toLowerCase() + "-"
+        } else {
+            outputFileName = "output-"
+        }
+
+        outputFileName
+    }
+
     private String getMediaType(AuditRecord auditRecord) {
         def mediaType
 
-        if (auditRecord.mediaType) {
-            mediaType = MediaType.parse(auditRecord.mediaType)
+        if (auditRecord.jobProperties?.mediaType) {
+            mediaType = MediaType.parse(auditRecord.jobProperties.mediaType)
         } else {
             mediaType = MediaType.PLAIN_TEXT_UTF_8
         }
