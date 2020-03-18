@@ -2,20 +2,25 @@ package com.icfolson.aem.groovy.console.notification.impl
 
 import com.day.cq.mailer.MailService
 import com.google.common.base.Charsets
+import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.notification.EmailNotificationService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.text.GStringTemplateEngine
 import groovy.util.logging.Slf4j
 import org.apache.commons.mail.Email
 import org.apache.commons.mail.HtmlEmail
+import org.apache.commons.mail.MultiPartEmail
 import org.osgi.service.component.annotations.Component
 import org.osgi.service.component.annotations.Reference
 import org.osgi.service.component.annotations.ReferenceCardinality
 
-@Component(service = NotificationService, immediate = true)
+import javax.mail.util.ByteArrayDataSource
+
+@Component(service = [EmailNotificationService, NotificationService], immediate = true)
 @Slf4j("LOG")
-class EmailNotificationService implements NotificationService {
+class DefaultEmailNotificationService implements EmailNotificationService {
 
     static final String SUBJECT = "Groovy Console Script Execution Result"
 
@@ -33,20 +38,18 @@ class EmailNotificationService implements NotificationService {
 
     @Override
     void notify(RunScriptResponse response) {
+        notify(response, configurationService.emailRecipients, false)
+    }
+
+    @Override
+    void notify(RunScriptResponse response, Set<String> recipients, boolean attachOutput) {
         if (configurationService.emailEnabled && mailService) {
-            def recipients = configurationService.emailRecipients
-
             if (recipients) {
-                def binding = createBinding(response)
-                def templatePath = response.exceptionStackTrace ? TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS
+                def email = createEmail(response, recipients, attachOutput)
 
-                def email = createEmail(recipients, binding, templatePath)
+                LOG.debug("sending email, recipients : {}", recipients)
 
-                LOG.debug("sending email, recipients = {}", recipients)
-
-                Thread.start {
-                    mailService.send(email)
-                }
+                mailService.send(email)
             } else {
                 LOG.error("email enabled but no recipients configured")
             }
@@ -55,22 +58,37 @@ class EmailNotificationService implements NotificationService {
         }
     }
 
-    private Email createEmail(Set<String> recipients, Map<String, String> binding, String templatePath) {
-        def email = new HtmlEmail()
+    private Email createEmail(RunScriptResponse response, Set<String> recipients, boolean attachOutput) {
+        def email = attachOutput ? new MultiPartEmail() : new HtmlEmail()
 
         recipients.each { name ->
             email.addTo(name)
         }
 
-        def template = new GStringTemplateEngine().createTemplate(this.class.getResource(templatePath))
+        email.subject = SUBJECT
+        email.charset = Charsets.UTF_8.name()
 
-        email.with {
-            charset = Charsets.UTF_8.name()
-            subject = SUBJECT
-            htmlMsg = template.make(binding).toString()
+        if (attachOutput) {
+            (email as MultiPartEmail).addPart(getMessage(response), MediaType.HTML_UTF_8.toString())
+
+            def dataSource = new ByteArrayDataSource(response.output.getBytes(Charsets.UTF_8.name()),
+                MediaType.parse(response.mediaType).toString())
+
+            // attach output file
+            (email as MultiPartEmail).attach(dataSource, response.outputFileName, null)
+        } else {
+            (email as HtmlEmail).htmlMsg = getMessage(response)
         }
 
         email
+    }
+
+    private String getMessage(RunScriptResponse response) {
+        new GStringTemplateEngine()
+            .createTemplate(this.class.getResource(response.exceptionStackTrace ?
+                TEMPLATE_PATH_FAIL : TEMPLATE_PATH_SUCCESS))
+            .make(createBinding(response))
+            .toString()
     }
 
     private Map<String, String> createBinding(RunScriptResponse response) {

@@ -7,6 +7,13 @@ import com.icfolson.aem.groovy.console.api.JobProperties
  */
 interface RunScriptResponse {
 
+    /**
+     * Get the date of script execution.
+     *
+     * @return execution date
+     */
+    Calendar getDate()
+
     String getScript()
 
     String getData()
@@ -24,4 +31,8 @@ interface RunScriptResponse {
     String getJobId()
 
     JobProperties getJobProperties()
+
+    String getMediaType()
+
+    String getOutputFileName()
 }

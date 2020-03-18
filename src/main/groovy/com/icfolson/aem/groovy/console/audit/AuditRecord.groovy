@@ -6,8 +6,6 @@ import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
 import groovy.transform.ToString
 import org.apache.sling.api.resource.Resource
 
-import static com.day.cq.commons.jcr.JcrConstants.JCR_CREATED
-
 @ToString(includePackage = false, includes = ["path"])
 class AuditRecord implements RunScriptResponse {
 
@@ -15,14 +13,11 @@ class AuditRecord implements RunScriptResponse {
 
     final String path
 
-    final Calendar date
-
     @Delegate
     final RunScriptResponse response
 
     AuditRecord(Resource resource) {
         path = resource.path
-        date = resource.valueMap.get(JCR_CREATED, Calendar)
         response = DefaultRunScriptResponse.fromAuditRecordResource(resource)
     }
 

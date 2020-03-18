@@ -62,10 +62,10 @@ class JobProperties {
         new JobProperties(properties)
     }
 
-    List<String> getEmailTo() {
+    Set<String> getEmailTo() {
         def emailTo = properties.get(EMAIL_TO) as String
 
-        emailTo ? emailTo.tokenize(",")*.trim() : []
+        (emailTo ? emailTo.tokenize(",")*.trim() : []) as Set
     }
 
     String getJobTitle() {

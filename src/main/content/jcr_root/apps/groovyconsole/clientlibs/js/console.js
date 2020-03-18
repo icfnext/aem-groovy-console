@@ -265,9 +265,6 @@ var GroovyConsole = function () {
             $('#result,#result-table,#output,#running-time').fadeOut('fast');
             $('#result pre,#output pre,#running-time pre').text('');
 
-            // clear scheduler
-            // GroovyConsole.clearScheduler();
-
             var resultTableData = $('#result-table').find('th');
 
             // destroy datatable and remove columns if it exists

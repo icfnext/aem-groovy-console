@@ -1,6 +1,7 @@
-package com.icfolson.aem.groovy.console.job.eventhandlers
+package com.icfolson.aem.groovy.console.job.event
 
 import com.icfolson.aem.groovy.console.audit.AuditService
+import com.icfolson.aem.groovy.console.notification.EmailNotificationService
 import groovy.util.logging.Slf4j
 import org.apache.sling.event.jobs.NotificationConstants
 import org.osgi.service.component.annotations.Component
@@ -14,27 +15,30 @@ import org.osgi.service.event.propertytypes.EventTopics
 @EventTopics(NotificationConstants.TOPIC_JOB_FINISHED)
 @EventFilter("(event.job.topic=groovyconsole/job*)")
 @Slf4j("LOG")
-class GroovyConsoleNotificationEventHandler implements EventHandler {
+class GroovyConsoleEmailNotificationEventHandler implements EventHandler {
 
     @Reference
     private AuditService auditService
 
+    @Reference
+    private EmailNotificationService emailNotificationService
+
     @Override
     void handleEvent(Event event) {
-        def eventProperties = event.propertyNames.collectEntries { propertyName ->
-            [propertyName, event.getProperty(propertyName)]
-        }
-
-        LOG.info("handling completed groovy console job with properties : {}", eventProperties)
+        LOG.info("handling completed groovy console job with properties : {}", event.propertyNames
+            .collectEntries { propertyName -> [propertyName, event.getProperty(propertyName)] })
 
         def jobId = event.getProperty(NotificationConstants.NOTIFICATION_PROPERTY_JOB_ID) as String
-
         def auditRecord = auditService.getAuditRecord(jobId)
 
         if (auditRecord) {
-            LOG.info("found audit record for job ID : {}, {}", jobId, auditRecord)
+            if (auditRecord.jobProperties?.emailTo) {
+                LOG.info("found audit record for job ID : {}, {}, sending notifications...", jobId, auditRecord)
 
-            // TODO
+                emailNotificationService.notify(auditRecord, auditRecord.jobProperties.emailTo, true)
+            } else {
+                LOG.info("missing job properties and/or email recipients for audit record, ignoring...")
+            }
         } else {
             LOG.error("audit record not found for job ID : {}", jobId)
         }

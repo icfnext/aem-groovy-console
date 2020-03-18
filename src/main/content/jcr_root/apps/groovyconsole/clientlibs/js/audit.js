@@ -14,8 +14,16 @@ GroovyConsole.Audit = function () {
                     {
                         className: 'open-record',
                         orderable: false,
+                        searchable: false,
                         data: null,
                         defaultContent: '<span class="glyphicon glyphicon-upload" title="Load Script"></span>'
+                    },
+                    {
+                        className: 'download-record',
+                        orderable: false,
+                        searchable: false,
+                        data: null,
+                        defaultContent: ''
                     },
                     {
                         data: 'date',
@@ -30,16 +38,6 @@ GroovyConsole.Audit = function () {
                         orderable: false
                     },
                     {
-                        className: 'download-record',
-                        orderable: false,
-                        searchable: false,
-                        data: null,
-                        defaultContent: '<div class="btn-group" role="group">\n' +
-                            '  <button type="button" class="btn btn-default download-result hidden">Result</button>\n' +
-                            '  <button type="button" class="btn btn-default download-output hidden">Output</button>\n' +
-                            '</div>'
-                    },
-                    {
                         className: 'delete-record',
                         orderable: false,
                         searchable: false,
@@ -47,7 +45,7 @@ GroovyConsole.Audit = function () {
                         defaultContent: '<span class="glyphicon glyphicon-trash" title="Delete Record"></span>'
                     }
                 ],
-                order: [[1, 'desc']],
+                order: [[2, 'desc']],
                 language: {
                     emptyTable: 'No audit records found.',
                     search: 'Script Contains: ',
@@ -57,9 +55,13 @@ GroovyConsole.Audit = function () {
                     infoFiltered: '(filtered from _MAX_ total records)'
                 },
                 rowCallback: function (row, data) {
-                    $('td:eq(1)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
-                    $('td:eq(2)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
-                    $('td:eq(2)', row).popover({
+                    if (data.hasOutput) {
+                        $('td:eq(1)', row).html('<span class="glyphicon glyphicon-floppy-save" title="Download Output"></span>');
+                    }
+
+                    $('td:eq(2)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
+                    $('td:eq(3)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
+                    $('td:eq(3)', row).popover({
                         container: 'body',
                         content: '<pre>' + data.script + '</pre>',
                         html: true,
@@ -68,31 +70,8 @@ GroovyConsole.Audit = function () {
                     });
 
                     if (data.exception.length) {
-                        $('td:eq(3)', row).html('<span class="label label-danger">' + data.exception + '</span>');
+                        $('td:eq(4)', row).html('<span class="label label-danger">' + data.exception + '</span>');
                     }
-
-                    var buttons = []
-
-                    if (data.hasResult) {
-                        buttons.push($('<button type="button" class="btn btn-default download-result">Result</button>').click(function () {
-                            window.location = DOWNLOAD_URL + '?' + $.param({
-                                'userId': data.userId,
-                                'script': data.relativePath,
-                                'result': true
-                            });
-                        }));
-                    }
-
-                    if (data.hasOutput) {
-                        buttons.push($('<button type="button" class="btn btn-default">Output</button>').click(function () {
-                            window.location = DOWNLOAD_URL + '?' + $.param({
-                                'userId': data.userId,
-                                'script': data.relativePath
-                            });
-                        }));
-                    }
-
-                    $('td:eq(4)', row).html($('<div class="btn-group" role="group"></div>').html(buttons));
                 }
             });
 
@@ -117,6 +96,16 @@ GroovyConsole.Audit = function () {
                     GroovyConsole.showResult(response);
 
                     $('html, body').animate({scrollTop: 0});
+                });
+            });
+
+            tableBody.on('click', 'td.download-record', function () {
+                var tr = $(this).closest('tr');
+                var data = table.row(tr).data();
+
+                window.location = DOWNLOAD_URL + '?' + $.param({
+                    'userId': data.userId,
+                    'script': data.relativePath
                 });
             });
 

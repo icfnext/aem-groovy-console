@@ -69,7 +69,7 @@ code {
     border-color: #ddd;
 }
 
-td.open-record, td.delete-record {
+td.open-record, td.download-record, td.delete-record {
     cursor: pointer;
 }
 
