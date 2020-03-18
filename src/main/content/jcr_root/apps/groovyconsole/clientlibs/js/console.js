@@ -147,6 +147,19 @@ var GroovyConsole = function () {
 
                 GroovyConsole.reset();
 
+                var jobTitle = $('input[name="jobTitle"]').val();
+                var cronExpression = $('input[name="cronExpression"]').val();
+
+                if (jobTitle.length === 0) {
+                    GroovyConsole.showError('Job Title is required.');
+                    return;
+                }
+
+                if (!$('input[name="immediate"]').prop('checked') && cronExpression.length === 0) {
+                    GroovyConsole.showError('Cron Expression is required if job is not immediate.');
+                    return;
+                }
+
                 var script = scriptEditor.getSession().getValue();
 
                 if (script.length) {
@@ -161,10 +174,11 @@ var GroovyConsole = function () {
                     $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/jobs.json', {
                         script: script,
                         data: dataEditor.getSession().getValue(),
-                        jobTitle: $('input[name="jobTitle"]').val(),
+                        jobTitle: jobTitle,
                         jobDescription: $('input[name="jobDescription"]').val(),
-                        cronExpression: $('input[name="cronExpression"]').val(),
+                        cronExpression: cronExpression,
                         mediaType: $('select[name="mediaType"]').val(),
+                        emailTo: $('input[name="emailTo"]').val(),
                         scheduledJobId: $('input[name="scheduledJobId"]').val()
                     }).done(function () {
                         GroovyConsole.showSuccess('Job scheduled successfully.');
@@ -253,6 +267,16 @@ var GroovyConsole = function () {
 
         initializeTooltips: function () {
             $('[data-toggle="tooltip"]').tooltip();
+        },
+
+        initializeEvents: function () {
+            $('input[name="immediate"]').click(function () {
+                if ($(this).prop('checked')) {
+                    $('input[name="cronExpression"]').attr('disabled', true);
+                } else {
+                    $('input[name="cronExpression"]').attr('disabled', false);
+                }
+            });
         },
 
         reset: function () {
@@ -389,7 +413,8 @@ var GroovyConsole = function () {
             $('#scheduler-form input[type="hidden"]').val('');
             $('#scheduler-form input[type="text"]').val('');
             $('#scheduler-form input[type="checkbox"]').prop('checked', false);
-            $('#scheduler-form input[type="select"]').val('');
+            $('input[name="cronExpression"]').attr('disabled', false);
+            $('#scheduler-form select').val($('#scheduler-form select option:first').val());
         },
 
         hideScheduler: function () {
