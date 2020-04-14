@@ -3,7 +3,7 @@ package com.icfolson.aem.groovy.console.servlets
 import com.day.cq.commons.jcr.JcrConstants
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import groovy.util.logging.Slf4j

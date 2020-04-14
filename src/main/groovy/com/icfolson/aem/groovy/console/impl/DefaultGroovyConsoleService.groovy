@@ -5,8 +5,8 @@ import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.JobProperties
-import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.api.ScriptData
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants

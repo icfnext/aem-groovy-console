@@ -31,7 +31,7 @@ class JobProperties {
     static JobProperties fromRequest(SlingHttpServletRequest request) {
         def properties = JOB_PROPERTIES.collectEntries { propertyName ->
             [propertyName, request.getParameter(propertyName)]
-        }.findAll { it.value != null }
+        }.findAll { it.value != null } as Map<String, Object>
 
         properties[DATE_CREATED] = Calendar.instance
         properties[SCHEDULED_JOB_ID] = UUID.randomUUID().toString()
@@ -40,7 +40,7 @@ class JobProperties {
     }
 
     static JobProperties fromJob(Job job) {
-        def properties = [:]
+        def properties = [:] as Map<String, Object>
 
         job.propertyNames.findAll { propertyName -> ALL_JOB_PROPERTIES.contains(propertyName) }
             .each { propertyName ->
@@ -51,7 +51,7 @@ class JobProperties {
     }
 
     static JobProperties fromValueMap(ValueMap valueMap) {
-        def properties = [:]
+        def properties = [:] as Map<String, Object>
 
         valueMap.each { name, value ->
             if (ALL_JOB_PROPERTIES.contains(name)) {

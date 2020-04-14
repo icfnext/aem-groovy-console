@@ -3,10 +3,10 @@ package com.icfolson.aem.groovy.console.extension.impl
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
 import com.icfolson.aem.groovy.console.api.CompilationCustomizerExtensionProvider
-import com.icfolson.aem.groovy.console.api.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
@@ -34,7 +34,7 @@ class DefaultExtensionService implements ExtensionService {
 
     @Override
     Map<String, BindingVariable> getBindingVariables(ScriptContext scriptContext) {
-        def bindingVariables = [:]
+        def bindingVariables = [:] as Map<String, BindingVariable>
 
         bindingExtensionProviders.each { extension ->
             extension.getBindingVariables(scriptContext).each { name, variable ->
@@ -57,7 +57,7 @@ class DefaultExtensionService implements ExtensionService {
 
     @Override
     Set<StarImport> getStarImports() {
-        starImportExtensionProviders.collectMany { it.starImports } as Set
+        starImportExtensionProviders.collectMany { it.starImports } as Set<StarImport>
     }
 
     @Override

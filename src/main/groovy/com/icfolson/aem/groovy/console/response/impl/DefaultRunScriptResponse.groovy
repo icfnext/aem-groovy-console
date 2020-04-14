@@ -5,8 +5,8 @@ import com.day.cq.commons.jcr.JcrUtil
 import com.day.text.Text
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.api.JobProperties
-import com.icfolson.aem.groovy.console.api.JobScriptContext
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.JobScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.table.Table
 import groovy.json.JsonBuilder

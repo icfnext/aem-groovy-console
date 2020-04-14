@@ -3,7 +3,7 @@ package com.icfolson.aem.groovy.console.extension.impl
 import com.google.common.io.ByteStreams
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.api.StarImport
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider

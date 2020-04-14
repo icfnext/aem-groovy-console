@@ -2,7 +2,7 @@ package com.icfolson.aem.groovy.console.extension
 
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.CompilationCustomizerExtensionProvider
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.StarImportExtensionProvider
 
 /**

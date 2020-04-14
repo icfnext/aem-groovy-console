@@ -1,9 +1,6 @@
 package com.icfolson.aem.groovy.console.audit
 
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
-import org.apache.sling.api.resource.PersistenceException
-
-import javax.jcr.RepositoryException
 
 interface AuditService {
 
@@ -11,27 +8,23 @@ interface AuditService {
      * Create an audit record for the given script execution response.
      *
      * @param response response containing execution result or exception
-     * @throws RepositoryException if error occurs creating audit record
-     * @throws PersistenceException if error occurs creating audit record
      */
-    AuditRecord createAuditRecord(RunScriptResponse response) throws RepositoryException, PersistenceException
+    AuditRecord createAuditRecord(RunScriptResponse response)
 
     /**
      * Delete all audit records.
      *
      * @param userId user that owns the audit records
-     * @throws PersistenceException if an error occurs while deleting audit resources
      */
-    void deleteAllAuditRecords(String userId) throws PersistenceException
+    void deleteAllAuditRecords(String userId)
 
     /**
      * Delete an audit record.
      *
      * @param userId user that owns the audit record
      * @param relativePath relative path to audit record from parent audit resource
-     * @throws PersistenceException if an error occurs while deleting the audit record resource
      */
-    void deleteAuditRecord(String userId, String relativePath) throws PersistenceException
+    void deleteAuditRecord(String userId, String relativePath)
 
     /**
      * Get all audit records.

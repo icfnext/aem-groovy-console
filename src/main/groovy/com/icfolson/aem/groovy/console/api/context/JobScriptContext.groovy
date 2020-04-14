@@ -1,4 +1,6 @@
-package com.icfolson.aem.groovy.console.api
+package com.icfolson.aem.groovy.console.api.context
+
+import com.icfolson.aem.groovy.console.api.JobProperties
 
 /**
  * Script context for scheduled jobs.

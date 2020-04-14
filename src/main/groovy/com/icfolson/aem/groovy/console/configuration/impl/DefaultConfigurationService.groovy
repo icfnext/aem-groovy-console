@@ -68,21 +68,13 @@ class DefaultConfigurationService implements ConfigurationService {
     }
 
     private boolean isAdminOrAllowedGroupMember(SlingHttpServletRequest request, Set<String> groupIds) {
-        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
-
-        def isAdminOrAllowedGroupMember = false
-
-        try {
+        resourceResolverFactory.getServiceResourceResolver(null).withCloseable { resourceResolver ->
             def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
             def memberOfGroupIds = user.memberOf()*.ID
 
             LOG.debug("member of group IDs : {}, allowed group IDs : {}", memberOfGroupIds, groupIds)
 
-            isAdminOrAllowedGroupMember = user.admin || (groupIds ? memberOfGroupIds.intersect(groupIds as Iterable) : false)
-        } finally {
-            resourceResolver.close()
+            user.admin || (groupIds ? memberOfGroupIds.intersect(groupIds as Iterable) : false)
         }
-
-        isAdminOrAllowedGroupMember
     }
 }

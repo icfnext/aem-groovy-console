@@ -1,8 +1,8 @@
 package com.icfolson.aem.groovy.console
 
 import com.icfolson.aem.groovy.console.api.JobProperties
-import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.api.ScriptData
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptData
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 

@@ -1,6 +1,6 @@
 package com.icfolson.aem.groovy.console.api.impl
 
-import com.icfolson.aem.groovy.console.api.ServletScriptContext
+import com.icfolson.aem.groovy.console.api.context.ServletScriptContext
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
