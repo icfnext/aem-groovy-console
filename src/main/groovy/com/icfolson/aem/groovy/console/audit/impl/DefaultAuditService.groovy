@@ -65,7 +65,7 @@ class DefaultAuditService implements AuditService {
 
                 auditRecord = new AuditRecord(auditRecordResource)
 
-                LOG.debug("created audit record = {}", auditRecord)
+                LOG.debug("created audit record : {}", auditRecord)
 
                 auditRecord
             } catch (RepositoryException | PersistenceException e) {
@@ -88,11 +88,11 @@ class DefaultAuditService implements AuditService {
                         resourceResolver.delete(resource)
                     }
 
-                    LOG.debug("deleted all audit record resources for path = {}", auditNodePath)
+                    LOG.debug("deleted all audit record resources for path : {}", auditNodePath)
 
                     resourceResolver.commit()
                 } else {
-                    LOG.debug("audit resource not found for user ID = {}", userId)
+                    LOG.debug("audit resource not found for user ID : {}", userId)
                 }
             } catch (PersistenceException e) {
                 LOG.error("error deleting audit records", e)
@@ -110,7 +110,7 @@ class DefaultAuditService implements AuditService {
 
                 resourceResolver.delete(auditRecordResource)
 
-                LOG.debug("deleted audit record for user = {} at relative path = {}", userId, relativePath)
+                LOG.debug("deleted audit record for user : {} at relative path : {}", userId, relativePath)
 
                 resourceResolver.commit()
             } catch (PersistenceException e) {
@@ -145,7 +145,7 @@ class DefaultAuditService implements AuditService {
             if (auditRecordResource) {
                 auditRecord = new AuditRecord(auditRecordResource)
 
-                LOG.debug("found audit record = {}", auditRecord)
+                LOG.debug("found audit record : {}", auditRecord)
             }
         }
 

@@ -85,7 +85,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug("script execution completed, running time = {}", runningTime)
+            LOG.debug("script execution completed, running time : {}", runningTime)
 
             runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, result,
                 scriptContext.outputStream.toString(CHARSET), runningTime)
@@ -149,14 +149,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)
 
-        LOG.info("added notification service = {}", notificationService.class.name)
+        LOG.info("added notification service : {}", notificationService.class.name)
     }
 
     @Synchronized
     void unbindNotificationService(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
-        LOG.info("removed notification service = {}", notificationService.class.name)
+        LOG.info("removed notification service : {}", notificationService.class.name)
     }
 
     // internals

@@ -82,14 +82,14 @@ class DefaultExtensionService implements ExtensionService {
     void bindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.add(extension)
 
-        LOG.info("added binding extension = {}", extension.class.name)
+        LOG.info("added binding extension : {}", extension.class.name)
     }
 
     @Synchronized
     void unbindBindingExtensionProvider(BindingExtensionProvider extension) {
         bindingExtensionProviders.remove(extension)
 
-        LOG.info("removed binding extension = {}", extension.class.name)
+        LOG.info("removed binding extension : {}", extension.class.name)
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -97,14 +97,14 @@ class DefaultExtensionService implements ExtensionService {
     void bindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.add(extension)
 
-        LOG.info("added star import extension = {} with imports = {}", extension.class.name, extension.starImports)
+        LOG.info("added star import extension : {} with imports : {}", extension.class.name, extension.starImports)
     }
 
     @Synchronized
     void unbindStarImportExtensionProvider(StarImportExtensionProvider extension) {
         starImportExtensionProviders.remove(extension)
 
-        LOG.info("removed star import extension = {} with imports = {}", extension.class.name, extension.starImports)
+        LOG.info("removed star import extension : {} with imports : {}", extension.class.name, extension.starImports)
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -112,14 +112,14 @@ class DefaultExtensionService implements ExtensionService {
     void bindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.add(extension)
 
-        LOG.info("added script metaclass extension = {}", extension.class.name)
+        LOG.info("added script metaclass extension : {}", extension.class.name)
     }
 
     @Synchronized
     void unbindScriptMetaClassExtensionProvider(ScriptMetaClassExtensionProvider extension) {
         scriptMetaClassExtensionProviders.remove(extension)
 
-        LOG.info("removed script metaclass extension = {}", extension.class.name)
+        LOG.info("removed script metaclass extension : {}", extension.class.name)
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -127,13 +127,13 @@ class DefaultExtensionService implements ExtensionService {
     void bindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
         compilationCustomizerExtensionProviders.add(extension)
 
-        LOG.info("adding compilation customizer extension = {}", extension.class.name)
+        LOG.info("adding compilation customizer extension : {}", extension.class.name)
     }
 
     @Synchronized
     void unbindCompilationCustomizerExtensionProvider(CompilationCustomizerExtensionProvider extension) {
         compilationCustomizerExtensionProviders.remove(extension)
 
-        LOG.info("removed compilation customizer extension = {}", extension.class.name)
+        LOG.info("removed compilation customizer extension : {}", extension.class.name)
     }
 }

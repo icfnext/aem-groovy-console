@@ -94,7 +94,11 @@ To provide custom notifications for script executions, bundles may implement the
 
 ## Scheduler
 
-The Scheduler allows for immediate or Cron-based script execution.  Scripts are executed as [Sling Jobs](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html) and are audited in the same manner as scripts executed in the console.
+The Scheduler allows for immediate (asynchronous) or Cron-based script execution.  Scripts are executed as [Sling Jobs](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html) and are audited in the same manner as scripts executed in the console.
+
+### Scheduled Job Event Handling
+
+Bundles may implement services extending `com.icfolson.aem.groovy.console.job.event.AbstractGroovyConsoleScheduledJobEventHandler` to provide additional post-processing or notifications for completed Groovy Console jobs.  See `com.icfolson.aem.groovy.console.job.event.DefaultGroovyConsoleEmailNotificationEventHandler` for an example of the required annotations to register a custom event handler.
 
 ## Sample Scripts
 

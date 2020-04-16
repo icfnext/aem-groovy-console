@@ -29,7 +29,7 @@ class DefaultGroovyConsoleEmailNotificationEventHandler extends AbstractGroovyCo
         if (response.jobProperties?.emailTo) {
             emailNotificationService.notify(response, response.jobProperties.emailTo, true)
         } else {
-            LOG.info("missing job properties and/or email recipients for script execution, ignoring...")
+            LOG.debug("missing job properties and/or email recipients for script execution, ignoring...")
         }
     }
 

@@ -88,6 +88,7 @@ GroovyConsole.ScheduledJobs = function () {
                     $('#scheduler-form input[name="jobTitle"]').val(response.jobTitle);
                     $('#scheduler-form input[name="jobDescription"]').val(response.jobDescription);
                     $('#scheduler-form input[name="cronExpression"]').val(response.cronExpression);
+                    $('#scheduler-form select[name="mediaType"]').val(response.mediaType);
                     $('#scheduler-form input[type="checkbox"]').prop('checked', false);
 
                     $('html, body').animate({scrollTop: 0});
