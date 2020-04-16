@@ -45,7 +45,7 @@
     </div>
 
     <div class="panel-group" id="info">
-        <sly data-sly-include="history.html"></sly>
+        <sly data-sly-include="history.html" data-sly-test="${body.auditEnabled}"></sly>
         <sly data-sly-include="scheduled-jobs.html" data-sly-test="${body.hasScheduledJobPermission}"></sly>
         <sly data-sly-include="bindings.html"></sly>
         <sly data-sly-include="imports.html"></sly>

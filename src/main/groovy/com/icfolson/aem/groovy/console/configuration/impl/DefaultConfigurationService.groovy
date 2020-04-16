@@ -25,19 +25,19 @@ class DefaultConfigurationService implements ConfigurationService {
     @Reference
     private ResourceResolverFactory resourceResolverFactory
 
-    boolean emailEnabled
+    private boolean emailEnabled
 
-    Set<String> emailRecipients
+    private Set<String> emailRecipients
 
-    Set<String> allowedGroups
+    private Set<String> allowedGroups
 
-    Set<String> allowedScheduledJobsGroups
+    private Set<String> allowedScheduledJobsGroups
 
-    boolean vanityPathEnabled
+    private boolean vanityPathEnabled
 
-    boolean auditDisabled
+    private boolean auditDisabled
 
-    boolean displayAllAuditRecords
+    private boolean displayAllAuditRecords
 
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
@@ -52,6 +52,26 @@ class DefaultConfigurationService implements ConfigurationService {
     @Override
     String getConsoleHref() {
         vanityPathEnabled ? VANITY_PATH : DEFAULT_PATH
+    }
+
+    @Override
+    boolean isEmailEnabled() {
+        emailEnabled
+    }
+
+    @Override
+    Set<String> getEmailRecipients() {
+        emailRecipients
+    }
+
+    @Override
+    boolean isAuditDisabled() {
+        auditDisabled
+    }
+
+    @Override
+    boolean isDisplayAllAuditRecords() {
+        displayAllAuditRecords
     }
 
     @Activate

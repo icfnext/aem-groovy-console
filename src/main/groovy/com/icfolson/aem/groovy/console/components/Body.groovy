@@ -45,4 +45,8 @@ class Body {
     boolean isHasScheduledJobPermission() {
         configurationService.hasScheduledJobPermission(request)
     }
+
+    boolean isAuditEnabled() {
+        !configurationService.auditDisabled
+    }
 }

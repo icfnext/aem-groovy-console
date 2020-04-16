@@ -531,4 +531,5 @@ $(function () {
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
     GroovyConsole.initializeTooltips();
+    GroovyConsole.initializeEvents();
 });

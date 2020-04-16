@@ -29,9 +29,7 @@ class GroovyConsoleScheduledJobConsumer implements JobConsumer {
             [propertyName, job.getProperty(propertyName)]
         })
 
-        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
-
-        resourceResolver.withCloseable {
+        resourceResolverFactory.getServiceResourceResolver(null).withCloseable { resourceResolver ->
             def outputStream = new ByteArrayOutputStream()
 
             def scriptContext = new ScheduledJobScriptContext(

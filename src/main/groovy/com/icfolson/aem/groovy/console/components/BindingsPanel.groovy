@@ -7,10 +7,9 @@ import groovy.transform.Memoized
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.models.annotations.Model
+import org.apache.sling.models.annotations.injectorspecific.OSGiService
 import org.apache.sling.models.annotations.injectorspecific.ScriptVariable
 import org.apache.sling.models.annotations.injectorspecific.Self
-
-import javax.inject.Inject
 
 @Model(adaptables = SlingHttpServletRequest)
 class BindingsPanel {
@@ -21,7 +20,7 @@ class BindingsPanel {
     @ScriptVariable
     private SlingHttpServletResponse response
 
-    @Inject
+    @OSGiService
     private ExtensionService extensionService
 
     @Memoized

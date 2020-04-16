@@ -75,9 +75,10 @@ class DefaultEmailNotificationService implements EmailNotificationService {
         email.subject = SUBJECT
         email.charset = Charsets.UTF_8.name()
 
+        def message = getMessage(response, successTemplate, failureTemplate)
+
         if (attachOutput) {
-            (email as MultiPartEmail).addPart(getMessage(response, successTemplate, failureTemplate),
-                MediaType.HTML_UTF_8.toString())
+            (email as MultiPartEmail).addPart(message, MediaType.HTML_UTF_8.toString())
 
             def dataSource = new ByteArrayDataSource(response.output.getBytes(Charsets.UTF_8.name()),
                 MediaType.parse(response.mediaType).toString())
@@ -85,31 +86,25 @@ class DefaultEmailNotificationService implements EmailNotificationService {
             // attach output file
             (email as MultiPartEmail).attach(dataSource, response.outputFileName, null)
         } else {
-            (email as HtmlEmail).htmlMsg = getMessage(response, successTemplate, failureTemplate)
+            (email as HtmlEmail).htmlMsg = message
         }
 
         email
     }
 
     private String getMessage(RunScriptResponse response, String successTemplate, String failureTemplate) {
-        def templateEngine = new GStringTemplateEngine()
-        def emailTemplate
+        def template
 
         if (response.exceptionStackTrace) {
-            if (failureTemplate) {
-                emailTemplate = templateEngine.createTemplate(failureTemplate)
-            } else {
-                emailTemplate = templateEngine.createTemplate(this.class.getResource(TEMPLATE_PATH_FAIL))
-            }
+            template = failureTemplate ?: this.class.getResource(TEMPLATE_PATH_FAIL).text
         } else {
-            if (successTemplate) {
-                emailTemplate = templateEngine.createTemplate(successTemplate)
-            } else {
-                emailTemplate = templateEngine.createTemplate(this.class.getResource(TEMPLATE_PATH_SUCCESS))
-            }
+            template = successTemplate ?: this.class.getResource(TEMPLATE_PATH_SUCCESS).text
         }
 
-        emailTemplate.make(createBinding(response)).toString()
+        new GStringTemplateEngine()
+            .createTemplate(template)
+            .make(createBinding(response))
+            .toString()
     }
 
     private Map<String, String> createBinding(RunScriptResponse response) {
