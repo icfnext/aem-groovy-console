@@ -4,8 +4,8 @@ import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
 import com.icfolson.aem.groovy.console.api.BindingExtensionProvider
 import com.icfolson.aem.groovy.console.api.BindingVariable
-import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.api.ServletScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ServletScriptContext
 import com.icfolson.aem.groovy.extension.builders.NodeBuilder
 import com.icfolson.aem.groovy.extension.builders.PageBuilder
 import groovy.json.JsonException

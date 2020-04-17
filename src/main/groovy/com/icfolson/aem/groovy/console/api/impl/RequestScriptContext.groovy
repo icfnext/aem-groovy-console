@@ -1,11 +1,16 @@
 package com.icfolson.aem.groovy.console.api.impl
 
-import com.icfolson.aem.groovy.console.api.ServletScriptContext
+import com.icfolson.aem.groovy.console.api.context.ServletScriptContext
 import groovy.transform.TupleConstructor
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
 import org.apache.sling.api.resource.ResourceResolver
 
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.DATA
+
+/**
+ * Script context for request-based (i.e. via the console) script executions.
+ */
 @TupleConstructor
 class RequestScriptContext implements ServletScriptContext {
 
@@ -17,9 +22,7 @@ class RequestScriptContext implements ServletScriptContext {
 
     PrintStream printStream
 
-    String scriptContent
-
-    String data
+    String script
 
     @Override
     ResourceResolver getResourceResolver() {
@@ -29,5 +32,10 @@ class RequestScriptContext implements ServletScriptContext {
     @Override
     String getUserId() {
         request.resourceResolver.userID
+    }
+
+    @Override
+    String getData() {
+        request.getParameter(DATA)
     }
 }

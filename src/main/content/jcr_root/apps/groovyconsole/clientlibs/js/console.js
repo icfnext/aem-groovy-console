@@ -107,11 +107,13 @@ var GroovyConsole = function () {
 
                 GroovyConsole.localStorage.clearScriptName();
                 GroovyConsole.reset();
+                GroovyConsole.clearScheduler();
 
                 scriptEditor.getSession().setValue('');
                 dataEditor.getSession().setValue('');
 
                 GroovyConsole.hideData();
+                GroovyConsole.hideScheduler();
             });
 
             $('#open-script').click(function () {
@@ -138,12 +140,82 @@ var GroovyConsole = function () {
                 }
             });
 
+            $('#schedule-job').click(function () {
+                if ($('#schedule-job').hasClass('disabled')) {
+                    return;
+                }
+
+                GroovyConsole.reset();
+
+                var jobTitle = $('input[name="jobTitle"]').val();
+                var cronExpression = $('input[name="cronExpression"]').val();
+
+                if (jobTitle.length === 0) {
+                    GroovyConsole.showError('Job Title is required.');
+                    return;
+                }
+
+                if (!$('input[name="immediate"]').prop('checked') && cronExpression.length === 0) {
+                    GroovyConsole.showError('Cron Expression is required if job is not immediate.');
+                    return;
+                }
+
+                var script = scriptEditor.getSession().getValue();
+
+                if (script.length) {
+                    scriptEditor.setReadOnly(true);
+                    dataEditor.setReadOnly(true);
+
+                    GroovyConsole.showLoader();
+                    GroovyConsole.disableButtons();
+
+                    $('#schedule-job-text').text('Scheduling...');
+
+                    $.post(CQ.shared.HTTP.getContextPath() + '/bin/groovyconsole/jobs.json', {
+                        script: script,
+                        data: dataEditor.getSession().getValue(),
+                        jobTitle: jobTitle,
+                        jobDescription: $('input[name="jobDescription"]').val(),
+                        cronExpression: cronExpression,
+                        mediaType: $('select[name="mediaType"]').val(),
+                        emailTo: $('input[name="emailTo"]').val(),
+                        scheduledJobId: $('input[name="scheduledJobId"]').val()
+                    }).done(function () {
+                        GroovyConsole.showSuccess('Job scheduled successfully.');
+                        GroovyConsole.clearScheduler();
+                        GroovyConsole.hideScheduler();
+
+                        $('#scheduled-jobs').collapse('show');
+                    }).fail(function (jqXHR) {
+                        if (jqXHR.status === 400) {
+                            GroovyConsole.showError('Invalid Cron expression.');
+                        } else if (jqXHR.status === 403) {
+                            GroovyConsole.showError('You do not have permission to schedule jobs in the Groovy Console.');
+                        } else {
+                            GroovyConsole.showError('Job scheduling failed.  Check error.log file.');
+                        }
+                    }).always(function () {
+                        scriptEditor.setReadOnly(false);
+                        dataEditor.setReadOnly(false);
+
+                        GroovyConsole.hideLoader();
+                        GroovyConsole.enableButtons();
+                        GroovyConsole.ScheduledJobs.refreshScheduledJobs();
+
+                        $('#schedule-job-text').text('Schedule Job');
+                    });
+                } else {
+                    GroovyConsole.showError('Script is empty.');
+                }
+            });
+
             $('#run-script').click(function () {
                 if ($('#run-script').hasClass('disabled')) {
                     return;
                 }
 
                 GroovyConsole.reset();
+                GroovyConsole.clearScheduler();
 
                 var script = scriptEditor.getSession().getValue();
 
@@ -195,6 +267,16 @@ var GroovyConsole = function () {
 
         initializeTooltips: function () {
             $('[data-toggle="tooltip"]').tooltip();
+        },
+
+        initializeEvents: function () {
+            $('input[name="immediate"]').click(function () {
+                if ($(this).prop('checked')) {
+                    $('input[name="cronExpression"]').attr('disabled', true);
+                } else {
+                    $('input[name="cronExpression"]').attr('disabled', false);
+                }
+            });
         },
 
         reset: function () {
@@ -250,16 +332,19 @@ var GroovyConsole = function () {
                         .addClass('alert-danger')
                         .fadeIn('fast');
                 }
+
                 $('#stacktrace').text(exceptionStackTrace).fadeIn('fast');
             } else {
                 if (!GroovyConsole.showTable(response) && result && result.length) {
                     this.handleDownloadLink('#result', result);
+
                     $('#result pre').text(result);
                     $('#result').fadeIn('fast');
                 }
 
                 if (output && output.length) {
                     this.handleDownloadLink('#output', output);
+
                     $('#output pre').text(output);
                     $('#output').removeClass('alert-danger')
                         .addClass('alert-success')
@@ -287,7 +372,7 @@ var GroovyConsole = function () {
 
                 $.each(json.columns, function (i, columnName) {
                     headerRow.append('<th>' + columnName + '</th>');
-                    columns.push({ title: columnName });
+                    columns.push({title: columnName});
                 });
 
                 resultDataTable = resultTable.DataTable({
@@ -308,11 +393,35 @@ var GroovyConsole = function () {
             return hasTable;
         },
 
+        showScheduler: function () {
+            var $data = $('#scheduler');
+
+            if (!$data.hasClass('in')) {
+                $data.collapse('show');
+            }
+        },
+
         showData: function () {
             var $data = $('#data');
 
             if (!$data.hasClass('in')) {
                 $data.collapse('show');
+            }
+        },
+
+        clearScheduler: function () {
+            $('#scheduler-form input[type="hidden"]').val('');
+            $('#scheduler-form input[type="text"]').val('');
+            $('#scheduler-form input[type="checkbox"]').prop('checked', false);
+            $('input[name="cronExpression"]').attr('disabled', false);
+            $('#scheduler-form select').val($('#scheduler-form select option:first').val());
+        },
+
+        hideScheduler: function () {
+            var $scheduler = $('#scheduler');
+
+            if ($scheduler.hasClass('in')) {
+                $scheduler.collapse('hide');
             }
         },
 
@@ -422,4 +531,5 @@ $(function () {
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
     GroovyConsole.initializeTooltips();
+    GroovyConsole.initializeEvents();
 });

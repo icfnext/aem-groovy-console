@@ -1,9 +1,9 @@
 package com.icfolson.aem.groovy.console.response
 
-import groovy.transform.Immutable
+/**
+ * Response for saved scripts.
+ */
+interface SaveScriptResponse {
 
-@Immutable
-class SaveScriptResponse {
-
-    String scriptName
+    String getScriptName()
 }

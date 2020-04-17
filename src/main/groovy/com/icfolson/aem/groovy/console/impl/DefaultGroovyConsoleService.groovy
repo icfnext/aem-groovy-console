@@ -4,17 +4,22 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.api.ScriptData
+import com.icfolson.aem.groovy.console.api.JobProperties
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultSaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
+import org.apache.sling.event.jobs.JobManager
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
@@ -58,6 +63,9 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
+    @Reference
+    private JobManager jobManager
+
     @Override
     RunScriptResponse runScript(ScriptContext scriptContext) {
         def binding = getBinding(scriptContext)
@@ -65,7 +73,7 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         def runScriptResponse = null
 
         try {
-            def script = new GroovyShell(binding, configuration).parse(scriptContext.scriptContent)
+            def script = new GroovyShell(binding, configuration).parse(scriptContext.script)
 
             extensionService.getScriptMetaClasses(scriptContext).each { meta ->
                 script.metaClass(meta)
@@ -77,21 +85,21 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug("script execution completed, running time = {}", runningTime)
+            LOG.debug("script execution completed, running time : {}", runningTime)
 
-            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result,
+            runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, result,
                 scriptContext.outputStream.toString(CHARSET), runningTime)
 
             auditAndNotify(runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
                 scriptContext.outputStream.toString(CHARSET), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext,
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
                 scriptContext.outputStream.toString(CHARSET), t)
 
             auditAndNotify(runScriptResponse)
@@ -114,9 +122,26 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
             folderNode.getNode(fileName).remove()
         }
 
-        saveFile(session, folderNode, scriptData.scriptContent, fileName, new Date(), MediaType.OCTET_STREAM.toString())
+        saveFile(session, folderNode, scriptData.script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
-        new SaveScriptResponse(fileName)
+        new DefaultSaveScriptResponse(fileName)
+    }
+
+    @Override
+    boolean addScheduledJob(JobProperties jobProperties) {
+        if (jobProperties.cronExpression) {
+            LOG.info("adding scheduled job with properties : {}", jobProperties.toMap())
+
+            jobManager.createJob(GroovyConsoleConstants.JOB_TOPIC)
+                .properties(jobProperties.toMap())
+                .schedule()
+                .cron(jobProperties.cronExpression)
+                .add()
+        } else {
+            LOG.info("adding immediate job with properties : {}", jobProperties.toMap())
+
+            jobManager.addJob(GroovyConsoleConstants.JOB_TOPIC, jobProperties.toMap())
+        }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -124,14 +149,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)
 
-        LOG.info("added notification service = {}", notificationService.class.name)
+        LOG.info("added notification service : {}", notificationService.class.name)
     }
 
     @Synchronized
     void unbindNotificationService(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
-        LOG.info("removed notification service = {}", notificationService.class.name)
+        LOG.info("removed notification service : {}", notificationService.class.name)
     }
 
     // internals

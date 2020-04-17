@@ -1,4 +1,4 @@
-package com.icfolson.aem.groovy.console.api
+package com.icfolson.aem.groovy.console.api.context
 
 import org.apache.sling.api.resource.ResourceResolver
 
@@ -26,5 +26,5 @@ interface ScriptData {
      *
      * @return script content
      */
-    String getScriptContent()
+    String getScript()
 }

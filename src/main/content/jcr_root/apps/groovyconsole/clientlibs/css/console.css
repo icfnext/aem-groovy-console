@@ -19,7 +19,7 @@ body {
     visibility: hidden;
 }
 
-#data-group {
+#toolbar-group {
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -69,7 +69,11 @@ code {
     border-color: #ddd;
 }
 
-td.open-record, td.delete-record {
+td.open-record, td.download-record, td.delete-record {
+    cursor: pointer;
+}
+
+td.edit-scheduled-job, td.delete-scheduled-job {
     cursor: pointer;
 }
 
@@ -83,7 +87,7 @@ td.open-record, td.delete-record {
     overflow-x: hidden;
 }
 
-.form-group {
+#history .form-group {
     margin-bottom: 0;
 }
 
@@ -93,6 +97,14 @@ td.open-record, td.delete-record {
 
 #history table {
     width: 100%;
+}
+
+#history td {
+    vertical-align: middle;
+}
+
+#scheduled-jobs td {
+    vertical-align: middle;
 }
 
 .popover {

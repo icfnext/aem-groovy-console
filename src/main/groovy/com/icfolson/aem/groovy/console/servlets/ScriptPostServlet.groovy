@@ -3,7 +3,7 @@ package com.icfolson.aem.groovy.console.servlets
 import com.day.cq.commons.jcr.JcrConstants
 import com.google.common.base.Charsets
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import groovy.util.logging.Slf4j
@@ -17,10 +17,9 @@ import javax.servlet.Servlet
 import javax.servlet.ServletException
 
 import static com.google.common.base.Preconditions.checkNotNull
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATH
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_SCRIPT_PATHS
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT_PATH
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT_PATHS
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN
 
 @Component(service = Servlet, immediate = true, property = [
@@ -39,7 +38,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
         ServletException, IOException {
         if (configurationService.hasPermission(request)) {
-            def scriptPaths = request.getParameterValues(PARAMETER_SCRIPT_PATHS)
+            def scriptPaths = request.getParameterValues(SCRIPT_PATHS)
 
             if (scriptPaths) {
                 LOG.debug("running scripts for paths : {}", scriptPaths)
@@ -52,7 +51,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
 
                 writeJsonResponse(response, runScriptResponses)
             } else {
-                def scriptPath = request.getParameter(PARAMETER_SCRIPT_PATH)
+                def scriptPath = request.getParameter(SCRIPT_PATH)
 
                 if (scriptPath) {
                     LOG.debug("running script for path : {}", scriptPath)
@@ -75,20 +74,19 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             response: response,
             outputStream: outputStream,
             printStream: new PrintStream(outputStream, true, Charsets.UTF_8.name()),
-            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty."),
-            data: request.getRequestParameter(PARAMETER_DATA)?.getString(Charsets.UTF_8.name())
+            script: checkNotNull(getScript(request, scriptPath), "Script cannot be empty.")
         )
     }
 
-    private String getScriptContent(SlingHttpServletRequest request, String scriptPath) {
+    private String getScript(SlingHttpServletRequest request, String scriptPath) {
         if (scriptPath) {
-            loadScriptContent(request, scriptPath)
+            loadScript(request, scriptPath)
         } else {
-            request.getRequestParameter(PARAMETER_SCRIPT)?.getString(Charsets.UTF_8.name())
+            request.getRequestParameter(SCRIPT)?.getString(Charsets.UTF_8.name())
         }
     }
 
-    private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {
+    private String loadScript(SlingHttpServletRequest request, String scriptPath) {
         def session = request.resourceResolver.adaptTo(Session)
 
         def binary = session.getNode(scriptPath)
@@ -96,10 +94,10 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
             .getProperty(JcrConstants.JCR_DATA)
             .binary
 
-        def scriptContent = binary.stream.text
+        def script = binary.stream.text
 
         binary.dispose()
 
-        scriptContent
+        script
     }
 }
