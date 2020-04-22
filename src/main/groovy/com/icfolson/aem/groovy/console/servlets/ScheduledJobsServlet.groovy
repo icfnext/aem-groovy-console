@@ -67,7 +67,8 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
                         .put("scriptPreview", GroovyScriptUtils.getScriptPreview(scheduledJobInfo.jobProperties[SCRIPT] as String))
                         .put("nextExecutionDate", scheduledJobInfo.nextScheduledExecution.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY))
                         .build()
-                }.sort { properties -> properties[DATE_CREATED] }
+                }
+                .sort { properties -> properties[DATE_CREATED] }
 
             writeJsonResponse(response, [data: scheduledJobs])
         }
