@@ -62,6 +62,10 @@ class JobProperties {
         new JobProperties(properties)
     }
 
+    String getScheduledJobId() {
+        properties.get(SCHEDULED_JOB_ID)
+    }
+
     Set<String> getEmailTo() {
         def emailTo = properties.get(EMAIL_TO) as String
 

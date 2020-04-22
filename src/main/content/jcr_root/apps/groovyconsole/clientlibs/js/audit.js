@@ -2,8 +2,6 @@ GroovyConsole.Audit = function () {
 
     var AUDIT_URL = '/bin/groovyconsole/audit.json';
 
-    var DOWNLOAD_URL = '/bin/groovyconsole/download';
-
     var table;
 
     return {
@@ -55,7 +53,7 @@ GroovyConsole.Audit = function () {
                     infoFiltered: '(filtered from _MAX_ total records)'
                 },
                 rowCallback: function (row, data) {
-                    if (data.hasOutput) {
+                    if (data.downloadUrl) {
                         $('td:eq(1)', row).html('<span class="glyphicon glyphicon-floppy-save" title="Download Output"></span>');
                     }
 
@@ -103,10 +101,7 @@ GroovyConsole.Audit = function () {
                 var tr = $(this).closest('tr');
                 var data = table.row(tr).data();
 
-                window.location = DOWNLOAD_URL + '?' + $.param({
-                    'userId': data.userId,
-                    'script': data.relativePath
-                });
+                window.location = data.downloadUrl;
             });
 
             tableBody.on('click', 'td.delete-record', function () {

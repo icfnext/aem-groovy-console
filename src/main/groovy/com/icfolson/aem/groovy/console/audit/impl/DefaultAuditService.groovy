@@ -4,6 +4,7 @@ import com.day.cq.commons.jcr.JcrUtil
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
@@ -126,6 +127,11 @@ class DefaultAuditService implements AuditService {
         def auditNodePath = getAuditNodePath(userId)
 
         findAllAuditRecords(auditNodePath)
+    }
+
+    @Override
+    List<AuditRecord> getAllScheduledJobAuditRecords() {
+        getAllAuditRecords(GroovyConsoleConstants.SYSTEM_USER_NAME)
     }
 
     @Override

@@ -35,6 +35,13 @@ interface AuditService {
     List<AuditRecord> getAllAuditRecords(String userId)
 
     /**
+     * Get all audit records for scheduled jobs.
+     *
+     * @return all audit records for scheduled jobs
+     */
+    List<AuditRecord> getAllScheduledJobAuditRecords()
+
+    /**
      * Get the audit record for the given job ID.
      *
      * @param jobId Sling-generated ID for the job

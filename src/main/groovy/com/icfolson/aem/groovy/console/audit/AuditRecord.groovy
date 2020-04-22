@@ -21,6 +21,16 @@ class AuditRecord implements RunScriptResponse {
         response = DefaultRunScriptResponse.fromAuditRecordResource(resource)
     }
 
+    String getDownloadUrl() {
+        def downloadUrl = null
+
+        if (output) {
+            downloadUrl = "/bin/groovyconsole/download?userId=$userId&script=$relativePath"
+        }
+
+        downloadUrl
+    }
+
     String getRelativePath() {
         (path - Text.getAbsoluteParent(path, DEPTH_RELATIVE_PATH)).substring(1)
     }

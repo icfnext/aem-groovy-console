@@ -96,11 +96,15 @@ td.edit-scheduled-job, td.delete-scheduled-job {
 }
 
 #history table {
-    width: 100%;
+    width: 100% !important;
 }
 
 #history td {
     vertical-align: middle;
+}
+
+#scheduled-jobs table {
+    width: 100% !important;
 }
 
 #scheduled-jobs td {

@@ -3,6 +3,8 @@ package com.icfolson.aem.groovy.console.servlets
 import com.google.common.collect.ImmutableMap
 import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.JobProperties
+import com.icfolson.aem.groovy.console.audit.AuditRecord
+import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
 import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.utils.GroovyScriptUtils
@@ -36,6 +38,9 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
     private GroovyConsoleService consoleService
 
     @Reference
+    private AuditService auditService
+
+    @Reference
     private JobManager jobManager
 
     @Override
@@ -47,15 +52,22 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
             // single job
             writeJsonResponse(response, scheduledJob.jobProperties)
         } else {
+            def scheduledJobAuditRecords = auditService.allScheduledJobAuditRecords
+
             // list all jobs
-            def scheduledJobs = jobManager.getScheduledJobs(
-                GroovyConsoleConstants.JOB_TOPIC, 0, null).collect { scheduledJobInfo ->
-                new ImmutableMap.Builder<String, Object>()
-                    .putAll(scheduledJobInfo.jobProperties)
-                    .put("scriptPreview", GroovyScriptUtils.getScriptPreview(scheduledJobInfo.jobProperties[SCRIPT] as String))
-                    .put("nextExecutionDate", scheduledJobInfo.nextScheduledExecution.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY))
-                    .build()
-            }.sort { properties -> properties[DATE_CREATED] }
+            def scheduledJobs = jobManager.getScheduledJobs(GroovyConsoleConstants.JOB_TOPIC, 0, null)
+                .collect { scheduledJobInfo ->
+                    def auditRecords = scheduledJobAuditRecords.findAll { record ->
+                        isAuditRecordForScheduledJob(record, scheduledJobInfo)
+                    }
+
+                    new ImmutableMap.Builder<String, Object>()
+                        .putAll(scheduledJobInfo.jobProperties)
+                        .put("downloadUrl", auditRecords ? auditRecords.last().downloadUrl : null)
+                        .put("scriptPreview", GroovyScriptUtils.getScriptPreview(scheduledJobInfo.jobProperties[SCRIPT] as String))
+                        .put("nextExecutionDate", scheduledJobInfo.nextScheduledExecution.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY))
+                        .build()
+                }.sort { properties -> properties[DATE_CREATED] }
 
             writeJsonResponse(response, [data: scheduledJobs])
         }
@@ -118,5 +130,11 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
         }
 
         scheduledJobInfo
+    }
+
+    private boolean isAuditRecordForScheduledJob(AuditRecord auditRecord, ScheduledJobInfo scheduledJobInfo) {
+        def scheduledJobId = auditRecord.jobProperties?.scheduledJobId
+
+        scheduledJobId && scheduledJobId == scheduledJobInfo.jobProperties.get(SCHEDULED_JOB_ID) as String
     }
 }

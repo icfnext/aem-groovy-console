@@ -17,6 +17,13 @@ GroovyConsole.ScheduledJobs = function () {
                         defaultContent: '<span class="glyphicon glyphicon-pencil" title="Edit Scheduled Job"></span>'
                     },
                     {
+                        className: 'download-scheduled-job-output',
+                        orderable: false,
+                        searchable: false,
+                        data: null,
+                        defaultContent: ''
+                    },
+                    {
                         data: 'jobTitle'
                     },
                     {
@@ -53,8 +60,12 @@ GroovyConsole.ScheduledJobs = function () {
                     infoFiltered: '(filtered from _MAX_ total jobs)'
                 },
                 rowCallback: function (row, data) {
-                    $('td:eq(3)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
-                    $('td:eq(3)', row).popover({
+                    if (data.downloadUrl) {
+                        $('td:eq(1)', row).html('<span class="glyphicon glyphicon-floppy-save" title="Download Last Execution Output"></span>');
+                    }
+
+                    $('td:eq(4)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
+                    $('td:eq(4)', row).popover({
                         container: 'body',
                         content: '<pre>' + data.script + '</pre>',
                         html: true,
@@ -93,6 +104,13 @@ GroovyConsole.ScheduledJobs = function () {
 
                     $('html, body').animate({scrollTop: 0});
                 });
+            });
+
+            tableBody.on('click', 'td.download-scheduled-job-output', function () {
+                var tr = $(this).closest('tr');
+                var data = table.row(tr).data();
+
+                window.location = data.downloadUrl;
             });
 
             tableBody.on('click', 'td.delete-scheduled-job', function () {

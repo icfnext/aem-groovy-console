@@ -63,7 +63,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
                 exception: auditRecord.exception,
                 link: "$consoleHref?userId=${auditRecord.userId}&script=${auditRecord.relativePath}",
                 relativePath: auditRecord.relativePath,
-                hasOutput: auditRecord.output as Boolean
+                downloadUrl: auditRecord.downloadUrl
             ]
         }]
     }

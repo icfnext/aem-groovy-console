@@ -5,6 +5,8 @@ import com.google.common.net.MediaType
 
 class GroovyConsoleConstants {
 
+    public static final String SYSTEM_USER_NAME = "groovy-console-system-user"
+
     public static final String PATH_CONSOLE_ROOT = "/var/groovyconsole"
 
     public static final String PATH_SCRIPTS_FOLDER = "$PATH_CONSOLE_ROOT/scripts"
