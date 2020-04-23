@@ -6,7 +6,7 @@ import com.day.cq.replication.Replicator
 import com.day.cq.search.PredicateGroup
 import com.day.cq.search.QueryBuilder
 import com.day.cq.wcm.api.PageManager
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.ScriptMetaClassExtensionProvider
 import com.icfolson.aem.groovy.console.table.Table
 import org.apache.sling.models.factory.ModelFactory
@@ -31,7 +31,7 @@ class DefaultScriptMetaClassExtensionProvider implements ScriptMetaClassExtensio
 
     @Override
     Closure getScriptMetaClass(ScriptContext scriptContext) {
-        def resourceResolver = scriptContext.request.resourceResolver
+        def resourceResolver = scriptContext.resourceResolver
         def session = resourceResolver.adaptTo(Session)
         def pageManager = resourceResolver.adaptTo(PageManager)
 

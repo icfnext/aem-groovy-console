@@ -1,10 +1,8 @@
 # AEM Groovy Console
 
-[ICF Next](http://www.icfnext.com)
-
 ## Overview
 
-The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After installing the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
+The AEM Groovy Console provides an interface for running [Groovy](http://www.groovy-lang.org/) scripts in Adobe Experience Manager.  Scripts can be created to manipulate content in the JCR, call OSGi services, or execute arbitrary code using the AEM, Sling, or JCR APIs.  After ainstalling the package in AEM (instructions below), see the [console page](http://localhost:4502/apps/groovyconsole.html) for documentation on the available bindings and methods.  Sample scripts are included in the package for reference.
 
 ![Screenshot](src/site/screenshot.png)
 
@@ -17,7 +15,7 @@ The AEM Groovy Console provides an interface for running [Groovy](http://www.gro
 
 Groovy Console Version(s) | AEM Version(s)
 ------------ | -------------
-14.x.x, 13.x.x | 6.3, 6.4, 6.5
+15.x.x, 14.x.x, 13.x.x | 6.3, 6.4, 6.5
 12.x.x | 6.4
 11.x.x | 6.3
 10.x.x, 9.x.x | 6.2
@@ -62,7 +60,7 @@ Property | Description | Default Value
 ------------ | ------------- | ----------
 Email Enabled? | Check to enable email notification on completion of script execution. | `false`
 Email Recipients | Email addresses to receive notification. | `[]`
-Allowed Groups | List of group names that are authorized to use the console. If empty, no authorization check is performed. | `[]`
+Allowed Groups | List of group names that are authorized to use the console.  By default, only the `admin` user has permission to execute scripts.
 Vanity Path Enabled? | Enables `/groovyconsole` vanity path. | `false`
 Audit Disabled? | Disables auditing of script execution history. | `false`
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`
@@ -93,6 +91,14 @@ Service Interface | Description
 ## Notifications
 
 To provide custom notifications for script executions, bundles may implement the `com.icfolson.aem.groovy.console.notification.NotificationService` interface (see the `com.icfolson.aem.groovy.console.notification.impl.EmailNotificationService` class for an example).  These services will be dynamically bound by the Groovy Console service and all registered notification services will be called for each script execution.
+
+## Scheduler
+
+The Scheduler allows for immediate (asynchronous) or Cron-based script execution.  Scripts are executed as [Sling Jobs](https://sling.apache.org/documentation/bundles/apache-sling-eventing-and-job-handling.html) and are audited in the same manner as scripts executed in the console.
+
+### Scheduled Job Event Handling
+
+Bundles may implement services extending `com.icfolson.aem.groovy.console.job.event.AbstractGroovyConsoleScheduledJobEventHandler` to provide additional post-processing or notifications for completed Groovy Console jobs.  See `com.icfolson.aem.groovy.console.job.event.DefaultGroovyConsoleEmailNotificationEventHandler` for an example of the required annotations to register a custom event handler.
 
 ## Sample Scripts
 

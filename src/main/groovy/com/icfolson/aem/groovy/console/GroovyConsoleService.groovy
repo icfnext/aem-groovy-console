@@ -1,18 +1,37 @@
 package com.icfolson.aem.groovy.console
 
+import com.icfolson.aem.groovy.console.api.JobProperties
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptData
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
-import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
 
+/**
+ * Service for executing and saving Groovy scripts.
+ */
 interface GroovyConsoleService {
 
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response)
+    /**
+     * Run a Groovy script with the given script context.
+     *
+     * @param scriptContext script context
+     * @return response containing script output
+     */
+    RunScriptResponse runScript(ScriptContext scriptContext)
 
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath)
+    /**
+     * Save a Groovy script with the file name and content provided in the given script data.
+     *
+     * @param scriptData script data
+     * @return response containing the name of the saved script
+     */
+    SaveScriptResponse saveScript(ScriptData scriptData)
 
-    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response,
-        List<String> scriptPaths)
-
-    SaveScriptResponse saveScript(SlingHttpServletRequest request)
+    /**
+     * Run or schedule a Groovy Console job execution.
+     *
+     * @param jobProperties job properties
+     * @return true if job was successfully added
+     */
+    boolean addScheduledJob(JobProperties jobProperties)
 }

@@ -1,5 +1,7 @@
 package com.icfolson.aem.groovy.console.api
 
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+
 /**
  * Services may implement this interface to supply additional binding values for Groovy script executions.
  */

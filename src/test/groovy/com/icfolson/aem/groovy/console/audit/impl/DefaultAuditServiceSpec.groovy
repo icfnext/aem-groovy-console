@@ -1,9 +1,9 @@
 package com.icfolson.aem.groovy.console.audit.impl
 
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.audit.AuditRecord
 import com.icfolson.aem.groovy.console.configuration.impl.DefaultConfigurationService
-import com.icfolson.aem.groovy.console.response.RunScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
 import com.icfolson.aem.prosper.specs.ProsperSpec
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.sling.jcr.resource.JcrResourceConstants
@@ -39,9 +39,9 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, script, "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, script)
 
-        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, output, runningTime)
+        def runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, result, output, runningTime)
 
         def auditRecord = auditService.createAuditRecord(runScriptResponse)
 
@@ -63,11 +63,11 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, "script content", null)
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
         def exception = new RuntimeException("")
 
-        def runScriptResponse = RunScriptResponse.fromException(scriptContext, "output", exception)
+        def runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext, "output", exception)
 
         def auditRecord = auditService.createAuditRecord(runScriptResponse)
 
@@ -85,9 +85,9 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
-        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
+        def runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 
         def auditRecords = []
 
@@ -105,9 +105,9 @@ class DefaultAuditServiceSpec extends ProsperSpec {
         def request = requestBuilder.build()
         def response = responseBuilder.build()
 
-        def scriptContext = new ScriptContext(request, response, null, "script content", "data")
+        def scriptContext = new RequestScriptContext(request, response, new ByteArrayOutputStream(), null, "script content")
 
-        def runScriptResponse = RunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
+        def runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, "result", "output", "running time")
 
         auditService.createAuditRecord(runScriptResponse)
 

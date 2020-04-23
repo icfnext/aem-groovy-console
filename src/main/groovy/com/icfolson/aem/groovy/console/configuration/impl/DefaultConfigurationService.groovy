@@ -25,41 +25,53 @@ class DefaultConfigurationService implements ConfigurationService {
     @Reference
     private ResourceResolverFactory resourceResolverFactory
 
-    boolean emailEnabled
+    private boolean emailEnabled
 
-    Set<String> emailRecipients
+    private Set<String> emailRecipients
 
-    Set<String> allowedGroups
+    private Set<String> allowedGroups
 
-    boolean vanityPathEnabled
+    private Set<String> allowedScheduledJobsGroups
 
-    boolean auditDisabled
+    private boolean vanityPathEnabled
 
-    boolean displayAllAuditRecords
+    private boolean auditDisabled
+
+    private boolean displayAllAuditRecords
 
     @Override
     boolean hasPermission(SlingHttpServletRequest request) {
-        def resourceResolver = resourceResolverFactory.getServiceResourceResolver(null)
+        isAdminOrAllowedGroupMember(request, allowedGroups)
+    }
 
-        def hasPermission = false
-
-        try {
-            def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
-            def memberOfGroupIds = user.memberOf()*.ID
-
-            LOG.debug("member of group IDs = {}, allowed group IDs = {}", memberOfGroupIds, allowedGroups)
-
-            hasPermission = allowedGroups ? user.admin || memberOfGroupIds.intersect(allowedGroups as Iterable) : false
-        } finally {
-            resourceResolver.close()
-        }
-
-        hasPermission
+    @Override
+    boolean hasScheduledJobPermission(SlingHttpServletRequest request) {
+        isAdminOrAllowedGroupMember(request, allowedScheduledJobsGroups)
     }
 
     @Override
     String getConsoleHref() {
         vanityPathEnabled ? VANITY_PATH : DEFAULT_PATH
+    }
+
+    @Override
+    boolean isEmailEnabled() {
+        emailEnabled
+    }
+
+    @Override
+    Set<String> getEmailRecipients() {
+        emailRecipients
+    }
+
+    @Override
+    boolean isAuditDisabled() {
+        auditDisabled
+    }
+
+    @Override
+    boolean isDisplayAllAuditRecords() {
+        displayAllAuditRecords
     }
 
     @Activate
@@ -69,8 +81,20 @@ class DefaultConfigurationService implements ConfigurationService {
         emailEnabled = properties.emailEnabled()
         emailRecipients = (properties.emailRecipients() ?: []).findAll() as Set
         allowedGroups = (properties.allowedGroups() ?: []).findAll() as Set
+        allowedScheduledJobsGroups = (properties.allowedScheduledJobsGroups() ?: []).findAll() as Set
         vanityPathEnabled = properties.vanityPathEnabled()
         auditDisabled = properties.auditDisabled()
         displayAllAuditRecords = properties.auditDisplayAll()
+    }
+
+    private boolean isAdminOrAllowedGroupMember(SlingHttpServletRequest request, Set<String> groupIds) {
+        resourceResolverFactory.getServiceResourceResolver(null).withCloseable { resourceResolver ->
+            def user = resourceResolver.adaptTo(UserManager).getAuthorizable(request.userPrincipal) as User
+            def memberOfGroupIds = user.memberOf()*.ID
+
+            LOG.debug("member of group IDs : {}, allowed group IDs : {}", memberOfGroupIds, groupIds)
+
+            user.admin || (groupIds ? memberOfGroupIds.intersect(groupIds as Iterable) : false)
+        }
     }
 }

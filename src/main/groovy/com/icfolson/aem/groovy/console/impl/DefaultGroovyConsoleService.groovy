@@ -2,21 +2,24 @@ package com.icfolson.aem.groovy.console.impl
 
 import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
-import com.google.common.base.Charsets
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
-import com.icfolson.aem.groovy.console.api.ScriptContext
+import com.icfolson.aem.groovy.console.api.JobProperties
+import com.icfolson.aem.groovy.console.api.context.ScriptContext
+import com.icfolson.aem.groovy.console.api.context.ScriptData
 import com.icfolson.aem.groovy.console.audit.AuditService
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants
 import com.icfolson.aem.groovy.console.extension.ExtensionService
 import com.icfolson.aem.groovy.console.notification.NotificationService
 import com.icfolson.aem.groovy.console.response.RunScriptResponse
 import com.icfolson.aem.groovy.console.response.SaveScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
+import com.icfolson.aem.groovy.console.response.impl.DefaultSaveScriptResponse
 import groovy.transform.Synchronized
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
-import org.apache.sling.api.SlingHttpServletRequest
-import org.apache.sling.api.SlingHttpServletResponse
+import org.apache.sling.event.jobs.JobManager
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
@@ -29,24 +32,14 @@ import javax.jcr.Node
 import javax.jcr.Session
 import java.util.concurrent.CopyOnWriteArrayList
 
-import static com.google.common.base.Preconditions.checkNotNull
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.EXTENSION_GROOVY
-import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PARAMETER_DATA
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.CHARSET
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.FORMAT_RUNNING_TIME
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.PATH_SCRIPTS_FOLDER
+import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.TIME_ZONE_RUNNING_TIME
 
 @Component(service = GroovyConsoleService, immediate = true)
 @Slf4j("LOG")
 class DefaultGroovyConsoleService implements GroovyConsoleService {
-
-    private static final String CHARSET = Charsets.UTF_8.name()
-
-    static final String PARAMETER_FILE_NAME = "fileName"
-
-    static final String PARAMETER_SCRIPT = "script"
-
-    static final String FORMAT_RUNNING_TIME = "HH:mm:ss.SSS"
-
-    static final String TIME_ZONE_RUNNING_TIME = "GMT"
 
     static final def RUNNING_TIME = { closure ->
         def start = System.currentTimeMillis()
@@ -70,29 +63,17 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     @Reference
     private ExtensionService extensionService
 
-    @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response) {
-        runScript(request, response, null)
-    }
+    @Reference
+    private JobManager jobManager
 
     @Override
-    RunScriptResponse runScript(SlingHttpServletRequest request, SlingHttpServletResponse response, String scriptPath) {
-        def stream = new ByteArrayOutputStream()
-
-        def scriptContext = new ScriptContext(
-            request: request,
-            response: response,
-            printStream: new PrintStream(stream, true, CHARSET),
-            scriptContent: checkNotNull(getScriptContent(request, scriptPath), "Script content cannot be empty."),
-            data: request.getRequestParameter(PARAMETER_DATA)?.getString(CHARSET)
-        )
-
+    RunScriptResponse runScript(ScriptContext scriptContext) {
         def binding = getBinding(scriptContext)
 
         def runScriptResponse = null
 
         try {
-            def script = new GroovyShell(binding, configuration).parse(scriptContext.scriptContent)
+            def script = new GroovyShell(binding, configuration).parse(scriptContext.script)
 
             extensionService.getScriptMetaClasses(scriptContext).each { meta ->
                 script.metaClass(meta)
@@ -104,55 +85,63 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
                 result = script.run()
             }
 
-            LOG.debug("script execution completed, running time = {}", runningTime)
+            LOG.debug("script execution completed, running time : {}", runningTime)
 
-            runScriptResponse = RunScriptResponse.fromResult(scriptContext, result, stream.toString(CHARSET),
-                runningTime)
+            runScriptResponse = DefaultRunScriptResponse.fromResult(scriptContext, result,
+                scriptContext.outputStream.toString(CHARSET), runningTime)
 
             auditAndNotify(runScriptResponse)
         } catch (MultipleCompilationErrorsException e) {
             LOG.error("script compilation error", e)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CHARSET), e)
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
+                scriptContext.outputStream.toString(CHARSET), e)
         } catch (Throwable t) {
             LOG.error("error running script", t)
 
-            runScriptResponse = RunScriptResponse.fromException(scriptContext, stream.toString(CHARSET), t)
+            runScriptResponse = DefaultRunScriptResponse.fromException(scriptContext,
+                scriptContext.outputStream.toString(CHARSET), t)
 
             auditAndNotify(runScriptResponse)
         } finally {
-            stream.close()
+            scriptContext.outputStream.close()
         }
 
         runScriptResponse
     }
 
     @Override
-    List<RunScriptResponse> runScripts(SlingHttpServletRequest request, SlingHttpServletResponse response,
-        List<String> scriptPaths) {
-        scriptPaths.collect { scriptPath ->
-            runScript(request, response, scriptPath)
-        }
-    }
-
-    @Override
     @Synchronized
-    SaveScriptResponse saveScript(SlingHttpServletRequest request) {
-        def session = request.resourceResolver.adaptTo(Session)
+    SaveScriptResponse saveScript(ScriptData scriptData) {
+        def session = scriptData.resourceResolver.adaptTo(Session)
         def folderNode = JcrUtil.createPath(PATH_SCRIPTS_FOLDER, JcrConstants.NT_FOLDER, session)
 
-        def name = request.getParameter(PARAMETER_FILE_NAME)
-        def fileName = name.endsWith(EXTENSION_GROOVY) ? name : "$name$EXTENSION_GROOVY"
+        def fileName = scriptData.fileName
 
         if (folderNode.hasNode(fileName)) {
             folderNode.getNode(fileName).remove()
         }
 
-        def script = request.getParameter(PARAMETER_SCRIPT)
+        saveFile(session, folderNode, scriptData.script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
-        saveFile(session, folderNode, script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
+        new DefaultSaveScriptResponse(fileName)
+    }
 
-        new SaveScriptResponse(fileName)
+    @Override
+    boolean addScheduledJob(JobProperties jobProperties) {
+        if (jobProperties.cronExpression) {
+            LOG.info("adding scheduled job with properties : {}", jobProperties.toMap())
+
+            jobManager.createJob(GroovyConsoleConstants.JOB_TOPIC)
+                .properties(jobProperties.toMap())
+                .schedule()
+                .cron(jobProperties.cronExpression)
+                .add()
+        } else {
+            LOG.info("adding immediate job with properties : {}", jobProperties.toMap())
+
+            jobManager.addJob(GroovyConsoleConstants.JOB_TOPIC, jobProperties.toMap())
+        }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -160,25 +149,17 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     void bindNotificationService(NotificationService notificationService) {
         notificationServices.add(notificationService)
 
-        LOG.info("added notification service = {}", notificationService.class.name)
+        LOG.info("added notification service : {}", notificationService.class.name)
     }
 
     @Synchronized
     void unbindNotificationService(NotificationService notificationService) {
         notificationServices.remove(notificationService)
 
-        LOG.info("removed notification service = {}", notificationService.class.name)
+        LOG.info("removed notification service : {}", notificationService.class.name)
     }
 
     // internals
-
-    private String getScriptContent(SlingHttpServletRequest request, String scriptPath) {
-        if (scriptPath) {
-            loadScriptContent(request, scriptPath)
-        } else {
-            request.getRequestParameter(PARAMETER_SCRIPT)?.getString(CHARSET)
-        }
-    }
 
     private void auditAndNotify(RunScriptResponse response) {
         if (!configurationService.auditDisabled) {
@@ -203,21 +184,6 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     private CompilerConfiguration getConfiguration() {
         new CompilerConfiguration().addCompilationCustomizers(extensionService.compilationCustomizers
             as CompilationCustomizer[])
-    }
-
-    private String loadScriptContent(SlingHttpServletRequest request, String scriptPath) {
-        def session = request.resourceResolver.adaptTo(Session)
-
-        def binary = session.getNode(scriptPath)
-            .getNode(JcrConstants.JCR_CONTENT)
-            .getProperty(JcrConstants.JCR_DATA)
-            .binary
-
-        def scriptContent = binary.stream.text
-
-        binary.dispose()
-
-        scriptContent
     }
 
     private void saveFile(Session session, Node folderNode, String script, String fileName, Date date,

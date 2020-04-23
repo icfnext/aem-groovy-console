@@ -1,80 +1,38 @@
 package com.icfolson.aem.groovy.console.response
 
-import com.day.text.Text
-import com.icfolson.aem.groovy.console.api.ScriptContext
-import com.icfolson.aem.groovy.console.audit.AuditRecord
-import com.icfolson.aem.groovy.console.table.Table
-import groovy.json.JsonBuilder
-import groovy.transform.Immutable
-import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.sling.api.resource.Resource
-import org.apache.sling.api.resource.ResourceUtil
+import com.icfolson.aem.groovy.console.api.JobProperties
 
-import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_DATA
-import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_EXCEPTION_STACK_TRACE
-import static com.icfolson.aem.groovy.console.audit.AuditRecord.PROPERTY_SCRIPT
+/**
+ * Response for script executions.
+ */
+interface RunScriptResponse {
 
-@Immutable
-class RunScriptResponse {
+    /**
+     * Get the date of script execution.
+     *
+     * @return execution date
+     */
+    Calendar getDate()
 
-    private static final int LEVEL_USERID = 4
+    String getScript()
 
-    static RunScriptResponse fromResult(ScriptContext scriptContext, Object result, String output, String runningTime) {
-        def resultString
+    String getData()
 
-        if (result instanceof Table) {
-            resultString = new JsonBuilder([table: result]).toString()
-        } else {
-            resultString = result as String
-        }
+    String getResult()
 
-        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, resultString, output, "", runningTime,
-            scriptContext.userId)
-    }
+    String getOutput()
 
-    static RunScriptResponse fromException(ScriptContext scriptContext, String output, Throwable throwable) {
-        def exceptionStackTrace = ExceptionUtils.getStackTrace(throwable)
+    String getExceptionStackTrace()
 
-        new RunScriptResponse(scriptContext.scriptContent, scriptContext.data, "", output, exceptionStackTrace, "",
-            scriptContext.userId)
-    }
+    String getRunningTime()
 
-    static RunScriptResponse fromAuditRecordResource(Resource resource) {
-        def properties = resource.valueMap
+    String getUserId()
 
-        def script = properties.get(PROPERTY_SCRIPT, "")
-        def data = properties.get(PROPERTY_DATA, "")
-        def exceptionStackTrace = properties.get(PROPERTY_EXCEPTION_STACK_TRACE, "")
-        def output = properties.get(AuditRecord.PROPERTY_OUTPUT, "")
+    String getJobId()
 
-        def userIdResourcePath = ResourceUtil.getParent(resource.path, LEVEL_USERID)
-        def userId = Text.getName(userIdResourcePath)
+    JobProperties getJobProperties()
 
-        def response
+    String getMediaType()
 
-        if (exceptionStackTrace) {
-            response = new RunScriptResponse(script, data, "", output, exceptionStackTrace, "", userId)
-        } else {
-            def result = properties.get(AuditRecord.PROPERTY_RESULT, "")
-            def runningTime = properties.get(AuditRecord.PROPERTY_RUNNING_TIME, "")
-
-            response = new RunScriptResponse(script, data, result, output, "", runningTime, userId)
-        }
-
-        response
-    }
-
-    String script
-
-    String data
-
-    String result
-
-    String output
-
-    String exceptionStackTrace
-
-    String runningTime
-
-    String userId
+    String getOutputFileName()
 }
