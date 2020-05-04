@@ -60,10 +60,10 @@ class ScheduledJobsServlet extends AbstractJsonResponseServlet {
                     def auditRecords = scheduledJobAuditRecords.findAll { record ->
                         isAuditRecordForScheduledJob(record, scheduledJobInfo)
                     }
-
+                    
                     new ImmutableMap.Builder<String, Object>()
                         .putAll(scheduledJobInfo.jobProperties)
-                        .put("downloadUrl", auditRecords ? auditRecords.last().downloadUrl : null)
+                        .put("downloadUrl", (auditRecords ? auditRecords.last().downloadUrl : null) ?: "")
                         .put("scriptPreview", GroovyScriptUtils.getScriptPreview(scheduledJobInfo.jobProperties[SCRIPT] as String))
                         .put("nextExecutionDate", scheduledJobInfo.nextScheduledExecution.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY))
                         .build()
