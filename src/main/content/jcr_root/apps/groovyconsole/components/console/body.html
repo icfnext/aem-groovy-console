@@ -44,7 +44,7 @@
         <pre></pre>
     </div>
 
-    <sly data-sly-include="active-jobs.html" data-sly-test="${body.hasScheduledJobPermission && body.hasActiveJobs}"></sly>
+    <sly data-sly-include="active-jobs.html" data-sly-test="${body.hasActiveJobs}"></sly>
 
     <div class="panel-group" id="info">
         <sly data-sly-include="scheduled-jobs.html" data-sly-test="${body.hasScheduledJobPermission}"></sly>
