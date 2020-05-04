@@ -1,5 +1,6 @@
 package com.icfolson.aem.groovy.console
 
+import com.icfolson.aem.groovy.console.api.ActiveJob
 import com.icfolson.aem.groovy.console.api.JobProperties
 import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.context.ScriptData
@@ -34,4 +35,11 @@ interface GroovyConsoleService {
      * @return true if job was successfully added
      */
     boolean addScheduledJob(JobProperties jobProperties)
+
+    /**
+     * Get a list of all active jobs.
+     *
+     * @return list of active jobs
+     */
+    List<ActiveJob> getActiveJobs()
 }
