@@ -4,6 +4,7 @@ import com.day.cq.commons.jcr.JcrConstants
 import com.day.cq.commons.jcr.JcrUtil
 import com.google.common.net.MediaType
 import com.icfolson.aem.groovy.console.GroovyConsoleService
+import com.icfolson.aem.groovy.console.api.ActiveJob
 import com.icfolson.aem.groovy.console.api.JobProperties
 import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.context.ScriptData
@@ -125,6 +126,13 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
         saveFile(session, folderNode, scriptData.script, fileName, new Date(), MediaType.OCTET_STREAM.toString())
 
         new DefaultSaveScriptResponse(fileName)
+    }
+
+    @Override
+    List<ActiveJob> getActiveJobs() {
+        jobManager.findJobs(JobManager.QueryType.ACTIVE, GroovyConsoleConstants.JOB_TOPIC, 0, null).collect { job ->
+            new ActiveJob(job)
+        }
     }
 
     @Override
