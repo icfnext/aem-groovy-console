@@ -126,7 +126,9 @@ class DefaultAuditService implements AuditService {
     List<AuditRecord> getAllAuditRecords(String userId) {
         def auditNodePath = getAuditNodePath(userId)
 
-        findAllAuditRecords(auditNodePath)
+        withResourceResolver { ResourceResolver resourceResolver ->
+            findAllAuditRecords(resourceResolver, auditNodePath)
+        }
     }
 
     @Override
@@ -136,8 +138,10 @@ class DefaultAuditService implements AuditService {
 
     @Override
     AuditRecord getAuditRecord(String jobId) {
-        findAllAuditRecords(AUDIT_PATH).find { auditRecord ->
-            auditRecord.jobId == jobId
+        withResourceResolver { ResourceResolver resourceResolver ->
+            findAllAuditRecords(resourceResolver, AUDIT_PATH).find { auditRecord ->
+                auditRecord.jobId == jobId
+            }
         }
     }
 
@@ -258,20 +262,18 @@ class DefaultAuditService implements AuditService {
         configurationService.displayAllAuditRecords ? AUDIT_PATH : "$AUDIT_PATH/$userId"
     }
 
-    private List<AuditRecord> findAllAuditRecords(String auditNodePath) {
+    private List<AuditRecord> findAllAuditRecords(ResourceResolver resourceResolver, String auditNodePath) {
         def auditRecords = []
 
-        withResourceResolver { ResourceResolver resourceResolver ->
-            def auditResource = resourceResolver.getResource(auditNodePath)
+        def auditResource = resourceResolver.getResource(auditNodePath)
 
-            if (auditResource) {
-                auditResource.listChildren().each { resource ->
-                    if (resource.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
-                        auditRecords.add(new AuditRecord(resource))
-                    }
-
-                    auditRecords.addAll(findAllAuditRecords(resource.path))
+        if (auditResource) {
+            auditResource.listChildren().each { resource ->
+                if (resource.name.startsWith(AUDIT_RECORD_NODE_PREFIX)) {
+                    auditRecords.add(new AuditRecord(resource))
                 }
+
+                auditRecords.addAll(findAllAuditRecords(resourceResolver, resource.path))
             }
         }
 
