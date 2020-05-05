@@ -164,16 +164,12 @@ class DefaultAuditService implements AuditService {
 
     @Override
     List<AuditRecord> getAuditRecords(String userId, Calendar startDate, Calendar endDate) {
-        getAllAuditRecords(userId).findAll { auditRecord ->
-            def auditRecordDate = auditRecord.date
+        getAuditRecordsForDateRange(getAllAuditRecords(userId), startDate, endDate)
+    }
 
-            auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
-            auditRecordDate.set(Calendar.MINUTE, 0)
-            auditRecordDate.set(Calendar.SECOND, 0)
-            auditRecordDate.set(Calendar.MILLISECOND, 0)
-
-            !auditRecordDate.before(startDate) && !auditRecordDate.after(endDate)
-        }
+    @Override
+    List<AuditRecord> getScheduledJobAuditRecords(Calendar startDate, Calendar endDate) {
+        getAuditRecordsForDateRange(allScheduledJobAuditRecords, startDate, endDate)
     }
 
     @Activate
@@ -278,6 +274,19 @@ class DefaultAuditService implements AuditService {
         }
 
         auditRecords
+    }
+
+    private List<AuditRecord> getAuditRecordsForDateRange(List<AuditRecord> auditRecords, Calendar startDate, Calendar endDate) {
+        auditRecords.findAll { auditRecord ->
+            def auditRecordDate = auditRecord.date
+
+            auditRecordDate.set(Calendar.HOUR_OF_DAY, 0)
+            auditRecordDate.set(Calendar.MINUTE, 0)
+            auditRecordDate.set(Calendar.SECOND, 0)
+            auditRecordDate.set(Calendar.MILLISECOND, 0)
+
+            !auditRecordDate.before(startDate) && !auditRecordDate.after(endDate)
+        }
     }
 
     private <T> T withResourceResolver(Closure<T> closure) {
