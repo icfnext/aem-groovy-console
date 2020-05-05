@@ -65,6 +65,7 @@ Scheduled Jobs Allowed Groups | List of group names that are authorized to sched
 Vanity Path Enabled? | Enables `/groovyconsole` vanity path. | `false`
 Audit Disabled? | Disables auditing of script execution history. | `false`
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`
+Thread Timeout | Time in seconds that scripts are allowed to execute before being interrupted.  If 0, no timeout is enforced. | 0 
 
 ## Batch Script Execution
 

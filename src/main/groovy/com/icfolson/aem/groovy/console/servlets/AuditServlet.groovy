@@ -57,6 +57,7 @@ class AuditServlet extends AbstractJsonResponseServlet {
             [
                 date: auditRecord.date.format(GroovyConsoleConstants.DATE_FORMAT_DISPLAY),
                 scriptPreview: GroovyScriptUtils.getScriptPreview(auditRecord.script),
+                jobTitle: auditRecord.jobProperties.jobTitle,
                 userId: auditRecord.userId,
                 script: auditRecord.script,
                 data: auditRecord.data,
@@ -72,16 +73,23 @@ class AuditServlet extends AbstractJsonResponseServlet {
         def startDateParameter = request.getParameter(GroovyConsoleConstants.START_DATE)
         def endDateParameter = request.getParameter(GroovyConsoleConstants.END_DATE)
 
-        def auditRecords
+        def auditRecords = [] as List<AuditRecord>
 
         if (!startDateParameter || !endDateParameter) {
-            auditRecords = auditService.getAllAuditRecords(request.resourceResolver.userID)
-        } else {
-            def startDate = Date.parse(DATE_FORMAT, startDateParameter)
-            def endDate = Date.parse(DATE_FORMAT, endDateParameter)
+            if (configurationService.hasScheduledJobPermission(request)) {
+                auditRecords.addAll(auditService.allScheduledJobAuditRecords)
+            }
 
-            auditRecords = auditService.getAuditRecords(request.resourceResolver.userID, startDate.toCalendar(),
-                endDate.toCalendar())
+            auditRecords.addAll(auditService.getAllAuditRecords(request.resourceResolver.userID))
+        } else {
+            def startDate = Date.parse(DATE_FORMAT, startDateParameter).toCalendar()
+            def endDate = Date.parse(DATE_FORMAT, endDateParameter).toCalendar()
+
+            if (configurationService.hasScheduledJobPermission(request)) {
+                auditRecords.addAll(auditService.getScheduledJobAuditRecords(startDate, endDate))
+            }
+
+            auditRecords.addAll(auditService.getAuditRecords(request.resourceResolver.userID, startDate, endDate))
         }
 
         auditRecords.sort { a, b -> b.date.timeInMillis <=> a.date.timeInMillis }

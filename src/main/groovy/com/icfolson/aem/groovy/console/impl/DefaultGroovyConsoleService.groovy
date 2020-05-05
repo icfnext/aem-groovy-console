@@ -18,11 +18,13 @@ import com.icfolson.aem.groovy.console.response.SaveScriptResponse
 import com.icfolson.aem.groovy.console.response.impl.DefaultRunScriptResponse
 import com.icfolson.aem.groovy.console.response.impl.DefaultSaveScriptResponse
 import groovy.transform.Synchronized
+import groovy.transform.TimedInterrupt
 import groovy.util.logging.Slf4j
 import org.apache.jackrabbit.util.Text
 import org.apache.sling.event.jobs.JobManager
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
+import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer
 import org.codehaus.groovy.control.customizers.CompilationCustomizer
 import org.osgi.service.component.annotations.Component
 import org.osgi.service.component.annotations.Reference
@@ -190,7 +192,14 @@ class DefaultGroovyConsoleService implements GroovyConsoleService {
     }
 
     private CompilerConfiguration getConfiguration() {
-        new CompilerConfiguration().addCompilationCustomizers(extensionService.compilationCustomizers
+        def configuration = new CompilerConfiguration()
+
+        if (configurationService.threadTimeout > 0) {
+            // add timed interrupt using configured timeout value
+            configuration.addCompilationCustomizers(new ASTTransformationCustomizer(value: configurationService.threadTimeout, TimedInterrupt))
+        }
+
+        configuration.addCompilationCustomizers(extensionService.compilationCustomizers
             as CompilationCustomizer[])
     }
 
