@@ -34,4 +34,8 @@ public @interface ConfigurationServiceProperties {
     @AttributeDefinition(name = "Display All Audit Records?",
         description = "If enabled, all audit records (including records for other users) will be displayed in the console history.")
     boolean auditDisplayAll() default false;
+
+    @AttributeDefinition(name = "Thread Timeout",
+        description = "Time in seconds that scripts are allowed to execute before being interrupted.  If 0, no timeout is enforced.")
+    long threadTimeout() default 0;
 }

@@ -60,10 +60,12 @@ Property | Description | Default Value
 ------------ | ------------- | ----------
 Email Enabled? | Check to enable email notification on completion of script execution. | `false`
 Email Recipients | Email addresses to receive notification. | `[]`
-Allowed Groups | List of group names that are authorized to use the console.  By default, only the `admin` user has permission to execute scripts.
+Script Execution Allowed Groups | List of group names that are authorized to use the console.  By default, only the 'admin' user has permission to execute scripts. | `[]`
+Scheduled Jobs Allowed Groups | List of group names that are authorized to schedule jobs.  By default, only the 'admin' user has permission to schedule jobs. | `[]`
 Vanity Path Enabled? | Enables `/groovyconsole` vanity path. | `false`
 Audit Disabled? | Disables auditing of script execution history. | `false`
 Display All Audit Records? | If enabled, all audit records (including records for other users) will be displayed in the console history. | `false`
+Thread Timeout | Time in seconds that scripts are allowed to execute before being interrupted.  If 0, no timeout is enforced. | 0 
 
 ## Batch Script Execution
 

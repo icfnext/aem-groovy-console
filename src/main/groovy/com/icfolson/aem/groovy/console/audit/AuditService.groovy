@@ -67,4 +67,13 @@ interface AuditService {
      * @return list of audit records in the given date range
      */
     List<AuditRecord> getAuditRecords(String userId, Calendar startDate, Calendar endDate)
+
+    /**
+     * Get a list of scheduled job audit records for the given date range.
+     *
+     * @param startDate start date
+     * @param endDate end date
+     * @return list of scheduled job audit records in the given date range
+     */
+    List<AuditRecord> getScheduledJobAuditRecords(Calendar startDate, Calendar endDate)
 }

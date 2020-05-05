@@ -28,6 +28,9 @@ GroovyConsole.Audit = function () {
                         searchable: false
                     },
                     {
+                        data: 'jobTitle'
+                    },
+                    {
                         data: 'script',
                         orderable: false
                     },
@@ -46,7 +49,7 @@ GroovyConsole.Audit = function () {
                 order: [[2, 'desc']],
                 language: {
                     emptyTable: 'No audit records found.',
-                    search: 'Script Contains: ',
+                    search: 'Contains: ',
                     zeroRecords: 'No matching audit records found.',
                     info: 'Showing _START_ to _END_ of _TOTAL_ records',
                     infoEmpty: '',
@@ -58,8 +61,8 @@ GroovyConsole.Audit = function () {
                     }
 
                     $('td:eq(2)', row).html('<a href="' + data.link + '">' + data.date + '</a>');
-                    $('td:eq(3)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
-                    $('td:eq(3)', row).popover({
+                    $('td:eq(4)', row).html('<code>' + data.scriptPreview + '</code><div class="hidden">' + data.script + '</div>');
+                    $('td:eq(4)', row).popover({
                         container: 'body',
                         content: '<pre>' + data.script + '</pre>',
                         html: true,
@@ -68,7 +71,7 @@ GroovyConsole.Audit = function () {
                     });
 
                     if (data.exception.length) {
-                        $('td:eq(4)', row).html('<span class="label label-danger">' + data.exception + '</span>');
+                        $('td:eq(5)', row).html('<span class="label label-danger">' + data.exception + '</span>');
                     }
                 }
             });

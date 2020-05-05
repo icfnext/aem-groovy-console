@@ -4,8 +4,7 @@ import com.icfolson.aem.groovy.console.audit.AuditService
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.models.annotations.Model
 import org.apache.sling.models.annotations.injectorspecific.OSGiService
-
-import javax.inject.Inject
+import org.apache.sling.models.annotations.injectorspecific.Self
 
 @Model(adaptables = SlingHttpServletRequest)
 class HistoryPanel {
@@ -13,7 +12,7 @@ class HistoryPanel {
     @OSGiService
     private AuditService auditService
 
-    @Inject
+    @Self
     private SlingHttpServletRequest request
 
     Boolean isHasAuditRecords() {

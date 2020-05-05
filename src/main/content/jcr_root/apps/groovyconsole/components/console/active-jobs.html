@@ -1,0 +1,25 @@
+<div class="panel panel-default" data-sly-use.panel="com.icfolson.aem.groovy.console.components.ActiveJobsPanel">
+    <div class="panel-heading">
+        <h4 class="panel-title">Active Jobs</h4>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Start Time</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Script</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-sly-repeat.job="${panel.activeJobs}">
+            <td>${job.id}</td>
+            <td>${job.formattedStartTime}</td>
+            <td>${job.title}</td>
+            <td>${job.description}</td>
+            <td>${job.script}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

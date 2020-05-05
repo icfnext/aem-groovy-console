@@ -58,4 +58,11 @@ interface ConfigurationService {
      * @return if true, display all audit records
      */
     boolean isDisplayAllAuditRecords()
+
+    /**
+     * Get the thread timeout value in seconds.  Scripts will be interrupted when the timeout value is reached.  If zero, no timeout will be enforced.
+     *
+     * @return thread timeout
+     */
+    long getThreadTimeout()
 }
