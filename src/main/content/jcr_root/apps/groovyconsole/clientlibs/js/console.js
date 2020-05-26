@@ -263,6 +263,18 @@ var GroovyConsole = function () {
                     }
                 }
             });
+
+            $('.copy-link').click(function () {
+                var $temp = $('<textarea>');
+
+                $('body').append($temp);
+
+                $temp.val($(this).closest('div').find('pre').text()).select();
+
+                document.execCommand("copy");
+
+                $temp.remove();
+            });
         },
 
         initializeTooltips: function () {
@@ -300,7 +312,7 @@ var GroovyConsole = function () {
 
         handleDownloadLink: function (parent, content) {
             var $parent = document.querySelector(parent);
-            var $downloadLink = $parent.querySelector('.download__link');
+            var $downloadLink = $parent.querySelector('.download-link');
 
             if (!$downloadLink) {
                 return;
