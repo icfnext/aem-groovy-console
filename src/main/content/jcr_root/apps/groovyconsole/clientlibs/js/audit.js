@@ -146,9 +146,9 @@ GroovyConsole.Audit = function () {
 
             dateRange.daterangepicker({
                 maxDate: moment()
-            }).on('apply.daterangepicker', function (e, picker) {
-                var startDate = picker.startDate.format('YYYY-MM-DD');
-                var endDate = picker.endDate.format('YYYY-MM-DD');
+            }, function(start, end) {
+                var startDate = start.format('YYYY-MM-DD');
+                var endDate = end.format('YYYY-MM-DD');
 
                 GroovyConsole.Audit.loadAuditRecords(startDate, endDate);
             });

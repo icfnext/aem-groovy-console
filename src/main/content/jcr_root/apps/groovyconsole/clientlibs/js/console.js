@@ -264,21 +264,31 @@ var GroovyConsole = function () {
                 }
             });
 
-            $('.copy-link').click(function () {
+            $('.copy-link').click(function (e) {
+                e.preventDefault();
+
+                var $copyLink = $(this);
                 var $temp = $('<textarea>');
 
                 $('body').append($temp);
 
-                $temp.val($(this).closest('div').find('pre').text()).select();
+                $temp.val($copyLink.closest('div').find('pre').text()).select();
 
                 document.execCommand("copy");
 
                 $temp.remove();
+                $copyLink.tooltip('show');
+
+                setTimeout(function () {
+                    $copyLink.tooltip('hide');
+                }, 1000);
             });
         },
 
         initializeTooltips: function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('.copy-link').tooltip({
+                trigger: 'manual'
+            });
         },
 
         initializeEvents: function () {
@@ -542,6 +552,6 @@ $(function () {
     GroovyConsole.initializeEditors();
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
-    GroovyConsole.initializeTooltips();
     GroovyConsole.initializeEvents();
+    GroovyConsole.initializeTooltips();
 });
