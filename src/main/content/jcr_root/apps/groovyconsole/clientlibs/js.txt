@@ -1,6 +1,6 @@
 #base=js
 
-jquery-1.11.1.min.js
+jquery-3.5.1.min.js
 jquery-ui.min.js
 moment.min.js
 bootstrap.min.js
