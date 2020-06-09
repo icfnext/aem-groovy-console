@@ -1,8 +1,9 @@
 #base=js
 
-datatables.min.js
+datatables.js
 jquery-ui.min.js
 moment.min.js
+daterangepicker.js
 bootstrap3-typeahead.min.js
 ace.js
 ext-language_tools.js
@@ -41,7 +42,6 @@ theme-twilight.js
 theme-vibrant_ink.js
 theme-xcode.js
 modernizr.custom.2.6.2.js
-daterangepicker.js
 console.js
 services.js
 audit.js
