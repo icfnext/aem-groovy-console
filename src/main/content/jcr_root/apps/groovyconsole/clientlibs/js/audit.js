@@ -2,6 +2,8 @@ GroovyConsole.Audit = function () {
 
     var AUDIT_URL = '/bin/groovyconsole/audit.json';
 
+    var DOM = "<'row panel-row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row panel-row'<'col-sm-5'i><'col-sm-7'p>>";
+
     var table;
 
     return {
@@ -73,7 +75,8 @@ GroovyConsole.Audit = function () {
                     if (data.exception.length) {
                         $('td:eq(5)', row).html('<span class="label label-danger">' + data.exception + '</span>');
                     }
-                }
+                },
+                dom: DOM
             });
 
             var tableBody = $('.audit tbody');
@@ -146,12 +149,15 @@ GroovyConsole.Audit = function () {
 
             dateRange.daterangepicker({
                 maxDate: moment()
-            }).on('apply.daterangepicker', function (e, picker) {
-                var startDate = picker.startDate.format('YYYY-MM-DD');
-                var endDate = picker.endDate.format('YYYY-MM-DD');
+            }, function(start, end) {
+                var startDate = start.format('YYYY-MM-DD');
+                var endDate = end.format('YYYY-MM-DD');
 
                 GroovyConsole.Audit.loadAuditRecords(startDate, endDate);
             });
+
+            dateRange.val('');
+            dateRange.attr('placeholder', 'Date Range');
 
             $('#date-range-clear').click(function () {
                 dateRange.val('');

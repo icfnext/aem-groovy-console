@@ -2,6 +2,6 @@
 
 bootstrap.css
 bootstrap-theme.css
-daterangepicker-bs3.css
+daterangepicker.css
 datatables.css
 console.css

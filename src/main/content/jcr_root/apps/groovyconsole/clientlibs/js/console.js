@@ -13,6 +13,8 @@ var GroovyConsole = function () {
                 GroovyConsole.localStorage.saveScriptEditorContent(scriptEditor.getSession().getDocument().getValue());
             });
             scriptEditor.setOptions({
+
+
                 enableBasicAutocompletion: true
             });
 
@@ -263,10 +265,32 @@ var GroovyConsole = function () {
                     }
                 }
             });
+
+            $('.copy-link').click(function (e) {
+                e.preventDefault();
+
+                var $copyLink = $(this);
+                var $temp = $('<textarea>');
+
+                $('body').append($temp);
+
+                $temp.val($copyLink.closest('div').find('pre').text()).select();
+
+                document.execCommand("copy");
+
+                $temp.remove();
+                $copyLink.tooltip('show');
+
+                setTimeout(function () {
+                    $copyLink.tooltip('hide');
+                }, 1000);
+            });
         },
 
         initializeTooltips: function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('.copy-link').tooltip({
+                trigger: 'manual'
+            });
         },
 
         initializeEvents: function () {
@@ -300,7 +324,7 @@ var GroovyConsole = function () {
 
         handleDownloadLink: function (parent, content) {
             var $parent = document.querySelector(parent);
-            var $downloadLink = $parent.querySelector('.download__link');
+            var $downloadLink = $parent.querySelector('.download-link');
 
             if (!$downloadLink) {
                 return;
@@ -530,6 +554,6 @@ $(function () {
     GroovyConsole.initializeEditors();
     GroovyConsole.initializeThemeMenu();
     GroovyConsole.initializeButtons();
-    GroovyConsole.initializeTooltips();
     GroovyConsole.initializeEvents();
+    GroovyConsole.initializeTooltips();
 });
