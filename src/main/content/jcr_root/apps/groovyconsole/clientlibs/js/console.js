@@ -13,6 +13,8 @@ var GroovyConsole = function () {
                 GroovyConsole.localStorage.saveScriptEditorContent(scriptEditor.getSession().getDocument().getValue());
             });
             scriptEditor.setOptions({
+
+
                 enableBasicAutocompletion: true
             });
 
