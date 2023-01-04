@@ -1,6 +1,6 @@
 # AEM Groovy Console
 
-_This project has moved to https://github.com/CID15/aem-groovy-console and will no longer be maintained in this repository._
+_This project has moved to https://github.com/orbinson/aem-groovy-console and will no longer be maintained in this repository._
 
 ## Overview
 
