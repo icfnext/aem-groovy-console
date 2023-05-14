@@ -16,7 +16,7 @@ import org.osgi.service.event.propertytypes.EventTopics
 @EventTopics(NotificationConstants.TOPIC_JOB_FINISHED)
 @EventFilter("(event.job.topic=groovyconsole/job*)")
 @Slf4j("LOG")
-class DefaultGroovyConsoleEmailNotificationEventHandler extends AbstractGroovyConsoleScheduledJobEventHandler {
+class DefaultGroovyConsoleEmailNotificationEventHandler {
 
     @Reference
     private EmailNotificationService emailNotificationService

@@ -1,0 +1,1 @@
+vault-cli/bin/vlt.bat
