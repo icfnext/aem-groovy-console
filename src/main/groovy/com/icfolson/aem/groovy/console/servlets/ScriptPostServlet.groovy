@@ -6,6 +6,7 @@ import com.icfolson.aem.groovy.console.GroovyConsoleService
 import com.icfolson.aem.groovy.console.api.context.ScriptContext
 import com.icfolson.aem.groovy.console.api.impl.RequestScriptContext
 import com.icfolson.aem.groovy.console.configuration.ConfigurationService
+import com.icfolson.aem.groovy.console.utils.GroovyScriptException
 import groovy.util.logging.Slf4j
 import org.apache.sling.api.SlingHttpServletRequest
 import org.apache.sling.api.SlingHttpServletResponse
@@ -14,7 +15,8 @@ import org.osgi.service.component.annotations.Reference
 
 import javax.jcr.Session
 import javax.servlet.Servlet
-import javax.servlet.ServletException
+
+//import javax.servlet.ServletException
 
 import static com.google.common.base.Preconditions.checkNotNull
 import static com.icfolson.aem.groovy.console.constants.GroovyConsoleConstants.SCRIPT
@@ -36,7 +38,7 @@ class ScriptPostServlet extends AbstractJsonResponseServlet {
 
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
+            GroovyScriptException, IOException {
         if (configurationService.hasPermission(request)) {
             def scriptPaths = request.getParameterValues(SCRIPT_PATHS)
 

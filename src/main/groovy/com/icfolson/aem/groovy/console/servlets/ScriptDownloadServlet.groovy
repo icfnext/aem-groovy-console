@@ -13,6 +13,10 @@ import javax.servlet.Servlet
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST
 
+class GroovyScriptLet extends Object {
+
+}
+
 @Component(service = Servlet, immediate = true, property = [
     "sling.servlet.paths=/bin/groovyconsole/download"
 ])
